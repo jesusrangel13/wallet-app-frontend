@@ -1,0 +1,60 @@
+'use client'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { TrendingUp } from 'lucide-react'
+import { formatCurrency } from '@/types/currency'
+import { useState, useEffect } from 'react'
+import { transactionAPI } from '@/lib/api'
+
+export const MonthlyIncomeWidget = () => {
+  const [income, setIncome] = useState(0)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchIncome = async () => {
+      try {
+        setLoading(true)
+        const now = new Date()
+        const month = now.getMonth() + 1
+        const year = now.getFullYear()
+        const res = await transactionAPI.getStats(month, year)
+        setIncome(res.data.data.totalIncome)
+      } catch (error) {
+        console.error('Error fetching income:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchIncome()
+  }, [])
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardTitle className="text-sm font-medium text-gray-600">Monthly Income</CardTitle>
+          <TrendingUp className="h-4 w-4 text-green-600" />
+        </CardHeader>
+        <CardContent>
+          <div className="animate-pulse h-8 bg-gray-200 rounded"></div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium text-gray-600">Monthly Income</CardTitle>
+        <TrendingUp className="h-4 w-4 text-green-600" />
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold text-green-600">
+          {formatCurrency(income, 'CLP')}
+        </div>
+        <p className="text-xs text-gray-500 mt-1">This month</p>
+      </CardContent>
+    </Card>
+  )
+}
