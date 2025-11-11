@@ -97,6 +97,8 @@ export const userAPI = {
         netBalance: number;
         peopleWhoOweMe: Array<{
           amount: number;
+          totalHistorical: number;
+          totalPaid: number;
           user: { id: string; name: string; avatarUrl?: string };
           unpaidExpenses: Array<{
             expenseId: string;
@@ -104,15 +106,31 @@ export const userAPI = {
             amount: number;
             date: string;
           }>;
+          paidExpenses: Array<{
+            expenseId: string;
+            description: string;
+            amount: number;
+            date: string;
+            paidDate?: string;
+          }>;
         }>;
         peopleIOweTo: Array<{
           amount: number;
+          totalHistorical: number;
+          totalPaid: number;
           user: { id: string; name: string; avatarUrl?: string };
           unpaidExpenses: Array<{
             expenseId: string;
             description: string;
             amount: number;
             date: string;
+          }>;
+          paidExpenses: Array<{
+            expenseId: string;
+            description: string;
+            amount: number;
+            date: string;
+            paidDate?: string;
           }>;
         }>;
       }>;
