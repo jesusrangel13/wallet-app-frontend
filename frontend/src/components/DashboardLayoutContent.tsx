@@ -33,11 +33,7 @@ export function DashboardLayoutContent({ children }: DashboardLayoutContentProps
   }
 
   return (
-    <div
-      className={`flex flex-col transition-all duration-300 ${
-        mounted && isCollapsed ? 'md:pl-16' : 'md:pl-64'
-      }`}
-    >
+    <div className="flex flex-col flex-1 w-full">{/* Content takes remaining width */}
       {/* Top Navigation */}
       <nav className="bg-white shadow-sm border-b sticky top-0 z-30">
         <div className="px-4 sm:px-6 lg:px-8">
