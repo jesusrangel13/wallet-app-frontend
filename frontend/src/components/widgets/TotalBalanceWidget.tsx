@@ -29,9 +29,11 @@ export const TotalBalanceWidget = () => {
   if (loading) {
     return (
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium text-gray-600">Total Balance</CardTitle>
-          <Wallet className="h-4 w-4 text-gray-600" />
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <Wallet className="h-4 w-4 text-gray-600" />
+            Total Balance
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse h-8 bg-gray-200 rounded"></div>
@@ -42,9 +44,11 @@ export const TotalBalanceWidget = () => {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600">Total Balance</CardTitle>
-        <Wallet className="h-4 w-4 text-gray-600" />
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+          <Wallet className="h-4 w-4 text-gray-600" />
+          Total Balance
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-1">

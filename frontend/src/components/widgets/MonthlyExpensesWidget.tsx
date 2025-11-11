@@ -32,9 +32,11 @@ export const MonthlyExpensesWidget = () => {
   if (loading) {
     return (
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium text-gray-600">Monthly Expenses</CardTitle>
-          <TrendingDown className="h-4 w-4 text-red-600" />
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <TrendingDown className="h-4 w-4 text-red-600" />
+            Monthly Expenses
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse h-8 bg-gray-200 rounded"></div>
@@ -45,9 +47,11 @@ export const MonthlyExpensesWidget = () => {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600">Monthly Expenses</CardTitle>
-        <TrendingDown className="h-4 w-4 text-red-600" />
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+          <TrendingDown className="h-4 w-4 text-red-600" />
+          Monthly Expenses
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold text-red-600">
