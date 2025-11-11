@@ -163,6 +163,7 @@ export default function TransactionsPage() {
         const sharedExpensePayload = {
           transactionId: '', // Will be updated after transaction creation
           groupId: sharedExpenseData.groupId,
+          paidByUserId: sharedExpenseData.paidByUserId, // Include who paid
           amount: data.amount,
           description: data.description || 'Shared expense',
           splitType: sharedExpenseData.splitType,

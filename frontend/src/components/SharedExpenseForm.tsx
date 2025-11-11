@@ -94,7 +94,8 @@ export default function SharedExpenseForm({
 
   useEffect(() => {
     // Only handle new group selection (not from initial data)
-    if (selectedGroupId && !initialData) {
+    // If editing (initialData exists), skip this - the first useEffect handles it
+    if (selectedGroupId && !initialData && !isInitialized) {
       const group = groups.find((g) => g.id === selectedGroupId)
       setSelectedGroup(group || null)
       if (group) {
@@ -125,7 +126,7 @@ export default function SharedExpenseForm({
         }
       }
     }
-  }, [selectedGroupId, groups, initialData, paidByUserId])
+  }, [selectedGroupId, groups, initialData, isInitialized, paidByUserId])
 
   useEffect(() => {
     // Recalculate amounts when split type or total changes
