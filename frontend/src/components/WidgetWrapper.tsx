@@ -1,6 +1,6 @@
 'use client'
 
-import { X, GripHorizontal, ChevronUp, ChevronDown } from 'lucide-react'
+import { Trash2, GripHorizontal, ChevronDown } from 'lucide-react'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { dashboardPreferenceAPI } from '@/lib/api'
 import { toast } from 'sonner'
@@ -75,33 +75,27 @@ export const WidgetWrapper = ({ widgetId, children }: WidgetWrapperProps) => {
 
   return (
     <div className="relative h-full w-full flex flex-col">
-      {/* Widget Header with Controls */}
-      <div className="flex items-center justify-between bg-gray-50 border-b border-gray-200 px-3 py-2 gap-2">
-        {/* Left: Drag Handle */}
-        <div className="drag-handle cursor-grab active:cursor-grabbing p-1 hover:bg-gray-200 rounded transition-colors">
-          <GripHorizontal className="w-4 h-4 text-gray-400" />
-        </div>
+      {/* Overlay for widget controls - positioned absolute over the widget header */}
+      <div className="absolute top-0 left-0 right-0 h-16 flex items-center justify-between px-6 py-4 z-10 pointer-events-none">
+        {/* Left: Empty space for widget title */}
+        <div />
 
-        {/* Center: Spacer */}
-        <div className="flex-1" />
-
-        {/* Right: Height Selector and Remove Button */}
-        <div className="flex items-center gap-2">
+        {/* Right: Widget Controls */}
+        <div className="flex items-center gap-1.5 pointer-events-auto">
           {/* Height selector */}
           <div className="relative">
             <button
               onClick={() => setShowHeightMenu(!showHeightMenu)}
-              className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition-colors text-xs font-medium whitespace-nowrap"
+              className="flex items-center justify-center w-8 h-8 rounded hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900"
               title="Adjust height"
               type="button"
             >
-              <span>H: {currentHeight}</span>
-              <ChevronDown className="w-3 h-3" />
+              <ChevronDown className="w-4 h-4" />
             </button>
 
             {/* Height menu dropdown */}
             {showHeightMenu && (
-              <div className="absolute right-0 top-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-30 min-w-max">
+              <div className="absolute right-0 top-full mt-0.5 bg-white border border-gray-200 rounded shadow-lg z-50 min-w-max">
                 {HEIGHT_OPTIONS.map((option) => (
                   <button
                     key={option.value}
@@ -113,27 +107,32 @@ export const WidgetWrapper = ({ widgetId, children }: WidgetWrapperProps) => {
                     }`}
                     type="button"
                   >
-                    {option.label} ({option.value}x)
+                    {option.label}
                   </button>
                 ))}
               </div>
             )}
           </div>
 
+          {/* Drag Handle */}
+          <div className="drag-handle cursor-grab active:cursor-grabbing flex items-center justify-center w-8 h-8 rounded hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900">
+            <GripHorizontal className="w-4 h-4" />
+          </div>
+
           {/* Remove button */}
           <button
             onClick={handleRemoveWidget}
-            className="p-1 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors hover:scale-110"
+            className="flex items-center justify-center w-8 h-8 rounded hover:bg-red-50 transition-colors text-gray-600 hover:text-red-600"
             title="Remove widget"
             type="button"
           >
-            <X className="w-4 h-4" />
+            <Trash2 className="w-4 h-4" />
           </button>
         </div>
       </div>
 
       {/* Widget content */}
-      <div className="flex-1 px-3 py-2 overflow-auto">
+      <div className="flex-1 overflow-auto">
         {children}
       </div>
     </div>
