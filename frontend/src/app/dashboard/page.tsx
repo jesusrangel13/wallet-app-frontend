@@ -5,7 +5,6 @@ import { useDashboardStore } from '@/store/dashboardStore'
 import { dashboardPreferenceAPI } from '@/lib/api'
 import { DashboardGrid } from '@/components/DashboardGrid'
 import { WidgetWrapper } from '@/components/WidgetWrapper'
-import { EditModeToolbar } from '@/components/EditModeToolbar'
 import { WidgetSelector } from '@/components/WidgetSelector'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
@@ -141,9 +140,6 @@ export default function DashboardPage() {
           </button>
         </div>
       )}
-
-      {/* Edit toolbar */}
-      <EditModeToolbar onAddWidget={() => setShowWidgetSelector(true)} />
 
       {/* Widget selector modal */}
       <WidgetSelector isOpen={showWidgetSelector} onClose={() => setShowWidgetSelector(false)} />
