@@ -20,7 +20,6 @@ interface DashboardState {
   layout: GridLayoutItem[]
 
   // UI State
-  isEditMode: boolean
   isLoading: boolean
   error: string | null
 
@@ -28,7 +27,6 @@ interface DashboardState {
   setPreferences: (prefs: DashboardPreference) => void
   setWidgets: (widgets: WidgetConfig[]) => void
   setLayout: (layout: GridLayoutItem[]) => void
-  toggleEditMode: () => void
   setIsLoading: (loading: boolean) => void
   setError: (error: string | null) => void
 
@@ -63,7 +61,6 @@ export const useDashboardStore = create<DashboardState>()(
       preferences: null,
       widgets: [],
       layout: [],
-      isEditMode: false,
       isLoading: false,
       error: null,
 
@@ -78,11 +75,6 @@ export const useDashboardStore = create<DashboardState>()(
       setWidgets: (widgets) => set({ widgets }),
 
       setLayout: (layout) => set({ layout }),
-
-      toggleEditMode: () =>
-        set((state) => ({
-          isEditMode: !state.isEditMode,
-        })),
 
       setIsLoading: (loading) => set({ isLoading: loading }),
 
@@ -177,7 +169,6 @@ export const useDashboardStore = create<DashboardState>()(
           preferences: null,
           widgets: [],
           layout: [],
-          isEditMode: false,
           isLoading: false,
           error: null,
         }),
@@ -185,7 +176,6 @@ export const useDashboardStore = create<DashboardState>()(
     {
       name: 'dashboard-store',
       partialize: (state) => ({
-        isEditMode: state.isEditMode,
         preferences: state.preferences,
         widgets: state.widgets,
         layout: state.layout,

@@ -6,7 +6,7 @@ import { useAuthStore } from '@/store/authStore'
 import { Wallet, LogOut } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { NotificationBell } from '@/components/NotificationBell'
-import { EditDashboardButtons } from '@/components/EditDashboardButtons'
+import { AddWidgetButton } from '@/components/AddWidgetButton'
 import { useState, useEffect } from 'react'
 
 interface DashboardLayoutContentProps {
@@ -49,10 +49,10 @@ export function DashboardLayoutContent({ children }: DashboardLayoutContentProps
             </div>
             <div className="flex items-center gap-2 md:gap-4">
               <NotificationBell />
-              {/* Edit Dashboard buttons - only show on main dashboard */}
+              {/* Add Widget button - only show on main dashboard */}
               {isMainDashboard && (
                 <div className="hidden sm:block border-l border-gray-200 pl-2 md:pl-4">
-                  <EditDashboardButtons />
+                  <AddWidgetButton />
                 </div>
               )}
               <button

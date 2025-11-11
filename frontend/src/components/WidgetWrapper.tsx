@@ -19,7 +19,7 @@ const HEIGHT_OPTIONS = [
 ]
 
 export const WidgetWrapper = ({ widgetId, children }: WidgetWrapperProps) => {
-  const { isEditMode, removeWidget, widgets, layout, setPreferences, updateWidgetHeight } = useDashboardStore()
+  const { removeWidget, widgets, layout, setPreferences, updateWidgetHeight } = useDashboardStore()
   const [showHeightMenu, setShowHeightMenu] = useState(false)
 
   // Get current height of the widget
@@ -75,62 +75,58 @@ export const WidgetWrapper = ({ widgetId, children }: WidgetWrapperProps) => {
 
   return (
     <div className="relative h-full w-full">
-      {isEditMode && (
-        <>
-          {/* Drag handle */}
-          <div className="drag-handle absolute top-2 left-2 cursor-grab z-20 p-1 hover:bg-gray-200 rounded">
-            <GripHorizontal className="w-4 h-4 text-gray-400" />
-          </div>
+      {/* Drag handle */}
+      <div className="drag-handle absolute top-2 left-2 cursor-grab z-20 p-1 hover:bg-gray-200 rounded">
+        <GripHorizontal className="w-4 h-4 text-gray-400" />
+      </div>
 
-          {/* Height selector */}
-          <div className="absolute bottom-2 left-2 z-20">
-            <div className="relative">
-              <button
-                onClick={() => setShowHeightMenu(!showHeightMenu)}
-                className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition-colors text-xs font-medium"
-                title="Adjust height"
-                type="button"
-              >
-                <span>H: {currentHeight}</span>
-                <ChevronDown className="w-3 h-3" />
-              </button>
-
-              {/* Height menu dropdown */}
-              {showHeightMenu && (
-                <div className="absolute left-0 bottom-full mb-2 bg-white border border-gray-300 rounded shadow-lg z-30">
-                  {HEIGHT_OPTIONS.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => handleHeightChange(option.value)}
-                      className={`w-full text-left px-3 py-2 text-sm transition-colors ${
-                        currentHeight === option.value
-                          ? 'bg-blue-600 text-white font-semibold'
-                          : 'hover:bg-gray-100 text-gray-700'
-                      }`}
-                      type="button"
-                    >
-                      {option.label} ({option.value}x)
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Remove button */}
+      {/* Height selector */}
+      <div className="absolute bottom-2 left-2 z-20">
+        <div className="relative">
           <button
-            onClick={handleRemoveWidget}
-            className="absolute top-2 right-2 p-1 bg-red-100 text-red-600 rounded hover:bg-red-200 z-20 transition-colors hover:scale-110"
-            title="Remove widget"
+            onClick={() => setShowHeightMenu(!showHeightMenu)}
+            className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition-colors text-xs font-medium"
+            title="Adjust height"
             type="button"
           >
-            <X className="w-4 h-4" />
+            <span>H: {currentHeight}</span>
+            <ChevronDown className="w-3 h-3" />
           </button>
-        </>
-      )}
 
-      {/* Widget content with padding when in edit mode */}
-      <div className={isEditMode ? 'pt-10 px-2 pb-2 h-full' : 'h-full'}>
+          {/* Height menu dropdown */}
+          {showHeightMenu && (
+            <div className="absolute left-0 bottom-full mb-2 bg-white border border-gray-300 rounded shadow-lg z-30">
+              {HEIGHT_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => handleHeightChange(option.value)}
+                  className={`w-full text-left px-3 py-2 text-sm transition-colors ${
+                    currentHeight === option.value
+                      ? 'bg-blue-600 text-white font-semibold'
+                      : 'hover:bg-gray-100 text-gray-700'
+                  }`}
+                  type="button"
+                >
+                  {option.label} ({option.value}x)
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Remove button */}
+      <button
+        onClick={handleRemoveWidget}
+        className="absolute top-2 right-2 p-1 bg-red-100 text-red-600 rounded hover:bg-red-200 z-20 transition-colors hover:scale-110"
+        title="Remove widget"
+        type="button"
+      >
+        <X className="w-4 h-4" />
+      </button>
+
+      {/* Widget content with padding for controls */}
+      <div className="pt-10 px-2 pb-2 h-full">
         {children}
       </div>
     </div>

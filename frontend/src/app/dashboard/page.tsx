@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { dashboardPreferenceAPI } from '@/lib/api'
 import { DashboardGrid } from '@/components/DashboardGrid'
 import { WidgetWrapper } from '@/components/WidgetWrapper'
-import { WidgetSelector } from '@/components/WidgetSelector'
+import { AddWidgetButton } from '@/components/AddWidgetButton'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
 
@@ -43,7 +43,6 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
 
 export default function DashboardPage() {
   const { preferences, setPreferences, isLoading, setIsLoading } = useDashboardStore()
-  const [showWidgetSelector, setShowWidgetSelector] = useState(false)
 
   // Load dashboard preferences on mount
   useEffect(() => {
@@ -132,17 +131,9 @@ export default function DashboardPage() {
       {preferences.widgets.length === 0 && (
         <div className="text-center py-12">
           <p className="text-gray-500 mb-4">No widgets on your dashboard</p>
-          <button
-            onClick={() => setShowWidgetSelector(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Add Widget
-          </button>
+          <AddWidgetButton />
         </div>
       )}
-
-      {/* Widget selector modal */}
-      <WidgetSelector isOpen={showWidgetSelector} onClose={() => setShowWidgetSelector(false)} />
     </div>
   )
 }
