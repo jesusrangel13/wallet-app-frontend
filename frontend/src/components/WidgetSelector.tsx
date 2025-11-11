@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { getAllWidgets, getWidgetsByCategory, type WidgetDefinition } from '@/config/widgets'
+import { getAllWidgets, type WidgetDefinition } from '@/config/widgets'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { Modal } from '@/components/ui/Modal'
-import { X, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { dashboardPreferenceAPI } from '@/lib/api'
 import { toast } from 'sonner'
 
@@ -14,7 +14,7 @@ interface WidgetSelectorProps {
 }
 
 export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
-  const { addWidget, widgets, setPreferences } = useDashboardStore()
+  const { widgets, setPreferences } = useDashboardStore()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -65,35 +65,22 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] flex flex-col">
-        {/* Header */}
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-gray-900">Add Widgets</h2>
-            <button
-              onClick={onClose}
-              className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <X className="w-6 h-6 text-gray-500" />
-            </button>
-          </div>
-
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search widgets..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+    <Modal isOpen={isOpen} onClose={onClose} title="Add Widgets">
+      <div className="space-y-4 max-w-2xl">
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search widgets..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
 
         {/* Category Filter */}
-        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <div className="bg-gray-50 p-4 rounded-lg">
           <p className="text-sm font-semibold text-gray-700 mb-3">Categories</p>
           <div className="flex gap-2 flex-wrap">
             <button
@@ -123,14 +110,15 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
         </div>
 
         {/* Widget List */}
-        <div className="overflow-y-auto flex-1 p-6">
+        <div className="max-h-[60vh] overflow-y-auto">
           {filteredWidgets.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {filteredWidgets.map((widget) => (
                 <button
                   key={widget.id}
                   onClick={() => handleAddWidget(widget)}
-                  className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-left group"
+                  disabled={isLoading}
+                  className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-left group disabled:opacity-50"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-semibold text-gray-900 group-hover:text-blue-700">
@@ -162,16 +150,6 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Footer */}
-        <div className="p-6 border-t border-gray-200 bg-gray-50">
-          <button
-            onClick={onClose}
-            className="w-full px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors font-medium"
-          >
-            Close
-          </button>
         </div>
       </div>
     </Modal>
