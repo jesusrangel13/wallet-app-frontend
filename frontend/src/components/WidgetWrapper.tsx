@@ -43,7 +43,7 @@ export const WidgetWrapper = ({ widgetId, children }: WidgetWrapperProps) => {
 
   return (
     <div className="relative h-full w-full flex flex-col">
-      {/* Overlay for widget controls - positioned absolute over the widget header */}
+      {/* Overlay for widget controls - positioned absolute over the CardHeader */}
       <div className="absolute top-0 right-0 h-16 flex items-center gap-1 px-6 py-4 z-10 pointer-events-none">
         {/* Widget Controls */}
         <div className="flex items-center gap-1.5 pointer-events-auto">

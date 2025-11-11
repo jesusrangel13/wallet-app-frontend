@@ -22,7 +22,7 @@ export const CardHeader = forwardRef<HTMLDivElement, CardProps>(
     return (
       <div
         ref={ref}
-        className={cn('px-6 py-4 border-b border-gray-200', className)}
+        className={cn('px-6 py-4 border-b border-gray-200 flex items-start justify-between gap-4', className)}
         {...props}
       />
     )
@@ -36,7 +36,7 @@ export const CardTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadi
     return (
       <h3
         ref={ref}
-        className={cn('text-lg font-semibold text-gray-900', className)}
+        className={cn('text-lg font-semibold text-gray-900 flex items-center gap-2 flex-1', className)}
         {...props}
       />
     )
@@ -44,6 +44,20 @@ export const CardTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadi
 )
 
 CardTitle.displayName = 'CardTitle'
+
+export const CardHeaderActions = forwardRef<HTMLDivElement, CardProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn('flex items-center gap-1.5 flex-shrink-0', className)}
+        {...props}
+      />
+    )
+  }
+)
+
+CardHeaderActions.displayName = 'CardHeaderActions'
 
 export const CardContent = forwardRef<HTMLDivElement, CardProps>(
   ({ className, ...props }, ref) => {
