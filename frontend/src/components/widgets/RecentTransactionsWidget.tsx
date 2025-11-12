@@ -33,9 +33,10 @@ export const RecentTransactionsWidget = () => {
       try {
         setLoading(true)
         const res = await transactionAPI.getRecent(5)
-        setTransactions(res.data.data)
+        setTransactions(res.data.data || [])
       } catch (error) {
         console.error('Error fetching recent transactions:', error)
+        setTransactions([])
       } finally {
         setLoading(false)
       }
