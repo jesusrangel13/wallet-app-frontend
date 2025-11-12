@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { TransactionType, Account, Category } from '@/types'
 import { cn } from '@/lib/utils'
 
@@ -31,9 +31,25 @@ export default function TransactionFiltersComponent({
   categories,
 }: TransactionFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [searchInput, setSearchInput] = useState(filters.search)
+
+  // Debounce search input - only trigger API call after 300ms of inactivity
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchInput !== filters.search) {
+        onFilterChange({ ...filters, search: searchInput })
+      }
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [searchInput, filters, onFilterChange])
 
   const handleChange = (field: keyof TransactionFilters, value: string) => {
-    onFilterChange({ ...filters, [field]: value })
+    if (field === 'search') {
+      setSearchInput(value) // Update local state for debouncing
+    } else {
+      onFilterChange({ ...filters, [field]: value })
+    }
   }
 
   const clearFilters = () => {
@@ -68,7 +84,7 @@ export default function TransactionFiltersComponent({
       <div className="relative">
         <input
           type="text"
-          value={filters.search}
+          value={searchInput}
           onChange={(e) => handleChange('search', e.target.value)}
           placeholder="Search by description, payee, or amount..."
           className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

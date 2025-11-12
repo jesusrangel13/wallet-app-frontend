@@ -180,6 +180,9 @@ export const transactionAPI = {
     minAmount?: number
     maxAmount?: number
     tags?: string[]
+    search?: string
+    sortBy?: 'date' | 'amount' | 'payee'
+    sortOrder?: 'asc' | 'desc'
     page?: number
     limit?: number
   }) =>

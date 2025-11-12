@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -18,6 +18,7 @@ import TransactionFiltersComponent, { TransactionFilters } from '@/components/Tr
 import { formatCurrency } from '@/lib/utils'
 import { exportToCSV, exportToJSON, exportToExcel } from '@/lib/exportTransactions'
 import { PaymentStatusBadge } from '@/components/PaymentStatusBadge'
+import { Pagination } from '@/components/Pagination'
 
 const transactionSchema = z.object({
   accountId: z.string().min(1, 'Account is required'),
@@ -63,6 +64,11 @@ export default function TransactionsPage() {
   const [selectAll, setSelectAll] = useState(false)
   const [isBulkDeleting, setIsBulkDeleting] = useState(false)
   const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(20)
+  const [totalPages, setTotalPages] = useState(0)
+  const [totalRecords, setTotalRecords] = useState(0)
+  const [hasMore, setHasMore] = useState(false)
 
   // Month/Year selector
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
@@ -116,16 +122,42 @@ export default function TransactionsPage() {
     }))
   }, [])
 
+  useEffect(() => {
+    loadTransactions(1) // Reset to page 1 when filters change
+  }, [filters])
+
+  useEffect(() => {
+    if (currentPage > 0) {
+      loadTransactions(currentPage) // Reload current page when items per page changes
+    }
+  }, [itemsPerPage])
+
   const loadData = async () => {
     await Promise.all([loadTransactions(), loadAccounts(), loadCategories()])
   }
 
-  const loadTransactions = async () => {
+  const loadTransactions = async (page: number = 1) => {
     try {
       setIsLoading(true)
-      const response = await transactionAPI.getAll()
-      // Extract transaction array from paginated response
+      const response = await transactionAPI.getAll({
+        page,
+        limit: itemsPerPage,
+        search: filters.search || undefined,
+        type: filters.type !== 'ALL' ? filters.type : undefined,
+        accountId: filters.accountId || undefined,
+        categoryId: filters.categoryId || undefined,
+        startDate: filters.startDate || undefined,
+        endDate: filters.endDate || undefined,
+        minAmount: filters.minAmount ? Number(filters.minAmount) : undefined,
+        maxAmount: filters.maxAmount ? Number(filters.maxAmount) : undefined,
+        sortBy: (filters.sortBy as any) || undefined,
+        sortOrder: (filters.sortOrder as any) || undefined,
+      })
       setTransactions(response.data.data.data)
+      setTotalPages(response.data.data.totalPages)
+      setTotalRecords(response.data.data.total)
+      setHasMore(response.data.data.hasMore)
+      setCurrentPage(page)
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to load transactions')
     } finally {
@@ -227,7 +259,7 @@ export default function TransactionsPage() {
       newSelected.add(id)
     }
     setSelectedTransactionIds(newSelected)
-    setSelectAll(newSelected.size === filteredTransactions.length && filteredTransactions.length > 0)
+    setSelectAll(newSelected.size === transactions.length && transactions.length > 0)
   }
 
   const handleSelectAll = () => {
@@ -235,7 +267,7 @@ export default function TransactionsPage() {
       setSelectedTransactionIds(new Set())
       setSelectAll(false)
     } else {
-      const allIds = new Set(filteredTransactions.map(t => t.id))
+      const allIds = new Set(transactions.map(t => t.id))
       setSelectedTransactionIds(allIds)
       setSelectAll(true)
     }
@@ -412,74 +444,6 @@ export default function TransactionsPage() {
     }
   }
 
-  // Filter and sort transactions
-  const filteredTransactions = useMemo(() => {
-    let filtered = [...transactions]
-
-    // Search filter
-    if (filters.search) {
-      const search = filters.search.toLowerCase()
-      filtered = filtered.filter(
-        (t) =>
-          t.description?.toLowerCase().includes(search) ||
-          t.payee?.toLowerCase().includes(search) ||
-          t.amount.toString().includes(search) ||
-          t.category?.name.toLowerCase().includes(search)
-      )
-    }
-
-    // Type filter
-    if (filters.type !== 'ALL') {
-      filtered = filtered.filter((t) => t.type === filters.type)
-    }
-
-    // Account filter
-    if (filters.accountId) {
-      filtered = filtered.filter((t) => t.accountId === filters.accountId)
-    }
-
-    // Category filter
-    if (filters.categoryId) {
-      filtered = filtered.filter((t) => t.categoryId === filters.categoryId)
-    }
-
-    // Date range filter
-    if (filters.startDate) {
-      filtered = filtered.filter((t) => new Date(t.date) >= new Date(filters.startDate))
-    }
-    if (filters.endDate) {
-      const endDate = new Date(filters.endDate)
-      endDate.setHours(23, 59, 59, 999)
-      filtered = filtered.filter((t) => new Date(t.date) <= endDate)
-    }
-
-    // Amount range filter
-    if (filters.minAmount) {
-      filtered = filtered.filter((t) => Number(t.amount) >= Number(filters.minAmount))
-    }
-    if (filters.maxAmount) {
-      filtered = filtered.filter((t) => Number(t.amount) <= Number(filters.maxAmount))
-    }
-
-    // Sort
-    filtered.sort((a, b) => {
-      let comparison = 0
-      switch (filters.sortBy) {
-        case 'date':
-          comparison = new Date(a.date).getTime() - new Date(b.date).getTime()
-          break
-        case 'amount':
-          comparison = Number(a.amount) - Number(b.amount)
-          break
-        case 'payee':
-          comparison = (a.payee || '').localeCompare(b.payee || '')
-          break
-      }
-      return filters.sortOrder === 'asc' ? comparison : -comparison
-    })
-
-    return filtered
-  }, [transactions, filters])
 
   const handleExport = (format: 'csv' | 'json' | 'excel') => {
     const timestamp = new Date().toISOString().split('T')[0]
@@ -487,17 +451,17 @@ export default function TransactionsPage() {
 
     switch (format) {
       case 'csv':
-        exportToCSV(filteredTransactions, `${filename}.csv`)
+        exportToCSV(transactions, `${filename}.csv`)
         break
       case 'json':
-        exportToJSON(filteredTransactions, `${filename}.json`)
+        exportToJSON(transactions, `${filename}.json`)
         break
       case 'excel':
-        exportToExcel(filteredTransactions, `${filename}.xlsx`)
+        exportToExcel(transactions, `${filename}.xlsx`)
         break
     }
 
-    toast.success(`Exported ${filteredTransactions.length} transactions`)
+    toast.success(`Exported ${transactions.length} transactions`)
     setShowExportMenu(false)
   }
 
@@ -533,7 +497,7 @@ export default function TransactionsPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
           <p className="text-gray-600 mt-1">
-            {filteredTransactions.length} of {transactions.length} transactions
+            {totalRecords} transactions
           </p>
         </div>
         <div className="flex gap-3">
@@ -542,7 +506,7 @@ export default function TransactionsPage() {
             <Button
               variant="outline"
               onClick={() => setShowExportMenu(!showExportMenu)}
-              disabled={filteredTransactions.length === 0}
+              disabled={transactions.length === 0}
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -697,18 +661,16 @@ export default function TransactionsPage() {
 
       {/* Transactions List */}
       <div className={`grid gap-4 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''}`}>
-        {filteredTransactions.length === 0 ? (
+        {transactions.length === 0 ? (
           <Card>
             <CardContent>
               <p className="text-center text-gray-500 py-8">
-                {transactions.length === 0
-                  ? 'No transactions yet. Create your first transaction to get started!'
-                  : 'No transactions match your filters.'}
+                No transactions found.
               </p>
             </CardContent>
           </Card>
         ) : (
-          filteredTransactions.map((transaction) => (
+          transactions.map((transaction) => (
             <Card key={transaction.id} className={`transition-colors ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 border-blue-300' : ''}`}>
               <CardContent className="py-4">
                 <div className="flex items-start justify-between">
@@ -842,6 +804,18 @@ export default function TransactionsPage() {
           ))
         )}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => loadTransactions(page)}
+          itemsPerPage={itemsPerPage}
+          onItemsPerPageChange={(limit) => setItemsPerPage(limit)}
+          totalItems={totalRecords}
+        />
+      )}
 
       {/* Transaction Modal */}
       <Modal
