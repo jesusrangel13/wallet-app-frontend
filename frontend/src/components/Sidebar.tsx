@@ -37,7 +37,14 @@ export function Sidebar() {
     setMobileOpen(false)
   }
 
-  const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/')
+  const isActive = (href: string) => {
+    // Exact match for dashboard home
+    if (href === '/dashboard') {
+      return pathname === '/dashboard'
+    }
+    // For other routes, check if pathname starts with href
+    return pathname === href || pathname.startsWith(href + '/')
+  }
 
   if (!mounted) return null
 
