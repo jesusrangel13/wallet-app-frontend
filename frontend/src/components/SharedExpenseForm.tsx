@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Group, SplitType } from '@/types'
 import { groupAPI } from '@/lib/api'
 import { cn } from '@/lib/utils'
@@ -136,6 +136,18 @@ export default function SharedExpenseForm({
     }
   }, [selectedGroupId, groups, initialData, isInitialized, paidByUserId])
 
+  // Create a memoized key that tracks only the input values (percentage/shares)
+  // This prevents infinite loops while still recalculating when needed
+  const participantsKey = useMemo(() => {
+    if (splitType === 'PERCENTAGE') {
+      return participants.map(p => `${p.userId}:${p.percentage || 0}`).join('|')
+    } else if (splitType === 'SHARES') {
+      return participants.map(p => `${p.userId}:${p.shares || 1}`).join('|')
+    } else {
+      return `${participants.length}`
+    }
+  }, [participants, splitType])
+
   useEffect(() => {
     // Recalculate amounts when split type or total changes
     if (participants.length > 0 && totalAmount > 0) {
@@ -150,7 +162,7 @@ export default function SharedExpenseForm({
         // The first condition above will trigger when totalAmount > 0
       }
     }
-  }, [splitType, totalAmount, participants])
+  }, [splitType, totalAmount, participantsKey])
 
   useEffect(() => {
     // Notify parent of changes
