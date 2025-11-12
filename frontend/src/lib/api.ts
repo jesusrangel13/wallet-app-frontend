@@ -341,6 +341,41 @@ export const categoryAPI = {
     api.delete<ApiResponse<{ message: string }>>(`/categories/${id}`),
 }
 
+// Category Template API (new system - USE_CATEGORY_TEMPLATES enabled)
+export const categoryTemplateAPI = {
+  // Get all templates
+  getAllTemplates: () =>
+    api.get<ApiResponse<any[]>>('/categories/templates/all'),
+
+  // Get templates in hierarchy
+  getTemplatesHierarchy: () =>
+    api.get<ApiResponse<any[]>>('/categories/templates/hierarchy'),
+
+  // Override a template category
+  createOverride: (data: { templateId: string; name?: string; icon?: string; color?: string }) =>
+    api.post<ApiResponse<any>>('/categories/overrides', data),
+
+  // Get a category override
+  getOverride: (id: string) =>
+    api.get<ApiResponse<any>>(`/categories/overrides/${id}`),
+
+  // Update a category override
+  updateOverride: (id: string, data: { name?: string; icon?: string; color?: string }) =>
+    api.put<ApiResponse<any>>(`/categories/overrides/${id}`, data),
+
+  // Delete/deactivate a category override
+  deleteOverride: (id: string) =>
+    api.delete<ApiResponse<{ message: string }>>(`/categories/overrides/${id}`),
+
+  // Create a custom category
+  createCustom: (data: { name: string; icon?: string; color?: string; type: 'EXPENSE' | 'INCOME' | 'TRANSFER' }) =>
+    api.post<ApiResponse<any>>('/categories/custom', data),
+
+  // Get all custom categories
+  getCustomCategories: () =>
+    api.get<ApiResponse<any[]>>('/categories/custom/all'),
+}
+
 // Tag API
 export const tagAPI = {
   create: (data: CreateTagForm) =>
