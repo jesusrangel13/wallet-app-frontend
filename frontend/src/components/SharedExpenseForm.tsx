@@ -138,11 +138,19 @@ export default function SharedExpenseForm({
 
   useEffect(() => {
     // Recalculate amounts when split type or total changes
-    // But NOT when participants change (to allow editing)
     if (participants.length > 0 && totalAmount > 0) {
+      // Always recalculate when we have a valid total amount
       calculateSplit()
+    } else if (participants.length > 0 && splitType && totalAmount === 0) {
+      // Check if defaults are loaded (percentage/shares) but total amount is 0
+      // When totalAmount becomes available later, this will recalculate
+      const hasDefaults = participants.some(p => p.percentage !== undefined || p.shares !== undefined)
+      if (hasDefaults) {
+        // Defaults are loaded, just waiting for totalAmount to be set
+        // The first condition above will trigger when totalAmount > 0
+      }
     }
-  }, [splitType, totalAmount, participants.length])
+  }, [splitType, totalAmount, participants])
 
   useEffect(() => {
     // Notify parent of changes
