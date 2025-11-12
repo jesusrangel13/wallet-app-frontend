@@ -174,13 +174,23 @@ export const transactionAPI = {
   getAll: (filters?: {
     accountId?: string
     type?: string
-    category?: string
+    categoryId?: string
     startDate?: string
     endDate?: string
     minAmount?: number
     maxAmount?: number
+    tags?: string[]
+    page?: number
+    limit?: number
   }) =>
-    api.get<ApiResponse<Transaction[]>>('/transactions', { params: filters }),
+    api.get<ApiResponse<{
+      data: Transaction[]
+      total: number
+      page: number
+      limit: number
+      totalPages: number
+      hasMore: boolean
+    }>>('/transactions', { params: filters }),
 
   getById: (id: string) =>
     api.get<ApiResponse<Transaction>>(`/transactions/${id}`),
