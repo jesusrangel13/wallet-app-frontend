@@ -59,43 +59,14 @@ export function exportToJSON(transactions: Transaction[], filename: string = 'tr
   downloadFile(jsonContent, filename, 'application/json')
 }
 
-export function exportToExcel(transactions: Transaction[], filename: string = 'transactions.xlsx') {
-  // For Excel, we'll use CSV format with .xlsx extension
-  // In a real app, you might want to use a library like xlsx or exceljs
-  const headers = [
-    'Date',
-    'Type',
-    'Account',
-    'Category',
-    'Description',
-    'Payee',
-    'Payer',
-    'Amount',
-    'Currency',
-    'Tags',
-    'To Account',
-  ]
-
-  const rows = transactions.map((t) => [
-    new Date(t.date).toLocaleDateString(),
-    t.type,
-    t.account?.name || '',
-    t.category?.name || 'Uncategorized',
-    t.description || '',
-    t.payee || '',
-    t.payer || '',
-    t.amount.toString(),
-    t.account?.currency || '',
-    t.tags?.map((tag) => tag.tag.name).join('; ') || '',
-    t.toAccount?.name || '',
-  ])
-
-  const tsvContent = [
-    headers.join('\t'),
-    ...rows.map((row) => row.join('\t')),
-  ].join('\n')
-
-  downloadFile(tsvContent, filename, 'application/vnd.ms-excel')
+/**
+ * Export to Excel using dynamically imported xlsx library
+ * The xlsx library (~600KB) is only loaded when explicitly called
+ * This reduces initial bundle size significantly
+ */
+export async function exportToExcel(transactions: Transaction[], filename: string = 'transactions.xlsx') {
+  const { exportToExcelWithXlsx } = await import('./exportExcel')
+  return exportToExcelWithXlsx(transactions, filename)
 }
 
 function downloadFile(content: string, filename: string, mimeType: string) {
