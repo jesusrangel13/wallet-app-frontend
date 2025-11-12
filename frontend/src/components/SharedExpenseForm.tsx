@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Group, SplitType } from '@/types'
 import { groupAPI } from '@/lib/api'
 import { cn } from '@/lib/utils'
@@ -71,6 +71,7 @@ export default function SharedExpenseForm({
   const [participants, setParticipants] = useState<Participant[]>([])
   const [isLoadingGroups, setIsLoadingGroups] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
+  const [showCalculationFeedback, setShowCalculationFeedback] = useState(false)
 
   useEffect(() => {
     if (enabled) {
@@ -94,7 +95,8 @@ export default function SharedExpenseForm({
 
   useEffect(() => {
     // Only handle new group selection (not from initial data)
-    if (selectedGroupId && !initialData) {
+    // If editing (initialData exists), skip this - the first useEffect handles it
+    if (selectedGroupId && !initialData && !isInitialized) {
       const group = groups.find((g) => g.id === selectedGroupId)
       setSelectedGroup(group || null)
       if (group) {
@@ -125,15 +127,42 @@ export default function SharedExpenseForm({
         }
       }
     }
-  }, [selectedGroupId, groups, initialData, paidByUserId])
+  }, [selectedGroupId, groups, initialData, isInitialized, paidByUserId])
+
+  // Create a memoized key that tracks only the input values (percentage/shares)
+  // This prevents infinite loops while still recalculating when needed
+  const participantsKey = useMemo(() => {
+    if (splitType === 'PERCENTAGE') {
+      return participants.map(p => `${p.userId}:${p.percentage || 0}`).join('|')
+    } else if (splitType === 'SHARES') {
+      return participants.map(p => `${p.userId}:${p.shares || 1}`).join('|')
+    } else {
+      return `${participants.length}`
+    }
+  }, [participants, splitType])
 
   useEffect(() => {
     // Recalculate amounts when split type or total changes
-    // But NOT when participants change (to allow editing)
     if (participants.length > 0 && totalAmount > 0) {
+      // Always recalculate when we have a valid total amount
       calculateSplit()
+
+      // Show feedback when calculation happens automatically (not editing)
+      if (!initialData && selectedGroupId) {
+        setShowCalculationFeedback(true)
+        const timer = setTimeout(() => setShowCalculationFeedback(false), 2000)
+        return () => clearTimeout(timer)
+      }
+    } else if (participants.length > 0 && splitType && totalAmount === 0) {
+      // Check if defaults are loaded (percentage/shares) but total amount is 0
+      // When totalAmount becomes available later, this will recalculate
+      const hasDefaults = participants.some(p => p.percentage !== undefined || p.shares !== undefined)
+      if (hasDefaults) {
+        // Defaults are loaded, just waiting for totalAmount to be set
+        // The first condition above will trigger when totalAmount > 0
+      }
     }
-  }, [splitType, totalAmount, participants.length])
+  }, [splitType, totalAmount, participantsKey])
 
   useEffect(() => {
     // Notify parent of changes
@@ -291,6 +320,16 @@ export default function SharedExpenseForm({
         </button>
       </div>
 
+      {/* Helpful hint */}
+      <div className="bg-blue-100 border border-blue-300 rounded-lg p-3 flex items-start gap-2">
+        <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+        </svg>
+        <p className="text-xs text-blue-800">
+          For best experience, <strong>select a group first</strong> to load split defaults, then enter the amount to calculate automatically.
+        </p>
+      </div>
+
       {/* Select Group */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -316,6 +355,30 @@ export default function SharedExpenseForm({
 
       {selectedGroup && (
         <>
+          {/* Feedback when group is selected but no amount yet */}
+          {totalAmount === 0 && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
+              <svg className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <p className="text-xs text-amber-800">
+                Now <strong>enter the amount above</strong> to see splits calculated automatically based on group defaults.
+              </p>
+            </div>
+          )}
+
+          {/* Feedback when calculation completes */}
+          {showCalculationFeedback && totalAmount > 0 && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2 animate-pulse">
+              <svg className="w-5 h-5 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <p className="text-xs text-green-800 font-medium">
+                ✓ Split calculated for {formatCurrency(totalAmount, currency)} based on group defaults
+              </p>
+            </div>
+          )}
+
           {/* Paid By */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">

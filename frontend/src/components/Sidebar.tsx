@@ -46,7 +46,7 @@ export function Sidebar() {
       {/* Mobile Menu Button - Only visible on small screens */}
       <button
         onClick={() => setMobileOpen(!isMobileOpen)}
-        className="md:hidden fixed bottom-6 right-6 z-50 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+        className="md:hidden fixed bottom-24 right-6 z-50 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors"
         aria-label="Toggle menu"
       >
         {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -144,15 +144,6 @@ export function Sidebar() {
         )}
       </aside>
 
-      {/* Main content should have margin when sidebar is not mobile */}
-      <style jsx>{`
-        @media (min-width: 768px) {
-          main {
-            margin-left: ${isCollapsed ? '64px' : '256px'};
-            transition: margin-left 300ms ease-in-out;
-          }
-        }
-      `}</style>
     </>
   )
 }

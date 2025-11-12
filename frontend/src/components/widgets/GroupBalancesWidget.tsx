@@ -64,8 +64,8 @@ export const GroupBalancesWidget = () => {
         </CardTitle>
         <p className="text-sm text-gray-500">People who owe you</p>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
+      <CardContent className="p-0">
+        <div className="space-y-3">
           {balances.length > 0 ? (
             balances.flatMap((group) =>
               group.members
@@ -73,18 +73,18 @@ export const GroupBalancesWidget = () => {
                 .map((member, index) => (
                   <div
                     key={`${group.groupId}-${member.userId}-${index}`}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="flex items-center justify-between px-6 py-4 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                    <div className="flex items-center gap-4 flex-1">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
                         {member.name.split(' ').map((n) => n[0]).join('')}
                       </div>
-                      <div>
-                        <p className="font-medium text-gray-900">{member.name}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-gray-900 truncate">{member.name}</p>
                         <p className="text-xs text-gray-500">{group.groupName}</p>
                       </div>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right ml-4 flex-shrink-0">
                       <p className="font-semibold text-green-600">
                         {formatCurrency(Math.abs(member.balance), 'CLP')}
                       </p>
@@ -94,7 +94,7 @@ export const GroupBalancesWidget = () => {
                 ))
             )
           ) : (
-            <p className="text-gray-500 text-center py-8">
+            <p className="text-gray-500 text-center py-12">
               No shared expenses yet. Create a group to start tracking!
             </p>
           )}

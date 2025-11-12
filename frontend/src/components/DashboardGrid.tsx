@@ -13,7 +13,7 @@ interface DashboardGridProps {
 }
 
 export const DashboardGrid = ({ children }: DashboardGridProps) => {
-  const { layout, isEditMode, saveLayout } = useDashboardStore()
+  const { layout, saveLayout } = useDashboardStore()
   const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [containerWidth, setContainerWidth] = useState(1200)
@@ -42,8 +42,6 @@ export const DashboardGrid = ({ children }: DashboardGridProps) => {
   // Handle layout change with debouncing
   const handleLayoutChange = useCallback(
     (newLayout: Layout[]) => {
-      if (!isEditMode) return
-
       // Clear previous timer
       if (debounceTimer) {
         clearTimeout(debounceTimer)
@@ -80,7 +78,7 @@ export const DashboardGrid = ({ children }: DashboardGridProps) => {
 
       setDebounceTimer(timer)
     },
-    [isEditMode, debounceTimer, saveLayout]
+    [debounceTimer, saveLayout]
   )
 
   // Handle container resize for responsive width
@@ -109,7 +107,7 @@ export const DashboardGrid = ({ children }: DashboardGridProps) => {
   return (
     <div
       ref={containerRef}
-      className={`dashboard-grid-wrapper ${isEditMode ? 'edit-mode' : ''} w-full`}
+      className="dashboard-grid-wrapper w-full"
     >
       <GridLayout
         className="dashboard-grid"
@@ -117,8 +115,8 @@ export const DashboardGrid = ({ children }: DashboardGridProps) => {
         cols={4}
         rowHeight={100}
         width={containerWidth}
-        isResizable={isEditMode}
-        isDraggable={isEditMode}
+        isResizable={true}
+        isDraggable={true}
         onLayoutChange={handleLayoutChange}
         draggableHandle=".drag-handle"
         containerPadding={[16, 16]}
