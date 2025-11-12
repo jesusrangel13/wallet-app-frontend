@@ -124,7 +124,8 @@ export default function TransactionsPage() {
     try {
       setIsLoading(true)
       const response = await transactionAPI.getAll()
-      setTransactions(response.data.data)
+      // Extract transaction array from paginated response
+      setTransactions(response.data.data.data)
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to load transactions')
     } finally {
