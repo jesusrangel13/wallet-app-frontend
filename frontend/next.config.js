@@ -2,8 +2,8 @@
 const nextConfig = {
   reactStrictMode: true,
 
-  // Optimización para deployment en Vercel
-  output: 'standalone',
+  // Optimización para deployment en Vercel (solo en producción)
+  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
 
   // Optimizaciones de producción
   compress: true,
