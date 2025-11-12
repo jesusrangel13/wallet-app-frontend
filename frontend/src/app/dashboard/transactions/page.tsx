@@ -53,6 +53,7 @@ export default function TransactionsPage() {
   const [accounts, setAccounts] = useState<Account[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshingList, setIsRefreshingList] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null)
   const [isSharedExpense, setIsSharedExpense] = useState(false)
@@ -110,7 +111,16 @@ export default function TransactionsPage() {
   const selectedAccount = accounts.find((a) => a.id === selectedAccountId)
 
   useEffect(() => {
-    loadData()
+    const loadInitialData = async () => {
+      try {
+        setIsLoading(true)
+        await Promise.all([loadTransactions(), loadAccounts(), loadCategories()])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadInitialData()
     // Set initial date filters to current month
     const now = new Date()
     const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
@@ -132,13 +142,9 @@ export default function TransactionsPage() {
     }
   }, [itemsPerPage])
 
-  const loadData = async () => {
-    await Promise.all([loadTransactions(), loadAccounts(), loadCategories()])
-  }
-
   const loadTransactions = async (page: number = 1) => {
     try {
-      setIsLoading(true)
+      setIsRefreshingList(true)
       const response = await transactionAPI.getAll({
         page,
         limit: itemsPerPage,
@@ -165,7 +171,7 @@ export default function TransactionsPage() {
       setTotalRecords(0)
       setHasMore(false)
     } finally {
-      setIsLoading(false)
+      setIsRefreshingList(false)
     }
   }
 
@@ -664,7 +670,15 @@ export default function TransactionsPage() {
       )}
 
       {/* Transactions List */}
-      <div className={`grid gap-4 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''}`}>
+      <div className={`grid gap-4 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} relative`}>
+        {isRefreshingList && (
+          <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center z-20 rounded-lg">
+            <div className="flex flex-col items-center gap-3">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <p className="text-sm text-gray-600">Loading transactions...</p>
+            </div>
+          </div>
+        )}
         {transactions.length === 0 ? (
           <Card>
             <CardContent>
