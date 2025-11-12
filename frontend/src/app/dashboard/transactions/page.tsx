@@ -153,13 +153,17 @@ export default function TransactionsPage() {
         sortBy: (filters.sortBy as any) || undefined,
         sortOrder: (filters.sortOrder as any) || undefined,
       })
-      setTransactions(response.data.data.data)
-      setTotalPages(response.data.data.totalPages)
-      setTotalRecords(response.data.data.total)
-      setHasMore(response.data.data.hasMore)
+      setTransactions(response.data.data.data || [])
+      setTotalPages(response.data.data.totalPages || 0)
+      setTotalRecords(response.data.data.total || 0)
+      setHasMore(response.data.data.hasMore || false)
       setCurrentPage(page)
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to load transactions')
+      setTransactions([])
+      setTotalPages(0)
+      setTotalRecords(0)
+      setHasMore(false)
     } finally {
       setIsLoading(false)
     }
