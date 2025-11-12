@@ -124,6 +124,14 @@ export default function SharedExpenseForm({
         if (group.members.length > 0 && !paidByUserId) {
           setPaidByUserId(group.members[0].userId)
         }
+
+        // Force recalculation of split amounts after loading defaults
+        // Use setTimeout to ensure participant state is updated first
+        setTimeout(() => {
+          if (totalAmount > 0) {
+            calculateSplit()
+          }
+        }, 0)
       }
     }
   }, [selectedGroupId, groups, initialData, isInitialized, paidByUserId])
