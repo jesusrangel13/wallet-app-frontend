@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
-import { Trash2, Edit2, Plus, Sparkles } from 'lucide-react'
+import { Trash2, Edit2, Plus, Sparkles, ChevronDown } from 'lucide-react'
 
 const COLOR_PALETTE = [
   '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
@@ -29,6 +29,7 @@ interface CategoryFormData {
   icon: string
   color: string
   type: TransactionType
+  parentId?: string | null
 }
 
 interface CategoryItem {
@@ -39,6 +40,7 @@ interface CategoryItem {
   type: TransactionType
   isCustom?: boolean
   source?: string
+  subcategories?: CategoryItem[]
 }
 
 export default function CategoriesPage() {
@@ -48,11 +50,14 @@ export default function CategoriesPage() {
   const [selectedType, setSelectedType] = useState<TransactionType>('EXPENSE')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState<CategoryItem | null>(null)
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
+  const [selectedParentId, setSelectedParentId] = useState<string | null>(null)
   const [formData, setFormData] = useState<CategoryFormData>({
     name: '',
     icon: EMOJIS[0],
     color: COLOR_PALETTE[0],
     type: 'EXPENSE',
+    parentId: null,
   })
 
   // Create mutation
@@ -63,6 +68,7 @@ export default function CategoriesPage() {
         icon: data.icon,
         color: data.color,
         type: data.type,
+        parentId: data.parentId || undefined,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userCategories'] })
@@ -107,26 +113,42 @@ export default function CategoriesPage() {
     },
   })
 
-  // Filter categories by type - separate templates and custom
-  const templateCategories = useMemo(() => {
+  // Filter categories by type - merged list (templates and custom)
+  const filteredCategories = useMemo(() => {
     return allCategories
-      .filter(cat => cat.type === selectedType && !cat.isCustom)
+      .filter(cat => cat.type === selectedType)
       .sort((a, b) => a.name.localeCompare(b.name))
   }, [allCategories, selectedType])
 
-  const customCategories = useMemo(() => {
-    return allCategories
-      .filter(cat => cat.type === selectedType && cat.isCustom)
-      .sort((a, b) => a.name.localeCompare(b.name))
-  }, [allCategories, selectedType])
+  // Helper to count total subcategories recursively
+  const countSubcategories = (category: CategoryItem): number => {
+    let count = category.subcategories?.length || 0
+    category.subcategories?.forEach(sub => {
+      count += countSubcategories(sub)
+    })
+    return count
+  }
 
-  const openNewCategoryModal = () => {
+  // Toggle expand/collapse for a category
+  const toggleExpanded = (categoryId: string) => {
+    const newExpanded = new Set(expandedCategories)
+    if (newExpanded.has(categoryId)) {
+      newExpanded.delete(categoryId)
+    } else {
+      newExpanded.add(categoryId)
+    }
+    setExpandedCategories(newExpanded)
+  }
+
+  const openNewCategoryModal = (parentId?: string) => {
     setEditingCategory(null)
+    setSelectedParentId(parentId || null)
     setFormData({
       name: '',
       icon: EMOJIS[0],
       color: COLOR_PALETTE[0],
       type: selectedType,
+      parentId: parentId || null,
     })
     setIsModalOpen(true)
   }
@@ -145,11 +167,13 @@ export default function CategoriesPage() {
   const closeModal = () => {
     setIsModalOpen(false)
     setEditingCategory(null)
+    setSelectedParentId(null)
     setFormData({
       name: '',
       icon: EMOJIS[0],
       color: COLOR_PALETTE[0],
       type: selectedType,
+      parentId: null,
     })
   }
 
@@ -175,6 +199,86 @@ export default function CategoriesPage() {
     if (window.confirm('¿Estás seguro de que deseas eliminar esta categoría?')) {
       deleteMutation.mutate(categoryId)
     }
+  }
+
+  // Render subcategories recursively
+  const renderSubcategories = (subcategories: CategoryItem[] | undefined, parentId: string, level: number = 1) => {
+    if (!subcategories || subcategories.length === 0) return null
+
+    return (
+      <div className="ml-6 space-y-2 border-l-2 border-gray-200 pl-4">
+        {subcategories.map((subCat) => {
+          const isExpanded = expandedCategories.has(subCat.id)
+          const hasSubcategories = (subCat.subcategories?.length || 0) > 0
+
+          return (
+            <div key={subCat.id} className="space-y-1">
+              <div className="flex items-center gap-2 py-2">
+                {hasSubcategories && (
+                  <button
+                    onClick={() => toggleExpanded(subCat.id)}
+                    className="p-1 hover:bg-gray-100 rounded"
+                  >
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform ${
+                        isExpanded ? 'rotate-0' : '-rotate-90'
+                      }`}
+                    />
+                  </button>
+                )}
+                {!hasSubcategories && <div className="w-6" />}
+
+                <span className="text-2xl">{subCat.icon || '📁'}</span>
+                <span className="text-sm font-medium text-gray-700">{subCat.name}</span>
+
+                <div className="ml-auto flex items-center gap-2">
+                  {subCat.isCustom && (
+                    <button
+                      onClick={() => openNewCategoryModal(subCat.id)}
+                      disabled={isSubmitting}
+                      className="px-2 py-1 text-xs bg-green-50 text-green-600 rounded hover:bg-green-100 transition disabled:opacity-50"
+                      title="Agregar subcategoría"
+                    >
+                      <Plus className="inline w-3 h-3" />
+                    </button>
+                  )}
+                  {subCat.isCustom ? (
+                    <>
+                      <button
+                        onClick={() => openEditModal(subCat)}
+                        disabled={isSubmitting}
+                        className="px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition disabled:opacity-50"
+                      >
+                        <Edit2 className="inline w-3 h-3" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(subCat.id)}
+                        disabled={deleteMutation.isPending}
+                        className="px-2 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 transition disabled:opacity-50"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => handleDelete(subCat.id)}
+                      disabled={deleteMutation.isPending}
+                      className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition disabled:opacity-50"
+                    >
+                      Ocultar
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {hasSubcategories && isExpanded && (
+                renderSubcategories(subCat.subcategories, subCat.id, level + 1)
+              )}
+            </div>
+          )
+        })}
+      </div>
+    )
   }
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending
@@ -230,108 +334,126 @@ export default function CategoriesPage() {
         </Button>
       </div>
 
-      {/* Templates Section */}
-      {templateCategories.length > 0 && (
-        <div className="space-y-4">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              📋 Categorías por Defecto
-            </h2>
-            <p className="text-sm text-gray-600 mb-4">
-              Estas son las categorías estándar. Son de solo lectura pero puedes crear categorías personalizadas.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {templateCategories.map((category) => (
-              <Card key={category.id} className="bg-gray-50 hover:shadow-lg transition-shadow opacity-80">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <span className="text-4xl">{category.icon || '📁'}</span>
-                    <div
-                      className="w-6 h-6 rounded border-2 border-gray-300"
-                      style={{ backgroundColor: category.color || '#FF6B6B' }}
-                    />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 text-lg mb-1">
-                    {category.name}
-                  </h3>
-                  <span className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded">
-                    Template
-                  </span>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Custom Categories Section */}
+      {/* Categories Section - Unified List */}
       <div className="space-y-4">
         <div>
           <h2 className="text-xl font-bold text-gray-900 mb-4">
-            ✨ Mis Categorías Personalizadas
+            📂 Todas mis Categorías
           </h2>
           <p className="text-sm text-gray-600 mb-4">
-            Crea y personaliza tus propias categorías
+            Aquí están tus categorías por defecto y personalizadas. Haz clic en el icono de flecha para expandir las subcategorías.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {customCategories.length > 0 ? (
-            customCategories.map((category) => (
-              <Card key={category.id} className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <span className="text-4xl">{category.icon || '📁'}</span>
-                    <div
-                      className="w-6 h-6 rounded border-2 border-gray-300"
-                      style={{ backgroundColor: category.color || '#FF6B6B' }}
-                    />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 text-lg mb-1">
-                    {category.name}
-                  </h3>
-                  <span className="inline-block px-2 py-1 text-xs bg-green-100 text-green-700 rounded mb-4">
-                    Personalizada
-                  </span>
 
-                  {/* Action Buttons */}
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => openEditModal(category)}
-                      disabled={isSubmitting}
-                      className="flex-1 px-3 py-2 text-sm bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition disabled:opacity-50"
-                    >
-                      <Edit2 className="inline w-3 h-3 mr-1" />
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => handleDelete(category.id)}
-                      disabled={deleteMutation.isPending}
-                      className="px-3 py-2 text-sm bg-red-50 text-red-600 rounded hover:bg-red-100 transition disabled:opacity-50"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          ) : (
-            <div className="col-span-full text-center py-12 text-gray-500">
-              <Sparkles className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-              <p className="text-lg font-medium mb-1">No hay categorías personalizadas</p>
-              <p className="text-sm mb-4">
-                Crea tu primera categoría personalizada para organizarte mejor
-              </p>
-              <Button
-                onClick={openNewCategoryModal}
-                className="bg-green-600 hover:bg-green-700 text-white mx-auto"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Crear Categoría
-              </Button>
-            </div>
-          )}
-        </div>
+        {filteredCategories.length > 0 ? (
+          <Card className="bg-white">
+            <CardContent className="p-6">
+              <div className="space-y-3">
+                {filteredCategories.map((category) => {
+                  const isExpanded = expandedCategories.has(category.id)
+                  const hasSubcategories = (category.subcategories?.length || 0) > 0
+                  const subCatCount = countSubcategories(category)
+
+                  return (
+                    <div key={category.id} className="space-y-1">
+                      <div className="flex items-center gap-3 py-3 px-3 rounded-lg hover:bg-gray-50 transition">
+                        {hasSubcategories && (
+                          <button
+                            onClick={() => toggleExpanded(category.id)}
+                            className="p-1 hover:bg-gray-200 rounded transition"
+                          >
+                            <ChevronDown
+                              className={`w-5 h-5 transition-transform text-gray-600 ${
+                                isExpanded ? 'rotate-0' : '-rotate-90'
+                              }`}
+                            />
+                          </button>
+                        )}
+                        {!hasSubcategories && <div className="w-7" />}
+
+                        <span className="text-3xl">{category.icon || '📁'}</span>
+
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-gray-900">{category.name}</h3>
+                            {hasSubcategories && (
+                              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                {subCatCount} {subCatCount === 1 ? 'subcategoría' : 'subcategorías'}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div
+                          className="w-5 h-5 rounded border-2 border-gray-300 flex-shrink-0"
+                          style={{ backgroundColor: category.color || '#FF6B6B' }}
+                        />
+
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          {category.isCustom && (
+                            <button
+                              onClick={() => openNewCategoryModal(category.id)}
+                              disabled={isSubmitting}
+                              className="px-3 py-1 text-sm bg-green-50 text-green-600 rounded hover:bg-green-100 transition disabled:opacity-50"
+                              title="Agregar subcategoría"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          )}
+                          {category.isCustom ? (
+                            <>
+                              <button
+                                onClick={() => openEditModal(category)}
+                                disabled={isSubmitting}
+                                className="px-3 py-1 text-sm bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition disabled:opacity-50"
+                              >
+                                <Edit2 className="inline w-3 h-3" />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(category.id)}
+                                disabled={deleteMutation.isPending}
+                                className="px-3 py-1 text-sm bg-red-50 text-red-600 rounded hover:bg-red-100 transition disabled:opacity-50"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            </>
+                          ) : (
+                            <button
+                              onClick={() => handleDelete(category.id)}
+                              disabled={deleteMutation.isPending}
+                              className="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition disabled:opacity-50"
+                            >
+                              Ocultar
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {hasSubcategories && isExpanded && (
+                        renderSubcategories(category.subcategories, category.id)
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="text-center py-12 text-gray-500">
+            <Sparkles className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+            <p className="text-lg font-medium mb-1">No hay categorías para este tipo</p>
+            <p className="text-sm mb-4">
+              Crea tu primera categoría personalizada para organizarte mejor
+            </p>
+            <Button
+              onClick={openNewCategoryModal}
+              className="bg-green-600 hover:bg-green-700 text-white mx-auto"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Crear Categoría
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Modal for Creating/Editing Custom Category */}
@@ -345,6 +467,16 @@ export default function CategoriesPage() {
             e.preventDefault()
             handleSubmit()
           }}>
+            {/* Parent Category Selector - only show if not editing */}
+            {!editingCategory && selectedParentId && (
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded">
+                <p className="text-sm text-blue-800">
+                  <strong>Crear subcategoría en:</strong><br/>
+                  {filteredCategories.find(c => c.id === selectedParentId)?.name}
+                </p>
+              </div>
+            )}
+
             {/* Name Input */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -354,7 +486,7 @@ export default function CategoriesPage() {
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Ej: Cine, Supermercado, etc."
+                placeholder={selectedParentId ? 'Ej: Subcategoría específica' : 'Ej: Cine, Supermercado, etc.'}
                 disabled={isSubmitting}
                 autoFocus
               />
