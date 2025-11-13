@@ -73,7 +73,7 @@ export function useCustomCategories() {
     queryKey: ['customCategories'],
     queryFn: async () => {
       const response = await categoryTemplateAPI.getCustomCategories()
-      return response.data
+      return response.data.data || []
     },
     staleTime: 15 * 60 * 1000, // 15 minutes
   })
