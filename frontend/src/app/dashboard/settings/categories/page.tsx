@@ -107,8 +107,14 @@ export default function CategoriesPage() {
     },
   })
 
-  // Filter categories by type and only show custom ones (templates are read-only)
-  const filteredCategories = useMemo(() => {
+  // Filter categories by type - separate templates and custom
+  const templateCategories = useMemo(() => {
+    return allCategories
+      .filter(cat => cat.type === selectedType && !cat.isCustom)
+      .sort((a, b) => a.name.localeCompare(b.name))
+  }, [allCategories, selectedType])
+
+  const customCategories = useMemo(() => {
     return allCategories
       .filter(cat => cat.type === selectedType && cat.isCustom)
       .sort((a, b) => a.name.localeCompare(b.name))
@@ -224,61 +230,108 @@ export default function CategoriesPage() {
         </Button>
       </div>
 
-      {/* Categories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredCategories.length > 0 ? (
-          filteredCategories.map((category) => (
-            <Card key={category.id} className="hover:shadow-lg transition-shadow">
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <span className="text-4xl">{category.icon || '📁'}</span>
-                  <div
-                    className="w-6 h-6 rounded border-2 border-gray-300"
-                    style={{ backgroundColor: category.color || '#FF6B6B' }}
-                  />
-                </div>
-                <h3 className="font-semibold text-gray-900 text-lg mb-1">
-                  {category.name}
-                </h3>
-                <p className="text-xs text-gray-500 mb-4">Personalizada</p>
-
-                {/* Action Buttons */}
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => openEditModal(category)}
-                    disabled={isSubmitting}
-                    className="flex-1 px-3 py-2 text-sm bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition disabled:opacity-50"
-                  >
-                    <Edit2 className="inline w-3 h-3 mr-1" />
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => handleDelete(category.id)}
-                    disabled={deleteMutation.isPending}
-                    className="px-3 py-2 text-sm bg-red-50 text-red-600 rounded hover:bg-red-100 transition disabled:opacity-50"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </button>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        ) : (
-          <div className="col-span-full text-center py-12 text-gray-500">
-            <Sparkles className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-            <p className="text-lg font-medium mb-1">No hay categorías personalizadas</p>
-            <p className="text-sm mb-4">
-              Crea tu primera categoría personalizada para organizarte mejor
+      {/* Templates Section */}
+      {templateCategories.length > 0 && (
+        <div className="space-y-4">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              📋 Categorías por Defecto
+            </h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Estas son las categorías estándar. Son de solo lectura pero puedes crear categorías personalizadas.
             </p>
-            <Button
-              onClick={openNewCategoryModal}
-              className="bg-green-600 hover:bg-green-700 text-white mx-auto"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Crear Categoría
-            </Button>
           </div>
-        )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {templateCategories.map((category) => (
+              <Card key={category.id} className="bg-gray-50 hover:shadow-lg transition-shadow opacity-80">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <span className="text-4xl">{category.icon || '📁'}</span>
+                    <div
+                      className="w-6 h-6 rounded border-2 border-gray-300"
+                      style={{ backgroundColor: category.color || '#FF6B6B' }}
+                    />
+                  </div>
+                  <h3 className="font-semibold text-gray-900 text-lg mb-1">
+                    {category.name}
+                  </h3>
+                  <span className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded">
+                    Template
+                  </span>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Custom Categories Section */}
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">
+            ✨ Mis Categorías Personalizadas
+          </h2>
+          <p className="text-sm text-gray-600 mb-4">
+            Crea y personaliza tus propias categorías
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {customCategories.length > 0 ? (
+            customCategories.map((category) => (
+              <Card key={category.id} className="hover:shadow-lg transition-shadow">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <span className="text-4xl">{category.icon || '📁'}</span>
+                    <div
+                      className="w-6 h-6 rounded border-2 border-gray-300"
+                      style={{ backgroundColor: category.color || '#FF6B6B' }}
+                    />
+                  </div>
+                  <h3 className="font-semibold text-gray-900 text-lg mb-1">
+                    {category.name}
+                  </h3>
+                  <span className="inline-block px-2 py-1 text-xs bg-green-100 text-green-700 rounded mb-4">
+                    Personalizada
+                  </span>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => openEditModal(category)}
+                      disabled={isSubmitting}
+                      className="flex-1 px-3 py-2 text-sm bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition disabled:opacity-50"
+                    >
+                      <Edit2 className="inline w-3 h-3 mr-1" />
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDelete(category.id)}
+                      disabled={deleteMutation.isPending}
+                      className="px-3 py-2 text-sm bg-red-50 text-red-600 rounded hover:bg-red-100 transition disabled:opacity-50"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12 text-gray-500">
+              <Sparkles className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+              <p className="text-lg font-medium mb-1">No hay categorías personalizadas</p>
+              <p className="text-sm mb-4">
+                Crea tu primera categoría personalizada para organizarte mejor
+              </p>
+              <Button
+                onClick={openNewCategoryModal}
+                className="bg-green-600 hover:bg-green-700 text-white mx-auto"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Crear Categoría
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Modal for Creating/Editing Custom Category */}
