@@ -28,7 +28,7 @@ export interface Account {
   updatedAt: string
 }
 
-// Category types
+// Category types (Legacy - for compatibility)
 export interface Category {
   id: string
   userId: string
@@ -42,6 +42,62 @@ export interface Category {
   updatedAt: string
   parent?: Category
   subcategories?: Category[]
+}
+
+// Category Templates System (New)
+export interface CategoryTemplate {
+  id: string
+  name: string
+  description?: string
+  icon?: string
+  color?: string
+  type: TransactionType
+  parentId?: string | null
+  createdAt: string
+  updatedAt: string
+  parent?: CategoryTemplate
+  subcategories?: CategoryTemplate[]
+}
+
+export interface UserCategoryOverride {
+  id: string
+  userId: string
+  templateId: string
+  name?: string
+  icon?: string
+  color?: string
+  createdAt: string
+  updatedAt: string
+  template?: CategoryTemplate
+}
+
+export interface CustomCategory {
+  id: string
+  userId: string
+  name: string
+  icon?: string
+  color?: string
+  type: TransactionType
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface MergedCategory {
+  id: string
+  name: string
+  icon?: string
+  color?: string
+  type: TransactionType
+  source: 'TEMPLATE' | 'OVERRIDE' | 'CUSTOM'
+  templateId?: string
+  overrideId?: string
+  customId?: string
+  hasOverride: boolean
+  isCustom: boolean
+  isEditable: boolean
+  parentId?: string
+  subcategories?: MergedCategory[]
 }
 
 // Tag types
