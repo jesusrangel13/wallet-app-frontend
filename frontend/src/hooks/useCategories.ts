@@ -51,21 +51,6 @@ export function useTemplateCategories(type?: TransactionType) {
 }
 
 /**
- * Hook para obtener overrides de usuario
- */
-export function useUserCategoryOverrides() {
-  return useQuery({
-    queryKey: ['userCategoryOverrides'],
-    queryFn: async () => {
-      // Get all overrides - we'll create an endpoint that returns all
-      const response = await categoryTemplateAPI.getOverride('')
-      return response.data
-    },
-    staleTime: 15 * 60 * 1000, // 15 minutes
-  })
-}
-
-/**
  * Hook para obtener categorías personalizadas del usuario
  */
 export function useCustomCategories() {
