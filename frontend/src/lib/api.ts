@@ -343,6 +343,10 @@ export const categoryAPI = {
 
 // Category Template API (new system - USE_CATEGORY_TEMPLATES enabled)
 export const categoryTemplateAPI = {
+  // Get user's merged categories (templates + overrides + custom)
+  getUserCategories: () =>
+    api.get<ApiResponse<any[]>>('/categories/user/categories'),
+
   // Get all templates
   getAllTemplates: () =>
     api.get<ApiResponse<any[]>>('/categories/templates/all'),

@@ -84,51 +84,23 @@ export function useCustomCategories() {
  * Este es el hook principal a usar en componentes
  */
 export function useMergedCategories(type?: TransactionType) {
-  // Fetch all three sources in parallel
-  const results = useQueries({
-    queries: [
-      {
-        queryKey: ['categoryTemplates', type],
-        queryFn: () => categoryTemplateAPI.getTemplatesHierarchy(),
-        staleTime: 30 * 60 * 1000,
-      },
-      {
-        queryKey: ['userCategoryOverrides'],
-        queryFn: async () => {
-          const response = await categoryTemplateAPI.getCustomCategories() // Placeholder
-          return response.data
-        },
-        staleTime: 15 * 60 * 1000,
-      },
-      {
-        queryKey: ['customCategories'],
-        queryFn: async () => {
-          const response = await categoryTemplateAPI.getCustomCategories()
-          return response.data
-        },
-        staleTime: 15 * 60 * 1000,
-      },
-    ],
+  // Fetch user's merged categories directly from backend
+  const { data: response, isLoading, error } = useQuery({
+    queryKey: ['userCategories', type],
+    queryFn: () => categoryTemplateAPI.getUserCategories(),
+    staleTime: 15 * 60 * 1000, // 15 minutes - categories are stable
   })
 
-  const isLoading = results.some(r => r.isLoading)
-  const error = results.find(r => r.error)?.error
-
-  // Merge and transform data
-  const merged = useMemo(() => {
-    const templatesResponse = results[0].data
-    const overridesResponse = results[1].data
-    const customResponse = results[2].data
-
-    const templates = templatesResponse?.data?.data || []
-    const overrides = overridesResponse?.data || []
-    const customCategories = customResponse?.data || []
-
-    return mergeCategories(templates as CategoryTemplate[], overrides, customCategories, type)
-  }, [results, type])
+  // Filter by type if provided
+  const filtered = useMemo(() => {
+    if (!response) return []
+    const categories = response.data?.data || []
+    if (!type) return categories
+    return filterCategoriesByType(categories as CategoryTemplate[], type)
+  }, [response, type])
 
   return {
-    categories: merged,
+    categories: filtered,
     isLoading,
     error,
   }
