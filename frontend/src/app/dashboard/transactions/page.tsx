@@ -159,10 +159,10 @@ export default function TransactionsPage() {
         sortBy: (filters.sortBy as any) || undefined,
         sortOrder: (filters.sortOrder as any) || undefined,
       })
-      setTransactions(response.data.data || [])
-      setTotalPages(response.data.totalPages || 0)
-      setTotalRecords(response.data.total || 0)
-      setHasMore(response.data.hasMore || false)
+      setTransactions(response.data.data.data || [])
+      setTotalPages(response.data.data.totalPages || 0)
+      setTotalRecords(response.data.data.total || 0)
+      setHasMore(response.data.data.hasMore || false)
       setCurrentPage(page)
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to load transactions')
