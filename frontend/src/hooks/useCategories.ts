@@ -70,7 +70,7 @@ export function useCustomCategories() {
  */
 export function useMergedCategories(type?: TransactionType) {
   // Fetch user's merged categories directly from backend
-  const { data: response, isLoading, error } = useQuery({
+  const { data: response, isLoading, error, isFetching } = useQuery({
     queryKey: ['userCategories', type],
     queryFn: () => categoryTemplateAPI.getUserCategories(),
     staleTime: 15 * 60 * 1000, // 15 minutes - categories are stable
@@ -87,6 +87,7 @@ export function useMergedCategories(type?: TransactionType) {
   return {
     categories: filtered,
     isLoading,
+    isFetching,
     error,
   }
 }

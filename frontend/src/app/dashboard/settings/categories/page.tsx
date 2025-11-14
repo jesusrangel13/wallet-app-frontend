@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
-import { Trash2, Edit2, Plus, Sparkles, ChevronDown } from 'lucide-react'
+import { Trash2, Edit2, Plus, Sparkles, ChevronDown, Loader2 } from 'lucide-react'
 
 const COLOR_PALETTE = [
   '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
@@ -45,7 +45,7 @@ interface CategoryItem {
 
 export default function CategoriesPage() {
   const queryClient = useQueryClient()
-  const { categories: allCategories, isLoading } = useMergedCategories()
+  const { categories: allCategories, isLoading, isFetching } = useMergedCategories()
 
   const [selectedType, setSelectedType] = useState<TransactionType>('EXPENSE')
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -244,17 +244,6 @@ export default function CategoriesPage() {
                 <span className="text-sm font-medium text-gray-700">{subCat.name}</span>
 
                 <div className="ml-auto flex items-center gap-2">
-                  {/* Only show '+' button for first level subcategories (not for nested subcategories) */}
-                  {subCat.isCustom && level === 1 && (
-                    <button
-                      onClick={() => openNewCategoryModal(subCat.id)}
-                      disabled={isSubmitting}
-                      className="px-2 py-1 text-xs bg-green-50 text-green-600 rounded hover:bg-green-100 transition disabled:opacity-50"
-                      title="Agregar subcategoría"
-                    >
-                      <Plus className="inline w-3 h-3" />
-                    </button>
-                  )}
                   {subCat.isCustom ? (
                     <>
                       <button
@@ -359,7 +348,13 @@ export default function CategoriesPage() {
         </div>
 
         {filteredCategories.length > 0 ? (
-          <Card className="bg-white">
+          <Card className="bg-white relative">
+            {isFetching && !isLoading && (
+              <div className="absolute top-4 right-4 flex items-center gap-2 text-sm text-gray-500">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Actualizando...</span>
+              </div>
+            )}
             <CardContent className="p-6">
               <div className="space-y-3">
                 {filteredCategories.map((category) => {

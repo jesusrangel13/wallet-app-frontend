@@ -21,8 +21,8 @@ const accountSchema = z.object({
   balance: z.coerce.number().min(0, 'Balance must be positive'),
   currency: z.enum(['CLP', 'USD', 'EUR']).default('CLP'),
   isDefault: z.boolean().default(false),
-  creditLimit: z.coerce.number().positive().optional(),
-  billingDay: z.coerce.number().min(1).max(31).optional(),
+  creditLimit: z.preprocess((val) => (val === '' || val === null ? undefined : val), z.coerce.number().positive().optional()),
+  billingDay: z.preprocess((val) => (val === '' || val === null ? undefined : val), z.coerce.number().min(1).max(31).optional()),
 }).refine(
   (data) => {
     // If type is CREDIT, creditLimit and billingDay are required
@@ -58,6 +58,7 @@ const accountTypeColors: Record<AccountType, string> = {
 export default function AccountsPage() {
   const [accounts, setAccounts] = useState<Account[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isRefetching, setIsRefetching] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingAccount, setEditingAccount] = useState<Account | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -83,7 +84,7 @@ export default function AccountsPage() {
   const selectedType = watch('type')
 
   useEffect(() => {
-    loadAccounts()
+    loadAccounts(true)
   }, [])
 
   useEffect(() => {
@@ -110,34 +111,46 @@ export default function AccountsPage() {
     }
   }, [editingAccount, reset])
 
-  const loadAccounts = async () => {
+  const loadAccounts = async (isInitial = false) => {
     try {
-      setIsLoading(true)
+      if (isInitial) {
+        setIsLoading(true)
+      } else {
+        setIsRefetching(true)
+      }
       const response = await accountAPI.getAll()
       setAccounts(response.data.data)
     } catch (error: any) {
       toast.error('Failed to load accounts')
       console.error(error)
     } finally {
-      setIsLoading(false)
+      if (isInitial) {
+        setIsLoading(false)
+      } else {
+        setIsRefetching(false)
+      }
     }
   }
 
   const onSubmit = async (data: AccountFormData) => {
     try {
+      console.log('Form submitted with data:', data)
       setIsSubmitting(true)
       if (editingAccount) {
+        console.log('Updating account:', editingAccount.id)
         await accountAPI.update(editingAccount.id, data)
         toast.success('Account updated successfully')
       } else {
+        console.log('Creating new account')
         await accountAPI.create(data as CreateAccountForm)
         toast.success('Account created successfully')
       }
       setIsModalOpen(false)
       setEditingAccount(null)
       reset()
-      await loadAccounts()
+      await loadAccounts(false)
     } catch (error: any) {
+      console.error('Error saving account:', error)
       toast.error(error.response?.data?.message || 'Failed to save account')
     } finally {
       setIsSubmitting(false)
@@ -162,7 +175,7 @@ export default function AccountsPage() {
       } else {
         // No transactions, deleted successfully
         toast.success(response.data.data.message)
-        await loadAccounts()
+        await loadAccounts(false)
       }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to delete account')
@@ -175,7 +188,7 @@ export default function AccountsPage() {
     try {
       const response = await accountAPI.delete(deletingAccount.id, transferToAccountId)
       toast.success(response.data.data.message)
-      await loadAccounts()
+      await loadAccounts(false)
       setIsDeleteModalOpen(false)
       setDeletingAccount(null)
       setTransactionCount(0)
@@ -209,7 +222,7 @@ export default function AccountsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Header - Always visible */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Accounts</h1>
@@ -221,28 +234,40 @@ export default function AccountsPage() {
         </Button>
       </div>
 
-      {/* Accounts Grid */}
-      {accounts.length === 0 ? (
-        <Card>
-          <CardContent className="py-12">
-            <div className="text-center">
-              <Wallet className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 text-lg mb-4">No accounts yet</p>
-              <Button onClick={handleAddNew}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create your first account
-              </Button>
+      {/* Accounts Grid - With localized loading */}
+      <div className="relative">
+        {/* Refetching overlay - Only on the cards section */}
+        {isRefetching && (
+          <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10 rounded-lg pointer-events-none">
+            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow-md">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+              <span className="text-sm text-gray-600">Updating...</span>
             </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {accounts.map((account) => {
-            const Icon = accountTypeIcons[account.type]
-            const colorClass = accountTypeColors[account.type]
+          </div>
+        )}
 
-            return (
-              <Card key={account.id} className="hover:shadow-lg transition-shadow">
+        {/* Accounts content */}
+        {accounts.length === 0 ? (
+          <Card>
+            <CardContent className="py-12">
+              <div className="text-center">
+                <Wallet className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500 text-lg mb-4">No accounts yet</p>
+                <Button onClick={handleAddNew}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create your first account
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {accounts.map((account) => {
+              const Icon = accountTypeIcons[account.type]
+              const colorClass = accountTypeColors[account.type]
+
+              return (
+                <Card key={account.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <div className="flex items-center gap-3">
                     <div className={`p-3 rounded-lg ${colorClass}`}>
@@ -325,11 +350,12 @@ export default function AccountsPage() {
                     </Button>
                   </div>
                 </CardContent>
-              </Card>
-            )
-          })}
-        </div>
-      )}
+                </Card>
+              )
+            })}
+          </div>
+        )}
+      </div>
 
       {/* Add/Edit Modal */}
       <Modal
@@ -341,7 +367,7 @@ export default function AccountsPage() {
         }}
         title={editingAccount ? 'Edit Account' : 'Add New Account'}
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit, (errors) => console.log('Form validation failed:', errors))} className="space-y-4">
           <Input
             label="Account Name"
             placeholder="e.g., Main Wallet, Savings Account"
@@ -369,7 +395,7 @@ export default function AccountsPage() {
           </div>
 
           <Input
-            label="Initial Balance"
+            label={editingAccount ? 'Current Balance' : 'Initial Balance'}
             type="number"
             step="0.01"
             placeholder="0.00"
