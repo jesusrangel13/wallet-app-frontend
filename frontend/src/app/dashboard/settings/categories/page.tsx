@@ -129,6 +129,18 @@ export default function CategoriesPage() {
     return count
   }
 
+  // Helper to find a category by ID in the entire hierarchy
+  const findCategoryById = (categories: CategoryItem[], id: string): CategoryItem | null => {
+    for (const cat of categories) {
+      if (cat.id === id) return cat
+      if (cat.subcategories) {
+        const found = findCategoryById(cat.subcategories, id)
+        if (found) return found
+      }
+    }
+    return null
+  }
+
   // Toggle expand/collapse for a category
   const toggleExpanded = (categoryId: string) => {
     const newExpanded = new Set(expandedCategories)
@@ -467,15 +479,18 @@ export default function CategoriesPage() {
             e.preventDefault()
             handleSubmit()
           }}>
-            {/* Parent Category Selector - only show if not editing */}
-            {!editingCategory && selectedParentId && (
-              <div className="p-3 bg-blue-50 border border-blue-200 rounded">
-                <p className="text-sm text-blue-800">
-                  <strong>Crear subcategoría en:</strong><br/>
-                  {filteredCategories.find(c => c.id === selectedParentId)?.name}
-                </p>
-              </div>
-            )}
+            {/* Parent Category Selector - only show if not editing and parent exists */}
+            {!editingCategory && selectedParentId && (() => {
+              const parentCategory = findCategoryById(allCategories, selectedParentId)
+              return parentCategory ? (
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded">
+                  <p className="text-sm text-blue-800">
+                    <strong>Crear subcategoría en:</strong><br/>
+                    {parentCategory.icon} {parentCategory.name}
+                  </p>
+                </div>
+              ) : null
+            })()}
 
             {/* Name Input */}
             <div>
