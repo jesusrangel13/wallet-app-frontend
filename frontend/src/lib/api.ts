@@ -371,8 +371,8 @@ export const categoryTemplateAPI = {
   deleteOverride: (id: string) =>
     api.delete<ApiResponse<{ message: string }>>(`/categories/overrides/${id}`),
 
-  // Create a custom category
-  createCustom: (data: { name: string; icon?: string; color?: string; type: 'EXPENSE' | 'INCOME' | 'TRANSFER' }) =>
+  // Create a custom category (or subcategory if parentId is provided)
+  createCustom: (data: { name: string; icon?: string; color?: string; type: 'EXPENSE' | 'INCOME' | 'TRANSFER'; parentId?: string }) =>
     api.post<ApiResponse<any>>('/categories/custom', data),
 
   // Get all custom categories

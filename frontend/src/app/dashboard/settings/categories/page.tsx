@@ -152,7 +152,7 @@ export default function CategoriesPage() {
     setExpandedCategories(newExpanded)
   }
 
-  const openNewCategoryModal = (parentId?: string) => {
+  const openNewCategoryModal = (parentId?: string | null) => {
     setEditingCategory(null)
     setSelectedParentId(parentId || null)
     setFormData({
@@ -338,7 +338,7 @@ export default function CategoriesPage() {
       {/* Add Custom Category Button */}
       <div className="flex justify-end">
         <Button
-          onClick={openNewCategoryModal}
+          onClick={() => openNewCategoryModal()}
           className="bg-green-600 hover:bg-green-700 text-white"
         >
           <Plus className="w-4 h-4 mr-2" />
@@ -402,16 +402,17 @@ export default function CategoriesPage() {
                         />
 
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          {category.isCustom && (
-                            <button
-                              onClick={() => openNewCategoryModal(category.id)}
-                              disabled={isSubmitting}
-                              className="px-3 py-1 text-sm bg-green-50 text-green-600 rounded hover:bg-green-100 transition disabled:opacity-50"
-                              title="Agregar subcategoría"
-                            >
-                              <Plus className="w-3 h-3" />
-                            </button>
-                          )}
+                          {/* Add subcategory button - available for both custom and template categories */}
+                          <button
+                            onClick={() => {
+                              openNewCategoryModal(category.id)
+                            }}
+                            disabled={isSubmitting}
+                            className="px-3 py-1 text-sm bg-green-50 text-green-600 rounded hover:bg-green-100 transition disabled:opacity-50"
+                            title="Agregar subcategoría"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
                           {category.isCustom ? (
                             <>
                               <button
@@ -458,7 +459,7 @@ export default function CategoriesPage() {
               Crea tu primera categoría personalizada para organizarte mejor
             </p>
             <Button
-              onClick={openNewCategoryModal}
+              onClick={() => openNewCategoryModal()}
               className="bg-green-600 hover:bg-green-700 text-white mx-auto"
             >
               <Plus className="w-4 h-4 mr-2" />
