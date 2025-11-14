@@ -244,7 +244,8 @@ export default function CategoriesPage() {
                 <span className="text-sm font-medium text-gray-700">{subCat.name}</span>
 
                 <div className="ml-auto flex items-center gap-2">
-                  {subCat.isCustom && (
+                  {/* Only show '+' button for first level subcategories (not for nested subcategories) */}
+                  {subCat.isCustom && level === 1 && (
                     <button
                       onClick={() => openNewCategoryModal(subCat.id)}
                       disabled={isSubmitting}
