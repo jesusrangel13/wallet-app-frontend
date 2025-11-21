@@ -26,10 +26,13 @@ interface ImportedTransaction {
     amount: number
     description: string
     date: string
+    categoryId: string | null
     category: {
       id: string
       name: string
-      color: string
+      icon?: string | null
+      color?: string | null
+      type?: string
     } | null
   } | null
 }

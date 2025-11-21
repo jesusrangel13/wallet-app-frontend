@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { toast } from 'sonner'
-import { Account, Category, Group } from '@/types'
+import { Account, Group, MergedCategory } from '@/types'
 import { accountAPI, categoryAPI, groupAPI, importAPI } from '@/lib/api'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -34,7 +34,7 @@ interface ParsedTransaction {
 
 export default function ImportPage() {
   const [accounts, setAccounts] = useState<Account[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
+  const [categories, setCategories] = useState<MergedCategory[]>([])
   const [groups, setGroups] = useState<Group[]>([])
   const [selectedAccount, setSelectedAccount] = useState<string>('')
   const [parsedData, setParsedData] = useState<ParsedTransaction[]>([])
@@ -81,15 +81,15 @@ export default function ImportPage() {
     const categoryNames = categories.map(c => c.name).join(', ')
     const groupNames = groups.map(g => g.name).join(', ')
 
-    const headers = ['date', 'type', 'amount', 'description', 'category', 'tags', 'notes', 'receiptUrl', 'sharedGroup', 'paidBy', 'splitType', 'participants']
+    const headers = ['date', 'type', 'amount', 'description', 'payee', 'category', 'tags', 'notes', 'receiptUrl', 'sharedGroup', 'paidBy', 'splitType', 'participants']
     const exampleRows = [
-      ['2024-01-15', 'EXPENSE', '50000', 'Groceries at supermarket', 'Food', 'grocery', 'Weekly shopping', '', '', '', '', ''],
-      ['15/01/2024', 'INCOME', '500000', 'Monthly salary', 'Salary', 'work', '', '', '', '', '', ''],
-      ['2024-01-16', 'EXPENSE', '35000', 'Gas station', 'Transport', 'fuel,car', 'Full tank', '', '', '', '', ''],
-      ['2024-01-17', 'EXPENSE', '60000', 'Dinner with friends', 'Food', 'restaurant', 'Group dinner', '', 'Familia', 'user@example.com', 'EQUAL', 'user1@example.com,user2@example.com,user3@example.com'],
-      ['2024-01-18', 'EXPENSE', '90000', 'Pizza with group (70/30)', 'Food', '', '', '', 'Friends', 'user@example.com', 'PERCENTAGE', 'user1@example.com:70,user2@example.com:30'],
-      ['2024-01-19', 'EXPENSE', '100000', 'Rent split exactly', 'Housing', '', '', '', 'Roommates', 'user@example.com', 'EXACT', 'user1@example.com:50000,user2@example.com:50000'],
-      ['2024-01-20', 'EXPENSE', '80000', 'Food split by shares (2:1)', 'Food', '', '', '', 'Family', 'user@example.com', 'SHARES', 'user1@example.com:2,user2@example.com:1'],
+      ['2024-01-15', 'EXPENSE', '50000', 'Groceries at supermarket', 'Supermarket XYZ', 'Food', 'grocery', 'Weekly shopping', '', '', '', '', ''],
+      ['15/01/2024', 'INCOME', '500000', 'Monthly salary', 'Company ABC', 'Salary', 'work', '', '', '', '', '', ''],
+      ['2024-01-16', 'EXPENSE', '35000', 'Gas station', 'Shell Station', 'Transport', 'fuel,car', 'Full tank', '', '', '', '', ''],
+      ['2024-01-17', 'EXPENSE', '60000', 'Dinner with friends', 'Restaurant La Piazza', 'Food', 'restaurant', 'Group dinner', 'Familia', 'user@example.com', 'EQUAL', 'user1@example.com,user2@example.com,user3@example.com'],
+      ['2024-01-18', 'EXPENSE', '90000', 'Pizza with group (70/30)', 'Pizza Hut', 'Food', '', '', 'Friends', 'user@example.com', 'PERCENTAGE', 'user1@example.com:70,user2@example.com:30'],
+      ['2024-01-19', 'EXPENSE', '100000', 'Rent split exactly', 'Landlord', 'Housing', '', '', 'Roommates', 'user@example.com', 'EXACT', 'user1@example.com:50000,user2@example.com:50000'],
+      ['2024-01-20', 'EXPENSE', '80000', 'Food split by shares (2:1)', 'Market', 'Food', '', '', 'Family', 'user@example.com', 'SHARES', 'user1@example.com:2,user2@example.com:1'],
     ]
 
     const instructions = [
@@ -98,6 +98,7 @@ export default function ImportPage() {
       '# Date formats accepted: YYYY-MM-DD, DD/MM/YYYY, or Excel date numbers',
       `# Type: Must be EXPENSE, INCOME, or TRANSFER`,
       `# Amount: Number without currency symbols`,
+      '# Payee: Recipient or merchant name (optional, e.g., "Restaurant", "Supermarket XYZ")',
       `# Available categories: ${categoryNames}`,
       `# Available groups: ${groupNames}`,
       '# Tags: Separate multiple tags with commas',

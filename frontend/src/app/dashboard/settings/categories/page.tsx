@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
 import { Trash2, Edit2, Plus, Sparkles, ChevronDown, Loader2 } from 'lucide-react'
+import { LoadingSpinner, SkeletonCard, LoadingMessages } from '@/components/ui/Loading'
 
 const COLOR_PALETTE = [
   '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
@@ -289,9 +290,9 @@ export default function CategoriesPage() {
     return (
       <div className="space-y-6">
         <h1 className="text-3xl font-bold text-gray-900">Mis Categorías</h1>
-        <div className="animate-pulse space-y-4">
+        <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-32 bg-gray-200 rounded-lg" />
+            <SkeletonCard key={i} />
           ))}
         </div>
       </div>
@@ -351,8 +352,8 @@ export default function CategoriesPage() {
           <Card className="bg-white relative">
             {isFetching && !isLoading && (
               <div className="absolute top-4 right-4 flex items-center gap-2 text-sm text-gray-500">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Actualizando...</span>
+                <LoadingSpinner size="sm" />
+                <span>{LoadingMessages.updating}</span>
               </div>
             )}
             <CardContent className="p-6">
@@ -567,10 +568,10 @@ export default function CategoriesPage() {
                 className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
               >
                 {isSubmitting ? (
-                  <>
-                    <span className="inline-block animate-spin mr-2">⏳</span>
-                    Guardando...
-                  </>
+                  <span className="inline-flex items-center gap-2">
+                    <LoadingSpinner size="sm" className="text-current" />
+                    {LoadingMessages.saving}
+                  </span>
                 ) : editingCategory ? (
                   'Actualizar'
                 ) : (

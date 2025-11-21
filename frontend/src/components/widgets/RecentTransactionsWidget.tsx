@@ -13,14 +13,22 @@ interface RecentTransaction {
   amount: number
   type: 'EXPENSE' | 'INCOME' | 'TRANSFER'
   date: string
+  payee?: string
+  sharedExpenseId?: string
   category?: {
     name: string
-    icon?: string
-    color?: string
-  }
+    icon?: string | null
+    color?: string | null
+  } | null
   account?: {
     name: string
     currency: string
+  }
+  sharedExpense?: {
+    id: string
+    participants?: Array<{
+      isPaid?: boolean
+    }>
   }
 }
 
@@ -32,7 +40,7 @@ export const RecentTransactionsWidget = () => {
     const fetchData = async () => {
       try {
         setLoading(true)
-        const res = await transactionAPI.getRecent(5)
+        const res = await transactionAPI.getRecent(3)
         setTransactions(res.data.data || [])
       } catch (error) {
         console.error('Error fetching recent transactions:', error)
@@ -85,9 +93,19 @@ export const RecentTransactionsWidget = () => {
                     {transaction.category?.icon || '📊'}
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900">
-                      {transaction.description || transaction.category?.name || 'Transaction'}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-gray-900">
+                        {transaction.description || transaction.category?.name || 'Transaction'}
+                      </p>
+                      {transaction.sharedExpenseId && (
+                        <span className="inline-flex items-center gap-1 text-xs bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded-full border border-purple-200">
+                          👥
+                        </span>
+                      )}
+                    </div>
+                    {transaction.payee && (
+                      <p className="text-xs text-gray-600">→ {transaction.payee}</p>
+                    )}
                     <p className="text-xs text-gray-500">{transaction.account?.name || 'Account'}</p>
                   </div>
                 </div>
@@ -127,10 +145,8 @@ export const RecentTransactionsWidget = () => {
           )}
         </div>
         {transactions.length > 0 && (
-          <Link href="/dashboard/transactions" className="block mt-4">
-            <button className="w-full text-center py-2 text-sm text-blue-600 hover:text-blue-700 font-medium">
-              View all transactions →
-            </button>
+          <Link href="/dashboard/transactions" className="block mt-4 w-full text-center py-2 px-4 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg font-medium transition-colors">
+            Ver más transacciones →
           </Link>
         )}
       </CardContent>

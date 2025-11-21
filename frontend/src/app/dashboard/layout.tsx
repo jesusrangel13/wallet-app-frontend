@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/authStore'
+import { useSidebarStore } from '@/store/sidebarStore'
 import { Sidebar } from '@/components/Sidebar'
 import { DashboardLayoutContent } from '@/components/DashboardLayoutContent'
 
@@ -13,6 +14,7 @@ export default function DashboardLayout({
 }) {
   const router = useRouter()
   const { isAuthenticated } = useAuthStore()
+  const { isCollapsed } = useSidebarStore()
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export default function DashboardLayout({
       <Sidebar />
 
       {/* Layout Content with navbar and main content */}
-      <DashboardLayoutContent>{children}</DashboardLayoutContent>
+      <DashboardLayoutContent isCollapsed={isCollapsed}>{children}</DashboardLayoutContent>
     </div>
   )
 }

@@ -7,6 +7,14 @@ export interface User {
   currency: string
   country?: string
   isVerified: boolean
+  defaultSharedExpenseAccountId?: string | null
+  defaultSharedExpenseAccount?: {
+    id: string
+    name: string
+    type: AccountType
+    balance: number
+    currency: string
+  } | null
   createdAt: string
   updatedAt: string
 }
@@ -22,26 +30,22 @@ export interface Account {
   balance: number
   currency: string
   isDefault: boolean
+  isArchived: boolean
+  includeInTotalBalance: boolean
   creditLimit?: number // Only for CREDIT type
   billingDay?: number // Day of month (1-31) for statement generation
   createdAt: string
   updatedAt: string
 }
 
-// Category types (Legacy - for compatibility)
-export interface Category {
+// Category info returned from API (resolved from template or override)
+export interface CategoryInfo {
   id: string
-  userId: string
   name: string
-  icon?: string
-  color?: string
-  type: TransactionType
-  parentId?: string
-  isDefault: boolean
-  createdAt: string
-  updatedAt: string
-  parent?: Category
-  subcategories?: Category[]
+  icon?: string | null
+  color?: string | null
+  type?: string
+  parent?: CategoryInfo | null
 }
 
 // Category Templates System (New)
@@ -140,12 +144,7 @@ export interface Transaction {
     currency: string
     type: AccountType
   }
-  category?: {
-    name: string
-    icon?: string
-    color?: string
-    parent?: Category
-  }
+  category?: CategoryInfo | null
   toAccount?: {
     name: string
     currency: string
@@ -269,11 +268,7 @@ export interface SharedExpense {
     name: string
     avatarUrl?: string
   }
-  category?: {
-    name: string
-    icon?: string
-    color?: string
-  }
+  category?: CategoryInfo | null
   participants: ExpenseParticipant[]
 }
 
@@ -373,6 +368,7 @@ export interface CreateAccountForm {
   balance?: number
   currency?: string
   isDefault?: boolean
+  includeInTotalBalance?: boolean
   creditLimit?: number
   billingDay?: number
 }
@@ -402,6 +398,14 @@ export interface CreateGroupForm {
   name: string
   description?: string
   coverImageUrl?: string
+  memberEmails?: string[]
+  defaultSplitType?: SplitType
+  memberSplitSettings?: Array<{
+    email: string
+    percentage?: number
+    shares?: number
+    exactAmount?: number
+  }>
 }
 
 export interface CreateCategoryForm {

@@ -11,12 +11,14 @@ import { useState, useEffect } from 'react'
 
 interface DashboardLayoutContentProps {
   children: React.ReactNode
+  isCollapsed?: boolean
 }
 
-export function DashboardLayoutContent({ children }: DashboardLayoutContentProps) {
+export function DashboardLayoutContent({ children, isCollapsed }: DashboardLayoutContentProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const { isCollapsed } = useSidebarStore()
+  const sidebarState = useSidebarStore()
+  const collapsed = isCollapsed ?? sidebarState.isCollapsed
   const { user, clearAuth } = useAuthStore()
   const [mounted, setMounted] = useState(false)
 
@@ -33,7 +35,7 @@ export function DashboardLayoutContent({ children }: DashboardLayoutContentProps
   }
 
   return (
-    <div className="flex flex-col flex-1 w-full">{/* Content takes remaining width */}
+    <div className={`flex flex-col flex-1 w-full transition-all duration-300 ${collapsed ? 'md:ml-16' : 'md:ml-64'}`}>{/* Content takes remaining width */}
       {/* Top Navigation */}
       <nav className="bg-white shadow-sm border-b sticky top-0 z-30">
         <div className="px-4 sm:px-6 lg:px-8">

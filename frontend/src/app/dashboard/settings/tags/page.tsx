@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
+import { LoadingPage, LoadingSpinner, LoadingMessages } from '@/components/ui/Loading'
 
 const COLOR_PALETTE = [
   '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
@@ -117,11 +118,7 @@ export default function TagsSettingsPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading tags...</div>
-      </div>
-    )
+    return <LoadingPage message={LoadingMessages.tags} />
   }
 
   return (
@@ -264,29 +261,10 @@ export default function TagsSettingsPage() {
           <div className="flex gap-3 pt-4 border-t">
             <Button type="submit" className="flex-1" disabled={isSaving}>
               {isSaving ? (
-                <div className="flex items-center justify-center gap-2">
-                  <svg
-                    className="animate-spin h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  <span>Saving...</span>
-                </div>
+                <span className="inline-flex items-center gap-2">
+                  <LoadingSpinner size="sm" className="text-current" />
+                  {LoadingMessages.saving}
+                </span>
               ) : (
                 <span>{editingTag ? 'Update Tag' : 'Create Tag'}</span>
               )}

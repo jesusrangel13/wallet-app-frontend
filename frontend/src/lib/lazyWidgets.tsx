@@ -53,6 +53,24 @@ export const LazyChartWidgets = {
       ssr: false,
     }
   ),
+
+  // Expenses by parent category chart (uses recharts)
+  ExpensesByParentCategoryWidget: dynamic(
+    () => import('@/components/widgets/ExpensesByParentCategoryWidget').then(mod => ({ default: mod.ExpensesByParentCategoryWidget })),
+    {
+      loading: () => <WidgetSkeleton />,
+      ssr: false,
+    }
+  ),
+
+  // Expense details pie chart (uses recharts)
+  ExpenseDetailsPieWidget: dynamic(
+    () => import('@/components/widgets/ExpenseDetailsPieWidget').then(mod => ({ default: mod.ExpenseDetailsPieWidget })),
+    {
+      loading: () => <WidgetSkeleton />,
+      ssr: false,
+    }
+  ),
 }
 
 /**

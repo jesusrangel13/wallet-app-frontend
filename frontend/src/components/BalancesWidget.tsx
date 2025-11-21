@@ -2,14 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { DollarSign, ArrowUpCircle, ArrowDownCircle, Users, ChevronDown, ChevronUp, CheckCircle, Clock, Eye, ExternalLink } from 'lucide-react';
-import { userAPI, groupAPI } from '@/lib/api';
+import { ChevronDown, ChevronUp, CheckCircle, Clock, Eye, Wallet } from 'lucide-react';
+import { userAPI } from '@/lib/api';
 import { toast } from 'sonner';
-import { formatCurrency, type Currency } from '@/types/currency';
-import { MarkAsPaidButton } from './MarkAsPaidButton';
+import { formatCurrency } from '@/types/currency';
 import Link from 'next/link';
-import { formatDistanceToNow } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { SettleBalanceModal } from './SettleBalanceModal';
 
 interface Expense {
   expenseId: string;
@@ -45,10 +43,17 @@ interface UserBalances {
 export const BalancesWidget = () => {
   const [balances, setBalances] = useState<UserBalances | null>(null);
   const [loading, setLoading] = useState(true);
-  const [settlingBalance, setSettlingBalance] = useState<string | null>(null);
   const [expandedPersons, setExpandedPersons] = useState<Set<string>>(new Set());
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const [settleModalData, setSettleModalData] = useState<{
+    isOpen: boolean;
+    groupId: string;
+    otherUserId: string;
+    otherUserName: string;
+    amount: number;
+  } | null>(null);
 
-  const toggleExpanded = (groupId: string, userId: string) => {
+  const togglePerson = (groupId: string, userId: string) => {
     const key = `${groupId}-${userId}`;
     setExpandedPersons(prev => {
       const newSet = new Set(prev);
@@ -56,6 +61,18 @@ export const BalancesWidget = () => {
         newSet.delete(key);
       } else {
         newSet.add(key);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleGroup = (groupId: string) => {
+    setExpandedGroups(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(groupId)) {
+        newSet.delete(groupId);
+      } else {
+        newSet.add(groupId);
       }
       return newSet;
     });
@@ -78,121 +95,22 @@ export const BalancesWidget = () => {
     }
   };
 
-  const handleSettleBalance = async (groupId: string, otherUserId: string, userName: string) => {
-    setSettlingBalance(`${groupId}-${otherUserId}`);
-    try {
-      await groupAPI.settleAllBalance(groupId, otherUserId);
-      toast.success(`Balance con ${userName} saldado exitosamente`);
-      await loadBalances();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al saldar balance');
-    } finally {
-      setSettlingBalance(null);
-    }
+  const handleSettleBalance = (groupId: string, otherUserId: string, userName: string, amount: number) => {
+    setSettleModalData({
+      isOpen: true,
+      groupId,
+      otherUserId,
+      otherUserName: userName,
+      amount,
+    });
   };
 
-  // Función para generar color único por grupo
-  const getGroupAvatarColor = (groupId: string): string => {
-    const colors = [
-      'from-purple-500 to-pink-600',
-      'from-blue-500 to-cyan-600',
-      'from-orange-500 to-red-600',
-      'from-green-500 to-emerald-600',
-      'from-indigo-500 to-purple-600',
-      'from-rose-500 to-pink-600',
-      'from-amber-500 to-orange-600',
-      'from-teal-500 to-cyan-600',
-    ];
-    let hash = 0;
-    for (let i = 0; i < groupId.length; i++) {
-      hash = ((hash << 5) - hash) + groupId.charCodeAt(i);
-      hash = hash & hash;
-    }
-    return colors[Math.abs(hash) % colors.length];
+  const closeSettleModal = () => {
+    setSettleModalData(null);
   };
 
-  // Progress Bar Component
-  const ProgressBar = ({ totalPaid, totalHistorical }: { totalPaid: number; totalHistorical: number }) => {
-    const percentage = totalHistorical > 0 ? (totalPaid / totalHistorical) * 100 : 0;
-
-    return (
-      <div className="mt-4 pt-4 border-t border-gray-100">
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-600">Progreso de pago</span>
-            <span className="text-sm font-bold text-gray-900">{percentage.toFixed(0)}%</span>
-          </div>
-          <div className="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-green-500 to-green-600 transition-all duration-500 ease-out rounded-full"
-              style={{ width: `${percentage}%` }}
-            />
-          </div>
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span>Pagado: {formatCurrency(totalPaid, 'CLP')}</span>
-            <span>Total: {formatCurrency(totalHistorical, 'CLP')}</span>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Expenses List Component
-  const ExpensesList = ({ person, type }: { person: PersonBalance; type: 'owe-me' | 'i-owe' }) => {
-    const allExpenses = [...person.unpaidExpenses, ...person.paidExpenses].sort((a, b) =>
-      new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
-
-    if (allExpenses.length === 0) {
-      return <p className="text-sm text-gray-500 py-2">No hay transacciones</p>;
-    }
-
-    return (
-      <div className="mt-3 space-y-1">
-        {allExpenses.map((expense, idx) => {
-          const isPaid = person.paidExpenses.some(e => e.expenseId === expense.expenseId);
-          return (
-            <div
-              key={`${expense.expenseId}-${idx}`}
-              className={`flex items-center justify-between text-sm p-2 rounded ${
-                isPaid ? 'bg-green-50' : 'bg-orange-50'
-              }`}
-            >
-              <div className="flex items-center gap-2 flex-1">
-                {isPaid ? (
-                  <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
-                ) : (
-                  <Clock className="h-4 w-4 text-orange-600 flex-shrink-0" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className={`font-medium truncate ${isPaid ? 'text-green-900' : 'text-gray-900'}`}>
-                    {expense.description}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {formatDistanceToNow(new Date(expense.date), { addSuffix: true, locale: es })}
-                    {isPaid && expense.paidDate && (
-                      <span className="ml-1">
-                        • Pagado {formatDistanceToNow(new Date(expense.paidDate), { addSuffix: true, locale: es })}
-                      </span>
-                    )}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className={`font-semibold ${isPaid ? 'text-green-700' : type === 'owe-me' ? 'text-green-600' : 'text-red-600'}`}>
-                  {formatCurrency(expense.amount, 'CLP')}
-                </span>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${
-                  isPaid ? 'bg-green-200 text-green-800' : 'bg-orange-200 text-orange-800'
-                }`}>
-                  {isPaid ? 'Pagado' : 'Pendiente'}
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
+  const handleSettleSuccess = async () => {
+    await loadBalances();
   };
 
   if (loading) {
@@ -208,66 +126,39 @@ export const BalancesWidget = () => {
   if (!balances) return null;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Summary Cards */}
-      <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-green-800 flex items-center gap-2">
-            <ArrowDownCircle className="h-4 w-4" />
-            Me deben
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-green-900">
-            {formatCurrency(balances.totalOthersOweMe, 'CLP')}
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Wallet className="h-5 w-5" />
+          Mis Balances
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Summary - 3 columns without extra card */}
+        <div className="grid grid-cols-3 divide-x divide-gray-200 -mx-6 px-6 py-4 bg-gray-50/50">
+          <div className="pr-4">
+            <p className="text-xs text-gray-500 mb-1">Me deben</p>
+            <p className="text-xl font-bold text-green-600">{formatCurrency(balances.totalOthersOweMe, 'CLP')}</p>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-red-800 flex items-center gap-2">
-            <ArrowUpCircle className="h-4 w-4" />
-            Debo
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-red-900">
-            {formatCurrency(balances.totalIOweOthers, 'CLP')}
+          <div className="px-4">
+            <p className="text-xs text-gray-500 mb-1">Debo</p>
+            <p className="text-xl font-bold text-red-600">{formatCurrency(balances.totalIOweOthers, 'CLP')}</p>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card className={`bg-gradient-to-br ${balances.netBalance >= 0 ? 'from-blue-50 to-blue-100 border-blue-200' : 'from-orange-50 to-orange-100 border-orange-200'}`}>
-        <CardHeader className="pb-2">
-          <CardTitle className={`text-sm font-medium ${balances.netBalance >= 0 ? 'text-blue-800' : 'text-orange-800'} flex items-center gap-2`}>
-            <DollarSign className="h-4 w-4" />
-            Balance neto
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className={`text-2xl font-bold ${balances.netBalance >= 0 ? 'text-blue-900' : 'text-orange-900'}`}>
-            {formatCurrency(balances.netBalance, 'CLP')}
+          <div className="pl-4">
+            <p className="text-xs text-gray-500 mb-1">Balance</p>
+            <p className={`text-xl font-bold ${balances.netBalance >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>
+              {formatCurrency(balances.netBalance, 'CLP')}
+            </p>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Detailed Balances */}
-      <Card className="lg:col-span-3">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            Detalles por grupo
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+        {/* Group details section */}
+        <div>
           {balances.groupBalances.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500 mb-4">No tienes gastos compartidos aún</p>
-              <Link href="/dashboard/groups">
-                <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                  Crear grupo
-                </button>
+            <div className="text-center py-8">
+              <p className="text-gray-500 text-sm mb-3">No tienes gastos compartidos aún</p>
+              <Link href="/dashboard/groups" className="inline-block bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
+                Crear grupo
               </Link>
             </div>
           ) : (
@@ -275,167 +166,194 @@ export const BalancesWidget = () => {
               {balances.groupBalances.map((groupBalance) => {
                 const hasPeopleWhoOweMe = groupBalance.peopleWhoOweMe.length > 0;
                 const hasPeopleIOweTo = groupBalance.peopleIOweTo.length > 0;
-
                 if (!hasPeopleWhoOweMe && !hasPeopleIOweTo) return null;
 
                 return (
-                  <div key={groupBalance.group.id} className="border-2 border-gray-200 rounded-xl p-5 bg-white shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-4 flex-1">
-                        <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center text-white font-bold text-xl flex-shrink-0 shadow-md">
+                  <div key={groupBalance.group.id}>
+                    {/* Group header - clickable accordion trigger */}
+                    <button
+                      onClick={() => toggleGroup(groupBalance.group.id)}
+                      className="w-full flex items-center justify-between mb-3 p-3 bg-gray-50/50 rounded-lg hover:bg-gray-100/50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
                           {groupBalance.group.name.charAt(0)}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-bold text-gray-900">{groupBalance.group.name}</h3>
-                          <p className="text-base font-medium mt-1">
-                            Balance: <span className={groupBalance.netBalance >= 0 ? 'text-green-600' : 'text-red-600'}>
-                              {formatCurrency(groupBalance.netBalance, 'CLP')}
+                        <div className="flex items-center gap-4 flex-1">
+                          <h3 className="text-sm font-semibold text-gray-900">{groupBalance.group.name}</h3>
+                          {hasPeopleWhoOweMe && (
+                            <span className="text-xs text-green-600 font-medium">
+                              Te deben: {formatCurrency(groupBalance.othersOweMe, 'CLP')}
                             </span>
-                          </p>
+                          )}
+                          {hasPeopleIOweTo && (
+                            <span className="text-xs text-red-600 font-medium">
+                              Debes: {formatCurrency(groupBalance.iOweOthers, 'CLP')}
+                            </span>
+                          )}
                         </div>
                       </div>
-                      <Link href={`/dashboard/groups/${groupBalance.group.id}`}>
-                        <button className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors whitespace-nowrap text-sm font-medium">
-                          <Eye className="w-4 h-4" />
-                          Ver grupo
-                          <ExternalLink className="w-3 h-3" />
-                        </button>
-                      </Link>
-                    </div>
-
-                    {/* People who owe me */}
-                    {hasPeopleWhoOweMe && (
-                      <div className="mb-4">
-                        <h4 className="text-sm font-medium text-green-700 mb-2">Te deben:</h4>
-                        <div className="space-y-3">
-                          {groupBalance.peopleWhoOweMe.map((person) => {
-                            const personKey = `${groupBalance.group.id}-${person.user.id}`;
-                            const isExpanded = expandedPersons.has(personKey);
-                            const totalExpenses = person.unpaidExpenses.length + person.paidExpenses.length;
-
-                            return (
-                              <div key={person.user.id} className="bg-gradient-to-br from-white to-green-50 p-5 rounded-lg border-2 border-green-200 shadow-sm hover:shadow-md transition-all">
-                                {/* Header with Avatar and Info */}
-                                <div className="flex items-start justify-between gap-4 flex-col sm:flex-row">
-                                  <div className="flex items-start gap-4 flex-1 min-w-0">
-                                    <div className={`w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md`}>
-                                      {person.user.name.split(' ').map((n) => n[0]).join('')}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                      <p className="font-semibold text-gray-900 text-base">{person.user.name}</p>
-                                      <p className="text-xs text-gray-500 mt-1">
-                                        {person.unpaidExpenses.length} de {totalExpenses} gasto(s) pendiente(s)
-                                      </p>
-                                      <p className="text-2xl font-bold text-green-600 mt-2">{formatCurrency(person.amount, 'CLP')}</p>
-                                    </div>
-                                  </div>
-                                  <button
-                                    onClick={() => handleSettleBalance(groupBalance.group.id, person.user.id, person.user.name)}
-                                    disabled={settlingBalance === personKey}
-                                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shadow-md hover:shadow-lg"
-                                  >
-                                    <CheckCircle className="w-4 h-4" />
-                                    {settlingBalance === personKey ? 'Saldando...' : 'Marcar saldado'}
-                                  </button>
-                                </div>
-
-                                {/* Progress Bar */}
-                                {person.totalHistorical > 0 && (
-                                  <ProgressBar totalPaid={person.totalPaid} totalHistorical={person.totalHistorical} />
-                                )}
-
-                                {/* Expand/Collapse Button */}
-                                <button
-                                  onClick={() => toggleExpanded(groupBalance.group.id, person.user.id)}
-                                  className="w-full mt-4 flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-gray-900 py-2 border-t border-green-200 transition-colors"
-                                >
-                                  {isExpanded ? (
-                                    <>
-                                      <ChevronUp className="h-4 w-4" />
-                                      Ocultar {totalExpenses} gasto(s)
-                                    </>
-                                  ) : (
-                                    <>
-                                      <ChevronDown className="h-4 w-4" />
-                                      Ver {totalExpenses} gasto(s)
-                                    </>
-                                  )}
-                                </button>
-
-                                {/* Expenses List (Accordion) */}
-                                {isExpanded && <ExpensesList person={person} type="owe-me" />}
-                              </div>
-                            );
-                          })}
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href={`/dashboard/groups/${groupBalance.group.id}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium"
+                        >
+                          <Eye className="w-3 h-3" />
+                          Ver
+                        </Link>
+                        {expandedGroups.has(groupBalance.group.id) ? (
+                          <ChevronUp className="w-4 h-4 text-gray-500" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4 text-gray-500" />
+                        )}
                       </div>
-                    )}
+                    </button>
 
-                    {/* People I owe to */}
-                    {hasPeopleIOweTo && (
-                      <div>
-                        <h4 className="text-sm font-medium text-red-700 mb-2">Debes a:</h4>
-                        <div className="space-y-3">
-                          {groupBalance.peopleIOweTo.map((person) => {
-                            const personKey = `${groupBalance.group.id}-${person.user.id}`;
-                            const isExpanded = expandedPersons.has(personKey);
-                            const totalExpenses = person.unpaidExpenses.length + person.paidExpenses.length;
+                    {/* Split content - only visible when expanded */}
+                    {expandedGroups.has(groupBalance.group.id) && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Left: Te deben */}
+                      {hasPeopleWhoOweMe && (
+                        <div className="bg-green-50/30 rounded-lg p-3">
+                          <p className="text-xs font-semibold text-green-700 mb-3">Te deben</p>
+                          <div className="space-y-2.5">
+                            {groupBalance.peopleWhoOweMe.map((person) => {
+                              const personKey = `${groupBalance.group.id}-${person.user.id}`;
+                              const isExpanded = expandedPersons.has(personKey);
+                              const allExpenses = [...person.unpaidExpenses, ...person.paidExpenses];
+                              const percentage = person.totalHistorical > 0 ? (person.totalPaid / person.totalHistorical) * 100 : 0;
 
-                            return (
-                              <div key={person.user.id} className="bg-gradient-to-br from-white to-red-50 p-5 rounded-lg border-2 border-red-200 shadow-sm hover:shadow-md transition-all">
-                                {/* Header with Avatar and Info */}
-                                <div className="flex items-start justify-between gap-4 flex-col sm:flex-row">
-                                  <div className="flex items-start gap-4 flex-1 min-w-0">
-                                    <div className={`w-12 h-12 bg-gradient-to-br from-red-500 to-orange-600 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md`}>
-                                      {person.user.name.split(' ').map((n) => n[0]).join('')}
+                              return (
+                                <div key={person.user.id} className="rounded-lg p-2.5 hover:bg-white/60 transition-colors">
+                                  <div className="flex items-center justify-between gap-2 mb-2">
+                                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                                      <div className="w-7 h-7 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm">
+                                        {person.user.name.split(' ').map((n) => n[0]).join('')}
+                                      </div>
+                                      <span className="text-sm font-medium text-gray-900 truncate">{person.user.name}</span>
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                      <p className="font-semibold text-gray-900 text-base">{person.user.name}</p>
-                                      <p className="text-xs text-gray-500 mt-1">
-                                        {person.unpaidExpenses.length} de {totalExpenses} gasto(s) pendiente(s)
-                                      </p>
-                                      <p className="text-2xl font-bold text-red-600 mt-2">{formatCurrency(person.amount, 'CLP')}</p>
-                                    </div>
+                                    <span className="text-sm font-bold text-green-600">{formatCurrency(person.amount, 'CLP')}</span>
                                   </div>
-                                  <button
-                                    onClick={() => handleSettleBalance(groupBalance.group.id, person.user.id, person.user.name)}
-                                    disabled={settlingBalance === personKey}
-                                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shadow-md hover:shadow-lg"
-                                  >
-                                    <CheckCircle className="w-4 h-4" />
-                                    {settlingBalance === personKey ? 'Saldando...' : 'Marcar que pagué'}
-                                  </button>
-                                </div>
 
-                                {/* Progress Bar */}
-                                {person.totalHistorical > 0 && (
-                                  <ProgressBar totalPaid={person.totalPaid} totalHistorical={person.totalHistorical} />
-                                )}
-
-                                {/* Expand/Collapse Button */}
-                                <button
-                                  onClick={() => toggleExpanded(groupBalance.group.id, person.user.id)}
-                                  className="w-full mt-4 flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-gray-900 py-2 border-t border-red-200 transition-colors"
-                                >
-                                  {isExpanded ? (
-                                    <>
-                                      <ChevronUp className="h-4 w-4" />
-                                      Ocultar {totalExpenses} gasto(s)
-                                    </>
-                                  ) : (
-                                    <>
-                                      <ChevronDown className="h-4 w-4" />
-                                      Ver {totalExpenses} gasto(s)
-                                    </>
+                                  {/* Inline progress bar */}
+                                  {person.totalHistorical > 0 && (
+                                    <div className="w-full h-1 bg-green-200/50 rounded-full mb-2.5">
+                                      <div className="h-full bg-green-500 rounded-full transition-all" style={{ width: `${percentage}%` }} />
+                                    </div>
                                   )}
-                                </button>
 
-                                {/* Expenses List (Accordion) */}
-                                {isExpanded && <ExpensesList person={person} type="i-owe" />}
-                              </div>
-                            );
-                          })}
+                                  <div className="flex gap-1.5">
+                                    <button
+                                      onClick={() => handleSettleBalance(groupBalance.group.id, person.user.id, person.user.name, person.amount)}
+                                      className="flex-1 text-xs py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 font-medium transition-colors"
+                                    >
+                                      Saldado
+                                    </button>
+                                    {allExpenses.length > 0 && (
+                                      <button
+                                        onClick={() => togglePerson(groupBalance.group.id, person.user.id)}
+                                        className="text-xs text-gray-600 hover:text-gray-900 px-2 hover:bg-white/60 rounded-md transition-colors"
+                                      >
+                                        {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                                      </button>
+                                    )}
+                                  </div>
+
+                                  {/* Expenses - simple list */}
+                                  {isExpanded && allExpenses.length > 0 && (
+                                    <div className="mt-2.5 pt-2.5 space-y-1.5 border-t border-green-200/50">
+                                      {allExpenses.map((expense, idx) => {
+                                        const isPaid = person.paidExpenses.some(e => e.expenseId === expense.expenseId);
+                                        return (
+                                          <div key={idx} className="flex items-center justify-between text-xs py-0.5">
+                                            <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                                              {isPaid ? <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" /> : <Clock className="w-3 h-3 text-orange-500 flex-shrink-0" />}
+                                              <span className="truncate text-gray-700">{expense.description}</span>
+                                            </div>
+                                            <span className="font-medium text-gray-900 ml-2">{formatCurrency(expense.amount, 'CLP')}</span>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
+                      )}
+
+                      {/* Right: Debes */}
+                      {hasPeopleIOweTo && (
+                        <div className="bg-red-50/30 rounded-lg p-3">
+                          <p className="text-xs font-semibold text-red-700 mb-3">Debes</p>
+                          <div className="space-y-2.5">
+                            {groupBalance.peopleIOweTo.map((person) => {
+                              const personKey = `${groupBalance.group.id}-${person.user.id}`;
+                              const isExpanded = expandedPersons.has(personKey);
+                              const allExpenses = [...person.unpaidExpenses, ...person.paidExpenses];
+                              const percentage = person.totalHistorical > 0 ? (person.totalPaid / person.totalHistorical) * 100 : 0;
+
+                              return (
+                                <div key={person.user.id} className="rounded-lg p-2.5 hover:bg-white/60 transition-colors">
+                                  <div className="flex items-center justify-between gap-2 mb-2">
+                                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                                      <div className="w-7 h-7 bg-gradient-to-br from-red-500 to-orange-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm">
+                                        {person.user.name.split(' ').map((n) => n[0]).join('')}
+                                      </div>
+                                      <span className="text-sm font-medium text-gray-900 truncate">{person.user.name}</span>
+                                    </div>
+                                    <span className="text-sm font-bold text-red-600">{formatCurrency(person.amount, 'CLP')}</span>
+                                  </div>
+
+                                  {/* Inline progress bar */}
+                                  {person.totalHistorical > 0 && (
+                                    <div className="w-full h-1 bg-red-200/50 rounded-full mb-2.5">
+                                      <div className="h-full bg-green-500 rounded-full transition-all" style={{ width: `${percentage}%` }} />
+                                    </div>
+                                  )}
+
+                                  <div className="flex gap-1.5">
+                                    <button
+                                      onClick={() => handleSettleBalance(groupBalance.group.id, person.user.id, person.user.name, person.amount)}
+                                      className="flex-1 text-xs py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 font-medium transition-colors"
+                                    >
+                                      Pagué
+                                    </button>
+                                    {allExpenses.length > 0 && (
+                                      <button
+                                        onClick={() => togglePerson(groupBalance.group.id, person.user.id)}
+                                        className="text-xs text-gray-600 hover:text-gray-900 px-2 hover:bg-white/60 rounded-md transition-colors"
+                                      >
+                                        {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                                      </button>
+                                    )}
+                                  </div>
+
+                                  {/* Expenses - simple list */}
+                                  {isExpanded && allExpenses.length > 0 && (
+                                    <div className="mt-2.5 pt-2.5 space-y-1.5 border-t border-red-200/50">
+                                      {allExpenses.map((expense, idx) => {
+                                        const isPaid = person.paidExpenses.some(e => e.expenseId === expense.expenseId);
+                                        return (
+                                          <div key={idx} className="flex items-center justify-between text-xs py-0.5">
+                                            <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                                              {isPaid ? <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" /> : <Clock className="w-3 h-3 text-orange-500 flex-shrink-0" />}
+                                              <span className="truncate text-gray-700">{expense.description}</span>
+                                            </div>
+                                            <span className="font-medium text-gray-900 ml-2">{formatCurrency(expense.amount, 'CLP')}</span>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                       </div>
                     )}
                   </div>
@@ -443,8 +361,20 @@ export const BalancesWidget = () => {
               })}
             </div>
           )}
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </CardContent>
+
+      {settleModalData && (
+        <SettleBalanceModal
+          isOpen={settleModalData.isOpen}
+          onClose={closeSettleModal}
+          groupId={settleModalData.groupId}
+          otherUserId={settleModalData.otherUserId}
+          otherUserName={settleModalData.otherUserName}
+          amount={settleModalData.amount}
+          onSuccess={handleSettleSuccess}
+        />
+      )}
+    </Card>
   );
 };

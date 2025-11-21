@@ -5,7 +5,9 @@ import { toast } from 'sonner'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { userAPI } from '@/lib/api'
+import { userAPI, accountAPI } from '@/lib/api'
+import { LoadingPage, LoadingSpinner, LoadingMessages } from '@/components/ui/Loading'
+import { Account } from '@/types'
 
 interface UserProfile {
   id: string
@@ -18,6 +20,7 @@ interface UserProfile {
 
 export default function GeneralSettingsPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [accounts, setAccounts] = useState<Account[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [formData, setFormData] = useState({
@@ -25,6 +28,7 @@ export default function GeneralSettingsPage() {
     email: '',
     currency: 'CLP',
     country: '',
+    defaultSharedExpenseAccountId: null as string | null,
   })
 
   useEffect(() => {
@@ -34,14 +38,24 @@ export default function GeneralSettingsPage() {
   const loadProfile = async () => {
     try {
       setIsLoading(true)
-      const response = await userAPI.getProfile()
-      const user = response.data.data
+      const [profileRes, accountsRes] = await Promise.all([
+        userAPI.getProfile(),
+        accountAPI.getAll(),
+      ])
+
+      const user = profileRes.data.data
+      const allAccounts = accountsRes.data.data.filter(
+        (acc: Account) => !acc.isArchived
+      )
+
       setProfile(user)
+      setAccounts(allAccounts)
       setFormData({
         name: user.name,
         email: user.email,
         currency: user.currency,
         country: user.country || '',
+        defaultSharedExpenseAccountId: user.defaultSharedExpenseAccountId || null,
       })
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to load profile')
@@ -60,11 +74,17 @@ export default function GeneralSettingsPage() {
 
     try {
       setIsSaving(true)
-      await userAPI.updateProfile({
-        name: formData.name,
-        currency: formData.currency as 'CLP' | 'USD' | 'EUR',
-        country: formData.country || undefined,
-      })
+
+      // Update profile and default shared expense account in parallel
+      await Promise.all([
+        userAPI.updateProfile({
+          name: formData.name,
+          currency: formData.currency as 'CLP' | 'USD' | 'EUR',
+          country: formData.country || undefined,
+        }),
+        userAPI.updateDefaultSharedExpenseAccount(formData.defaultSharedExpenseAccountId),
+      ])
+
       toast.success('Profile updated successfully')
       loadProfile()
     } catch (error: any) {
@@ -75,11 +95,7 @@ export default function GeneralSettingsPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading profile...</div>
-      </div>
-    )
+    return <LoadingPage message={LoadingMessages.profile} />
   }
 
   return (
@@ -157,35 +173,50 @@ export default function GeneralSettingsPage() {
                   placeholder="e.g., Chile"
                 />
               </div>
+
+              {/* Default Shared Expense Account */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Default Account for Shared Expenses
+                </label>
+                <div className="relative">
+                  <select
+                    value={formData.defaultSharedExpenseAccountId || ''}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        defaultSharedExpenseAccountId: e.target.value || null,
+                      })
+                    }
+                    className="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white"
+                  >
+                    <option value="">No default account (select each time)</option>
+                    {accounts.map((account) => (
+                      <option key={account.id} value={account.id}>
+                        {account.name} - {account.currency} ${Number(account.balance).toFixed(2)}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+                <p className="mt-1 text-xs text-gray-500">
+                  This account will be pre-selected when settling shared expense balances
+                </p>
+              </div>
             </div>
 
             {/* Submit Button */}
             <div className="flex gap-3 pt-6 border-t">
               <Button type="submit" disabled={isSaving}>
                 {isSaving ? (
-                  <div className="flex items-center gap-2">
-                    <svg
-                      className="animate-spin h-4 w-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    <span>Saving...</span>
-                  </div>
+                  <span className="inline-flex items-center gap-2">
+                    <LoadingSpinner size="sm" className="text-current" />
+                    {LoadingMessages.saving}
+                  </span>
                 ) : (
                   'Save Changes'
                 )}

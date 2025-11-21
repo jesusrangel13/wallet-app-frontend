@@ -14,6 +14,7 @@ import type { Account, AccountType, CreateAccountForm } from '@/types'
 import { formatCurrency, CURRENCIES, type Currency } from '@/types/currency'
 import { Wallet, CreditCard, Banknote, Landmark, TrendingUp, Edit, Trash2, Plus, Star } from 'lucide-react'
 import DeleteAccountModal from '@/components/DeleteAccountModal'
+import { LoadingPage, LoadingOverlay, LoadingMessages } from '@/components/ui/Loading'
 
 const accountSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -21,6 +22,7 @@ const accountSchema = z.object({
   balance: z.coerce.number().min(0, 'Balance must be positive'),
   currency: z.enum(['CLP', 'USD', 'EUR']).default('CLP'),
   isDefault: z.boolean().default(false),
+  includeInTotalBalance: z.boolean().default(true),
   creditLimit: z.preprocess((val) => (val === '' || val === null ? undefined : val), z.coerce.number().positive().optional()),
   billingDay: z.preprocess((val) => (val === '' || val === null ? undefined : val), z.coerce.number().min(1).max(31).optional()),
 }).refine(
@@ -78,6 +80,7 @@ export default function AccountsPage() {
       currency: 'CLP',
       balance: 0,
       isDefault: false,
+      includeInTotalBalance: true,
     },
   })
 
@@ -95,6 +98,7 @@ export default function AccountsPage() {
         balance: Number(editingAccount.balance),
         currency: editingAccount.currency as Currency,
         isDefault: editingAccount.isDefault,
+        includeInTotalBalance: editingAccount.includeInTotalBalance,
         creditLimit: editingAccount.creditLimit ? Number(editingAccount.creditLimit) : undefined,
         billingDay: editingAccount.billingDay,
       })
@@ -105,6 +109,7 @@ export default function AccountsPage() {
         balance: 0,
         currency: 'CLP',
         isDefault: false,
+        includeInTotalBalance: true,
         creditLimit: undefined,
         billingDay: undefined,
       })
@@ -206,6 +211,7 @@ export default function AccountsPage() {
       balance: 0,
       currency: 'CLP',
       isDefault: false,
+      includeInTotalBalance: true,
       creditLimit: undefined,
       billingDay: undefined,
     })
@@ -213,11 +219,7 @@ export default function AccountsPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    )
+    return <LoadingPage message={LoadingMessages.accounts} />
   }
 
   return (
@@ -238,12 +240,7 @@ export default function AccountsPage() {
       <div className="relative">
         {/* Refetching overlay - Only on the cards section */}
         {isRefetching && (
-          <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10 rounded-lg pointer-events-none">
-            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow-md">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-              <span className="text-sm text-gray-600">Updating...</span>
-            </div>
-          </div>
+          <LoadingOverlay message={LoadingMessages.updating} />
         )}
 
         {/* Accounts content */}
@@ -455,6 +452,18 @@ export default function AccountsPage() {
             />
             <label htmlFor="isDefault" className="text-sm font-medium text-gray-700">
               Set as default account
+            </label>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="includeInTotalBalance"
+              {...register('includeInTotalBalance')}
+              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label htmlFor="includeInTotalBalance" className="text-sm font-medium text-gray-700">
+              Include in total balance
             </label>
           </div>
 

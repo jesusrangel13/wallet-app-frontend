@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
-import { Transaction, Account, TransactionType, CreateTransactionForm, Category } from '@/types'
+import { Transaction, Account, TransactionType, CreateTransactionForm, MergedCategory } from '@/types'
 import { transactionAPI, accountAPI, categoryAPI, sharedExpenseAPI } from '@/lib/api'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -18,7 +18,9 @@ import TransactionFiltersComponent, { TransactionFilters } from '@/components/Tr
 import { formatCurrency } from '@/lib/utils'
 import { exportToCSV, exportToJSON, exportToExcel } from '@/lib/exportTransactions'
 import { PaymentStatusBadge } from '@/components/PaymentStatusBadge'
-import { Pagination } from '@/components/Pagination'
+import { LoadingPage, LoadingOverlay, LoadingSpinner, LoadingMessages } from '@/components/ui/Loading'
+import { SharedExpenseIndicator } from '@/components/SharedExpenseIndicator'
+import { DateGroupHeader } from '@/components/DateGroupHeader'
 
 const transactionSchema = z.object({
   accountId: z.string().min(1, 'Account is required'),
@@ -48,10 +50,39 @@ const transactionSchema = z.object({
 
 type TransactionFormData = z.infer<typeof transactionSchema>
 
+// Helper function to group transactions by date
+const groupTransactionsByDate = (transactions: Transaction[]) => {
+  const groups = transactions.reduce((acc, transaction) => {
+    const date = new Date(transaction.date).toDateString()
+    if (!acc[date]) {
+      acc[date] = []
+    }
+    acc[date].push(transaction)
+    return acc
+  }, {} as Record<string, Transaction[]>)
+
+  return Object.entries(groups).map(([date, txs]) => {
+    const totalIncome = txs
+      .filter(t => t.type === 'INCOME')
+      .reduce((sum, t) => sum + Number(t.amount), 0)
+    const totalExpense = txs
+      .filter(t => t.type === 'EXPENSE')
+      .reduce((sum, t) => sum + Number(t.amount), 0)
+
+    return {
+      date,
+      transactions: txs,
+      totalIncome,
+      totalExpense,
+      currency: txs[0]?.account?.currency || 'CLP'
+    }
+  })
+}
+
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [accounts, setAccounts] = useState<Account[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
+  const [categories, setCategories] = useState<MergedCategory[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshingList, setIsRefreshingList] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -70,6 +101,8 @@ export default function TransactionsPage() {
   const [totalPages, setTotalPages] = useState(0)
   const [totalRecords, setTotalRecords] = useState(0)
   const [hasMore, setHasMore] = useState(false)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const observerTarget = useRef<HTMLDivElement>(null)
 
   // Month/Year selector
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
@@ -142,9 +175,37 @@ export default function TransactionsPage() {
     }
   }, [itemsPerPage])
 
-  const loadTransactions = async (page: number = 1) => {
+  // Infinite Scroll Observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoadingMore && !isRefreshingList) {
+          loadTransactions(currentPage + 1, true)
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    const currentTarget = observerTarget.current
+    if (currentTarget) {
+      observer.observe(currentTarget)
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget)
+      }
+    }
+  }, [hasMore, isLoadingMore, isRefreshingList, currentPage])
+
+  const loadTransactions = async (page: number = 1, append: boolean = false) => {
     try {
-      setIsRefreshingList(true)
+      if (append) {
+        setIsLoadingMore(true)
+      } else {
+        setIsRefreshingList(true)
+      }
+
       const response = await transactionAPI.getAll({
         page,
         limit: itemsPerPage,
@@ -159,19 +220,30 @@ export default function TransactionsPage() {
         sortBy: (filters.sortBy as any) || undefined,
         sortOrder: (filters.sortOrder as any) || undefined,
       })
-      setTransactions(response.data.data.data || [])
+
+      const newTransactions = response.data.data.data || []
+
+      if (append) {
+        setTransactions(prev => [...prev, ...newTransactions])
+      } else {
+        setTransactions(newTransactions)
+      }
+
       setTotalPages(response.data.data.totalPages || 0)
       setTotalRecords(response.data.data.total || 0)
       setHasMore(response.data.data.hasMore || false)
       setCurrentPage(page)
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to load transactions')
-      setTransactions([])
-      setTotalPages(0)
-      setTotalRecords(0)
-      setHasMore(false)
+      if (!append) {
+        setTransactions([])
+        setTotalPages(0)
+        setTotalRecords(0)
+        setHasMore(false)
+      }
     } finally {
       setIsRefreshingList(false)
+      setIsLoadingMore(false)
     }
   }
 
@@ -201,7 +273,7 @@ export default function TransactionsPage() {
 
       let sharedExpenseId: string | undefined = undefined
 
-      // If this is a shared expense, create the shared expense first
+      // If this is a shared expense for a NEW transaction, create the shared expense first
       if (isSharedExpense && sharedExpenseData && !editingTransaction) {
         const sharedExpensePayload = {
           transactionId: '', // Will be updated after transaction creation
@@ -222,13 +294,63 @@ export default function TransactionsPage() {
         sharedExpenseId = sharedExpenseResponse.data.data.id
       }
 
+      // Build payload with explicit sharedExpenseId handling
       const payload: CreateTransactionForm = {
         ...data,
         date: data.date || new Date().toISOString(),
-        sharedExpenseId,
       }
 
+      // Handle sharedExpenseId explicitly
+      if (isSharedExpense && sharedExpenseId) {
+        // New shared expense created
+        payload.sharedExpenseId = sharedExpenseId
+      } else if (isSharedExpense && editingTransaction?.sharedExpenseId) {
+        // Existing shared expense being kept
+        payload.sharedExpenseId = editingTransaction.sharedExpenseId
+      } else if (!isSharedExpense && editingTransaction?.sharedExpenseId) {
+        // User is removing shared expense from transaction
+        payload.sharedExpenseId = null as any
+      }
+      // If not shared expense and no previous shared expense, don't include field
+
       if (editingTransaction) {
+        // If editing a shared expense, update the shared expense as well
+        if (isSharedExpense && sharedExpenseData && editingTransaction.sharedExpenseId) {
+          const sharedExpensePayload = {
+            amount: data.amount,
+            description: data.description || 'Shared expense',
+            splitType: sharedExpenseData.splitType,
+            participants: sharedExpenseData.participants.map(p => ({
+              userId: p.userId,
+              amountOwed: p.amountOwed,
+              percentage: sharedExpenseData.splitType === 'PERCENTAGE' ? p.percentage : undefined,
+              shares: sharedExpenseData.splitType === 'SHARES' ? p.shares : undefined,
+            })),
+            paidByUserId: sharedExpenseData.paidByUserId,
+          }
+
+          await sharedExpenseAPI.update(editingTransaction.sharedExpenseId, sharedExpensePayload)
+        } else if (isSharedExpense && sharedExpenseData && !editingTransaction.sharedExpenseId) {
+          // Converting normal transaction to shared expense
+          const sharedExpensePayload = {
+            transactionId: editingTransaction.id,
+            groupId: sharedExpenseData.groupId,
+            paidByUserId: sharedExpenseData.paidByUserId,
+            amount: data.amount,
+            description: data.description || 'Shared expense',
+            splitType: sharedExpenseData.splitType,
+            participants: sharedExpenseData.participants.map(p => ({
+              userId: p.userId,
+              amountOwed: p.amountOwed,
+              percentage: sharedExpenseData.splitType === 'PERCENTAGE' ? p.percentage : undefined,
+              shares: sharedExpenseData.splitType === 'SHARES' ? p.shares : undefined,
+            })),
+          }
+
+          const sharedExpenseResponse = await sharedExpenseAPI.create(sharedExpensePayload)
+          payload.sharedExpenseId = sharedExpenseResponse.data.data.id
+        }
+
         await transactionAPI.update(editingTransaction.id, payload)
         toast.success('Transaction updated successfully')
       } else {
@@ -493,11 +615,7 @@ export default function TransactionsPage() {
   ]
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading transactions...</div>
-      </div>
-    )
+    return <LoadingPage message={LoadingMessages.transactions} />
   }
 
   return (
@@ -637,6 +755,53 @@ export default function TransactionsPage() {
         categories={categories}
       />
 
+      {/* Select All Button */}
+      {transactions.length > 0 && (
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={selectAll}
+              onChange={handleSelectAll}
+              className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+            />
+            <button
+              onClick={handleSelectAll}
+              className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+            >
+              {selectAll ? 'Deseleccionar todas' : 'Seleccionar todas'}
+            </button>
+            {selectedTransactionIds.size > 0 && (
+              <span className="text-sm text-gray-500">
+                ({selectedTransactionIds.size} de {transactions.length} seleccionadas)
+              </span>
+            )}
+          </div>
+          {selectedTransactionIds.size > 0 && (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSelectedTransactionIds(new Set())
+                  setSelectAll(false)
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => setShowBulkDeleteConfirm(true)}
+                disabled={isBulkDeleting}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                {isBulkDeleting ? LoadingMessages.deleting : 'Eliminar'}
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Bulk Delete Action Bar */}
       {selectedTransactionIds.size > 0 && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
@@ -662,22 +827,17 @@ export default function TransactionsPage() {
                 disabled={isBulkDeleting}
                 className="bg-red-600 hover:bg-red-700 text-white"
               >
-                {isBulkDeleting ? 'Deleting...' : 'Delete Selected'}
+                {isBulkDeleting ? LoadingMessages.deleting : 'Delete Selected'}
               </Button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Transactions List */}
-      <div className={`grid gap-4 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} relative`}>
+      {/* Transactions List - Grouped by Date */}
+      <div className={`space-y-6 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} relative`}>
         {isRefreshingList && (
-          <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center z-20 rounded-lg">
-            <div className="flex flex-col items-center gap-3">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <p className="text-sm text-gray-600">Loading transactions...</p>
-            </div>
-          </div>
+          <LoadingOverlay message={LoadingMessages.transactions} />
         )}
         {transactions.length === 0 ? (
           <Card>
@@ -688,7 +848,16 @@ export default function TransactionsPage() {
             </CardContent>
           </Card>
         ) : (
-          transactions.map((transaction) => (
+          groupTransactionsByDate(transactions).map((group) => (
+            <div key={group.date} className="space-y-2">
+              <DateGroupHeader
+                date={group.date}
+                totalIncome={group.totalIncome}
+                totalExpense={group.totalExpense}
+                currency={group.currency}
+              />
+              <div className="space-y-2">
+                {group.transactions.map((transaction) => (
             <Card key={transaction.id} className={`transition-colors ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 border-blue-300' : ''}`}>
               <CardContent className="py-4">
                 <div className="flex items-start justify-between">
@@ -718,43 +887,18 @@ export default function TransactionsPage() {
                         <p className="font-semibold text-gray-900">
                           {transaction.category?.name || 'Uncategorized'}
                         </p>
-                        {transaction.sharedExpenseId && transaction.sharedExpense && (
-                          <span className="inline-flex items-center gap-1 text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full border border-purple-200">
-                            👥 Compartido
-                          </span>
-                        )}
                       </div>
 
                       {transaction.description && (
                         <p className="text-sm text-gray-600 truncate">{transaction.description}</p>
                       )}
 
-                      {transaction.payee && (
-                        <p className="text-xs text-gray-500">→ {transaction.payee}</p>
-                      )}
+                      {/* Shared Expense Indicator - unified display */}
+                      <SharedExpenseIndicator transaction={transaction} variant="compact" className="mt-2" />
 
-                      {/* Shared Expense Payment Status */}
-                      {transaction.sharedExpenseId && transaction.sharedExpense?.participants && (
-                        <div className="mt-2 flex flex-wrap gap-1">
-                          {(() => {
-                            const participants = transaction.sharedExpense.participants
-                            if (!participants) return null
-
-                            const paidCount = participants.filter((p: any) => p.isPaid).length
-                            const totalCount = participants.length
-
-                            return (
-                              <span className="text-xs text-gray-600 flex items-center gap-1">
-                                Pagado: {paidCount}/{totalCount} personas
-                                {paidCount === totalCount ? (
-                                  <span className="text-green-600">✓</span>
-                                ) : (
-                                  <span className="text-amber-600">⏳</span>
-                                )}
-                              </span>
-                            )
-                          })()}
-                        </div>
+                      {/* Show payee only for non-shared transactions (shared ones show it in the indicator) */}
+                      {!transaction.sharedExpenseId && transaction.payee && (
+                        <p className="text-xs text-gray-500 mt-1">→ {transaction.payee}</p>
                       )}
 
                       <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
@@ -797,9 +941,6 @@ export default function TransactionsPage() {
                           transaction.account?.currency || 'CLP'
                         )}
                       </p>
-                      <p className="text-xs text-gray-500 mt-0.5">
-                        {new Date(transaction.date).toLocaleDateString()}
-                      </p>
                     </div>
 
                     <div className="flex gap-2">
@@ -819,20 +960,30 @@ export default function TransactionsPage() {
                 </div>
               </CardContent>
             </Card>
+                ))}
+              </div>
+            </div>
           ))
         )}
       </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) => loadTransactions(page)}
-          itemsPerPage={itemsPerPage}
-          onItemsPerPageChange={(limit) => setItemsPerPage(limit)}
-          totalItems={totalRecords}
-        />
+      {/* Infinite Scroll Observer Target */}
+      {hasMore && (
+        <div ref={observerTarget} className="flex justify-center py-8">
+          {isLoadingMore && (
+            <div className="flex items-center gap-2 text-gray-500">
+              <LoadingSpinner size="sm" />
+              <span className="text-sm">Cargando más transacciones...</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* End of list indicator */}
+      {!hasMore && transactions.length > 0 && (
+        <div className="text-center py-6 text-sm text-gray-500">
+          Has llegado al final de la lista
+        </div>
       )}
 
       {/* Transaction Modal */}
@@ -1054,29 +1205,10 @@ export default function TransactionsPage() {
           <div className="flex gap-3 pt-4 border-t">
             <Button type="submit" className="flex-1" disabled={isSaving}>
               {isSaving ? (
-                <div className="flex items-center justify-center gap-2">
-                  <svg
-                    className="animate-spin h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  <span>Saving...</span>
-                </div>
+                <span className="inline-flex items-center gap-2">
+                  <LoadingSpinner size="sm" className="text-current" />
+                  {LoadingMessages.saving}
+                </span>
               ) : (
                 <span>{editingTransaction ? 'Update Transaction' : 'Create Transaction'}</span>
               )}
@@ -1128,7 +1260,7 @@ export default function TransactionsPage() {
               disabled={isBulkDeleting}
               className="flex-1 bg-red-600 hover:bg-red-700 text-white"
             >
-              {isBulkDeleting ? 'Deleting...' : 'Delete'}
+              {isBulkDeleting ? LoadingMessages.deleting : 'Delete'}
             </Button>
           </div>
         </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { TransactionType, Account, Category } from '@/types'
+import { TransactionType, Account, MergedCategory } from '@/types'
 import { cn } from '@/lib/utils'
 
 export interface TransactionFilters {
@@ -21,7 +21,7 @@ interface TransactionFiltersProps {
   filters: TransactionFilters
   onFilterChange: (filters: TransactionFilters) => void
   accounts: Account[]
-  categories: Category[]
+  categories: MergedCategory[]
 }
 
 export default function TransactionFiltersComponent({

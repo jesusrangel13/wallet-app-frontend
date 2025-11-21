@@ -7,17 +7,22 @@ import { DashboardGrid } from '@/components/DashboardGrid'
 import { WidgetWrapper } from '@/components/WidgetWrapper'
 import { AddWidgetButton } from '@/components/AddWidgetButton'
 import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
+import { LoadingPage, LoadingMessages } from '@/components/ui/Loading'
 
 // Import all widgets
 import {
   TotalBalanceWidget,
   MonthlyIncomeWidget,
   MonthlyExpensesWidget,
+  PersonalExpensesWidget,
+  SharedExpensesWidget,
+  SavingsWidget,
   GroupsWidget,
   QuickActionsWidget,
   CashFlowWidget,
   ExpensesByCategoryWidget,
+  ExpensesByParentCategoryWidget,
+  ExpenseDetailsPieWidget,
   BalanceTrendWidget,
   GroupBalancesWidget,
   AccountBalancesWidget,
@@ -30,11 +35,16 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
   'total-balance': TotalBalanceWidget,
   'monthly-income': MonthlyIncomeWidget,
   'monthly-expenses': MonthlyExpensesWidget,
+  'personal-expenses': PersonalExpensesWidget,
+  'shared-expenses': SharedExpensesWidget,
+  'savings': SavingsWidget,
   'groups': GroupsWidget,
   'quick-actions': QuickActionsWidget,
   'balances': BalancesWidget,
   'cash-flow': CashFlowWidget,
   'expenses-by-category': ExpensesByCategoryWidget,
+  'expenses-by-parent-category': ExpensesByParentCategoryWidget,
+  'expense-details-pie': ExpenseDetailsPieWidget,
   'balance-trend': BalanceTrendWidget,
   'group-balances': GroupBalancesWidget,
   'account-balances': AccountBalancesWidget,
@@ -66,14 +76,7 @@ export default function DashboardPage() {
 
   // Show loading state
   if (isLoading || !preferences) {
-    return (
-      <div className="flex items-center justify-center h-[60vh]">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-          <p className="text-gray-600">Loading dashboard...</p>
-        </div>
-      </div>
-    )
+    return <LoadingPage message={LoadingMessages.dashboard} />
   }
 
   return (

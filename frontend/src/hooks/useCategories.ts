@@ -4,24 +4,14 @@ import { useMemo } from 'react'
 import type { CategoryTemplate, UserCategoryOverride, CustomCategory, MergedCategory, TransactionType } from '@/types'
 
 /**
- * Hook para obtener todas las categorías con caching automático (Legacy)
+ * Hook para obtener todas las categorías con caching automático
+ * Uses the new template-based system internally
  */
 export function useCategories(type?: string) {
   return useQuery({
     queryKey: ['categories', type],
     queryFn: () => categoryAPI.getAll(type),
     staleTime: 15 * 60 * 1000, // 15 minutes - categories are stable
-  })
-}
-
-/**
- * Hook para obtener una categoría específica (Legacy)
- */
-export function useCategory(id: string) {
-  return useQuery({
-    queryKey: ['category', id],
-    queryFn: () => categoryAPI.getById(id),
-    staleTime: 15 * 60 * 1000, // 15 minutes
   })
 }
 

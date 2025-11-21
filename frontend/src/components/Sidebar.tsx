@@ -70,9 +70,10 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          fixed md:static inset-y-0 left-0 z-40
+          fixed inset-y-0 left-0 z-40
           bg-white border-r border-gray-200
           transition-all duration-300 ease-in-out
+          h-screen overflow-y-auto
           ${isCollapsed ? 'md:w-16' : 'md:w-64'}
           ${isMobileOpen ? 'w-64' : '-translate-x-full md:translate-x-0'}
           flex flex-col

@@ -79,6 +79,13 @@ export default function SharedExpenseForm({
     }
   }, [enabled])
 
+  // Reset initialization when initialData changes (to support editing different expenses)
+  useEffect(() => {
+    if (initialData) {
+      setIsInitialized(false)
+    }
+  }, [initialData])
+
   // Load initial data when editing a shared expense
   useEffect(() => {
     if (enabled && initialData && groups.length > 0 && !isInitialized) {

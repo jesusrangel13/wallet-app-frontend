@@ -7,11 +7,16 @@ export type WidgetType =
   | 'total-balance'
   | 'monthly-income'
   | 'monthly-expenses'
+  | 'personal-expenses'
+  | 'shared-expenses'
+  | 'savings'
   | 'groups'
   | 'quick-actions'
   | 'balances'
   | 'cash-flow'
   | 'expenses-by-category'
+  | 'expenses-by-parent-category'
+  | 'expense-details-pie'
   | 'balance-trend'
   | 'group-balances'
   | 'account-balances'
@@ -73,6 +78,45 @@ export const WIDGET_REGISTRY: Record<WidgetType, WidgetDefinition> = {
     resizable: true,
     draggable: true,
   },
+  'personal-expenses': {
+    id: 'personal-expenses',
+    name: 'Gastos Personales',
+    description: 'Personal expenses excluding shared and transfers',
+    category: 'summary',
+    icon: 'ShoppingCart',
+    defaultWidth: 1,
+    defaultHeight: 2,
+    minWidth: 1,
+    minHeight: 1,
+    resizable: true,
+    draggable: true,
+  },
+  'shared-expenses': {
+    id: 'shared-expenses',
+    name: 'Gastos Compartidos',
+    description: 'Your share of shared group expenses',
+    category: 'summary',
+    icon: 'Users',
+    defaultWidth: 1,
+    defaultHeight: 2,
+    minWidth: 1,
+    minHeight: 1,
+    resizable: true,
+    draggable: true,
+  },
+  'savings': {
+    id: 'savings',
+    name: 'Ahorros',
+    description: 'Monthly savings (income - expenses)',
+    category: 'summary',
+    icon: 'PiggyBank',
+    defaultWidth: 1,
+    defaultHeight: 2,
+    minWidth: 1,
+    minHeight: 1,
+    resizable: true,
+    draggable: true,
+  },
   'groups': {
     id: 'groups',
     name: 'Groups',
@@ -121,7 +165,7 @@ export const WIDGET_REGISTRY: Record<WidgetType, WidgetDefinition> = {
     defaultWidth: 2,
     defaultHeight: 2,
     minWidth: 2,
-    minHeight: 1,
+    minHeight: 2,
     resizable: true,
     draggable: true,
   },
@@ -147,7 +191,7 @@ export const WIDGET_REGISTRY: Record<WidgetType, WidgetDefinition> = {
     defaultWidth: 2,
     defaultHeight: 2,
     minWidth: 2,
-    minHeight: 1,
+    minHeight: 2,
     resizable: true,
     draggable: true,
   },
@@ -187,6 +231,32 @@ export const WIDGET_REGISTRY: Record<WidgetType, WidgetDefinition> = {
     defaultHeight: 2,
     minWidth: 2,
     minHeight: 1,
+    resizable: true,
+    draggable: true,
+  },
+  'expenses-by-parent-category': {
+    id: 'expenses-by-parent-category',
+    name: 'Gastos por Categoría',
+    description: 'Expense distribution by parent category',
+    category: 'insights',
+    icon: 'BarChart3',
+    defaultWidth: 2,
+    defaultHeight: 2,
+    minWidth: 2,
+    minHeight: 2,
+    resizable: true,
+    draggable: true,
+  },
+  'expense-details-pie': {
+    id: 'expense-details-pie',
+    name: 'Detalle de Gastos',
+    description: 'Detailed expense breakdown with legend',
+    category: 'insights',
+    icon: 'PieChart',
+    defaultWidth: 2,
+    defaultHeight: 3,
+    minWidth: 2,
+    minHeight: 2,
     resizable: true,
     draggable: true,
   },

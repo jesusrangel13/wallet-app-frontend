@@ -67,9 +67,9 @@ interface RecentTransaction {
   date: string
   category?: {
     name: string
-    icon?: string
-    color?: string
-  }
+    icon?: string | null
+    color?: string | null
+  } | null
   account?: {
     name: string
     currency: string

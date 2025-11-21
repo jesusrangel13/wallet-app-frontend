@@ -113,7 +113,7 @@ export const DashboardGrid = ({ children }: DashboardGridProps) => {
         className="dashboard-grid"
         layout={gridLayout}
         cols={4}
-        rowHeight={100}
+        rowHeight={140}
         width={containerWidth}
         isResizable={true}
         isDraggable={true}

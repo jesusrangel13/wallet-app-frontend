@@ -10,8 +10,8 @@ import type {
   Group,
   SharedExpense,
   Payment,
-  Category,
   Tag,
+  MergedCategory,
   RegisterForm,
   LoginForm,
   CreateAccountForm,
@@ -20,7 +20,6 @@ import type {
   CreateGroupForm,
   CreateSharedExpenseForm,
   CreatePaymentForm,
-  CreateCategoryForm,
   CreateTagForm,
 } from '@/types'
 
@@ -135,6 +134,9 @@ export const userAPI = {
         }>;
       }>;
     }>>('/users/my-balances'),
+
+  updateDefaultSharedExpenseAccount: (accountId: string | null) =>
+    api.patch<ApiResponse<User>>('/users/me/default-shared-expense-account', { accountId }),
 }
 
 // Account API
@@ -281,12 +283,13 @@ export const groupAPI = {
   updateDefaultSplit: (id: string, data: { defaultSplitType: string; memberSplits: Array<{ userId: string; percentage?: number; shares?: number; exactAmount?: number }> }) =>
     api.put<ApiResponse<Group>>(`/groups/${id}/default-split`, data),
 
-  settleAllBalance: (groupId: string, otherUserId: string) =>
+  settleAllBalance: (groupId: string, otherUserId: string, accountId?: string) =>
     api.post<ApiResponse<{
       payment: Payment;
       settledExpenses: number;
       amount: number;
-    }>>(`/groups/${groupId}/settle-balance`, { otherUserId }),
+      transactionsCreated: boolean;
+    }>>(`/groups/${groupId}/settle-balance`, { otherUserId, accountId }),
 }
 
 // Shared Expense API
@@ -299,6 +302,9 @@ export const sharedExpenseAPI = {
 
   getById: (id: string) =>
     api.get<ApiResponse<SharedExpense>>(`/shared-expenses/${id}`),
+
+  update: (id: string, data: Partial<CreateSharedExpenseForm>) =>
+    api.put<ApiResponse<SharedExpense>>(`/shared-expenses/${id}`, data),
 
   delete: (id: string) =>
     api.delete<ApiResponse<{ message: string }>>(`/shared-expenses/${id}`),
@@ -316,29 +322,18 @@ export const sharedExpenseAPI = {
       amount: number
     }>>>(`/shared-expenses/groups/${groupId}/simplified-debts`),
 
-  markParticipantAsPaid: (expenseId: string, participantUserId: string) =>
-    api.patch<ApiResponse<any>>(`/shared-expenses/${expenseId}/participants/${participantUserId}/mark-paid`),
+  markParticipantAsPaid: (expenseId: string, participantUserId: string, accountId?: string) =>
+    api.patch<ApiResponse<any>>(`/shared-expenses/${expenseId}/participants/${participantUserId}/mark-paid`, { accountId }),
 
   markParticipantAsUnpaid: (expenseId: string, participantUserId: string) =>
     api.patch<ApiResponse<any>>(`/shared-expenses/${expenseId}/participants/${participantUserId}/mark-unpaid`),
 }
 
-// Category API
+// Category API (legacy - uses new template system internally)
 export const categoryAPI = {
-  create: (data: CreateCategoryForm) =>
-    api.post<ApiResponse<Category>>('/categories', data),
-
+  // Returns merged categories from templates + overrides
   getAll: (type?: string) =>
-    api.get<ApiResponse<Category[]>>('/categories', { params: { type } }),
-
-  getById: (id: string) =>
-    api.get<ApiResponse<Category>>(`/categories/${id}`),
-
-  update: (id: string, data: Partial<CreateCategoryForm>) =>
-    api.put<ApiResponse<Category>>(`/categories/${id}`, data),
-
-  delete: (id: string) =>
-    api.delete<ApiResponse<{ message: string }>>(`/categories/${id}`),
+    api.get<ApiResponse<MergedCategory[]>>('/categories', { params: { type } }),
 }
 
 // Category Template API (new system - USE_CATEGORY_TEMPLATES enabled)
@@ -451,6 +446,15 @@ export const dashboardAPI = {
       percentage: number
     }>>>('/dashboard/expenses-by-category'),
 
+  getExpensesByParentCategory: () =>
+    api.get<ApiResponse<Array<{
+      category: string
+      amount: number
+      percentage: number
+      icon: string | null
+      color: string | null
+    }>>>('/dashboard/expenses-by-parent-category'),
+
   getBalanceHistory: (days?: number) =>
     api.get<ApiResponse<Array<{
       date: string
@@ -480,6 +484,32 @@ export const dashboardAPI = {
       creditLimit: number | null
       color: string
     }>>>('/dashboard/account-balances'),
+
+  getPersonalExpenses: () =>
+    api.get<ApiResponse<{
+      total: number
+      month: string
+    }>>('/dashboard/personal-expenses'),
+
+  getSharedExpensesTotal: () =>
+    api.get<ApiResponse<{
+      total: number
+      count: number
+      month: string
+    }>>('/dashboard/shared-expenses'),
+
+  getMonthlySavings: () =>
+    api.get<ApiResponse<{
+      savings: number
+      savingsRate: number
+      income: number
+      expenses: number
+      breakdown: {
+        personal: number
+        shared: number
+      }
+      month: string
+    }>>('/dashboard/savings'),
 }
 
 // Notification API

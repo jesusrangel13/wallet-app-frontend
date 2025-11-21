@@ -11,7 +11,9 @@ import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
 import { PaymentStatusBadge } from '@/components/PaymentStatusBadge'
 import { MarkAsPaidButton } from '@/components/MarkAsPaidButton'
+import { MarkExpensePaidModal } from '@/components/MarkExpensePaidModal'
 import { formatCurrency } from '@/types/currency'
+import { LoadingPage, LoadingSpinner, LoadingMessages } from '@/components/ui/Loading'
 
 const GROUP_COVER_IMAGES = [
   '🏠', '👨‍👩‍👧‍👦', '🎉', '✈️', '🏖️', '🎓', '💼', '🎮', '🍕', '🎬',
@@ -33,6 +35,15 @@ export default function GroupsPage() {
   const [groupExpenses, setGroupExpenses] = useState<any[]>([])
   const [loadingExpenses, setLoadingExpenses] = useState(false)
 
+  // Mark expense as paid modal state
+  const [isMarkPaidModalOpen, setIsMarkPaidModalOpen] = useState(false)
+  const [selectedExpenseForPayment, setSelectedExpenseForPayment] = useState<{
+    expenseId: string
+    participantUserId: string
+    description: string
+    amount: number
+  } | null>(null)
+
   // Split configuration state
   const [isEditingSplit, setIsEditingSplit] = useState(false)
   const [splitType, setSplitType] = useState<SplitType>('EQUAL')
@@ -43,11 +54,20 @@ export default function GroupsPage() {
     name: string
     description: string
     coverImageUrl: string
+    memberEmails: string[]
+    defaultSplitType: SplitType
   }>({
     name: '',
     description: '',
     coverImageUrl: '👨‍👩‍👧‍👦',
+    memberEmails: [],
+    defaultSplitType: 'EQUAL',
   })
+  const [newEmailInput, setNewEmailInput] = useState('')
+  const [emailError, setEmailError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  // Split configuration for new group creation
+  const [splitConfig, setSplitConfig] = useState<Record<string, { percentage?: number; shares?: number; exactAmount?: number }>>({})
 
   useEffect(() => {
     loadGroups()
@@ -71,7 +91,12 @@ export default function GroupsPage() {
       name: '',
       description: '',
       coverImageUrl: '👨‍👩‍👧‍👦',
+      memberEmails: [],
+      defaultSplitType: 'EQUAL',
     })
+    setNewEmailInput('')
+    setEmailError('')
+    setSplitConfig({})
     setIsModalOpen(true)
   }
 
@@ -81,8 +106,76 @@ export default function GroupsPage() {
       name: group.name,
       description: group.description || '',
       coverImageUrl: group.coverImageUrl || '👨‍👩‍👧‍👦',
+      memberEmails: [],
+      defaultSplitType: group.defaultSplitType || 'EQUAL',
     })
+    setNewEmailInput('')
+    setEmailError('')
     setIsModalOpen(true)
+  }
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  const handleAddEmail = () => {
+    const email = newEmailInput.trim().toLowerCase()
+
+    if (!email) {
+      setEmailError('Please enter an email')
+      return
+    }
+
+    if (!validateEmail(email)) {
+      setEmailError('Invalid email format')
+      return
+    }
+
+    if (formData.memberEmails.includes(email)) {
+      setEmailError('Email already added')
+      return
+    }
+
+    if (user?.email && email === user.email.toLowerCase()) {
+      setEmailError('You will be added automatically as creator')
+      return
+    }
+
+    setFormData({
+      ...formData,
+      memberEmails: [...formData.memberEmails, email],
+    })
+    setNewEmailInput('')
+    setEmailError('')
+  }
+
+  const handleRemoveEmail = (emailToRemove: string) => {
+    setFormData({
+      ...formData,
+      memberEmails: formData.memberEmails.filter(email => email !== emailToRemove),
+    })
+    // Also remove from split config
+    const newSplitConfig = { ...splitConfig }
+    delete newSplitConfig[emailToRemove]
+    setSplitConfig(newSplitConfig)
+  }
+
+  const getAllMembersForSplit = () => {
+    // Include creator (current user) + all added member emails
+    const members: string[] = []
+    if (user?.email) {
+      members.push(user.email)
+    }
+    members.push(...formData.memberEmails)
+    return members
+  }
+
+  const getSplitConfigTotal = () => {
+    if (formData.defaultSplitType === 'PERCENTAGE') {
+      return Object.values(splitConfig).reduce((sum, config) => sum + (config.percentage || 0), 0)
+    }
+    return 0
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -93,26 +186,86 @@ export default function GroupsPage() {
       return
     }
 
+    // Validate split configuration if not EQUAL
+    if (formData.defaultSplitType === 'PERCENTAGE') {
+      const total = getSplitConfigTotal()
+      if (total !== 100 && Object.keys(splitConfig).length > 0) {
+        toast.error('Percentages must add up to 100%')
+        return
+      }
+    }
+
+    setIsSubmitting(true)
+
     try {
+      // Build member split settings array
+      const memberSplitSettings =
+        formData.defaultSplitType !== 'EQUAL' && Object.keys(splitConfig).length > 0
+          ? Object.entries(splitConfig).map(([email, config]) => ({
+              email,
+              percentage: formData.defaultSplitType === 'PERCENTAGE' ? config.percentage : undefined,
+              shares: formData.defaultSplitType === 'SHARES' ? config.shares : undefined,
+              exactAmount: formData.defaultSplitType === 'EXACT' ? config.exactAmount : undefined,
+            }))
+          : undefined
+
       const payload: CreateGroupForm = {
         name: formData.name.trim(),
         description: formData.description.trim() || undefined,
         coverImageUrl: formData.coverImageUrl,
+        memberEmails: formData.memberEmails.length > 0 ? formData.memberEmails : undefined,
+        defaultSplitType: formData.defaultSplitType,
+        memberSplitSettings,
       }
 
       if (editingGroup) {
-        await groupAPI.update(editingGroup.id, payload)
+        await groupAPI.update(editingGroup.id, {
+          name: payload.name,
+          description: payload.description,
+          coverImageUrl: payload.coverImageUrl,
+        })
         toast.success('Group updated successfully')
       } else {
-        await groupAPI.create(payload)
-        toast.success('Group created successfully')
+        const response = await groupAPI.create(payload)
+        const data = response.data.data as any
+
+        // Check for member add results
+        if (data.memberAddResults) {
+          const failed = data.memberAddResults.filter((r: any) => !r.success)
+          const succeeded = data.memberAddResults.filter((r: any) => r.success)
+
+          if (succeeded.length > 0) {
+            toast.success(`Group created! ${succeeded.length} member(s) added successfully`)
+          } else {
+            toast.success('Group created successfully')
+          }
+
+          if (failed.length > 0) {
+            failed.forEach((f: any) => {
+              toast.error(`Could not add ${f.email}: ${f.error}`)
+            })
+          }
+        } else {
+          toast.success('Group created successfully')
+        }
       }
 
       loadGroups()
       setIsModalOpen(false)
-      setFormData({ name: '', description: '', coverImageUrl: '👨‍👩‍👧‍👦' })
+      setFormData({
+        name: '',
+        description: '',
+        coverImageUrl: '👨‍👩‍👧‍👦',
+        memberEmails: [],
+        defaultSplitType: 'EQUAL',
+      })
+      setNewEmailInput('')
+      setEmailError('')
+      setSplitConfig({})
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to save group')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -274,11 +427,7 @@ export default function GroupsPage() {
   }, [activeTab, viewingGroup])
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading groups...</div>
-      </div>
-    )
+    return <LoadingPage message={LoadingMessages.groups} />
   }
 
   return (
@@ -476,10 +625,12 @@ export default function GroupsPage() {
           setIsModalOpen(false)
           setEditingGroup(null)
           setShowImagePicker(false)
+          setNewEmailInput('')
+          setEmailError('')
         }}
         title={editingGroup ? 'Edit Group' : 'Create Group'}
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
           {/* Cover Image Selection */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Cover Image</label>
@@ -531,16 +682,216 @@ export default function GroupsPage() {
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={3}
+              rows={2}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Add details about this group..."
             />
           </div>
 
+          {/* Default Split Type - Only for new groups */}
+          {!editingGroup && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Default Split Type
+              </label>
+              <select
+                value={formData.defaultSplitType}
+                onChange={(e) => setFormData({ ...formData, defaultSplitType: e.target.value as SplitType })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="EQUAL">Equal Split</option>
+                <option value="PERCENTAGE">By Percentage</option>
+                <option value="SHARES">By Shares</option>
+                <option value="EXACT">Exact Amounts</option>
+              </select>
+              <p className="text-xs text-gray-500 mt-1">
+                This will be the default when creating shared expenses
+              </p>
+            </div>
+          )}
+
+          {/* Add Members - Only for new groups */}
+          {!editingGroup && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Add Members (optional)
+              </label>
+              <div className="space-y-3">
+                {/* Email Input */}
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <Input
+                      type="email"
+                      value={newEmailInput}
+                      onChange={(e) => {
+                        setNewEmailInput(e.target.value)
+                        setEmailError('')
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          handleAddEmail()
+                        }
+                      }}
+                      placeholder="member@email.com"
+                      className={emailError ? 'border-red-500' : ''}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleAddEmail}
+                    className="shrink-0"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                  </Button>
+                </div>
+                {emailError && (
+                  <p className="text-xs text-red-600">{emailError}</p>
+                )}
+
+                {/* Added Emails List */}
+                {formData.memberEmails.length > 0 && (
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {formData.memberEmails.map((email) => (
+                      <div
+                        key={email}
+                        className="flex items-center justify-between bg-blue-50 px-3 py-2 rounded-lg"
+                      >
+                        <div className="flex items-center gap-2">
+                          <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
+                          </svg>
+                          <span className="text-sm text-gray-700">{email}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveEmail(email)}
+                          className="text-gray-400 hover:text-red-600 transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <p className="text-xs text-gray-500">
+                  {formData.memberEmails.length === 0
+                    ? 'You will be added automatically as the group creator'
+                    : `${formData.memberEmails.length} member(s) will be invited`}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Split Configuration - Only for new groups with non-EQUAL split type */}
+          {!editingGroup && formData.defaultSplitType !== 'EQUAL' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Configure Split Values
+              </label>
+              <div className="space-y-3 bg-gray-50 p-3 rounded-lg">
+                {getAllMembersForSplit().map((email) => (
+                  <div key={email} className="flex items-center gap-3">
+                    <div className="flex-1 flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">
+                        {email.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <span className="text-sm text-gray-700 truncate block">
+                          {email === user?.email ? `${user.name} (you)` : email}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="w-24">
+                      <Input
+                        type="number"
+                        step={
+                          formData.defaultSplitType === 'PERCENTAGE'
+                            ? '0.01'
+                            : formData.defaultSplitType === 'EXACT'
+                            ? '0.01'
+                            : '1'
+                        }
+                        min="0"
+                        value={
+                          formData.defaultSplitType === 'PERCENTAGE'
+                            ? splitConfig[email]?.percentage || ''
+                            : formData.defaultSplitType === 'SHARES'
+                            ? splitConfig[email]?.shares || ''
+                            : splitConfig[email]?.exactAmount || ''
+                        }
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value) || 0
+                          setSplitConfig({
+                            ...splitConfig,
+                            [email]: {
+                              percentage: formData.defaultSplitType === 'PERCENTAGE' ? value : undefined,
+                              shares: formData.defaultSplitType === 'SHARES' ? value : undefined,
+                              exactAmount: formData.defaultSplitType === 'EXACT' ? value : undefined,
+                            },
+                          })
+                        }}
+                        placeholder={
+                          formData.defaultSplitType === 'PERCENTAGE'
+                            ? '%'
+                            : formData.defaultSplitType === 'SHARES'
+                            ? 'shares'
+                            : '$'
+                        }
+                        className="text-right text-sm"
+                      />
+                    </div>
+                    <span className="text-xs text-gray-500 w-8">
+                      {formData.defaultSplitType === 'PERCENTAGE'
+                        ? '%'
+                        : formData.defaultSplitType === 'SHARES'
+                        ? 'sh'
+                        : '$'}
+                    </span>
+                  </div>
+                ))}
+                {formData.defaultSplitType === 'PERCENTAGE' && (
+                  <div className="pt-2 border-t border-gray-200">
+                    <p className="text-xs text-gray-600">
+                      Total: {getSplitConfigTotal()}%
+                      {getSplitConfigTotal() !== 100 && Object.keys(splitConfig).length > 0 && (
+                        <span className="text-red-600 ml-2">(must equal 100%)</span>
+                      )}
+                      {getSplitConfigTotal() === 100 && (
+                        <span className="text-green-600 ml-2">✓</span>
+                      )}
+                    </p>
+                  </div>
+                )}
+                {getAllMembersForSplit().length === 0 && (
+                  <p className="text-xs text-gray-500 text-center py-2">
+                    Add members above to configure their split values
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Buttons */}
           <div className="flex gap-3 pt-4 border-t">
-            <Button type="submit" className="flex-1">
-              {editingGroup ? 'Update Group' : 'Create Group'}
+            <Button type="submit" className="flex-1" disabled={isSubmitting}>
+              {isSubmitting
+                ? LoadingMessages.creating
+                : editingGroup
+                ? 'Update Group'
+                : formData.memberEmails.length > 0
+                ? `Create Group & Add ${formData.memberEmails.length} Member(s)`
+                : 'Create Group'}
             </Button>
             <Button
               type="button"
@@ -549,7 +900,10 @@ export default function GroupsPage() {
                 setIsModalOpen(false)
                 setEditingGroup(null)
                 setShowImagePicker(false)
+                setNewEmailInput('')
+                setEmailError('')
               }}
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
@@ -915,7 +1269,7 @@ export default function GroupsPage() {
 
               {loadingExpenses ? (
                 <div className="flex items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <LoadingSpinner size="lg" />
                 </div>
               ) : groupExpenses.length === 0 ? (
                 <div className="text-center py-12">
@@ -961,15 +1315,22 @@ export default function GroupsPage() {
                             </div>
                             <div className="flex items-center gap-2">
                               <PaymentStatusBadge isPaid={participant.isPaid || false} variant="compact" />
-                              <MarkAsPaidButton
-                                expenseId={expense.id}
-                                participantUserId={participant.userId}
-                                currentUserId={user?.id || ''}
-                                paidByUserId={expense.paidByUserId}
-                                isPaid={participant.isPaid || false}
-                                onSuccess={() => loadGroupExpenses(viewingGroup.id)}
-                                variant="icon"
-                              />
+                              {!participant.isPaid && participant.userId === user?.id && (
+                                <button
+                                  onClick={() => {
+                                    setSelectedExpenseForPayment({
+                                      expenseId: expense.id,
+                                      participantUserId: participant.userId,
+                                      description: expense.description,
+                                      amount: Number(participant.amountOwed),
+                                    })
+                                    setIsMarkPaidModalOpen(true)
+                                  }}
+                                  className="text-xs px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+                                >
+                                  {expense.paidByUserId === participant.userId ? 'Me pagaron' : 'Pagué'}
+                                </button>
+                              )}
                             </div>
                           </div>
                         ))}
@@ -1010,6 +1371,26 @@ export default function GroupsPage() {
             </div>
           </div>
         </Modal>
+      )}
+
+      {/* Mark Expense as Paid Modal */}
+      {selectedExpenseForPayment && (
+        <MarkExpensePaidModal
+          isOpen={isMarkPaidModalOpen}
+          onClose={() => {
+            setIsMarkPaidModalOpen(false)
+            setSelectedExpenseForPayment(null)
+          }}
+          expenseId={selectedExpenseForPayment.expenseId}
+          participantUserId={selectedExpenseForPayment.participantUserId}
+          expenseDescription={selectedExpenseForPayment.description}
+          amount={selectedExpenseForPayment.amount}
+          onSuccess={() => {
+            if (viewingGroup) {
+              loadGroupExpenses(viewingGroup.id)
+            }
+          }}
+        />
       )}
     </div>
   )

@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { Tag } from '@/types'
-import { tagAPI } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import { useTags, useCreateTag } from '@/hooks/useTags'
 
 interface TagSelectorProps {
   value: string[]
@@ -30,28 +30,11 @@ export default function TagSelector({
   error,
   label = 'Tags',
 }: TagSelectorProps) {
-  const [tags, setTags] = useState<Tag[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: tags = [], isLoading } = useTags()
+  const createTagMutation = useCreateTag()
   const [isExpanded, setIsExpanded] = useState(false)
   const [newTagInput, setNewTagInput] = useState('')
-  const [isCreatingTag, setIsCreatingTag] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    loadTags()
-  }, [])
-
-  const loadTags = async () => {
-    try {
-      setIsLoading(true)
-      const response = await tagAPI.getAll()
-      setTags(response.data.data)
-    } catch (error) {
-      console.error('Failed to load tags:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const handleToggleTag = (tagId: string) => {
     if (value.includes(tagId)) {
@@ -65,17 +48,12 @@ export default function TagSelector({
     if (!newTagInput.trim()) return
 
     try {
-      setIsCreatingTag(true)
-      const response = await tagAPI.create({ name: newTagInput.trim() })
-      const newTag = response.data.data
-      setTags([...tags, newTag])
+      const newTag = await createTagMutation.mutateAsync({ name: newTagInput.trim() })
       onChange([...value, newTag.id])
       setNewTagInput('')
       toast.success('Tag created successfully')
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to create tag')
-    } finally {
-      setIsCreatingTag(false)
     }
   }
 
@@ -206,10 +184,10 @@ export default function TagSelector({
               <button
                 type="button"
                 onClick={handleCreateTag}
-                disabled={isCreatingTag}
+                disabled={createTagMutation.isPending}
                 className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isCreatingTag ? 'Creating...' : 'Create'}
+                {createTagMutation.isPending ? 'Creating...' : 'Create'}
               </button>
             )}
           </div>

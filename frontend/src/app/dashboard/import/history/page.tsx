@@ -9,6 +9,7 @@ import { ArrowLeft, FileText, CheckCircle2, XCircle, Calendar, Upload, Loader2 }
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ImportHistory as ImportHistoryType, ImportHistoryStatus } from '@/types'
+import { LoadingSpinner, LoadingMessages } from '@/components/ui/Loading'
 
 type ImportHistory = ImportHistoryType
 
@@ -68,8 +69,8 @@ export default function ImportHistoryPage() {
       case 'PROCESSING':
         return (
           <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            Processing...
+            <LoadingSpinner size="sm" className="text-blue-800" />
+            {LoadingMessages.processing}
           </span>
         )
       case 'COMPLETED':
@@ -103,7 +104,10 @@ export default function ImportHistoryPage() {
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Import History</h1>
-            <p className="text-sm text-gray-600 mt-1">Loading...</p>
+            <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
+              <LoadingSpinner size="sm" />
+              {LoadingMessages.imports}
+            </p>
           </div>
         </div>
       </div>
