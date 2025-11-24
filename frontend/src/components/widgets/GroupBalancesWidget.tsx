@@ -10,7 +10,7 @@ interface GroupBalance {
   groupId: string
   groupName: string
   groupCoverImage?: string | null
-  userBalance: number
+  userBalance?: number
   totalOwed: number
   members: Array<{
     userId: string
@@ -94,7 +94,7 @@ export const GroupBalancesWidget = () => {
           {groupedData.length > 0 ? (
             groupedData.map((group) => {
               const isExpanded = expandedGroups.has(group.groupId)
-              const isPositive = group.userBalance > 0 // Positive = others owe you
+              const isPositive = (group.userBalance ?? 0) > 0 // Positive = others owe you
               const balanceColor = isPositive ? 'text-green-600' : 'text-red-600'
 
               return (
@@ -130,7 +130,7 @@ export const GroupBalancesWidget = () => {
 
                     {/* User's Balance in this Group */}
                     <span className={`font-semibold text-sm ${balanceColor} flex-shrink-0 ml-2`}>
-                      {formatCurrency(Math.abs(group.userBalance), 'CLP')}
+                      {formatCurrency(Math.abs(group.userBalance ?? 0), 'CLP')}
                     </span>
                   </button>
 

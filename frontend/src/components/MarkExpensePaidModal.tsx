@@ -111,7 +111,7 @@ export function MarkExpensePaidModal({
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm text-blue-900">
             Vas a marcar como pagado el gasto{' '}
-            <span className="font-semibold">"{expenseDescription}"</span> por{' '}
+            <span className="font-semibold">&quot;{expenseDescription}&quot;</span> por{' '}
             <span className="font-semibold">${amount.toFixed(0)}</span>.
           </p>
         </div>

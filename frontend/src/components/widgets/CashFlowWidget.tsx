@@ -9,7 +9,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 interface CashFlowData {
   month: string
-  year: string
+  year?: string
   income: number
   expense: number
 }
