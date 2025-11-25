@@ -21,6 +21,13 @@ import type {
   CreateSharedExpenseForm,
   CreatePaymentForm,
   CreateTagForm,
+  Loan,
+  LoanPayment,
+  LoansSummary,
+  LoansByBorrower,
+  LoanStatus,
+  CreateLoanForm,
+  RecordLoanPaymentForm,
 } from '@/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
@@ -606,6 +613,33 @@ export const dashboardPreferenceAPI = {
 
   resetToDefaults: () =>
     api.delete<ApiResponse<any>>('/users/dashboard-preferences/reset'),
+}
+
+// Loan API
+export const loanAPI = {
+  create: (data: CreateLoanForm) =>
+    api.post<ApiResponse<Loan>>('/loans', data),
+
+  getAll: (params?: { status?: LoanStatus; borrowerName?: string }) =>
+    api.get<ApiResponse<Loan[]>>('/loans', { params }),
+
+  getById: (id: string) =>
+    api.get<ApiResponse<Loan>>(`/loans/${id}`),
+
+  recordPayment: (id: string, data: RecordLoanPaymentForm) =>
+    api.post<ApiResponse<LoanPayment>>(`/loans/${id}/payments`, data),
+
+  cancel: (id: string) =>
+    api.patch<ApiResponse<Loan>>(`/loans/${id}/cancel`),
+
+  getSummary: () =>
+    api.get<ApiResponse<LoansSummary>>('/loans/summary'),
+
+  getByBorrower: () =>
+    api.get<ApiResponse<LoansByBorrower[]>>('/loans/by-borrower'),
+
+  delete: (id: string) =>
+    api.delete<ApiResponse<{ message: string }>>(`/loans/${id}`),
 }
 
 export default api

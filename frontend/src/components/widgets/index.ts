@@ -6,6 +6,7 @@ export { PersonalExpensesWidget } from './PersonalExpensesWidget'
 export { SharedExpensesWidget } from './SharedExpensesWidget'
 export { SavingsWidget } from './SavingsWidget'
 export { GroupsWidget } from './GroupsWidget'
+export { LoansWidget } from './LoansWidget'
 
 // Action widgets
 export { QuickActionsWidget } from './QuickActionsWidget'

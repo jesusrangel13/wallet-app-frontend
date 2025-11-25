@@ -442,3 +442,82 @@ export interface CreatePaymentForm {
   amount: number
   groupId?: string
 }
+
+// Loan types
+export type LoanStatus = 'ACTIVE' | 'PAID' | 'CANCELLED'
+
+export interface LoanPayment {
+  id: string
+  loanId: string
+  amount: number
+  paymentDate: string
+  transactionId?: string
+  transaction?: Transaction
+  notes?: string
+  createdAt: string
+}
+
+export interface Loan {
+  id: string
+  userId: string
+  borrowerName: string
+  borrowerUserId?: string
+  originalAmount: number
+  paidAmount: number
+  currency: string
+  loanDate: string
+  notes?: string
+  status: LoanStatus
+  createdAt: string
+  updatedAt: string
+  user?: {
+    name: string
+    email: string
+  }
+  borrowerUser?: {
+    name: string
+    email: string
+  }
+  loanTransaction?: Transaction
+  payments: LoanPayment[]
+}
+
+export interface LoansSummary {
+  totalLoans: number
+  activeLoans: number
+  totalLent: number
+  totalRecovered: number
+  totalPending: number
+  currency: string
+}
+
+export interface LoansByBorrower {
+  borrowerName: string
+  borrowerUserId?: string
+  borrowerUser?: {
+    id: string
+    name: string
+    email: string
+  }
+  totalLoans: number
+  totalLent: number
+  totalPaid: number
+  totalPending: number
+  loans: Loan[]
+}
+
+export interface CreateLoanForm {
+  borrowerName: string
+  borrowerUserId?: string
+  amount: number
+  accountId: string
+  loanDate?: string
+  notes?: string
+}
+
+export interface RecordLoanPaymentForm {
+  amount: number
+  accountId: string
+  paymentDate?: string
+  notes?: string
+}
