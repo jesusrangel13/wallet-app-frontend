@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { LoadingPage } from '@/components/ui/Loading'
 import RecordLoanPaymentModal from '@/components/RecordLoanPaymentModal'
-import { formatCurrency } from '@/types/currency'
+import { formatCurrency, type Currency } from '@/types/currency'
 import { ArrowLeft, HandCoins, Calendar, DollarSign, User, FileText } from 'lucide-react'
 
 export default function LoanDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -166,7 +166,7 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-gray-900">
-              {formatCurrency(loan.originalAmount, loan.currency)}
+              {formatCurrency(loan.originalAmount, loan.currency as Currency)}
             </div>
           </CardContent>
         </Card>
@@ -180,7 +180,7 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {formatCurrency(loan.paidAmount, loan.currency)}
+              {formatCurrency(loan.paidAmount, loan.currency as Currency)}
             </div>
           </CardContent>
         </Card>
@@ -194,7 +194,7 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">
-              {formatCurrency(pendingAmount, loan.currency)}
+              {formatCurrency(pendingAmount, loan.currency as Currency)}
             </div>
           </CardContent>
         </Card>
@@ -307,7 +307,7 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
                     )}
                   </div>
                   <div className="text-lg font-bold text-green-600">
-                    {formatCurrency(payment.amount, loan.currency)}
+                    {formatCurrency(payment.amount, loan.currency as Currency)}
                   </div>
                 </div>
               ))}

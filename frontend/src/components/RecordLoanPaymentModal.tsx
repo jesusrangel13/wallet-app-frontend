@@ -8,7 +8,7 @@ import { Account, Loan } from '@/types'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { formatCurrency } from '@/types/currency'
+import { formatCurrency, type Currency } from '@/types/currency'
 
 const paymentSchema = z.object({
   amount: z.coerce.number().positive('Amount must be positive'),
@@ -143,15 +143,15 @@ export default function RecordLoanPaymentModal({
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Monto original:</span>
-            <span className="font-medium">{formatCurrency(loan.originalAmount, loan.currency)}</span>
+            <span className="font-medium">{formatCurrency(loan.originalAmount, loan.currency as Currency)}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Ya pagado:</span>
-            <span className="font-medium text-green-600">{formatCurrency(loan.paidAmount, loan.currency)}</span>
+            <span className="font-medium text-green-600">{formatCurrency(loan.paidAmount, loan.currency as Currency)}</span>
           </div>
           <div className="flex justify-between text-sm pt-2 border-t border-gray-300">
             <span className="text-gray-900 font-semibold">Pendiente:</span>
-            <span className="font-bold text-orange-600">{formatCurrency(pendingAmount, loan.currency)}</span>
+            <span className="font-bold text-orange-600">{formatCurrency(pendingAmount, loan.currency as Currency)}</span>
           </div>
         </div>
 
@@ -192,7 +192,7 @@ export default function RecordLoanPaymentModal({
               onClick={setFullAmount}
               className="text-xs text-blue-600 hover:text-blue-700 underline"
             >
-              Pagar todo ({formatCurrency(pendingAmount, loan.currency)})
+              Pagar todo ({formatCurrency(pendingAmount, loan.currency as Currency)})
             </button>
           </div>
           <Input
@@ -210,7 +210,7 @@ export default function RecordLoanPaymentModal({
           )}
           {selectedAmount > pendingAmount && (
             <p className="text-red-500 text-xs mt-1">
-              El monto no puede exceder el pendiente de {formatCurrency(pendingAmount, loan.currency)}
+              El monto no puede exceder el pendiente de {formatCurrency(pendingAmount, loan.currency as Currency)}
             </p>
           )}
         </div>

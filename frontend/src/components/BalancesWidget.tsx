@@ -35,7 +35,7 @@ interface UserBalances {
     othersOweMe: number;
     iOweOthers: number;
     netBalance: number;
-    totalSharedExpenses: number;
+    totalSharedExpenses?: number;
     peopleWhoOweMe: PersonBalance[];
     peopleIOweTo: PersonBalance[];
   }>;
