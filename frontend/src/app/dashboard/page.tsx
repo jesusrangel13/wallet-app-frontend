@@ -129,7 +129,11 @@ export default function DashboardPage() {
               }}
             >
               <WidgetWrapper widgetId={widget.id}>
-                <WidgetComponent settings={widget.settings} />
+                <WidgetComponent
+                  settings={widget.settings}
+                  gridWidth={layoutItem.w}
+                  gridHeight={layoutItem.h}
+                />
               </WidgetWrapper>
             </div>
           )

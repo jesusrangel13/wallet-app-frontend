@@ -5,8 +5,16 @@ import { ShoppingCart } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
 import { dashboardAPI } from '@/lib/api'
+import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 
-export const PersonalExpensesWidget = () => {
+interface PersonalExpensesWidgetProps {
+  gridWidth?: number
+  gridHeight?: number
+}
+
+export const PersonalExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: PersonalExpensesWidgetProps) => {
+  const dimensions = useWidgetDimensions(gridWidth, gridHeight)
+  const fontSizes = getResponsiveFontSizes(dimensions)
   const [expense, setExpense] = useState(0)
   const [loading, setLoading] = useState(true)
 
@@ -45,16 +53,16 @@ export const PersonalExpensesWidget = () => {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-          <ShoppingCart className="h-4 w-4 text-amber-600" />
+        <CardTitle className={`${dimensions.isWide ? 'text-base' : 'text-sm'} font-medium text-gray-600 flex items-center gap-2`}>
+          <ShoppingCart className={`${dimensions.isWide ? 'h-5 w-5' : 'h-4 w-4'} text-amber-600`} />
           Gastos Personales
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-amber-600">
+        <div className={`${fontSizes.value} font-bold text-amber-600`}>
           {formatCurrency(expense, 'CLP')}
         </div>
-        <p className="text-xs text-gray-500 mt-1">Este mes</p>
+        <p className={`${fontSizes.label} text-gray-500 mt-1`}>Este mes</p>
       </CardContent>
     </Card>
   )

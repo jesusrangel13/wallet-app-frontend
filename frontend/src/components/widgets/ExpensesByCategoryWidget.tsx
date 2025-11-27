@@ -6,6 +6,7 @@ import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
 import { dashboardAPI } from '@/lib/api'
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 
 interface CategoryData {
   category: string
@@ -14,7 +15,13 @@ interface CategoryData {
   color: string
 }
 
-export const ExpensesByCategoryWidget = () => {
+interface ExpensesByCategoryWidgetProps {
+  gridWidth?: number
+  gridHeight?: number
+}
+
+export const ExpensesByCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesByCategoryWidgetProps) => {
+  const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const [data, setData] = useState<CategoryData[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -55,6 +62,13 @@ export const ExpensesByCategoryWidget = () => {
     )
   }
 
+  // Calculate responsive sizes
+  // For height 2, we have ~188px content height, which gives ~148px chart height
+  // Use a more generous radius to better fill the space
+  const chartHeight = calculateChartHeight(dimensions.contentHeight)
+  const outerRadius = dimensions.isSmall ? 70 : dimensions.isLarge ? 100 : 80
+  const labelFontSize = dimensions.isSmall ? 10 : 12
+
   return (
     <Card>
       <CardHeader>
@@ -65,17 +79,18 @@ export const ExpensesByCategoryWidget = () => {
       </CardHeader>
       <CardContent>
         {data.length > 0 ? (
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
+          <ResponsiveContainer width="100%" height={chartHeight}>
+            <PieChart margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
               <Pie
                 data={data}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ category, percentage }) => `${category} ${percentage.toFixed(0)}%`}
-                outerRadius={80}
+                label={dimensions.isSmall ? false : ({ category, percentage }) => `${category} ${percentage.toFixed(0)}%`}
+                outerRadius={outerRadius}
                 fill="#8884d8"
                 dataKey="amount"
+                style={{ fontSize: labelFontSize }}
               >
                 {data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
@@ -85,7 +100,7 @@ export const ExpensesByCategoryWidget = () => {
             </PieChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex items-center justify-center h-[300px] text-gray-500">
+          <div className={`flex items-center justify-center text-gray-500`} style={{ height: chartHeight }}>
             No expenses this month
           </div>
         )}

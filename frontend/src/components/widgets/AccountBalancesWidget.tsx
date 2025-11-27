@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 import { dashboardAPI } from '@/lib/api'
 import { Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
 
 interface AccountBalance {
   id: string
@@ -16,7 +17,13 @@ interface AccountBalance {
   color: string
 }
 
-export const AccountBalancesWidget = () => {
+interface AccountBalancesWidgetProps {
+  gridWidth?: number
+  gridHeight?: number
+}
+
+export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: AccountBalancesWidgetProps) => {
+  const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const [accounts, setAccounts] = useState<AccountBalance[]>([])
   const [loading, setLoading] = useState(true)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
