@@ -35,6 +35,7 @@ interface UserBalances {
     othersOweMe: number;
     iOweOthers: number;
     netBalance: number;
+    totalSharedExpenses: number;
     peopleWhoOweMe: PersonBalance[];
     peopleIOweTo: PersonBalance[];
   }>;
@@ -134,24 +135,6 @@ export const BalancesWidget = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Summary - 3 columns without extra card */}
-        <div className="grid grid-cols-3 divide-x divide-gray-200 -mx-6 px-6 py-4 bg-gray-50/50">
-          <div className="pr-4">
-            <p className="text-xs text-gray-500 mb-1">Me deben</p>
-            <p className="text-xl font-bold text-green-600">{formatCurrency(balances.totalOthersOweMe, 'CLP')}</p>
-          </div>
-          <div className="px-4">
-            <p className="text-xs text-gray-500 mb-1">Debo</p>
-            <p className="text-xl font-bold text-red-600">{formatCurrency(balances.totalIOweOthers, 'CLP')}</p>
-          </div>
-          <div className="pl-4">
-            <p className="text-xs text-gray-500 mb-1">Balance</p>
-            <p className={`text-xl font-bold ${balances.netBalance >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>
-              {formatCurrency(balances.netBalance, 'CLP')}
-            </p>
-          </div>
-        </div>
-
         {/* Group details section */}
         <div>
           {balances.groupBalances.length === 0 ? (
@@ -173,40 +156,49 @@ export const BalancesWidget = () => {
                     {/* Group header - clickable accordion trigger */}
                     <button
                       onClick={() => toggleGroup(groupBalance.group.id)}
-                      className="w-full flex items-center justify-between mb-3 p-3 bg-gray-50/50 rounded-lg hover:bg-gray-100/50 transition-colors"
+                      className="w-full mb-3 p-3 bg-gray-50/50 rounded-lg hover:bg-gray-100/50 transition-colors"
                     >
-                      <div className="flex items-center gap-3 flex-1">
-                        <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
-                          {groupBalance.group.name.charAt(0)}
-                        </div>
-                        <div className="flex items-center gap-4 flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-3 flex-1">
+                          <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
+                            {groupBalance.group.name.charAt(0)}
+                          </div>
                           <h3 className="text-sm font-semibold text-gray-900">{groupBalance.group.name}</h3>
-                          {hasPeopleWhoOweMe && (
-                            <span className="text-xs text-green-600 font-medium">
-                              Te deben: {formatCurrency(groupBalance.othersOweMe, 'CLP')}
-                            </span>
-                          )}
-                          {hasPeopleIOweTo && (
-                            <span className="text-xs text-red-600 font-medium">
-                              Debes: {formatCurrency(groupBalance.iOweOthers, 'CLP')}
-                            </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Link
+                            href={`/dashboard/groups/${groupBalance.group.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium"
+                          >
+                            <Eye className="w-3 h-3" />
+                            Ver
+                          </Link>
+                          {expandedGroups.has(groupBalance.group.id) ? (
+                            <ChevronUp className="w-4 h-4 text-gray-500" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4 text-gray-500" />
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Link
-                          href={`/dashboard/groups/${groupBalance.group.id}`}
-                          onClick={(e) => e.stopPropagation()}
-                          className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium"
-                        >
-                          <Eye className="w-3 h-3" />
-                          Ver
-                        </Link>
-                        {expandedGroups.has(groupBalance.group.id) ? (
-                          <ChevronUp className="w-4 h-4 text-gray-500" />
-                        ) : (
-                          <ChevronDown className="w-4 h-4 text-gray-500" />
+                      <div className="flex items-center justify-between text-xs gap-4 flex-wrap">
+                        {hasPeopleWhoOweMe && (
+                          <span className="text-green-600 font-medium">
+                            Te deben: {formatCurrency(groupBalance.othersOweMe, 'CLP')}
+                          </span>
                         )}
+                        {hasPeopleWhoOweMe && hasPeopleIOweTo && (
+                          <span className="text-gray-400">|</span>
+                        )}
+                        {hasPeopleIOweTo && (
+                          <span className="text-red-600 font-medium">
+                            Debes: {formatCurrency(groupBalance.iOweOthers, 'CLP')}
+                          </span>
+                        )}
+                        <span className="text-gray-400">|</span>
+                        <span className="text-blue-600 font-medium">
+                          Total gastos: {formatCurrency(groupBalance.totalSharedExpenses || 0, 'CLP')}
+                        </span>
                       </div>
                     </button>
 
