@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { LoadingPage } from '@/components/ui/Loading'
 import CreateLoanModal from '@/components/CreateLoanModal'
-import { formatCurrency } from '@/types/currency'
+import { formatCurrency, type Currency } from '@/types/currency'
 import { HandCoins, Plus, Filter } from 'lucide-react'
 
 export default function LoansPage() {
@@ -129,7 +129,7 @@ export default function LoansPage() {
           <CardContent className="pt-6">
             <div className="text-sm text-gray-600 mb-1">Total Prestado</div>
             <div className="text-2xl font-bold text-gray-900">
-              {formatCurrency(stats.totalLent, loans[0]?.currency || 'CLP')}
+              {formatCurrency(stats.totalLent, (loans[0]?.currency as Currency) || 'CLP')}
             </div>
           </CardContent>
         </Card>
@@ -137,7 +137,7 @@ export default function LoansPage() {
           <CardContent className="pt-6">
             <div className="text-sm text-gray-600 mb-1">Pendiente</div>
             <div className="text-2xl font-bold text-orange-600">
-              {formatCurrency(stats.totalPending, loans[0]?.currency || 'CLP')}
+              {formatCurrency(stats.totalPending, (loans[0]?.currency as Currency) || 'CLP')}
             </div>
           </CardContent>
         </Card>
@@ -145,7 +145,7 @@ export default function LoansPage() {
           <CardContent className="pt-6">
             <div className="text-sm text-gray-600 mb-1">Recuperado</div>
             <div className="text-2xl font-bold text-green-600">
-              {formatCurrency(stats.totalRecovered, loans[0]?.currency || 'CLP')}
+              {formatCurrency(stats.totalRecovered, (loans[0]?.currency as Currency) || 'CLP')}
             </div>
           </CardContent>
         </Card>
@@ -289,19 +289,19 @@ export default function LoansPage() {
                         <div>
                           <div className="text-xs text-gray-500">Original</div>
                           <div className="text-sm font-medium">
-                            {formatCurrency(loan.originalAmount, loan.currency)}
+                            {formatCurrency(loan.originalAmount, loan.currency as Currency)}
                           </div>
                         </div>
                         <div>
                           <div className="text-xs text-gray-500">Pagado</div>
                           <div className="text-sm font-medium text-green-600">
-                            {formatCurrency(loan.paidAmount, loan.currency)}
+                            {formatCurrency(loan.paidAmount, loan.currency as Currency)}
                           </div>
                         </div>
                         <div>
                           <div className="text-xs text-gray-500">Pendiente</div>
                           <div className="text-sm font-bold text-orange-600">
-                            {formatCurrency(pendingAmount, loan.currency)}
+                            {formatCurrency(pendingAmount, loan.currency as Currency)}
                           </div>
                         </div>
                       </div>

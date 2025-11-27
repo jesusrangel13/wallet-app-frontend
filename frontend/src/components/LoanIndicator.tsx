@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { formatCurrency } from '@/types/currency'
+import { formatCurrency, type Currency } from '@/types/currency'
 import { Loan } from '@/types'
 
 interface LoanIndicatorProps {
@@ -81,15 +81,15 @@ export function LoanIndicator({
       <div className="space-y-1 text-sm">
         <div className="flex justify-between">
           <span className="text-gray-600">Monto original:</span>
-          <span className="font-medium">{formatCurrency(loan.originalAmount, loan.currency)}</span>
+          <span className="font-medium">{formatCurrency(loan.originalAmount, loan.currency as Currency)}</span>
         </div>
         <div className="flex justify-between">
           <span className="text-gray-600">Ya pagado:</span>
-          <span className="font-medium text-green-600">{formatCurrency(loan.paidAmount, loan.currency)}</span>
+          <span className="font-medium text-green-600">{formatCurrency(loan.paidAmount, loan.currency as Currency)}</span>
         </div>
         <div className="flex justify-between pt-1 border-t border-orange-200">
           <span className="text-gray-900 font-semibold">Pendiente:</span>
-          <span className="font-bold text-orange-700">{formatCurrency(pendingAmount, loan.currency)}</span>
+          <span className="font-bold text-orange-700">{formatCurrency(pendingAmount, loan.currency as Currency)}</span>
         </div>
       </div>
 
@@ -132,7 +132,7 @@ export function LoanIndicator({
                   {new Date(payment.paymentDate).toLocaleDateString('es-ES')}
                 </span>
                 <span className="font-medium text-green-600">
-                  {formatCurrency(payment.amount, loan.currency)}
+                  {formatCurrency(payment.amount, loan.currency as Currency)}
                 </span>
               </div>
             ))}

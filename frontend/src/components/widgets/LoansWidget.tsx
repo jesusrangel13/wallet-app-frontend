@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { HandCoins } from 'lucide-react'
 import { loanAPI } from '@/lib/api'
 import { LoansSummary } from '@/types'
-import { formatCurrency } from '@/types/currency'
+import { formatCurrency, type Currency } from '@/types/currency'
 
 export const LoansWidget = () => {
   const [summary, setSummary] = useState<LoansSummary | null>(null)
@@ -91,7 +91,7 @@ export const LoansWidget = () => {
             {/* Pending Amount - Main Highlight */}
             <div>
               <div className="text-2xl font-bold text-orange-600">
-                {formatCurrency(summary.totalPending, summary.currency)}
+                {formatCurrency(summary.totalPending, summary.currency as Currency)}
               </div>
               <p className="text-xs text-gray-500">Pendiente de cobrar</p>
             </div>
@@ -106,7 +106,7 @@ export const LoansWidget = () => {
               </div>
               <div>
                 <div className="text-sm font-semibold text-gray-900">
-                  {formatCurrency(summary.totalLent, summary.currency)}
+                  {formatCurrency(summary.totalLent, summary.currency as Currency)}
                 </div>
                 <p className="text-xs text-gray-500">Total prestado</p>
               </div>
@@ -117,7 +117,7 @@ export const LoansWidget = () => {
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-600">Recuperado:</span>
                 <span className="font-medium text-green-600">
-                  {formatCurrency(summary.totalRecovered, summary.currency)}
+                  {formatCurrency(summary.totalRecovered, summary.currency as Currency)}
                 </span>
               </div>
             </div>
