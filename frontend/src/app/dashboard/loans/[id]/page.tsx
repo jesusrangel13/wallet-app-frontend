@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Loan, Account } from '@/types'
@@ -12,7 +12,8 @@ import RecordLoanPaymentModal from '@/components/RecordLoanPaymentModal'
 import { formatCurrency } from '@/types/currency'
 import { ArrowLeft, HandCoins, Calendar, DollarSign, User, FileText } from 'lucide-react'
 
-export default function LoanDetailPage({ params }: { params: { id: string } }) {
+export default function LoanDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const router = useRouter()
   const [loan, setLoan] = useState<Loan | null>(null)
   const [accounts, setAccounts] = useState<Account[]>([])
@@ -21,13 +22,13 @@ export default function LoanDetailPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     loadData()
-  }, [params.id])
+  }, [id])
 
   const loadData = async () => {
     try {
       setIsLoading(true)
       const [loanResponse, accountsResponse] = await Promise.all([
-        loanAPI.getById(params.id),
+        loanAPI.getById(id),
         accountAPI.getAll(),
       ])
       setLoan(loanResponse.data.data)
