@@ -215,7 +215,7 @@ export const WIDGET_REGISTRY: Record<WidgetType, WidgetDefinition> = {
     category: 'details',
     icon: 'CreditCard',
     defaultWidth: 2,
-    defaultHeight: 2,
+    defaultHeight: 1,
     minWidth: 2,
     minHeight: 1,
     resizable: true,

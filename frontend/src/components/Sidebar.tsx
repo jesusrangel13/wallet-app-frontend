@@ -3,7 +3,7 @@
 import { useSidebarStore } from '@/store/sidebarStore'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { useRouter, usePathname } from 'next/navigation'
-import { Menu, X, Home, CreditCard, TrendingUp, Users, Upload, Settings } from 'lucide-react'
+import { Menu, X, Home, CreditCard, TrendingUp, Users, Upload, Settings, HandCoins } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 interface NavItem {
@@ -17,6 +17,7 @@ const navItems: NavItem[] = [
   { label: 'Dashboard', icon: <Home className="w-6 h-6" />, href: '/dashboard', description: 'View your financial overview' },
   { label: 'Accounts', icon: <CreditCard className="w-6 h-6" />, href: '/dashboard/accounts', description: 'Manage your accounts' },
   { label: 'Transactions', icon: <TrendingUp className="w-6 h-6" />, href: '/dashboard/transactions', description: 'View transactions' },
+  { label: 'Loans', icon: <HandCoins className="w-6 h-6" />, href: '/dashboard/loans', description: 'Track loans' },
   { label: 'Groups', icon: <Users className="w-6 h-6" />, href: '/dashboard/groups', description: 'Manage shared expenses' },
   { label: 'Import', icon: <Upload className="w-6 h-6" />, href: '/dashboard/import', description: 'Import transactions' },
   { label: 'Settings', icon: <Settings className="w-6 h-6" />, href: '/dashboard/settings', description: 'Manage preferences' },

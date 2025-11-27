@@ -9,6 +9,7 @@ interface SharedExpenseIndicatorProps {
     payer?: string
     sharedExpense?: {
       id: string
+      paidByUserId?: string
       group?: {
         name: string
       }
@@ -42,8 +43,11 @@ export function SharedExpenseIndicator({
 
   const { sharedExpense, payee, payer } = transaction
   const participants = sharedExpense.participants || []
-  const paidCount = participants.filter(p => p.isPaid).length
-  const totalCount = participants.length
+
+  // Filter out the payer - they don't owe themselves
+  const debtors = participants.filter(p => p.userId !== sharedExpense.paidByUserId)
+  const paidCount = debtors.filter(p => p.isPaid).length
+  const totalCount = debtors.length
 
   // Determine who paid
   const payerName = payer || sharedExpense.paidBy?.name || 'Unknown'

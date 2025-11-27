@@ -39,21 +39,9 @@ export function DateGroupHeader({ date, totalIncome, totalExpense, currency }: D
         {displayDate}
       </h3>
       <div className="flex items-center gap-3 text-sm">
-        {totalExpense > 0 && (
-          <span className="text-red-600 font-medium">
-            -{formatCurrency(totalExpense, currency)}
-          </span>
-        )}
-        {totalIncome > 0 && (
-          <span className="text-green-600 font-medium">
-            +{formatCurrency(totalIncome, currency)}
-          </span>
-        )}
-        {totalIncome > 0 && totalExpense > 0 && (
-          <span className={`font-semibold ${netAmount >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-            {netAmount >= 0 ? '+' : ''}{formatCurrency(netAmount, currency)}
-          </span>
-        )}
+        <span className={`font-semibold ${netAmount >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+          {netAmount >= 0 ? '+' : ''}{formatCurrency(Math.abs(netAmount), currency)}
+        </span>
       </div>
     </div>
   )
