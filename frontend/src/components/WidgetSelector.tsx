@@ -31,7 +31,10 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
     // Don't show already added widgets (except for ones that can be multiple instances)
     const isAlreadyAdded = widgets.some((w) => w.type === widget.id)
 
-    return matchesSearch && matchesCategory && !isAlreadyAdded
+    // Hide account-balances widget as it's now fixed
+    const isFixed = widget.id === 'account-balances'
+
+    return matchesSearch && matchesCategory && !isAlreadyAdded && !isFixed
   })
 
   // Get unique categories
