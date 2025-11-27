@@ -30,6 +30,7 @@ import {
   RecentTransactionsWidget,
 } from '@/components/widgets'
 import { BalancesWidget } from '@/components/BalancesWidget'
+import { FixedAccountBalancesWidget } from '@/components/FixedAccountBalancesWidget'
 
 // Widget component map
 const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -91,9 +92,12 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Fixed Account Balances Widget - Always at top, full width */}
+      <FixedAccountBalancesWidget />
+
       {/* Dashboard Grid with Widgets */}
       <DashboardGrid>
-        {preferences.widgets.map((widget) => {
+        {preferences.widgets.filter((widget) => widget.type !== 'account-balances').map((widget) => {
           const WidgetComponent = WIDGET_COMPONENTS[widget.type]
           const layoutItem = preferences.layout.find((l) => l.i === widget.id)
 
