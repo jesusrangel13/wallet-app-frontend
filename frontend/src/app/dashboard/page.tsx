@@ -9,26 +9,24 @@ import { AddWidgetButton } from '@/components/AddWidgetButton'
 import { toast } from 'sonner'
 import { LoadingPage, LoadingMessages } from '@/components/ui/Loading'
 
-// Import all widgets
-import {
-  TotalBalanceWidget,
-  MonthlyIncomeWidget,
-  MonthlyExpensesWidget,
-  PersonalExpensesWidget,
-  SharedExpensesWidget,
-  SavingsWidget,
-  GroupsWidget,
-  LoansWidget,
-  QuickActionsWidget,
-  CashFlowWidget,
-  ExpensesByCategoryWidget,
-  ExpensesByParentCategoryWidget,
-  ExpenseDetailsPieWidget,
-  BalanceTrendWidget,
-  GroupBalancesWidget,
-  AccountBalancesWidget,
-  RecentTransactionsWidget,
-} from '@/components/widgets'
+// Import all widgets - using direct imports to avoid Next.js barrel export bundler issue
+import { TotalBalanceWidget } from '@/components/widgets/TotalBalanceWidget'
+import { MonthlyIncomeWidget } from '@/components/widgets/MonthlyIncomeWidget'
+import { MonthlyExpensesWidget } from '@/components/widgets/MonthlyExpensesWidget'
+import { PersonalExpensesWidget } from '@/components/widgets/PersonalExpensesWidget'
+import { SharedExpensesWidget } from '@/components/widgets/SharedExpensesWidget'
+import { SavingsWidget } from '@/components/widgets/SavingsWidget'
+import { GroupsWidget } from '@/components/widgets/GroupsWidget'
+import { LoansWidget } from '@/components/widgets/LoansWidget'
+import { QuickActionsWidget } from '@/components/widgets/QuickActionsWidget'
+import { CashFlowWidget } from '@/components/widgets/CashFlowWidget'
+import { ExpensesByCategoryWidget } from '@/components/widgets/ExpensesByCategoryWidget'
+import { ExpensesByParentCategoryWidget } from '@/components/widgets/ExpensesByParentCategoryWidget'
+import { ExpenseDetailsPieWidget } from '@/components/widgets/ExpenseDetailsPieWidget'
+import { BalanceTrendWidget } from '@/components/widgets/BalanceTrendWidget'
+import { GroupBalancesWidget } from '@/components/widgets/GroupBalancesWidget'
+import { AccountBalancesWidget } from '@/components/widgets/AccountBalancesWidget'
+import { RecentTransactionsWidget } from '@/components/widgets/RecentTransactionsWidget'
 import { BalancesWidget } from '@/components/BalancesWidget'
 import { FixedAccountBalancesWidget } from '@/components/FixedAccountBalancesWidget'
 
