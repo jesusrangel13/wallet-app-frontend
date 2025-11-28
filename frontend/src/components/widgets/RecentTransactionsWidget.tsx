@@ -6,6 +6,7 @@ import { formatCurrency, type Currency } from '@/types/currency'
 import { useState, useEffect } from 'react'
 import { transactionAPI } from '@/lib/api'
 import Link from 'next/link'
+import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
 
 interface RecentTransaction {
   id: string
@@ -32,15 +33,27 @@ interface RecentTransaction {
   }
 }
 
-export const RecentTransactionsWidget = () => {
+interface RecentTransactionsWidgetProps {
+  gridWidth?: number
+  gridHeight?: number
+}
+
+export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: RecentTransactionsWidgetProps) => {
+  const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const [transactions, setTransactions] = useState<RecentTransaction[]>([])
   const [loading, setLoading] = useState(true)
+
+  // Calculate how many items can fit based on widget height
+  // Each transaction item is approximately 72px tall
+  const maxItems = calculateMaxListItems(dimensions.contentHeight, 72)
+  // Fetch more transactions than we might need (up to 10)
+  const fetchCount = Math.min(Math.max(maxItems, 3), 10)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true)
-        const res = await transactionAPI.getRecent(3)
+        const res = await transactionAPI.getRecent(fetchCount)
         setTransactions(res.data.data || [])
       } catch (error) {
         console.error('Error fetching recent transactions:', error)
@@ -51,14 +64,14 @@ export const RecentTransactionsWidget = () => {
     }
 
     fetchData()
-  }, [])
+  }, [fetchCount])
 
   if (loading) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
             Recent Transactions
           </CardTitle>
         </CardHeader>
@@ -71,16 +84,16 @@ export const RecentTransactionsWidget = () => {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5" />
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+          <TrendingUp className="h-4 w-4" />
           Recent Transactions
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
           {transactions.length > 0 ? (
-            transactions.map((transaction) => (
+            transactions.slice(0, maxItems).map((transaction) => (
               <div
                 key={transaction.id}
                 className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"

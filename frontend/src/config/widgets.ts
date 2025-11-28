@@ -178,7 +178,7 @@ export const WIDGET_REGISTRY: Record<WidgetType, WidgetDefinition> = {
     defaultWidth: 2,
     defaultHeight: 2,
     minWidth: 2,
-    minHeight: 1,
+    minHeight: 2,
     resizable: true,
     draggable: true,
   },

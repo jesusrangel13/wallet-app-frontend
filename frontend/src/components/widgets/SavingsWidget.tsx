@@ -5,8 +5,16 @@ import { PiggyBank, TrendingUp, TrendingDown } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
 import { dashboardAPI } from '@/lib/api'
+import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 
-export const SavingsWidget = () => {
+interface SavingsWidgetProps {
+  gridWidth?: number
+  gridHeight?: number
+}
+
+export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetProps) => {
+  const dimensions = useWidgetDimensions(gridWidth, gridHeight)
+  const fontSizes = getResponsiveFontSizes(dimensions)
   const [savings, setSavings] = useState(0)
   const [savingsRate, setSavingsRate] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -37,7 +45,7 @@ export const SavingsWidget = () => {
   if (loading) {
     return (
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <PiggyBank className="h-4 w-4" />
             Ahorros
@@ -52,14 +60,14 @@ export const SavingsWidget = () => {
 
   return (
     <Card>
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
           <PiggyBank className={`h-4 w-4 ${colorClass}`} />
           Ahorros
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={`text-2xl font-bold ${colorClass}`}>
+        <div className={`${fontSizes.value} font-bold ${colorClass}`}>
           {formatCurrency(savings, 'CLP')}
         </div>
         <div className="flex items-center gap-1 mt-1">
@@ -67,7 +75,7 @@ export const SavingsWidget = () => {
             <TrendIcon className="h-3 w-3" />
             {savingsRate.toFixed(1)}%
           </div>
-          <p className="text-xs text-gray-500">de tasa de ahorro</p>
+          <p className={`${fontSizes.label} text-gray-500`}>de tasa de ahorro</p>
         </div>
       </CardContent>
     </Card>

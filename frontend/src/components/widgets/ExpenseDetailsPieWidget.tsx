@@ -6,6 +6,7 @@ import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
 import { dashboardAPI } from '@/lib/api'
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 
 interface CategoryData {
   category: string
@@ -14,7 +15,13 @@ interface CategoryData {
   color: string
 }
 
-export const ExpenseDetailsPieWidget = () => {
+interface ExpenseDetailsPieWidgetProps {
+  gridWidth?: number
+  gridHeight?: number
+}
+
+export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpenseDetailsPieWidgetProps) => {
+  const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const [data, setData] = useState<CategoryData[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -43,9 +50,9 @@ export const ExpenseDetailsPieWidget = () => {
   if (loading) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <PieChartIcon className="h-5 w-5" />
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <PieChartIcon className="h-4 w-4" />
             Detalle de Gastos
           </CardTitle>
         </CardHeader>
@@ -77,25 +84,31 @@ export const ExpenseDetailsPieWidget = () => {
     )
   }
 
+  // Calculate responsive sizes
+  const chartHeight = calculateChartHeight(dimensions.contentHeight)
+  const outerRadius = dimensions.isSmall ? 60 : dimensions.isLarge ? 120 : 100
+  const piePosition = dimensions.isSmall ? "50%" : "35%"
+  const showLegend = dimensions.width >= 500
+
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <PieChartIcon className="h-5 w-5" />
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+          <PieChartIcon className="h-4 w-4" />
           Detalle de Gastos
         </CardTitle>
         <p className="text-sm text-gray-500">Este mes</p>
       </CardHeader>
       <CardContent>
         {data.length > 0 ? (
-          <ResponsiveContainer width="100%" height={350}>
+          <ResponsiveContainer width="100%" height={chartHeight}>
             <PieChart>
               <Pie
                 data={data}
-                cx="35%"
+                cx={piePosition}
                 cy="50%"
                 labelLine={false}
-                outerRadius={100}
+                outerRadius={outerRadius}
                 fill="#8884d8"
                 dataKey="amount"
                 nameKey="category"
@@ -113,21 +126,23 @@ export const ExpenseDetailsPieWidget = () => {
                   ]
                 }}
               />
-              <Legend
-                layout="vertical"
-                align="right"
-                verticalAlign="middle"
-                content={renderLegend}
-                wrapperStyle={{
-                  paddingLeft: '20px',
-                  maxHeight: '320px',
-                  overflowY: 'auto',
-                }}
-              />
+              {showLegend && (
+                <Legend
+                  layout="vertical"
+                  align="right"
+                  verticalAlign="middle"
+                  content={renderLegend}
+                  wrapperStyle={{
+                    paddingLeft: '20px',
+                    maxHeight: chartHeight - 30,
+                    overflowY: 'auto',
+                  }}
+                />
+              )}
             </PieChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex items-center justify-center h-[350px] text-gray-500">
+          <div className="flex items-center justify-center text-gray-500" style={{ height: chartHeight }}>
             No hay gastos este mes
           </div>
         )}

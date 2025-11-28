@@ -5,6 +5,7 @@ import { DollarSign, ChevronDown, ChevronRight } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
 import { dashboardAPI } from '@/lib/api'
+import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
 
 interface GroupBalance {
   groupId: string
@@ -20,7 +21,13 @@ interface GroupBalance {
   }>
 }
 
-export const GroupBalancesWidget = () => {
+interface GroupBalancesWidgetProps {
+  gridWidth?: number
+  gridHeight?: number
+}
+
+export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBalancesWidgetProps) => {
+  const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const [balances, setBalances] = useState<GroupBalance[]>([])
   const [loading, setLoading] = useState(true)
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
@@ -54,10 +61,10 @@ export const GroupBalancesWidget = () => {
   if (loading) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <DollarSign className="h-5 w-5" />
-            Group Balances
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <DollarSign className="h-4 w-4" />
+            Mis Balances
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -66,6 +73,10 @@ export const GroupBalancesWidget = () => {
       </Card>
     )
   }
+
+  // Calculate how many groups can fit based on widget height
+  // Each group item is approximately 60px tall (collapsed)
+  const maxItems = calculateMaxListItems(dimensions.contentHeight, 60)
 
   // Group and aggregate data - filter groups with non-zero user balance
   const groupedData = balances
@@ -83,16 +94,16 @@ export const GroupBalancesWidget = () => {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <DollarSign className="h-5 w-5" />
-          Group Balances
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+          <DollarSign className="h-4 w-4" />
+          Mis Balances
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="space-y-2 p-4">
           {groupedData.length > 0 ? (
-            groupedData.map((group) => {
+            groupedData.slice(0, maxItems).map((group) => {
               const isExpanded = expandedGroups.has(group.groupId)
               const isPositive = (group.userBalance ?? 0) > 0 // Positive = others owe you
               const balanceColor = isPositive ? 'text-green-600' : 'text-red-600'

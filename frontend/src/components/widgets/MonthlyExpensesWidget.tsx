@@ -5,8 +5,16 @@ import { TrendingDown } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
 import { transactionAPI } from '@/lib/api'
+import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 
-export const MonthlyExpensesWidget = () => {
+interface MonthlyExpensesWidgetProps {
+  gridWidth?: number
+  gridHeight?: number
+}
+
+export const MonthlyExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: MonthlyExpensesWidgetProps) => {
+  const dimensions = useWidgetDimensions(gridWidth, gridHeight)
+  const fontSizes = getResponsiveFontSizes(dimensions)
   const [expense, setExpense] = useState(0)
   const [loading, setLoading] = useState(true)
 
@@ -32,7 +40,7 @@ export const MonthlyExpensesWidget = () => {
   if (loading) {
     return (
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <TrendingDown className="h-4 w-4 text-red-600" />
             Monthly Expenses
@@ -47,17 +55,17 @@ export const MonthlyExpensesWidget = () => {
 
   return (
     <Card>
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
           <TrendingDown className="h-4 w-4 text-red-600" />
           Monthly Expenses
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-red-600">
+        <div className={`${fontSizes.value} font-bold text-red-600`}>
           {formatCurrency(expense, 'CLP')}
         </div>
-        <p className="text-xs text-gray-500 mt-1">This month</p>
+        <p className={`${fontSizes.label} text-gray-500 mt-1`}>This month</p>
       </CardContent>
     </Card>
   )

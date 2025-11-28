@@ -5,8 +5,16 @@ import { Wallet } from 'lucide-react'
 import { formatCurrency, type Currency, CURRENCIES } from '@/types/currency'
 import { useState, useEffect } from 'react'
 import { accountAPI } from '@/lib/api'
+import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 
-export const TotalBalanceWidget = () => {
+interface TotalBalanceWidgetProps {
+  gridWidth?: number
+  gridHeight?: number
+}
+
+export const TotalBalanceWidget = ({ gridWidth = 1, gridHeight = 1 }: TotalBalanceWidgetProps) => {
+  const dimensions = useWidgetDimensions(gridWidth, gridHeight)
+  const fontSizes = getResponsiveFontSizes(dimensions)
   const [totalBalance, setTotalBalance] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
 
@@ -29,9 +37,9 @@ export const TotalBalanceWidget = () => {
   if (loading) {
     return (
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <Wallet className="h-4 w-4 text-gray-600" />
+            <Wallet className="h-4 w-4" />
             Total Balance
           </CardTitle>
         </CardHeader>
@@ -44,9 +52,9 @@ export const TotalBalanceWidget = () => {
 
   return (
     <Card>
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-          <Wallet className="h-4 w-4 text-gray-600" />
+          <Wallet className="h-4 w-4" />
           Total Balance
         </CardTitle>
       </CardHeader>
@@ -56,15 +64,15 @@ export const TotalBalanceWidget = () => {
             const currencyCode = currency as Currency
             return (
               <div key={currency}>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className={`${fontSizes.value} font-bold text-gray-900`}>
                   {formatCurrency(amount, currencyCode)}
                 </div>
-                <p className="text-xs text-gray-500">{CURRENCIES[currencyCode]?.name || currency}</p>
+                <p className={`${fontSizes.label} text-gray-500`}>{CURRENCIES[currencyCode]?.name || currency}</p>
               </div>
             )
           })}
           {Object.keys(totalBalance).length === 0 && (
-            <div className="text-2xl font-bold text-gray-900">{formatCurrency(0, 'CLP')}</div>
+            <div className={`${fontSizes.value} font-bold text-gray-900`}>{formatCurrency(0, 'CLP')}</div>
           )}
         </div>
       </CardContent>

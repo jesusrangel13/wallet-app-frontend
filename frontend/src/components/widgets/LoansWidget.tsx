@@ -7,8 +7,16 @@ import { HandCoins } from 'lucide-react'
 import { loanAPI } from '@/lib/api'
 import { LoansSummary } from '@/types'
 import { formatCurrency, type Currency } from '@/types/currency'
+import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 
-export const LoansWidget = () => {
+interface LoansWidgetProps {
+  gridWidth?: number
+  gridHeight?: number
+}
+
+export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps) => {
+  const dimensions = useWidgetDimensions(gridWidth, gridHeight)
+  const fontSizes = getResponsiveFontSizes(dimensions)
   const [summary, setSummary] = useState<LoansSummary | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -34,7 +42,7 @@ export const LoansWidget = () => {
   if (loading) {
     return (
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <HandCoins className="h-4 w-4 text-orange-600" />
             Mis Préstamos
@@ -54,7 +62,7 @@ export const LoansWidget = () => {
   if (error || !summary) {
     return (
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <HandCoins className="h-4 w-4 text-orange-600" />
             Mis Préstamos
@@ -69,7 +77,7 @@ export const LoansWidget = () => {
 
   return (
     <Card>
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
           <HandCoins className="h-4 w-4 text-orange-600" />
           Mis Préstamos
@@ -90,10 +98,10 @@ export const LoansWidget = () => {
           <div className="space-y-3">
             {/* Pending Amount - Main Highlight */}
             <div>
-              <div className="text-2xl font-bold text-orange-600">
+              <div className={`${fontSizes.value} font-bold text-orange-600`}>
                 {formatCurrency(summary.totalPending, summary.currency as Currency)}
               </div>
-              <p className="text-xs text-gray-500">Pendiente de cobrar</p>
+              <p className={`${fontSizes.label} text-gray-500`}>Pendiente de cobrar</p>
             </div>
 
             {/* Stats Grid */}
