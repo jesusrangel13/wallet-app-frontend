@@ -42,7 +42,7 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
   if (loading) {
     return (
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <HandCoins className="h-4 w-4 text-orange-600" />
             Mis Préstamos
@@ -62,7 +62,7 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
   if (error || !summary) {
     return (
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <HandCoins className="h-4 w-4 text-orange-600" />
             Mis Préstamos
@@ -77,9 +77,9 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
 
   return (
     <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className={`${dimensions.isWide ? 'text-base' : 'text-sm'} font-medium text-gray-600 flex items-center gap-2`}>
-          <HandCoins className={`${dimensions.isWide ? 'h-5 w-5' : 'h-4 w-4'} text-orange-600`} />
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+          <HandCoins className="h-4 w-4 text-orange-600" />
           Mis Préstamos
         </CardTitle>
       </CardHeader>

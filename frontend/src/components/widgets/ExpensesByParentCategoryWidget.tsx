@@ -45,9 +45,9 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
   if (loading) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5" />
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
             Gastos por Categoría
           </CardTitle>
         </CardHeader>
@@ -100,9 +100,9 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <BarChart3 className="h-5 w-5" />
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+          <BarChart3 className="h-4 w-4" />
           Gastos por Categoría
         </CardTitle>
       </CardHeader>

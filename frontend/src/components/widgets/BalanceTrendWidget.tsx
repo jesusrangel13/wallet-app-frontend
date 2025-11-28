@@ -85,9 +85,9 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
   if (loading) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Wallet className="h-5 w-5" />
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <Wallet className="h-4 w-4" />
             Balance Trend
           </CardTitle>
         </CardHeader>
@@ -100,10 +100,10 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
 
   // Calculate responsive sizes dynamically based on actual content
   // Balance section height varies by widget size:
-  // - Small (h<=2): ~70px (text-xl + compact spacing)
-  // - Medium (h=3-4): ~90px (text-3xl + normal spacing)
-  // - Large (h>=5): ~110px (text-4xl + extra spacing)
-  const balanceInfoHeight = dimensions.isSmall ? 70 : dimensions.isMedium ? 90 : 110
+  // - Small (h<=2): ~90px (text-xl + compact spacing + info line)
+  // - Medium (h=3-4): ~110px (text-3xl + normal spacing + info line)
+  // - Large (h>=5): ~130px (text-4xl + extra spacing + info line)
+  const balanceInfoHeight = dimensions.isSmall ? 90 : dimensions.isMedium ? 110 : 130
   const chartHeight = Math.max(dimensions.contentHeight - balanceInfoHeight - 10, 80)
 
   const valueFontSize = dimensions.isSmall ? 'text-xl' : dimensions.isLarge ? 'text-4xl' : 'text-3xl'
@@ -113,16 +113,15 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Wallet className="h-5 w-5" />
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+          <Wallet className="h-4 w-4" />
           Balance Trend
         </CardTitle>
       </CardHeader>
       <CardContent>
         {data.length > 0 ? (
           <div className={`flex flex-col items-center justify-center ${spacingClass}`}>
-            {/* Current Balance - Responsive sizing */}
             <div className="text-center w-full">
               <p className={`${labelFontSize} text-gray-500 ${dimensions.isSmall ? 'mb-0.5' : 'mb-1.5'}`}>Balance Actual</p>
               <p className={`${valueFontSize} font-bold text-gray-900 ${dimensions.isSmall ? 'mb-1' : 'mb-2'} leading-tight`}>
@@ -132,6 +131,14 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
                 {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                 <span className={`${badgeFontSize} font-semibold`}>
                   {changePercentage.toFixed(1)}% desde inicio
+                </span>
+              </div>
+              {/* Compact info line */}
+              <div className="flex items-center justify-center gap-3 mt-2 text-xs text-gray-600">
+                <span>Inicial: <span className="font-semibold">{formatCurrency(initialBalance, 'CLP')}</span></span>
+                <span className="text-gray-300">|</span>
+                <span className={isPositive ? 'text-green-600' : 'text-red-600'}>
+                  Cambio: <span className="font-semibold">{isPositive ? '+' : ''}{formatCurrency(change, 'CLP')}</span>
                 </span>
               </div>
             </div>
@@ -158,22 +165,6 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-
-            {/* Show additional details for large widgets */}
-            {dimensions.isLarge && (
-              <div className="w-full pt-2 border-t border-gray-200 grid grid-cols-2 gap-3 text-center">
-                <div>
-                  <p className="text-xs text-gray-500">Balance Inicial</p>
-                  <p className="text-sm font-semibold text-gray-900">{formatCurrency(initialBalance, 'CLP')}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500">Cambio</p>
-                  <p className={`text-sm font-semibold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                    {isPositive ? '+' : ''}{formatCurrency(change, 'CLP')}
-                  </p>
-                </div>
-              </div>
-            )}
           </div>
         ) : (
           <div className="flex items-center justify-center h-full text-gray-500">

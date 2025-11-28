@@ -40,7 +40,7 @@ export const MonthlyExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: Monthly
   if (loading) {
     return (
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <TrendingDown className="h-4 w-4 text-red-600" />
             Monthly Expenses
@@ -55,9 +55,9 @@ export const MonthlyExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: Monthly
 
   return (
     <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className={`${dimensions.isWide ? 'text-base' : 'text-sm'} font-medium text-gray-600 flex items-center gap-2`}>
-          <TrendingDown className={`${dimensions.isWide ? 'h-5 w-5' : 'h-4 w-4'} text-red-600`} />
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+          <TrendingDown className="h-4 w-4 text-red-600" />
           Monthly Expenses
         </CardTitle>
       </CardHeader>

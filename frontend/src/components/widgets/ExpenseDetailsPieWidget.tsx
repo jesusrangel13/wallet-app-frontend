@@ -50,9 +50,9 @@ export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: Expen
   if (loading) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <PieChartIcon className="h-5 w-5" />
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <PieChartIcon className="h-4 w-4" />
             Detalle de Gastos
           </CardTitle>
         </CardHeader>
@@ -92,9 +92,9 @@ export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: Expen
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <PieChartIcon className="h-5 w-5" />
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+          <PieChartIcon className="h-4 w-4" />
           Detalle de Gastos
         </CardTitle>
         <p className="text-sm text-gray-500">Este mes</p>

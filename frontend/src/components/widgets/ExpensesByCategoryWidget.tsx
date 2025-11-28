@@ -49,9 +49,9 @@ export const ExpensesByCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }: Expe
   if (loading) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <PieChartIcon className="h-5 w-5" />
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <PieChartIcon className="h-4 w-4" />
             Expenses by Category
           </CardTitle>
         </CardHeader>
@@ -71,9 +71,9 @@ export const ExpensesByCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }: Expe
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <PieChartIcon className="h-5 w-5" />
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+          <PieChartIcon className="h-4 w-4" />
           Expenses by Category
         </CardTitle>
       </CardHeader>

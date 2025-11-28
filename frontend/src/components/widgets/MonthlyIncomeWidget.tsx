@@ -40,7 +40,7 @@ export const MonthlyIncomeWidget = ({ gridWidth = 1, gridHeight = 1 }: MonthlyIn
   if (loading) {
     return (
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-green-600" />
             Monthly Income
@@ -55,9 +55,9 @@ export const MonthlyIncomeWidget = ({ gridWidth = 1, gridHeight = 1 }: MonthlyIn
 
   return (
     <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className={`${dimensions.isWide ? 'text-base' : 'text-sm'} font-medium text-gray-600 flex items-center gap-2`}>
-          <TrendingUp className={`${dimensions.isWide ? 'h-5 w-5' : 'h-4 w-4'} text-green-600`} />
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+          <TrendingUp className="h-4 w-4 text-green-600" />
           Monthly Income
         </CardTitle>
       </CardHeader>

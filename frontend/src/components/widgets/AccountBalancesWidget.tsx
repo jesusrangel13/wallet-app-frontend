@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 import { dashboardAPI } from '@/lib/api'
 import { Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
+import { Card, CardContent } from '@/components/ui/Card'
 
 interface AccountBalance {
   id: string
@@ -23,7 +23,6 @@ interface AccountBalancesWidgetProps {
 }
 
 export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: AccountBalancesWidgetProps) => {
-  const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const [accounts, setAccounts] = useState<AccountBalance[]>([])
   const [loading, setLoading] = useState(true)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -47,20 +46,23 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
 
   if (loading) {
     return (
-      <div className="w-full py-4">
-        <div className="animate-pulse h-24 bg-gray-200 rounded"></div>
-      </div>
+      <Card className="h-[140px]">
+        <CardContent className="h-full flex items-center justify-center !p-0">
+          <div className="animate-pulse h-20 w-full bg-gray-200 rounded mx-4"></div>
+        </CardContent>
+      </Card>
     )
   }
 
   return (
-    <div className="relative w-full py-3 px-4">
+    <Card className="h-[140px]">
+      <CardContent className="h-full flex items-center !p-0">
         {accounts.length > 0 ? (
-          <div className="relative">
+          <div className="relative w-full h-full flex items-center px-4">
             {/* Carousel container */}
             <div
               ref={scrollContainerRef}
-              className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory"
+              className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory w-full"
               style={{
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none',
@@ -139,7 +141,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
               {/* Add Account Card */}
               <button
                 onClick={() => router.push('/dashboard/accounts')}
-                className="min-w-[230px] flex-shrink-0 px-3 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50/50 transition-all snap-start flex flex-col items-center justify-center gap-2 h-[88px]"
+                className="min-w-[230px] flex-shrink-0 px-3 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50/50 transition-all snap-start flex flex-col items-center justify-center gap-2"
               >
                 <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
                   <Plus className="w-5 h-5 text-blue-600" />
@@ -150,7 +152,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
 
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-8">
+          <div className="flex flex-col items-center justify-center h-full w-full px-4">
             <p className="text-gray-500 text-center text-xs mb-4">
               No cuentas aún. ¡Agrega tu primera cuenta!
             </p>
@@ -169,6 +171,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
             display: none;
           }
         `}</style>
-    </div>
+      </CardContent>
+    </Card>
   )
 }

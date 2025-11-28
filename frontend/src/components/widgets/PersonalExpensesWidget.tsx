@@ -37,7 +37,7 @@ export const PersonalExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: Person
   if (loading) {
     return (
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <ShoppingCart className="h-4 w-4 text-amber-600" />
             Gastos Personales
@@ -52,9 +52,9 @@ export const PersonalExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: Person
 
   return (
     <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className={`${dimensions.isWide ? 'text-base' : 'text-sm'} font-medium text-gray-600 flex items-center gap-2`}>
-          <ShoppingCart className={`${dimensions.isWide ? 'h-5 w-5' : 'h-4 w-4'} text-amber-600`} />
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+          <ShoppingCart className="h-4 w-4 text-amber-600" />
           Gastos Personales
         </CardTitle>
       </CardHeader>
