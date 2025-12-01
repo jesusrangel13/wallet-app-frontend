@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
 import { dashboardAPI } from '@/lib/api'
 import { AreaChart, Area, ResponsiveContainer, Tooltip } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
+import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 
 interface BalanceData {
   date: string
@@ -20,6 +21,7 @@ interface BalanceTrendWidgetProps {
 
 export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTrendWidgetProps) => {
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
+  const { month, year } = useSelectedMonth()
   const [data, setData] = useState<BalanceData[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -27,7 +29,7 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
     const fetchData = async () => {
       try {
         setLoading(true)
-        const res = await dashboardAPI.getBalanceHistory(30)
+        const res = await dashboardAPI.getBalanceHistory(30, { month, year })
         setData(res.data.data)
       } catch (error) {
         console.error('Error fetching balance history:', error)
@@ -37,7 +39,7 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
     }
 
     fetchData()
-  }, [])
+  }, [month, year])
 
   // Calculate stats
   const currentBalance = data.length > 0 ? data[data.length - 1].balance : 0

@@ -6,6 +6,7 @@ import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
 import { transactionAPI } from '@/lib/api'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
+import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 
 interface MonthlyIncomeWidgetProps {
   gridWidth?: number
@@ -15,6 +16,7 @@ interface MonthlyIncomeWidgetProps {
 export const MonthlyIncomeWidget = ({ gridWidth = 1, gridHeight = 1 }: MonthlyIncomeWidgetProps) => {
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
+  const { month, year } = useSelectedMonth()
   const [income, setIncome] = useState(0)
   const [loading, setLoading] = useState(true)
 
@@ -22,10 +24,7 @@ export const MonthlyIncomeWidget = ({ gridWidth = 1, gridHeight = 1 }: MonthlyIn
     const fetchIncome = async () => {
       try {
         setLoading(true)
-        const now = new Date()
-        const month = now.getMonth() + 1
-        const year = now.getFullYear()
-        const res = await transactionAPI.getStats(month, year)
+        const res = await transactionAPI.getStats(month + 1, year)
         setIncome(res.data.data.totalIncome)
       } catch (error) {
         console.error('Error fetching income:', error)
@@ -35,7 +34,7 @@ export const MonthlyIncomeWidget = ({ gridWidth = 1, gridHeight = 1 }: MonthlyIn
     }
 
     fetchIncome()
-  }, [])
+  }, [month, year])
 
   if (loading) {
     return (

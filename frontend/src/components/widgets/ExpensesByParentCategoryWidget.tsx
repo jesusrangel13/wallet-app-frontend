@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
 import { dashboardAPI } from '@/lib/api'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
+import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 
 interface ParentCategoryData {
   category: string
@@ -23,6 +24,7 @@ interface ExpensesByParentCategoryWidgetProps {
 
 export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesByParentCategoryWidgetProps) => {
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
+  const { month, year } = useSelectedMonth()
   const [data, setData] = useState<ParentCategoryData[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -30,7 +32,7 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
     const fetchData = async () => {
       try {
         setLoading(true)
-        const res = await dashboardAPI.getExpensesByParentCategory()
+        const res = await dashboardAPI.getExpensesByParentCategory({ month, year })
         setData(res.data.data)
       } catch (error) {
         console.error('Error fetching expenses by parent category:', error)
@@ -40,7 +42,7 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
     }
 
     fetchData()
-  }, [])
+  }, [month, year])
 
   if (loading) {
     return (

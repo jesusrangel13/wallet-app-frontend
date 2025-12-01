@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
 import { dashboardAPI } from '@/lib/api'
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
+import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 
 interface CategoryData {
   category: string
@@ -22,6 +23,7 @@ interface ExpenseDetailsPieWidgetProps {
 
 export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpenseDetailsPieWidgetProps) => {
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
+  const { month, year } = useSelectedMonth()
   const [data, setData] = useState<CategoryData[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -29,7 +31,7 @@ export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: Expen
     const fetchData = async () => {
       try {
         setLoading(true)
-        const res = await dashboardAPI.getExpensesByCategory()
+        const res = await dashboardAPI.getExpensesByCategory({ month, year })
         // Use colors from backend, fallback to default if not provided
         const defaultColors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#6b7280', '#ef4444', '#14b8a6']
         const withColors = res.data.data.map((cat: any, idx: number) => ({
@@ -45,7 +47,7 @@ export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: Expen
     }
 
     fetchData()
-  }, [])
+  }, [month, year])
 
   if (loading) {
     return (

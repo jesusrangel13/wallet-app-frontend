@@ -439,36 +439,36 @@ export const importAPI = {
 
 // Dashboard API
 export const dashboardAPI = {
-  getCashFlow: (months?: number) =>
+  getCashFlow: (months?: number, params?: { month?: number; year?: number }) =>
     api.get<ApiResponse<Array<{
       month: string
       income: number
       expense: number
-    }>>>('/dashboard/cashflow', { params: { months } }),
+    }>>>('/dashboard/cashflow', { params: { months, ...(params || {}) } }),
 
-  getExpensesByCategory: () =>
+  getExpensesByCategory: (params?: { month?: number; year?: number }) =>
     api.get<ApiResponse<Array<{
       category: string
       amount: number
       percentage: number
-    }>>>('/dashboard/expenses-by-category'),
+    }>>>('/dashboard/expenses-by-category', { params }),
 
-  getExpensesByParentCategory: () =>
+  getExpensesByParentCategory: (params?: { month?: number; year?: number }) =>
     api.get<ApiResponse<Array<{
       category: string
       amount: number
       percentage: number
       icon: string | null
       color: string | null
-    }>>>('/dashboard/expenses-by-parent-category'),
+    }>>>('/dashboard/expenses-by-parent-category', { params }),
 
-  getBalanceHistory: (days?: number) =>
+  getBalanceHistory: (days?: number, params?: { month?: number; year?: number }) =>
     api.get<ApiResponse<Array<{
       date: string
       balance: number
-    }>>>('/dashboard/balance-history', { params: { days } }),
+    }>>>('/dashboard/balance-history', { params: { days, ...(params || {}) } }),
 
-  getGroupBalances: () =>
+  getGroupBalances: (params?: { month?: number; year?: number }) =>
     api.get<ApiResponse<Array<{
       groupId: string
       groupName: string
@@ -479,7 +479,7 @@ export const dashboardAPI = {
         email: string
         balance: number
       }>
-    }>>>('/dashboard/group-balances'),
+    }>>>('/dashboard/group-balances', { params }),
 
   getAccountBalances: () =>
     api.get<ApiResponse<Array<{
@@ -492,20 +492,20 @@ export const dashboardAPI = {
       color: string
     }>>>('/dashboard/account-balances'),
 
-  getPersonalExpenses: () =>
+  getPersonalExpenses: (params?: { month?: number; year?: number }) =>
     api.get<ApiResponse<{
       total: number
       month: string
-    }>>('/dashboard/personal-expenses'),
+    }>>('/dashboard/personal-expenses', { params }),
 
-  getSharedExpensesTotal: () =>
+  getSharedExpensesTotal: (params?: { month?: number; year?: number }) =>
     api.get<ApiResponse<{
       total: number
       count: number
       month: string
-    }>>('/dashboard/shared-expenses'),
+    }>>('/dashboard/shared-expenses', { params }),
 
-  getMonthlySavings: () =>
+  getMonthlySavings: (params?: { month?: number; year?: number }) =>
     api.get<ApiResponse<{
       savings: number
       savingsRate: number
@@ -516,7 +516,7 @@ export const dashboardAPI = {
         shared: number
       }
       month: string
-    }>>('/dashboard/savings'),
+    }>>('/dashboard/savings', { params }),
 }
 
 // Notification API

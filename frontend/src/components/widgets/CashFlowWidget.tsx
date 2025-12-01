@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
 import { dashboardAPI } from '@/lib/api'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
+import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 
 interface CashFlowData {
   month: string
@@ -22,6 +23,7 @@ interface CashFlowWidgetProps {
 
 export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidgetProps) => {
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
+  const { month, year } = useSelectedMonth()
   const [data, setData] = useState<CashFlowData[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -29,7 +31,7 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
     const fetchData = async () => {
       try {
         setLoading(true)
-        const res = await dashboardAPI.getCashFlow(6)
+        const res = await dashboardAPI.getCashFlow(6, { month, year })
         setData(res.data.data)
       } catch (error) {
         console.error('Error fetching cash flow:', error)
@@ -39,7 +41,7 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
     }
 
     fetchData()
-  }, [])
+  }, [month, year])
 
   // Calculate statistics
   const avgIncome = data.length > 0 ? data.reduce((sum, d) => sum + d.income, 0) / data.length : 0

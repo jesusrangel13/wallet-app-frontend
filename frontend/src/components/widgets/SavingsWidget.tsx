@@ -6,6 +6,7 @@ import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
 import { dashboardAPI } from '@/lib/api'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
+import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 
 interface SavingsWidgetProps {
   gridWidth?: number
@@ -15,6 +16,7 @@ interface SavingsWidgetProps {
 export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetProps) => {
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
+  const { month, year } = useSelectedMonth()
   const [savings, setSavings] = useState(0)
   const [savingsRate, setSavingsRate] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -23,7 +25,7 @@ export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetPr
     const fetchSavings = async () => {
       try {
         setLoading(true)
-        const res = await dashboardAPI.getMonthlySavings()
+        const res = await dashboardAPI.getMonthlySavings({ month, year })
         setSavings(res.data.data.savings)
         setSavingsRate(res.data.data.savingsRate)
       } catch (error) {
@@ -34,7 +36,7 @@ export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetPr
     }
 
     fetchSavings()
-  }, [])
+  }, [month, year])
 
   const isPositive = savings >= 0
   const colorClass = isPositive ? 'text-green-600' : 'text-red-600'

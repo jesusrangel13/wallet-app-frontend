@@ -6,6 +6,7 @@ import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
 import { dashboardAPI } from '@/lib/api'
 import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
+import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 
 interface GroupBalance {
   groupId: string
@@ -28,6 +29,7 @@ interface GroupBalancesWidgetProps {
 
 export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBalancesWidgetProps) => {
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
+  const { month, year } = useSelectedMonth()
   const [balances, setBalances] = useState<GroupBalance[]>([])
   const [loading, setLoading] = useState(true)
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
@@ -36,7 +38,7 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
     const fetchData = async () => {
       try {
         setLoading(true)
-        const res = await dashboardAPI.getGroupBalances()
+        const res = await dashboardAPI.getGroupBalances({ month, year })
         setBalances(res.data.data)
       } catch (error) {
         console.error('Error fetching group balances:', error)
@@ -46,7 +48,7 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
     }
 
     fetchData()
-  }, [])
+  }, [month, year])
 
   const toggleGroup = (groupId: string) => {
     const newExpanded = new Set(expandedGroups)

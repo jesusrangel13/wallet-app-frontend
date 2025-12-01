@@ -8,6 +8,8 @@ import { WidgetWrapper } from '@/components/WidgetWrapper'
 import { AddWidgetButton } from '@/components/AddWidgetButton'
 import { toast } from 'sonner'
 import { LoadingPage, LoadingMessages } from '@/components/ui/Loading'
+import { SelectedMonthProvider } from '@/contexts/SelectedMonthContext'
+import { MonthSelector } from '@/components/MonthSelector'
 
 // Import all widgets - using direct imports to avoid Next.js barrel export bundler issue
 import { TotalBalanceWidget } from '@/components/widgets/TotalBalanceWidget'
@@ -81,70 +83,73 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome back! Here&apos;s your financial overview.</p>
+    <SelectedMonthProvider>
+      <div className="space-y-6">
+        {/* Header with Month Selector */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+            <p className="text-gray-600 mt-1">Welcome back! Here&apos;s your financial overview.</p>
+          </div>
+          <MonthSelector />
         </div>
+
+        {/* Fixed Account Balances Widget - Always at top, full width */}
+        <FixedAccountBalancesWidget />
+
+        {/* Dashboard Grid with Widgets */}
+        <DashboardGrid>
+          {preferences.widgets.filter((widget) => widget.type !== 'account-balances').map((widget) => {
+            const WidgetComponent = WIDGET_COMPONENTS[widget.type]
+            const layoutItem = preferences.layout.find((l) => l.i === widget.id)
+
+            // Skip unknown widgets
+            if (!WidgetComponent) {
+              console.warn(`Unknown widget type: ${widget.type}`)
+              return null
+            }
+
+            // Skip widgets without layout info
+            if (!layoutItem) {
+              console.warn(`No layout found for widget: ${widget.id}`)
+              return null
+            }
+
+            return (
+              <div
+                key={widget.id}
+                data-grid={{
+                  i: layoutItem.i,
+                  x: layoutItem.x,
+                  y: layoutItem.y,
+                  w: layoutItem.w,
+                  h: layoutItem.h,
+                  minW: layoutItem.minW,
+                  minH: layoutItem.minH,
+                  maxW: layoutItem.maxW,
+                  maxH: layoutItem.maxH,
+                }}
+              >
+                <WidgetWrapper widgetId={widget.id}>
+                  <WidgetComponent
+                    settings={widget.settings}
+                    gridWidth={layoutItem.w}
+                    gridHeight={layoutItem.h}
+                  />
+                </WidgetWrapper>
+              </div>
+            )
+          })}
+        </DashboardGrid>
+
+        {/* Empty state */}
+        {preferences.widgets.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 mb-4">No widgets on your dashboard</p>
+            <AddWidgetButton />
+          </div>
+        )}
       </div>
-
-      {/* Fixed Account Balances Widget - Always at top, full width */}
-      <FixedAccountBalancesWidget />
-
-      {/* Dashboard Grid with Widgets */}
-      <DashboardGrid>
-        {preferences.widgets.filter((widget) => widget.type !== 'account-balances').map((widget) => {
-          const WidgetComponent = WIDGET_COMPONENTS[widget.type]
-          const layoutItem = preferences.layout.find((l) => l.i === widget.id)
-
-          // Skip unknown widgets
-          if (!WidgetComponent) {
-            console.warn(`Unknown widget type: ${widget.type}`)
-            return null
-          }
-
-          // Skip widgets without layout info
-          if (!layoutItem) {
-            console.warn(`No layout found for widget: ${widget.id}`)
-            return null
-          }
-
-          return (
-            <div
-              key={widget.id}
-              data-grid={{
-                i: layoutItem.i,
-                x: layoutItem.x,
-                y: layoutItem.y,
-                w: layoutItem.w,
-                h: layoutItem.h,
-                minW: layoutItem.minW,
-                minH: layoutItem.minH,
-                maxW: layoutItem.maxW,
-                maxH: layoutItem.maxH,
-              }}
-            >
-              <WidgetWrapper widgetId={widget.id}>
-                <WidgetComponent
-                  settings={widget.settings}
-                  gridWidth={layoutItem.w}
-                  gridHeight={layoutItem.h}
-                />
-              </WidgetWrapper>
-            </div>
-          )
-        })}
-      </DashboardGrid>
-
-      {/* Empty state */}
-      {preferences.widgets.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500 mb-4">No widgets on your dashboard</p>
-          <AddWidgetButton />
-        </div>
-      )}
-    </div>
+    </SelectedMonthProvider>
   )
 }

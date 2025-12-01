@@ -6,6 +6,7 @@ import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
 import { dashboardAPI } from '@/lib/api'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
+import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 
 interface SharedExpensesWidgetProps {
   gridWidth?: number
@@ -15,6 +16,7 @@ interface SharedExpensesWidgetProps {
 export const SharedExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: SharedExpensesWidgetProps) => {
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
+  const { month, year } = useSelectedMonth()
   const [expense, setExpense] = useState(0)
   const [loading, setLoading] = useState(true)
 
@@ -22,7 +24,7 @@ export const SharedExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: SharedEx
     const fetchExpense = async () => {
       try {
         setLoading(true)
-        const res = await dashboardAPI.getSharedExpensesTotal()
+        const res = await dashboardAPI.getSharedExpensesTotal({ month, year })
         setExpense(res.data.data.total)
       } catch (error) {
         console.error('Error fetching shared expenses:', error)
@@ -32,7 +34,7 @@ export const SharedExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: SharedEx
     }
 
     fetchExpense()
-  }, [])
+  }, [month, year])
 
   if (loading) {
     return (
