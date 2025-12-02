@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { formatCurrency } from '@/types/currency';
 import Link from 'next/link';
 import { SettleBalanceModal } from './SettleBalanceModal';
+import { useSelectedMonth } from '@/contexts/SelectedMonthContext';
 
 interface Expense {
   expenseId: string;
@@ -42,6 +43,7 @@ interface UserBalances {
 }
 
 export const BalancesWidget = () => {
+  const { month, year } = useSelectedMonth();
   const [balances, setBalances] = useState<UserBalances | null>(null);
   const [loading, setLoading] = useState(true);
   const [expandedPersons, setExpandedPersons] = useState<Set<string>>(new Set());
@@ -81,12 +83,12 @@ export const BalancesWidget = () => {
 
   useEffect(() => {
     loadBalances();
-  }, []);
+  }, [month, year]);
 
   const loadBalances = async () => {
     try {
       setLoading(true);
-      const res = await userAPI.getMyBalances();
+      const res = await userAPI.getMyBalances({ month, year });
       setBalances(res.data.data);
     } catch (error: any) {
       toast.error('Error loading balances');

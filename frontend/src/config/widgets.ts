@@ -11,6 +11,7 @@ export type WidgetType =
   | 'shared-expenses'
   | 'savings'
   | 'groups'
+  | 'loans'
   | 'quick-actions'
   | 'balances'
   | 'cash-flow'
@@ -126,6 +127,19 @@ export const WIDGET_REGISTRY: Record<WidgetType, WidgetDefinition> = {
     defaultWidth: 1,
     defaultHeight: 2,
     minWidth: 1,
+    minHeight: 1,
+    resizable: true,
+    draggable: true,
+  },
+  'loans': {
+    id: 'loans',
+    name: 'Préstamos',
+    description: 'Resumen de préstamos activos',
+    category: 'insights',
+    icon: 'DollarSign',
+    defaultWidth: 2,
+    defaultHeight: 2,
+    minWidth: 2,
     minHeight: 1,
     resizable: true,
     draggable: true,

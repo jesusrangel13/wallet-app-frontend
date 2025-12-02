@@ -91,7 +91,7 @@ export const userAPI = {
   getStats: () =>
     api.get<ApiResponse<{ accounts: number; transactions: number; groups: number }>>('/users/stats'),
 
-  getMyBalances: () =>
+  getMyBalances: (params?: { month?: number; year?: number }) =>
     api.get<ApiResponse<{
       totalOthersOweMe: number;
       totalIOweOthers: number;
@@ -140,7 +140,7 @@ export const userAPI = {
           }>;
         }>;
       }>;
-    }>>('/users/my-balances'),
+    }>>('/users/my-balances', { params }),
 
   updateDefaultSharedExpenseAccount: (accountId: string | null) =>
     api.patch<ApiResponse<User>>('/users/me/default-shared-expense-account', { accountId }),
