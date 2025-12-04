@@ -251,6 +251,9 @@ export const transactionAPI = {
 
   getRecent: (limit: number = 5) =>
     api.get<ApiResponse<Transaction[]>>('/transactions/recent', { params: { limit } }),
+
+  getUniquePayees: (search?: string) =>
+    api.get<ApiResponse<string[]>>('/transactions/payees', { params: search ? { search } : {} }),
 }
 
 // Budget API

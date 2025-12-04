@@ -12,6 +12,7 @@ import { DateTimePicker } from '@/components/ui/DateTimePicker'
 import CategorySelector from '@/components/CategorySelector'
 import TagSelector from '@/components/TagSelector'
 import SharedExpenseForm, { SharedExpenseData } from '@/components/SharedExpenseForm'
+import PayeeAutocomplete from '@/components/PayeeAutocomplete'
 
 const transactionSchema = z.object({
   accountId: z.string().optional(),
@@ -353,12 +354,12 @@ export default function TransactionFormModal({
 
         {/* Payee (quien recibe el pago) */}
         {selectedType !== 'TRANSFER' && mode !== 'import' && (
-          <Input
+          <PayeeAutocomplete
             label="Payee (Who received the payment)"
-            type="text"
-            placeholder="e.g., McDonald's, Uber, Enel"
+            value={watch('payee') || ''}
+            onChange={(value) => setValue('payee', value)}
             error={errors.payee?.message}
-            {...register('payee')}
+            placeholder="e.g., McDonald's, Uber, Enel"
           />
         )}
 

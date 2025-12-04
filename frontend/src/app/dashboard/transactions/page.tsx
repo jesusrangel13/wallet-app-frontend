@@ -14,6 +14,7 @@ import { Modal } from '@/components/ui/Modal'
 import CategorySelector from '@/components/CategorySelector'
 import TagSelector from '@/components/TagSelector'
 import SharedExpenseForm, { SharedExpenseData } from '@/components/SharedExpenseForm'
+import PayeeAutocomplete from '@/components/PayeeAutocomplete'
 import TransactionFiltersComponent, { TransactionFilters } from '@/components/TransactionFilters'
 import { formatCurrency } from '@/lib/utils'
 import { exportToCSV, exportToJSON, exportToExcel } from '@/lib/exportTransactions'
@@ -1143,12 +1144,12 @@ export default function TransactionsPage() {
 
           {/* Payee (quien recibe el pago) */}
           {selectedType !== 'TRANSFER' && (
-            <Input
+            <PayeeAutocomplete
               label="Payee (Who received the payment)"
-              type="text"
-              placeholder="e.g., McDonald's, Uber, Enel"
+              value={watch('payee') || ''}
+              onChange={(value) => setValue('payee', value)}
               error={errors.payee?.message}
-              {...register('payee')}
+              placeholder="e.g., McDonald's, Uber, Enel"
             />
           )}
 
