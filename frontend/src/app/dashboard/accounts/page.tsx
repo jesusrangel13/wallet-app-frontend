@@ -5,16 +5,18 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { useRouter } from 'next/navigation'
+import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
 import { accountAPI } from '@/lib/api'
-import type { Account, AccountType, CreateAccountForm } from '@/types'
-import { formatCurrency, CURRENCIES, type Currency } from '@/types/currency'
-import { Wallet, CreditCard, Banknote, Landmark, TrendingUp, Edit, Trash2, Plus, Star } from 'lucide-react'
+import type { Account, CreateAccountForm } from '@/types'
+import { CURRENCIES, type Currency } from '@/types/currency'
+import { Wallet, Plus } from 'lucide-react'
 import DeleteAccountModal from '@/components/DeleteAccountModal'
 import { LoadingPage, LoadingOverlay, LoadingMessages } from '@/components/ui/Loading'
+import AccountsCardView from '@/components/accounts/AccountsCardView'
 
 const accountSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -41,23 +43,8 @@ const accountSchema = z.object({
 
 type AccountFormData = z.infer<typeof accountSchema>
 
-const accountTypeIcons: Record<AccountType, any> = {
-  CASH: Banknote,
-  DEBIT: CreditCard,
-  CREDIT: CreditCard,
-  SAVINGS: Landmark,
-  INVESTMENT: TrendingUp,
-}
-
-const accountTypeColors: Record<AccountType, string> = {
-  CASH: 'bg-green-100 text-green-700',
-  DEBIT: 'bg-blue-100 text-blue-700',
-  CREDIT: 'bg-purple-100 text-purple-700',
-  SAVINGS: 'bg-yellow-100 text-yellow-700',
-  INVESTMENT: 'bg-indigo-100 text-indigo-700',
-}
-
 export default function AccountsPage() {
+  const router = useRouter()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isRefetching, setIsRefetching] = useState(false)
@@ -124,7 +111,9 @@ export default function AccountsPage() {
         setIsRefetching(true)
       }
       const response = await accountAPI.getAll()
-      setAccounts(response.data.data)
+      // Handle flexible response format (array or paginated structure)
+      const accountsData = response.data as any
+      setAccounts(Array.isArray(accountsData) ? accountsData : accountsData.data)
     } catch (error: any) {
       toast.error('Failed to load accounts')
       console.error(error)
@@ -236,9 +225,9 @@ export default function AccountsPage() {
         </Button>
       </div>
 
-      {/* Accounts Grid - With localized loading */}
+      {/* Accounts Display - With localized loading */}
       <div className="relative">
-        {/* Refetching overlay - Only on the cards section */}
+        {/* Refetching overlay */}
         {isRefetching && (
           <LoadingOverlay message={LoadingMessages.updating} />
         )}
@@ -258,99 +247,10 @@ export default function AccountsPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {accounts.map((account) => {
-              const Icon = accountTypeIcons[account.type]
-              const colorClass = accountTypeColors[account.type]
-
-              return (
-                <Card key={account.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-3 rounded-lg ${colorClass}`}>
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <CardTitle className="text-lg">{account.name}</CardTitle>
-                        {account.isDefault && (
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-500 capitalize">
-                        {account.type.toLowerCase()}
-                      </p>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {account.type === 'CREDIT' ? (
-                    <>
-                      <div className="space-y-3 mb-4">
-                        <div>
-                          <p className="text-xs text-gray-500 mb-1">Credit Limit</p>
-                          <p className="text-lg font-semibold text-gray-900">
-                            {formatCurrency(Number(account.creditLimit || 0), account.currency as Currency)}
-                          </p>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <p className="text-xs text-gray-500 mb-1">Available</p>
-                            <p className="text-sm font-semibold text-green-600">
-                              {formatCurrency(Number(account.balance), account.currency as Currency)}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-gray-500 mb-1">Used</p>
-                            <p className="text-sm font-semibold text-red-600">
-                              {formatCurrency(Number(account.creditLimit || 0) - Number(account.balance), account.currency as Currency)}
-                            </p>
-                          </div>
-                        </div>
-                        {account.billingDay && (
-                          <div>
-                            <p className="text-xs text-gray-500 mb-1">Billing Day</p>
-                            <p className="text-sm font-medium text-gray-700">Day {account.billingDay} of each month</p>
-                          </div>
-                        )}
-                      </div>
-                    </>
-                  ) : (
-                    <div className="mb-4">
-                      <p className="text-sm text-gray-500 mb-1">Balance</p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        {formatCurrency(Number(account.balance), account.currency as Currency)}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-1">
-                        {CURRENCIES[account.currency as Currency]?.name || account.currency}
-                      </p>
-                    </div>
-                  )}
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEdit(account)}
-                      className="flex-1"
-                    >
-                      <Edit className="h-4 w-4 mr-1" />
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDeleteClick(account)}
-                      className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Delete
-                    </Button>
-                  </div>
-                </CardContent>
-                </Card>
-              )
-            })}
-          </div>
+          <AccountsCardView
+            accounts={accounts}
+            onNavigate={(id) => router.push(`/dashboard/accounts/${id}`)}
+          />
         )}
       </div>
 

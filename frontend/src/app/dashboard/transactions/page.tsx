@@ -250,7 +250,9 @@ export default function TransactionsPage() {
   const loadAccounts = async () => {
     try {
       const response = await accountAPI.getAll()
-      setAccounts(response.data.data)
+      // Handle flexible response format (array or paginated structure)
+      const accountsData = response.data as any
+      setAccounts(Array.isArray(accountsData) ? accountsData : accountsData.data)
     } catch (error) {
       console.error('Failed to load accounts:', error)
     }

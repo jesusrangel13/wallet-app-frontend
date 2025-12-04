@@ -42,7 +42,9 @@ export default function TagsSettingsPage() {
     try {
       setIsLoading(true)
       const response = await tagAPI.getAll()
-      setTags(response.data.data)
+      // Handle flexible response format (array or paginated structure)
+      const tagsData = response.data as any
+      setTags(Array.isArray(tagsData) ? tagsData : tagsData.data)
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to load tags')
     } finally {

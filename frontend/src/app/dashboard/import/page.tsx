@@ -69,9 +69,11 @@ export default function ImportPage() {
         categoryAPI.getAll(),
         groupAPI.getAll(),
       ])
-      setAccounts(accountsRes.data.data)
-      setCategories(categoriesRes.data.data)
-      setGroups(groupsRes.data.data)
+      // Manejar respuestas que pueden ser arrays directos o formato paginado
+      const accountsData = accountsRes.data as any
+      setAccounts(Array.isArray(accountsData) ? accountsData : accountsData.data)
+      setCategories(Array.isArray(categoriesRes.data) ? categoriesRes.data : categoriesRes.data.data)
+      setGroups(Array.isArray(groupsRes.data) ? groupsRes.data : (groupsRes.data as any).data)
     } catch (error: any) {
       toast.error('Failed to load data')
     }

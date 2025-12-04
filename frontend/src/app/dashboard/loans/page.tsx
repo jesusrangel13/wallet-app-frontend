@@ -33,7 +33,7 @@ export default function LoansPage() {
         accountAPI.getAll(),
       ])
       setLoans(loansResponse.data.data)
-      setAccounts(accountsResponse.data.data)
+      setAccounts(accountsResponse.data.data.data)
     } catch (error: any) {
       console.error('Error loading data:', error)
       toast.error(error.response?.data?.message || 'Failed to load loans')

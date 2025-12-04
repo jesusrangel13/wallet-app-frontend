@@ -8,6 +8,7 @@ import { Account } from '@/types'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { DateTimePicker } from '@/components/ui/DateTimePicker'
 import CategorySelector from '@/components/CategorySelector'
 import TagSelector from '@/components/TagSelector'
 import SharedExpenseForm, { SharedExpenseData } from '@/components/SharedExpenseForm'
@@ -80,6 +81,7 @@ export default function TransactionFormModal({
     defaultValues: {
       type: 'EXPENSE',
       tags: [],
+      date: mode !== 'import' ? new Date().toISOString() : undefined,
       ...initialData,
     },
   })
@@ -377,21 +379,22 @@ export default function TransactionFormModal({
 
         {/* Date */}
         {mode === 'import' ? (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
-            <input
-              type="date"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              {...register('date')}
-            />
-            {errors.date && <p className="text-red-500 text-sm mt-1">{errors.date.message}</p>}
-          </div>
-        ) : (
-          <Input
-            label="Date & Time"
-            type="datetime-local"
+          <DateTimePicker
+            label="Date"
+            value={watch('date')}
+            onChange={(value) => setValue('date', value)}
             error={errors.date?.message}
-            {...register('date')}
+            includeTime={false}
+            placeholder="Select date..."
+          />
+        ) : (
+          <DateTimePicker
+            label="Date & Time"
+            value={watch('date')}
+            onChange={(value) => setValue('date', value)}
+            error={errors.date?.message}
+            includeTime={true}
+            placeholder="Select date and time..."
           />
         )}
 

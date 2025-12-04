@@ -151,8 +151,17 @@ export const accountAPI = {
   create: (data: CreateAccountForm) =>
     api.post<ApiResponse<Account>>('/accounts', data),
 
-  getAll: () =>
-    api.get<ApiResponse<Account[]>>('/accounts'),
+  getAll: (params?: { page?: number; limit?: number }) =>
+    api.get<ApiResponse<{
+      data: Account[];
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+        hasMore: boolean;
+      };
+    }>>('/accounts', { params }),
 
   getById: (id: string) =>
     api.get<ApiResponse<Account>>(`/accounts/${id}`),
@@ -173,6 +182,16 @@ export const accountAPI = {
 
   getTotalBalance: () =>
     api.get<ApiResponse<Record<string, number>>>('/accounts/balance/total'),
+
+  getBalanceHistory: (id: string, month?: number, year?: number) =>
+    api.get<ApiResponse<{
+      history: Array<{ date: string; balance: number }>;
+      currentBalance: number;
+      previousMonthBalance: number;
+      percentageChange: number;
+      month: number;
+      year: number;
+    }>>(`/accounts/${id}/balance-history`, { params: { month, year } }),
 }
 
 // Transaction API
@@ -239,8 +258,17 @@ export const budgetAPI = {
   create: (data: CreateBudgetForm) =>
     api.post<ApiResponse<Budget>>('/budgets', data),
 
-  getAll: (year?: number) =>
-    api.get<ApiResponse<Budget[]>>('/budgets', { params: { year } }),
+  getAll: (params?: { year?: number; page?: number; limit?: number }) =>
+    api.get<ApiResponse<{
+      data: Budget[];
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+        hasMore: boolean;
+      };
+    }>>('/budgets', { params }),
 
   getById: (id: string) =>
     api.get<ApiResponse<Budget>>(`/budgets/${id}`),
@@ -263,8 +291,17 @@ export const groupAPI = {
   create: (data: CreateGroupForm) =>
     api.post<ApiResponse<Group>>('/groups', data),
 
-  getAll: () =>
-    api.get<ApiResponse<Group[]>>('/groups'),
+  getAll: (params?: { page?: number; limit?: number }) =>
+    api.get<ApiResponse<Group[] | {
+      data: Group[];
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+        hasMore: boolean;
+      };
+    }>>('/groups', { params }),
 
   getById: (id: string) =>
     api.get<ApiResponse<Group>>(`/groups/${id}`),
@@ -387,8 +424,8 @@ export const tagAPI = {
   create: (data: CreateTagForm) =>
     api.post<ApiResponse<Tag>>('/tags', data),
 
-  getAll: () =>
-    api.get<ApiResponse<Tag[]>>('/tags'),
+  getAll: (params?: { page?: number; limit?: number }) =>
+    api.get<ApiResponse<Tag[]>>('/tags', { params }),
 
   getById: (id: string) =>
     api.get<ApiResponse<Tag>>(`/tags/${id}`),

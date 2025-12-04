@@ -189,7 +189,9 @@ export default function SharedExpenseForm({
     try {
       setIsLoadingGroups(true)
       const response = await groupAPI.getAll()
-      setGroups(response.data.data)
+      // El backend devuelve array directo sin paginación params
+      const groupsData = Array.isArray(response.data) ? response.data : (response.data as any).data
+      setGroups(groupsData)
     } catch (error) {
       console.error('Failed to load groups:', error)
     } finally {

@@ -32,6 +32,8 @@ export interface Account {
   isDefault: boolean
   isArchived: boolean
   includeInTotalBalance: boolean
+  accountNumber?: string // Optional account number
+  color: string // Hex color code (always present from backend)
   creditLimit?: number // Only for CREDIT type
   billingDay?: number // Day of month (1-31) for statement generation
   createdAt: string
@@ -369,6 +371,8 @@ export interface CreateAccountForm {
   currency?: string
   isDefault?: boolean
   includeInTotalBalance?: boolean
+  accountNumber?: string // Optional account number
+  color?: string // Optional hex color (backend generates if not provided)
   creditLimit?: number
   billingDay?: number
 }

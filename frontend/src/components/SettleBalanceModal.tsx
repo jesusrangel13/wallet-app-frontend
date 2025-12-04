@@ -45,7 +45,7 @@ export function SettleBalanceModal({
         userAPI.getProfile(),
       ])
 
-      const activeAccounts = accountsRes.data.data.filter(
+      const activeAccounts = accountsRes.data.data.data.filter(
         (account: Account) => !account.isArchived
       )
       setAccounts(activeAccounts)

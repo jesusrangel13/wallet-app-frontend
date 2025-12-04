@@ -32,7 +32,7 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
         accountAPI.getAll(),
       ])
       setLoan(loanResponse.data.data)
-      setAccounts(accountsResponse.data.data)
+      setAccounts(accountsResponse.data.data.data)
     } catch (error: any) {
       console.error('Error loading loan:', error)
       toast.error(error.response?.data?.message || 'Failed to load loan')

@@ -77,7 +77,9 @@ export default function GroupsPage() {
     try {
       setIsLoading(true)
       const response = await groupAPI.getAll()
-      setGroups(response.data.data)
+      // El backend devuelve array directo sin paginación params
+      const groupsData = Array.isArray(response.data) ? response.data : (response.data as any).data
+      setGroups(groupsData)
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to load groups')
     } finally {

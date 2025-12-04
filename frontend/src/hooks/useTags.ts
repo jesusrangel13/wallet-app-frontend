@@ -4,13 +4,15 @@ import type { Tag, CreateTagForm } from '@/types'
 
 /**
  * Hook para obtener todos los tags con caching automático
+ * @param params - Parámetros de paginación opcionales
  */
-export function useTags() {
-  return useQuery({
-    queryKey: ['tags'],
+export function useTags(params?: { page?: number; limit?: number }) {
+  return useQuery<Tag[]>({
+    queryKey: ['tags', params],
     queryFn: async () => {
-      const response = await tagAPI.getAll()
-      return response.data.data as Tag[]
+      const response = await tagAPI.getAll(params)
+      // Siempre devolver solo el array de tags con fallback
+      return response.data.data || []
     },
     staleTime: 10 * 60 * 1000, // 10 minutes - tags are relatively stable
   })
@@ -29,7 +31,7 @@ export function useCreateTag() {
     },
     onSuccess: (newTag) => {
       // Optimistically update the cache
-      queryClient.setQueryData<Tag[]>(['tags'], (oldTags = []) => {
+      queryClient.setQueryData<Tag[]>(['tags', undefined], (oldTags = []) => {
         return [...oldTags, newTag]
       })
     },
@@ -53,7 +55,7 @@ export function useUpdateTag() {
     },
     onSuccess: (updatedTag) => {
       // Update the tag in the cache
-      queryClient.setQueryData<Tag[]>(['tags'], (oldTags = []) => {
+      queryClient.setQueryData<Tag[]>(['tags', undefined], (oldTags = []) => {
         return oldTags.map((tag) => (tag.id === updatedTag.id ? updatedTag : tag))
       })
     },
@@ -73,7 +75,7 @@ export function useDeleteTag() {
     },
     onSuccess: (deletedId) => {
       // Remove the tag from the cache
-      queryClient.setQueryData<Tag[]>(['tags'], (oldTags = []) => {
+      queryClient.setQueryData<Tag[]>(['tags', undefined], (oldTags = []) => {
         return oldTags.filter((tag) => tag.id !== deletedId)
       })
     },

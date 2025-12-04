@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Tag } from '@/types'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -32,9 +32,19 @@ export default function TagSelector({
 }: TagSelectorProps) {
   const { data: tags = [], isLoading } = useTags()
   const createTagMutation = useCreateTag()
+
+  // Asegurar que tags es un array
+  const tagsList: Tag[] = Array.isArray(tags) ? tags : []
   const [isExpanded, setIsExpanded] = useState(false)
   const [newTagInput, setNewTagInput] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Auto-focus input when expanded
+  useEffect(() => {
+    if (isExpanded && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [isExpanded])
 
   const handleToggleTag = (tagId: string) => {
     if (value.includes(tagId)) {
@@ -46,6 +56,19 @@ export default function TagSelector({
 
   const handleCreateTag = async () => {
     if (!newTagInput.trim()) return
+
+    // Check if tag already exists (case-insensitive)
+    const existingTag = tagsList.find(
+      (tag) => tag.name.toLowerCase() === newTagInput.trim().toLowerCase()
+    )
+
+    if (existingTag) {
+      // Select existing tag instead of creating duplicate
+      onChange([...value, existingTag.id])
+      setNewTagInput('')
+      toast.info(`Tag "${existingTag.name}" already exists - selected it for you`)
+      return
+    }
 
     try {
       const newTag = await createTagMutation.mutateAsync({ name: newTagInput.trim() })
@@ -60,7 +83,24 @@ export default function TagSelector({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault()
-      handleCreateTag()
+
+      // Check for exact match first
+      const exactMatch = availableTags.find(
+        (tag) => tag.name.toLowerCase() === newTagInput.trim().toLowerCase()
+      )
+
+      if (exactMatch) {
+        // Select the existing tag
+        handleToggleTag(exactMatch.id)
+        setNewTagInput('')
+      } else if (availableTags.length === 1) {
+        // Only one filtered result - select it
+        handleToggleTag(availableTags[0].id)
+        setNewTagInput('')
+      } else if (newTagInput.trim()) {
+        // No match - create new tag
+        handleCreateTag()
+      }
     }
   }
 
@@ -68,8 +108,25 @@ export default function TagSelector({
     return TAG_COLORS[index % TAG_COLORS.length]
   }
 
-  const selectedTags = tags.filter((tag) => value.includes(tag.id))
-  const availableTags = tags.filter((tag) => !value.includes(tag.id))
+  const selectedTags = tagsList.filter((tag) => value.includes(tag.id))
+  const availableTags = tagsList.filter((tag) => {
+    // Exclude already selected tags
+    if (value.includes(tag.id)) return false
+
+    // If there's a search term, filter by name
+    if (newTagInput.trim()) {
+      return tag.name.toLowerCase().includes(newTagInput.toLowerCase())
+    }
+
+    // Show all if no search term
+    return true
+  })
+
+  // Check for exact match to prevent duplicate creation
+  const exactMatch = tagsList.find(
+    (tag) => tag.name.toLowerCase() === newTagInput.trim().toLowerCase()
+  )
+  const showCreateButton = newTagInput.trim() && !exactMatch
 
   if (isLoading) {
     return (
@@ -163,7 +220,7 @@ export default function TagSelector({
                 value={newTagInput}
                 onChange={(e) => setNewTagInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Type to create a new tag..."
+                placeholder="Search or create new tag..."
                 className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <svg
@@ -180,14 +237,14 @@ export default function TagSelector({
                 />
               </svg>
             </div>
-            {newTagInput.trim() && (
+            {showCreateButton && (
               <button
                 type="button"
                 onClick={handleCreateTag}
                 disabled={createTagMutation.isPending}
                 className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {createTagMutation.isPending ? 'Creating...' : 'Create'}
+                {createTagMutation.isPending ? 'Creating...' : `Create "${newTagInput.trim()}"`}
               </button>
             )}
           </div>
@@ -232,10 +289,17 @@ export default function TagSelector({
             </div>
           )}
 
-          {tags.length === 0 && (
+          {tagsList.length === 0 ? (
             <p className="text-sm text-gray-500 italic text-center py-2">
               No tags yet. Create your first tag above!
             </p>
+          ) : (
+            availableTags.length === 0 &&
+            newTagInput.trim() && (
+              <p className="text-sm text-gray-500 italic text-center py-2">
+                No tags match &quot;{newTagInput.trim()}&quot;. Press Enter to create it.
+              </p>
+            )
           )}
         </div>
       )}

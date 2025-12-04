@@ -44,7 +44,7 @@ export default function GeneralSettingsPage() {
       ])
 
       const user = profileRes.data.data
-      const allAccounts = accountsRes.data.data.filter(
+      const allAccounts = accountsRes.data.data.data.filter(
         (acc: Account) => !acc.isArchived
       )
 

@@ -11,7 +11,7 @@ interface DeleteAccountModalProps {
   onClose: () => void
   onConfirm: (transferToAccountId?: string) => Promise<void>
   account: Account | null
-  accounts: Account[]
+  accounts: Account[] | undefined
   transactionCount?: number
 }
 
@@ -27,7 +27,7 @@ export default function DeleteAccountModal({
   const [deleteTransactions, setDeleteTransactions] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const availableAccounts = accounts.filter(a => a.id !== account?.id)
+  const availableAccounts = accounts?.filter(a => a.id !== account?.id) || []
   const hasTransactions = transactionCount > 0
 
   const handleConfirm = async () => {

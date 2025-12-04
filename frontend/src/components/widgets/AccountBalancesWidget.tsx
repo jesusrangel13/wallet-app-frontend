@@ -4,15 +4,18 @@ import { formatCurrency, type Currency, CURRENCIES } from '@/types/currency'
 import { useState, useEffect, useRef } from 'react'
 import { dashboardAPI, accountAPI } from '@/lib/api'
 import { Plus } from 'lucide-react'
+import { getAccountIcon } from '@/utils/accountIcons'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { ColorPicker } from '@/components/ui/ColorPicker'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
-import type { CreateAccountForm } from '@/types'
+import { useRouter } from 'next/navigation'
+import type { CreateAccountForm, AccountType } from '@/types'
 
 // Validation schema
 const accountSchema = z.object({
@@ -22,6 +25,14 @@ const accountSchema = z.object({
   currency: z.enum(['CLP', 'USD', 'EUR']).default('CLP'),
   isDefault: z.boolean().default(false),
   includeInTotalBalance: z.boolean().default(true),
+  accountNumber: z.preprocess(
+    (val) => (val === '' || val === null ? undefined : val),
+    z.string().regex(/^\d+$/, 'Only numbers allowed').optional()
+  ),
+  color: z.preprocess(
+    (val) => (val === '' || val === null ? undefined : val),
+    z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Invalid hex color').optional()
+  ),
   creditLimit: z.preprocess((val) => (val === '' || val === null ? undefined : val), z.coerce.number().positive().optional()),
   billingDay: z.preprocess((val) => (val === '' || val === null ? undefined : val), z.coerce.number().min(1).max(31).optional()),
 }).refine(
@@ -55,6 +66,7 @@ interface AccountBalancesWidgetProps {
 }
 
 export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: AccountBalancesWidgetProps) => {
+  const router = useRouter()
   const [accounts, setAccounts] = useState<AccountBalance[]>([])
   const [loading, setLoading] = useState(true)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -155,54 +167,51 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                 const spent = isCreditCard ? account.creditLimit! - account.balance : 0
                 const percentageUsed = isCreditCard ? (spent / account.creditLimit!) * 100 : 0
 
+                // Get icon component for this account type
+                const IconComponent = getAccountIcon(account.type as AccountType)
+
                 return (
-                  <div
+                  <button
                     key={account.id}
-                    className="min-w-[230px] flex-shrink-0 px-3 py-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors snap-start"
+                    onClick={() => router.push(`/dashboard/accounts/${account.id}`)}
+                    className="min-w-[230px] flex-shrink-0 px-3 py-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors snap-start cursor-pointer text-left relative overflow-hidden"
                   >
+                    <div
+                      className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg"
+                      style={{ backgroundColor: account.color }}
+                    />
                     {isCreditCard ? (
-                      // CREDIT CARD LAYOUT - Ultra Compact
-                      <div className="flex flex-col gap-1">
-                        {/* Top: Color dot + Name */}
+                      <div className="flex flex-col gap-1 pl-2">
                         <div className="flex items-center gap-1.5">
-                          <div
-                            className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: account.color }}
-                          />
+                          <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                            <IconComponent className="w-3 h-3" style={{ color: account.color }} />
+                          </div>
                           <div className="min-w-0 flex-1">
                             <h3 className="font-medium text-xs text-gray-900 truncate">{account.name}</h3>
                           </div>
                         </div>
-
-                        {/* Middle: Spent amount */}
                         <div className="flex items-baseline justify-between">
                           <span className="text-[9px] text-gray-500 uppercase tracking-wide">Gastado</span>
                           <p className="font-semibold text-sm text-gray-900 tabular-nums">
                             {formatCurrency(spent, account.currency as Currency)}
                           </p>
                         </div>
-
-                        {/* Progress bar */}
                         <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-amber-500 rounded-full transition-all duration-300"
                             style={{ width: `${Math.min(Math.max(percentageUsed, 0), 100)}%` }}
                           />
                         </div>
-
-                        {/* Bottom: Available info */}
                         <p className="text-[9px] text-gray-500 truncate">
                           Disponible: <span className="font-medium text-gray-700">{formatCurrency(account.balance, account.currency as Currency)}</span>
                         </p>
                       </div>
                     ) : (
-                      // DEBIT/OTHER ACCOUNTS LAYOUT - Ultra Compact
-                      <div className="flex flex-col gap-1">
+                      <div className="flex flex-col gap-1 pl-2">
                         <div className="flex items-center gap-1.5">
-                          <div
-                            className="w-1.5 h-1.5 rounded-full"
-                            style={{ backgroundColor: account.color }}
-                          />
+                          <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                            <IconComponent className="w-3 h-3" style={{ color: account.color }} />
+                          </div>
                           <div className="min-w-0 flex-1">
                             <p className="font-medium text-xs text-gray-900 truncate">{account.name}</p>
                           </div>
@@ -215,7 +224,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                         </div>
                       </div>
                     )}
-                  </div>
+                  </button>
                 )
               })}
 
@@ -315,6 +324,35 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
             </select>
             {errors.currency && (
               <p className="text-red-500 text-sm mt-1">{errors.currency.message}</p>
+            )}
+          </div>
+
+          <Input
+            label="Account Number (optional)"
+            placeholder="e.g., 1234567890"
+            error={errors.accountNumber?.message}
+            {...register('accountNumber')}
+          />
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Color (optional)
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="color"
+                {...register('color')}
+                className="h-10 w-20 border border-gray-300 rounded cursor-pointer"
+              />
+              <Input
+                placeholder="#3B82F6"
+                error={errors.color?.message}
+                {...register('color')}
+                className="flex-1"
+              />
+            </div>
+            {errors.color && (
+              <p className="text-red-500 text-sm mt-1">{errors.color.message}</p>
             )}
           </div>
 
