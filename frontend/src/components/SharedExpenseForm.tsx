@@ -5,6 +5,7 @@ import { Group, SplitType } from '@/types'
 import { groupAPI } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { formatCurrency } from '@/lib/utils'
+import { useAuthStore } from '@/store/authStore'
 
 interface Participant {
   userId: string
@@ -63,6 +64,7 @@ export default function SharedExpenseForm({
   error,
   initialData,
 }: SharedExpenseFormProps) {
+  const { user } = useAuthStore()
   const [groups, setGroups] = useState<Group[]>([])
   const [selectedGroupId, setSelectedGroupId] = useState<string>('')
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null)
@@ -128,13 +130,18 @@ export default function SharedExpenseForm({
         })
         setParticipants(initialParticipants)
 
-        // Set paid by to first member by default
+        // Preselect logged-in user if they are in the group, otherwise select first member
         if (group.members.length > 0 && !paidByUserId) {
-          setPaidByUserId(group.members[0].userId)
+          const currentUserInGroup = group.members.find((member) => member.userId === user?.id)
+          if (currentUserInGroup) {
+            setPaidByUserId(currentUserInGroup.userId)
+          } else {
+            setPaidByUserId(group.members[0].userId)
+          }
         }
       }
     }
-  }, [selectedGroupId, groups, initialData, isInitialized, paidByUserId])
+  }, [selectedGroupId, groups, initialData, isInitialized, paidByUserId, user?.id])
 
   // Create a memoized key that tracks only the input values (percentage/shares)
   // This prevents infinite loops while still recalculating when needed
