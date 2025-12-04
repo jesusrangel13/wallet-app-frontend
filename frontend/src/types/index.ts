@@ -134,7 +134,6 @@ export interface Transaction {
   categoryId?: string
   description?: string
   date: string
-  receiptUrl?: string
   payee?: string
   payer?: string
   toAccountId?: string
@@ -256,7 +255,6 @@ export interface SharedExpense {
   amount: number
   description: string
   categoryId?: string
-  receiptUrl?: string
   splitType: SplitType
   date: string
   createdAt: string
@@ -384,7 +382,6 @@ export interface CreateTransactionForm {
   categoryId?: string
   description?: string
   date?: string
-  receiptUrl?: string
   payee?: string
   payer?: string
   toAccountId?: string
@@ -430,7 +427,6 @@ export interface CreateSharedExpenseForm {
   amount: number
   description: string
   categoryId?: string
-  receiptUrl?: string
   splitType: SplitType
   date?: string
   participants: Array<{

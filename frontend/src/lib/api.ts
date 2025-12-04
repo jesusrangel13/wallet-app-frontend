@@ -452,7 +452,6 @@ export const importAPI = {
       categoryId?: string
       tags?: string[]
       notes?: string
-      receiptUrl?: string
     }>
   }) =>
     api.post<ApiResponse<{

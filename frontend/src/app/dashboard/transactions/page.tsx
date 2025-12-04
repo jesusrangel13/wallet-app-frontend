@@ -29,7 +29,6 @@ const transactionSchema = z.object({
   categoryId: z.string().optional(),
   description: z.string().optional(),
   date: z.string().optional(),
-  receiptUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
   payee: z.string().optional(),
   payer: z.string().optional(),
   toAccountId: z.string().optional(),
@@ -436,7 +435,6 @@ export default function TransactionsPage() {
       categoryId: transaction.categoryId || undefined,
       description: transaction.description || '',
       date: transaction.date ? new Date(transaction.date).toISOString().slice(0, 16) : '',
-      receiptUrl: transaction.receiptUrl || '',
       payee: transaction.payee || '',
       payer: transaction.payer || '',
       toAccountId: transaction.toAccountId || undefined,
@@ -1181,15 +1179,6 @@ export default function TransactionsPage() {
             value={selectedTags}
             onChange={(tags) => setValue('tags', tags)}
             error={errors.tags?.message}
-          />
-
-          {/* Receipt URL */}
-          <Input
-            label="Receipt URL"
-            type="url"
-            placeholder="https://..."
-            error={errors.receiptUrl?.message}
-            {...register('receiptUrl')}
           />
 
           {/* Shared Expense */}

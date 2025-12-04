@@ -21,7 +21,6 @@ interface ParsedTransaction {
   category?: string
   tags?: string
   notes?: string
-  receiptUrl?: string
   sharedGroup?: string
   paidBy?: string
   splitType?: string
@@ -83,11 +82,11 @@ export default function ImportPage() {
     const categoryNames = categories.map(c => c.name).join(', ')
     const groupNames = groups.map(g => g.name).join(', ')
 
-    const headers = ['date', 'type', 'amount', 'description', 'payee', 'category', 'tags', 'notes', 'receiptUrl', 'sharedGroup', 'paidBy', 'splitType', 'participants']
+    const headers = ['date', 'type', 'amount', 'description', 'payee', 'category', 'tags', 'notes', 'sharedGroup', 'paidBy', 'splitType', 'participants']
     const exampleRows = [
-      ['2024-01-15', 'EXPENSE', '50000', 'Groceries at supermarket', 'Supermarket XYZ', 'Food', 'grocery', 'Weekly shopping', '', '', '', '', ''],
-      ['15/01/2024', 'INCOME', '500000', 'Monthly salary', 'Company ABC', 'Salary', 'work', '', '', '', '', '', ''],
-      ['2024-01-16', 'EXPENSE', '35000', 'Gas station', 'Shell Station', 'Transport', 'fuel,car', 'Full tank', '', '', '', '', ''],
+      ['2024-01-15', 'EXPENSE', '50000', 'Groceries at supermarket', 'Supermarket XYZ', 'Food', 'grocery', 'Weekly shopping', '', '', '', ''],
+      ['15/01/2024', 'INCOME', '500000', 'Monthly salary', 'Company ABC', 'Salary', 'work', '', '', '', '', ''],
+      ['2024-01-16', 'EXPENSE', '35000', 'Gas station', 'Shell Station', 'Transport', 'fuel,car', 'Full tank', '', '', '', ''],
       ['2024-01-17', 'EXPENSE', '60000', 'Dinner with friends', 'Restaurant La Piazza', 'Food', 'restaurant', 'Group dinner', 'Familia', 'user@example.com', 'EQUAL', 'user1@example.com,user2@example.com,user3@example.com'],
       ['2024-01-18', 'EXPENSE', '90000', 'Pizza with group (70/30)', 'Pizza Hut', 'Food', '', '', 'Friends', 'user@example.com', 'PERCENTAGE', 'user1@example.com:70,user2@example.com:30'],
       ['2024-01-19', 'EXPENSE', '100000', 'Rent split exactly', 'Landlord', 'Housing', '', '', 'Roommates', 'user@example.com', 'EXACT', 'user1@example.com:50000,user2@example.com:50000'],
@@ -155,7 +154,6 @@ export default function ImportPage() {
         ['- category: Category name (leave empty for "Uncategorized")'],
         ['- tags: Tags separated by commas (e.g., "work,urgent")'],
         ['- notes: Additional notes'],
-        ['- receiptUrl: URL to receipt image'],
         [''],
         ['SHARED EXPENSES (Optional):'],
         ['- sharedGroup: Name of the group (leave empty for non-shared expenses)'],
@@ -434,7 +432,6 @@ export default function ImportPage() {
         category: row.category || '',
         tags: row.tags || '',
         notes: row.notes || '',
-        receiptUrl: row.receiptUrl || '',
         sharedGroup: row.sharedGroup || '',
         paidBy: row.paidBy || '',
         splitType: row.splitType || '',
@@ -503,7 +500,6 @@ export default function ImportPage() {
           categoryId: category?.id,
           tags: transaction.tags ? transaction.tags.split(',').map(t => t.trim()) : undefined,
           notes: transaction.notes,
-          receiptUrl: transaction.receiptUrl || undefined,
           // Include shared expense data if present
           sharedGroup: transaction.sharedGroup || undefined,
           paidBy: transaction.paidBy || undefined,
@@ -722,7 +718,7 @@ export default function ImportPage() {
                     <p className="font-medium mb-1">Template includes:</p>
                     <ul className="list-disc list-inside space-y-1 text-blue-800">
                       <li>Required fields: date, type, amount, description</li>
-                      <li>Optional fields: category, tags, notes, receiptUrl, sharedGroup</li>
+                      <li>Optional fields: category, tags, notes, sharedGroup</li>
                       <li>List of your available categories and groups</li>
                       <li>Example transactions to guide you</li>
                     </ul>

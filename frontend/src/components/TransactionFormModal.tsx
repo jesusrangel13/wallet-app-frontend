@@ -20,7 +20,6 @@ const transactionSchema = z.object({
   categoryId: z.string().optional(),
   description: z.string().optional(),
   date: z.string().optional(),
-  receiptUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
   payee: z.string().optional(),
   payer: z.string().optional(),
   toAccountId: z.string().optional(),
@@ -405,17 +404,6 @@ export default function TransactionFormModal({
           onChange={(tags) => setValue('tags', tags)}
           error={errors.tags?.message}
         />
-
-        {/* Receipt URL */}
-        {mode !== 'import' && (
-          <Input
-            label="Receipt URL"
-            type="url"
-            placeholder="https://..."
-            error={errors.receiptUrl?.message}
-            {...register('receiptUrl')}
-          />
-        )}
 
         {/* Shared Expense */}
         {selectedType === 'EXPENSE' && !editingTransaction && mode !== 'import' && (
