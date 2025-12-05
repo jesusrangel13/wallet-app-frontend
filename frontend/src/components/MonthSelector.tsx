@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react'
 
@@ -38,21 +38,25 @@ export const MonthSelector = () => {
   const isNextDisabled =
     year === currentYear && month === currentMonth
 
-  const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  // Memoize event handlers to prevent child re-renders
+  const handleMonthChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const newMonth = parseInt(e.target.value)
     setMonthYear(newMonth, year)
-  }
+  }, [setMonthYear, year])
 
-  const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleYearChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const newYear = parseInt(e.target.value)
     setMonthYear(month, newYear)
-  }
+  }, [setMonthYear, month])
 
-  // Generate year options (current year and 5 years back)
-  const yearOptions = []
-  for (let i = currentYear; i >= currentYear - 5; i--) {
-    yearOptions.push(i)
-  }
+  // Memoize year options generation
+  const yearOptions = useMemo(() => {
+    const options = []
+    for (let i = currentYear; i >= currentYear - 5; i--) {
+      options.push(i)
+    }
+    return options
+  }, [currentYear])
 
   return (
     <div className="flex items-center gap-2">
@@ -101,11 +105,10 @@ export const MonthSelector = () => {
       <button
         onClick={goToNextMonth}
         disabled={isNextDisabled}
-        className={`p-2 rounded-lg transition-colors ${
-          isNextDisabled
+        className={`p-2 rounded-lg transition-colors ${isNextDisabled
             ? 'opacity-40 cursor-not-allowed'
             : 'hover:bg-gray-100'
-        }`}
+          }`}
         title="Mes siguiente"
       >
         <ChevronRight className="w-4 h-4 text-gray-600" />

@@ -37,7 +37,17 @@ export default function TagSelector({
   const tagsList: Tag[] = Array.isArray(tags) ? tags : []
   const [isExpanded, setIsExpanded] = useState(false)
   const [newTagInput, setNewTagInput] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Debounce search input - only trigger filtering after 300ms of inactivity
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(newTagInput)
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [newTagInput])
 
   // Auto-focus input when expanded
   useEffect(() => {
@@ -113,9 +123,9 @@ export default function TagSelector({
     // Exclude already selected tags
     if (value.includes(tag.id)) return false
 
-    // If there's a search term, filter by name
-    if (newTagInput.trim()) {
-      return tag.name.toLowerCase().includes(newTagInput.toLowerCase())
+    // If there's a search term, filter by name (use debounced search)
+    if (debouncedSearch.trim()) {
+      return tag.name.toLowerCase().includes(debouncedSearch.toLowerCase())
     }
 
     // Show all if no search term

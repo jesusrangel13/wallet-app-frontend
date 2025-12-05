@@ -44,7 +44,9 @@ export default function GeneralSettingsPage() {
       ])
 
       const user = profileRes.data.data
-      const allAccounts = accountsRes.data.data.filter(
+      // Handle the new response structure from accountAPI.getAll()
+      const accountsData = accountsRes.data.data
+      const allAccounts = (Array.isArray(accountsData) ? accountsData : accountsData.data).filter(
         (acc: Account) => !acc.isArchived
       )
 

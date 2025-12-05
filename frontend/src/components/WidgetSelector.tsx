@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { getAllWidgets, type WidgetDefinition } from '@/config/widgets'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { Modal } from '@/components/ui/Modal'
@@ -15,30 +15,45 @@ interface WidgetSelectorProps {
 
 export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
   const { widgets, setPreferences } = useDashboardStore()
+  const [searchInput, setSearchInput] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const allWidgets = getAllWidgets()
 
-  // Filter widgets based on search and category
-  const filteredWidgets = allWidgets.filter((widget) => {
-    const matchesSearch =
-      widget.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      widget.description.toLowerCase().includes(searchTerm.toLowerCase())
+  // Debounce search input - only trigger filtering after 300ms of inactivity
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchTerm(searchInput)
+    }, 300)
 
-    const matchesCategory = !selectedCategory || widget.category === selectedCategory
+    return () => clearTimeout(timer)
+  }, [searchInput])
 
-    // Don't show already added widgets (except for ones that can be multiple instances)
-    const isAlreadyAdded = widgets.some((w) => w.type === widget.id)
+  // Memoize filtered widgets - expensive operation
+  const filteredWidgets = useMemo(() => {
+    return allWidgets.filter((widget) => {
+      const matchesSearch =
+        widget.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        widget.description.toLowerCase().includes(searchTerm.toLowerCase())
 
-    // Hide account-balances widget as it's now fixed
-    const isFixed = widget.id === 'account-balances'
+      const matchesCategory = !selectedCategory || widget.category === selectedCategory
 
-    return matchesSearch && matchesCategory && !isAlreadyAdded && !isFixed
-  })
+      // Don't show already added widgets (except for ones that can be multiple instances)
+      const isAlreadyAdded = widgets.some((w) => w.type === widget.id)
 
-  // Get unique categories
-  const categories = Array.from(new Set(allWidgets.map((w) => w.category)))
+      // Hide account-balances widget as it's now fixed
+      const isFixed = widget.id === 'account-balances'
+
+      return matchesSearch && matchesCategory && !isAlreadyAdded && !isFixed
+    })
+  }, [allWidgets, searchTerm, selectedCategory, widgets])
+
+  // Memoize unique categories
+  const categories = useMemo(
+    () => Array.from(new Set(allWidgets.map((w) => w.category))),
+    [allWidgets]
+  )
 
   const handleAddWidget = async (widget: WidgetDefinition) => {
     try {
@@ -76,8 +91,8 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
           <input
             type="text"
             placeholder="Search widgets..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -88,11 +103,10 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
           <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => setSelectedCategory(null)}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                selectedCategory === null
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
+              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${selectedCategory === null
+                ? 'bg-blue-600 text-white'
+                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
             >
               All
             </button>
@@ -100,11 +114,10 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors capitalize ${
-                  selectedCategory === category
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors capitalize ${selectedCategory === category
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                  }`}
               >
                 {category}
               </button>

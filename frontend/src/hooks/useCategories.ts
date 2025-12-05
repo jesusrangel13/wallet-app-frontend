@@ -1,7 +1,7 @@
-import { useQuery, useQueries } from '@tanstack/react-query'
+import { useQuery, useQueries, useMutation, useQueryClient } from '@tanstack/react-query'
 import { categoryAPI, categoryTemplateAPI } from '@/lib/api'
 import { useMemo } from 'react'
-import type { CategoryTemplate, UserCategoryOverride, CustomCategory, MergedCategory, TransactionType } from '@/types'
+import type { CategoryTemplate, UserCategoryOverride, CustomCategory, MergedCategory, TransactionType, CreateCategoryForm } from '@/types'
 
 /**
  * Hook para obtener todas las categorías con caching automático
@@ -154,4 +154,151 @@ function mergeCategories(
   })
 
   return result
+}
+
+/**
+ * Hook para crear una nueva categoría personalizada
+ */
+export function useCreateCategory() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (data: CreateCategoryForm) => {
+      const response = await categoryTemplateAPI.createCustom(data)
+      return response.data.data
+    },
+    onMutate: async (newCategory) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['userCategories'] })
+      await queryClient.cancelQueries({ queryKey: ['customCategories'] })
+
+      // Snapshot the previous values
+      const previousUserCategories = queryClient.getQueryData(['userCategories'])
+      const previousCustomCategories = queryClient.getQueryData(['customCategories'])
+
+      // Optimistically add the new category
+      queryClient.setQueryData(['customCategories'], (old: any) => {
+        if (!old) return old
+
+        const optimisticCategory = {
+          ...newCategory,
+          id: `temp-${Date.now()}`,
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }
+
+        return [...old, optimisticCategory]
+      })
+
+      return { previousUserCategories, previousCustomCategories }
+    },
+    onError: (err, newCategory, context) => {
+      // Rollback on error
+      if (context?.previousUserCategories) {
+        queryClient.setQueryData(['userCategories'], context.previousUserCategories)
+      }
+      if (context?.previousCustomCategories) {
+        queryClient.setQueryData(['customCategories'], context.previousCustomCategories)
+      }
+    },
+    onSuccess: () => {
+      // Invalidate all category queries
+      queryClient.invalidateQueries({ queryKey: ['userCategories'] })
+      queryClient.invalidateQueries({ queryKey: ['customCategories'] })
+      queryClient.invalidateQueries({ queryKey: ['categories'] })
+    },
+  })
+}
+
+/**
+ * Hook para actualizar una categoría
+ */
+export function useUpdateCategory() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<CreateCategoryForm> }) => {
+      const response = await categoryTemplateAPI.updateOverride(id, data)
+      return response.data.data
+    },
+    onMutate: async ({ id, data }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['userCategories'] })
+      await queryClient.cancelQueries({ queryKey: ['customCategories'] })
+
+      // Snapshot the previous values
+      const previousUserCategories = queryClient.getQueryData(['userCategories'])
+      const previousCustomCategories = queryClient.getQueryData(['customCategories'])
+
+      // Optimistically update the category
+      queryClient.setQueryData(['customCategories'], (old: any) => {
+        if (!old) return old
+        return old.map((cat: any) => (cat.id === id ? { ...cat, ...data } : cat))
+      })
+
+      return { previousUserCategories, previousCustomCategories }
+    },
+    onError: (err, { id }, context) => {
+      // Rollback on error
+      if (context?.previousUserCategories) {
+        queryClient.setQueryData(['userCategories'], context.previousUserCategories)
+      }
+      if (context?.previousCustomCategories) {
+        queryClient.setQueryData(['customCategories'], context.previousCustomCategories)
+      }
+    },
+    onSuccess: () => {
+      // Invalidate all category queries
+      queryClient.invalidateQueries({ queryKey: ['userCategories'] })
+      queryClient.invalidateQueries({ queryKey: ['customCategories'] })
+      queryClient.invalidateQueries({ queryKey: ['categories'] })
+    },
+  })
+}
+
+/**
+ * Hook para eliminar una categoría
+ */
+export function useDeleteCategory() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await categoryTemplateAPI.deleteOverride(id)
+      return id
+    },
+    onMutate: async (id) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['userCategories'] })
+      await queryClient.cancelQueries({ queryKey: ['customCategories'] })
+
+      // Snapshot the previous values
+      const previousUserCategories = queryClient.getQueryData(['userCategories'])
+      const previousCustomCategories = queryClient.getQueryData(['customCategories'])
+
+      // Optimistically remove the category
+      queryClient.setQueryData(['customCategories'], (old: any) => {
+        if (!old) return old
+        return old.filter((cat: any) => cat.id !== id)
+      })
+
+      return { previousUserCategories, previousCustomCategories }
+    },
+    onError: (err, id, context) => {
+      // Rollback on error
+      if (context?.previousUserCategories) {
+        queryClient.setQueryData(['userCategories'], context.previousUserCategories)
+      }
+      if (context?.previousCustomCategories) {
+        queryClient.setQueryData(['customCategories'], context.previousCustomCategories)
+      }
+    },
+    onSuccess: () => {
+      // Invalidate all category queries
+      queryClient.invalidateQueries({ queryKey: ['userCategories'] })
+      queryClient.invalidateQueries({ queryKey: ['customCategories'] })
+      queryClient.invalidateQueries({ queryKey: ['categories'] })
+    },
+  })
 }

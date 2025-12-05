@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { TransactionType, Account, MergedCategory } from '@/types'
 import { cn } from '@/lib/utils'
 
@@ -44,15 +44,16 @@ export default function TransactionFiltersComponent({
     return () => clearTimeout(timer)
   }, [searchInput, filters, onFilterChange])
 
-  const handleChange = (field: keyof TransactionFilters, value: string) => {
+  // Memoize event handlers to prevent child re-renders
+  const handleChange = useCallback((field: keyof TransactionFilters, value: string) => {
     if (field === 'search') {
       setSearchInput(value) // Update local state for debouncing
     } else {
       onFilterChange({ ...filters, [field]: value })
     }
-  }
+  }, [filters, onFilterChange])
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     onFilterChange({
       search: '',
       type: 'ALL',
@@ -65,8 +66,9 @@ export default function TransactionFiltersComponent({
       sortBy: 'date',
       sortOrder: 'desc',
     })
+    setSearchInput('')
     setIsExpanded(false)
-  }
+  }, [onFilterChange])
 
   const activeFiltersCount = [
     filters.type !== 'ALL',

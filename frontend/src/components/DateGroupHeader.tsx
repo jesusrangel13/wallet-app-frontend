@@ -1,5 +1,6 @@
 'use client'
 
+import { memo, useMemo } from 'react'
 import { formatCurrency } from '@/lib/utils'
 
 interface DateGroupHeaderProps {
@@ -9,29 +10,39 @@ interface DateGroupHeaderProps {
   currency: string
 }
 
-export function DateGroupHeader({ date, totalIncome, totalExpense, currency }: DateGroupHeaderProps) {
-  const parsedDate = new Date(date)
-  const today = new Date()
-  const yesterday = new Date(today)
-  yesterday.setDate(yesterday.getDate() - 1)
+export const DateGroupHeader = memo(function DateGroupHeader({
+  date,
+  totalIncome,
+  totalExpense,
+  currency
+}: DateGroupHeaderProps) {
+  // Memoize date formatting - expensive operation
+  const displayDate = useMemo(() => {
+    const parsedDate = new Date(date)
+    const today = new Date()
+    const yesterday = new Date(today)
+    yesterday.setDate(yesterday.getDate() - 1)
 
-  // Format date as "Today", "Yesterday", or full date
-  let displayDate: string
+    // Format date as "Today", "Yesterday", or full date
+    if (parsedDate.toDateString() === today.toDateString()) {
+      return 'Hoy'
+    } else if (parsedDate.toDateString() === yesterday.toDateString()) {
+      return 'Ayer'
+    } else {
+      // Format as "September 9, 2025" or localized version
+      return parsedDate.toLocaleDateString('es-ES', {
+        month: 'long',
+        day: 'numeric',
+        year: parsedDate.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
+      })
+    }
+  }, [date])
 
-  if (parsedDate.toDateString() === today.toDateString()) {
-    displayDate = 'Hoy'
-  } else if (parsedDate.toDateString() === yesterday.toDateString()) {
-    displayDate = 'Ayer'
-  } else {
-    // Format as "September 9, 2025" or localized version
-    displayDate = parsedDate.toLocaleDateString('es-ES', {
-      month: 'long',
-      day: 'numeric',
-      year: parsedDate.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
-    })
-  }
-
-  const netAmount = totalIncome - totalExpense
+  // Memoize net amount calculation
+  const netAmount = useMemo(
+    () => totalIncome - totalExpense,
+    [totalIncome, totalExpense]
+  )
 
   return (
     <div className="flex items-center justify-between py-3 px-1 border-b border-gray-200">
@@ -45,4 +56,4 @@ export function DateGroupHeader({ date, totalIncome, totalExpense, currency }: D
       </div>
     </div>
   )
-}
+})

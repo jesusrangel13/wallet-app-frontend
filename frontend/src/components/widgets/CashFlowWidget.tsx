@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { TrendingUp, TrendingDown, DollarSign } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
@@ -43,10 +44,27 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
     fetchData()
   }, [month, year])
 
-  // Calculate statistics
-  const avgIncome = data.length > 0 ? data.reduce((sum, d) => sum + d.income, 0) / data.length : 0
-  const avgExpense = data.length > 0 ? data.reduce((sum, d) => sum + d.expense, 0) / data.length : 0
-  const avgBalance = avgIncome - avgExpense
+  // Memoize expensive calculations - prevents recalculating on every render
+  const statistics = useMemo(() => {
+    if (data.length === 0) {
+      return { avgIncome: 0, avgExpense: 0, avgBalance: 0 }
+    }
+
+    const avgIncome = data.reduce((sum, d) => sum + d.income, 0) / data.length
+    const avgExpense = data.reduce((sum, d) => sum + d.expense, 0) / data.length
+    const avgBalance = avgIncome - avgExpense
+
+    return { avgIncome, avgExpense, avgBalance }
+  }, [data])
+
+  // Memoize chart configuration
+  const chartConfig = useMemo(() => ({
+    chartHeight: calculateChartHeight(dimensions.contentHeight),
+    cardPadding: dimensions.isSmall ? 'p-1.5' : 'p-2',
+    cardFontSize: dimensions.isSmall ? 'text-[10px]' : 'text-xs',
+    valueFontSize: dimensions.isSmall ? 'text-sm' : 'text-base',
+    xAxisFontSize: dimensions.isSmall ? 8 : 10,
+  }), [dimensions])
 
   if (loading) {
     return (
@@ -64,12 +82,8 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
     )
   }
 
-  // Calculate responsive sizes
-  const chartHeight = calculateChartHeight(dimensions.contentHeight)
-  const cardPadding = dimensions.isSmall ? 'p-1.5' : 'p-2'
-  const cardFontSize = dimensions.isSmall ? 'text-[10px]' : 'text-xs'
-  const valueFontSize = dimensions.isSmall ? 'text-sm' : 'text-base'
-  const xAxisFontSize = dimensions.isSmall ? 8 : 10
+  const { avgIncome, avgExpense, avgBalance } = statistics
+  const { chartHeight, cardPadding, cardFontSize, valueFontSize, xAxisFontSize } = chartConfig
 
   return (
     <Card>

@@ -19,7 +19,17 @@ export default function LoansPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [statusFilter, setStatusFilter] = useState<'all' | LoanStatus>('all')
+  const [searchInput, setSearchInput] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+
+  // Debounce search input - only trigger filtering after 300ms of inactivity
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchTerm(searchInput)
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [searchInput])
 
   useEffect(() => {
     loadData()
@@ -170,41 +180,37 @@ export default function LoansPage() {
               <div className="flex gap-2 flex-wrap">
                 <button
                   onClick={() => setStatusFilter('all')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    statusFilter === 'all'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${statusFilter === 'all'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
                 >
                   Todos ({stats.total})
                 </button>
                 <button
                   onClick={() => setStatusFilter('ACTIVE')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    statusFilter === 'ACTIVE'
-                      ? 'bg-orange-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${statusFilter === 'ACTIVE'
+                    ? 'bg-orange-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
                 >
                   Activos ({stats.active})
                 </button>
                 <button
                   onClick={() => setStatusFilter('PAID')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    statusFilter === 'PAID'
-                      ? 'bg-green-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${statusFilter === 'PAID'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
                 >
                   Pagados ({stats.paid})
                 </button>
                 <button
                   onClick={() => setStatusFilter('CANCELLED')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    statusFilter === 'CANCELLED'
-                      ? 'bg-gray-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${statusFilter === 'CANCELLED'
+                    ? 'bg-gray-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
                 >
                   Cancelados ({stats.cancelled})
                 </button>
@@ -219,8 +225,8 @@ export default function LoansPage() {
               <input
                 id="search"
                 type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Buscar deudor..."
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -268,19 +274,18 @@ export default function LoansPage() {
                           {loan.borrowerName}
                         </h3>
                         <span
-                          className={`px-2 py-1 text-xs font-medium rounded-full ${
-                            loan.status === 'ACTIVE'
-                              ? 'bg-orange-100 text-orange-700'
-                              : loan.status === 'PAID'
+                          className={`px-2 py-1 text-xs font-medium rounded-full ${loan.status === 'ACTIVE'
+                            ? 'bg-orange-100 text-orange-700'
+                            : loan.status === 'PAID'
                               ? 'bg-green-100 text-green-700'
                               : 'bg-gray-100 text-gray-700'
-                          }`}
+                            }`}
                         >
                           {loan.status === 'ACTIVE'
                             ? 'Activo'
                             : loan.status === 'PAID'
-                            ? 'Pagado'
-                            : 'Cancelado'}
+                              ? 'Pagado'
+                              : 'Cancelado'}
                         </span>
                       </div>
 
@@ -315,9 +320,8 @@ export default function LoansPage() {
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-2">
                             <div
-                              className={`h-2 rounded-full transition-all ${
-                                loan.status === 'PAID' ? 'bg-green-500' : 'bg-orange-500'
-                              }`}
+                              className={`h-2 rounded-full transition-all ${loan.status === 'PAID' ? 'bg-green-500' : 'bg-orange-500'
+                                }`}
                               style={{ width: `${Math.min(progress, 100)}%` }}
                             />
                           </div>

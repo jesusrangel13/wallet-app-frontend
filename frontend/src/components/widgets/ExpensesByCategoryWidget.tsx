@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { PieChart as PieChartIcon } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
@@ -48,6 +49,21 @@ export const ExpensesByCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }: Expe
     fetchData()
   }, [month, year])
 
+  // Memoize chart configuration
+  const chartConfig = useMemo(() => {
+    const chartHeight = calculateChartHeight(dimensions.contentHeight)
+    const outerRadius = dimensions.isSmall ? 70 : dimensions.isLarge ? 100 : 80
+    const labelFontSize = dimensions.isSmall ? 10 : 12
+
+    return { chartHeight, outerRadius, labelFontSize }
+  }, [dimensions])
+
+  // Memoize Tooltip formatter to prevent recreation on every render
+  const tooltipFormatter = useCallback(
+    (value: number) => formatCurrency(Number(value), 'CLP'),
+    []
+  )
+
   if (loading) {
     return (
       <Card>
@@ -64,12 +80,7 @@ export const ExpensesByCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }: Expe
     )
   }
 
-  // Calculate responsive sizes
-  // For height 2, we have ~188px content height, which gives ~148px chart height
-  // Use a more generous radius to better fill the space
-  const chartHeight = calculateChartHeight(dimensions.contentHeight)
-  const outerRadius = dimensions.isSmall ? 70 : dimensions.isLarge ? 100 : 80
-  const labelFontSize = dimensions.isSmall ? 10 : 12
+  const { chartHeight, outerRadius, labelFontSize } = chartConfig
 
   return (
     <Card>
@@ -98,7 +109,7 @@ export const ExpensesByCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }: Expe
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value) => formatCurrency(Number(value), 'CLP')} />
+              <Tooltip formatter={tooltipFormatter} />
             </PieChart>
           </ResponsiveContainer>
         ) : (

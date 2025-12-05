@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import { Button } from '@/components/ui/Button'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 
@@ -20,11 +21,19 @@ export const Pagination = ({
   onItemsPerPageChange,
   totalItems,
 }: PaginationProps) => {
-  const startItem = (currentPage - 1) * itemsPerPage + 1
-  const endItem = Math.min(currentPage * itemsPerPage, totalItems)
+  // Memoize calculations to prevent recalculating on every render
+  const startItem = useMemo(
+    () => (currentPage - 1) * itemsPerPage + 1,
+    [currentPage, itemsPerPage]
+  )
 
-  // Generate page numbers to display
-  const getPageNumbers = () => {
+  const endItem = useMemo(
+    () => Math.min(currentPage * itemsPerPage, totalItems),
+    [currentPage, itemsPerPage, totalItems]
+  )
+
+  // Memoize page numbers generation - expensive calculation
+  const pageNumbers = useMemo(() => {
     const pages: (number | string)[] = []
     const maxPagesToShow = 5
     const halfWindow = Math.floor(maxPagesToShow / 2)
@@ -51,9 +60,7 @@ export const Pagination = ({
     }
 
     return pages
-  }
-
-  const pageNumbers = getPageNumbers()
+  }, [currentPage, totalPages])
 
   return (
     <div className="flex flex-col gap-4 items-center justify-between px-4 py-4 border-t">
@@ -67,11 +74,10 @@ export const Pagination = ({
               onItemsPerPageChange(limit)
               onPageChange(1) // Reset to page 1
             }}
-            className={`px-3 py-1 rounded ${
-              itemsPerPage === limit
+            className={`px-3 py-1 rounded ${itemsPerPage === limit
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+              }`}
           >
             {limit}
           </button>
@@ -117,13 +123,12 @@ export const Pagination = ({
                 key={idx}
                 onClick={() => typeof page === 'number' && onPageChange(page)}
                 disabled={page === '...'}
-                className={`w-8 h-8 text-sm rounded ${
-                  page === currentPage
+                className={`w-8 h-8 text-sm rounded ${page === currentPage
                     ? 'bg-blue-500 text-white font-semibold'
                     : page === '...'
-                    ? 'text-gray-400 cursor-default'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                      ? 'text-gray-400 cursor-default'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
               >
                 {page}
               </button>
