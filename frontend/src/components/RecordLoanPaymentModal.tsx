@@ -55,7 +55,7 @@ export default function RecordLoanPaymentModal({
   })
 
   const selectedAccountId = watch('accountId')
-  const selectedAccount = accounts.find((a) => a.id === selectedAccountId)
+  const selectedAccount = accounts?.find((a) => a.id === selectedAccountId)
   const selectedAmount = watch('amount') || 0
 
   const formatAmountDisplay = (value: string | number, currency: string): string => {
@@ -169,12 +169,12 @@ export default function RecordLoanPaymentModal({
           >
             <option value="">Selecciona una cuenta</option>
             {accounts
-              .filter((a) => !a.isArchived && a.currency === loan.currency)
+              ?.filter((a) => !a.isArchived && a.currency === loan.currency)
               .map((account) => (
                 <option key={account.id} value={account.id}>
                   {account.name} ({account.currency})
                 </option>
-              ))}
+              )) || []}
           </select>
           {errors.accountId && (
             <p className="text-red-500 text-xs mt-1">{errors.accountId.message}</p>

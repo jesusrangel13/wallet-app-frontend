@@ -10,14 +10,10 @@ import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
+import { ColorPicker } from '@/components/ui/ColorPicker'
+import { EmojiPicker } from '@/components/ui/EmojiPicker'
 import { Trash2, Edit2, Plus, Sparkles, ChevronDown, Loader2 } from 'lucide-react'
 import { LoadingSpinner, SkeletonCard, LoadingMessages } from '@/components/ui/Loading'
-
-const COLOR_PALETTE = [
-  '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
-  '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#52B788',
-  '#E63946', '#F77F00', '#06A77D', '#3A86FF', '#8338EC'
-]
 
 const EMOJIS = [
   '🍽️', '🚗', '🛒', '🎮', '🏠', '💊', '✈️', '📚', '👔', '💰',
@@ -56,7 +52,7 @@ export default function CategoriesPage() {
   const [formData, setFormData] = useState<CategoryFormData>({
     name: '',
     icon: EMOJIS[0],
-    color: COLOR_PALETTE[0],
+    color: '#EF4444',
     type: 'EXPENSE',
     parentId: null,
   })
@@ -159,7 +155,7 @@ export default function CategoriesPage() {
     setFormData({
       name: '',
       icon: EMOJIS[0],
-      color: COLOR_PALETTE[0],
+      color: '#EF4444',
       type: selectedType,
       parentId: parentId || null,
     })
@@ -171,7 +167,7 @@ export default function CategoriesPage() {
     setFormData({
       name: category.name,
       icon: category.icon || '📦',
-      color: category.color || COLOR_PALETTE[0],
+      color: category.color || '#EF4444',
       type: category.type,
     })
     setIsModalOpen(true)
@@ -184,7 +180,7 @@ export default function CategoriesPage() {
     setFormData({
       name: '',
       icon: EMOJIS[0],
-      color: COLOR_PALETTE[0],
+      color: '#EF4444',
       type: selectedType,
       parentId: null,
     })
@@ -506,51 +502,18 @@ export default function CategoriesPage() {
             </div>
 
             {/* Icon Selector */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Icono
-              </label>
-              <div className="grid grid-cols-6 gap-2 max-h-40 overflow-y-auto p-2 border border-gray-200 rounded">
-                {EMOJIS.map((emoji) => (
-                  <button
-                    key={emoji}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, icon: emoji })}
-                    disabled={isSubmitting}
-                    className={`p-2 text-2xl rounded border-2 transition ${
-                      formData.icon === emoji
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <EmojiPicker
+              value={formData.icon}
+              onChange={(icon) => setFormData({ ...formData, icon })}
+              label="Icono"
+            />
 
             {/* Color Selector */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Color
-              </label>
-              <div className="grid grid-cols-5 gap-2">
-                {COLOR_PALETTE.map((color) => (
-                  <button
-                    key={color}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, color })}
-                    disabled={isSubmitting}
-                    className={`w-full h-10 rounded border-2 transition ${
-                      formData.color === color
-                        ? 'border-gray-800 ring-2 ring-gray-400'
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
-                    style={{ backgroundColor: color }}
-                  />
-                ))}
-              </div>
-            </div>
+            <ColorPicker
+              value={formData.color}
+              onChange={(color) => setFormData({ ...formData, color })}
+              label="Color"
+            />
 
             {/* Action Buttons */}
             <div className="flex gap-2 justify-end pt-4 border-t border-gray-200">

@@ -50,7 +50,7 @@ export default function CreateLoanModal({
   })
 
   const selectedAccountId = watch('accountId')
-  const selectedAccount = accounts.find((a) => a.id === selectedAccountId)
+  const selectedAccount = accounts?.find((a) => a.id === selectedAccountId)
 
   const formatAmountDisplay = (value: string | number, currency: string): string => {
     if (!value) return ''
@@ -149,12 +149,12 @@ export default function CreateLoanModal({
           >
             <option value="">Selecciona una cuenta</option>
             {accounts
-              .filter((a) => !a.isArchived)
+              ?.filter((a) => !a.isArchived)
               .map((account) => (
                 <option key={account.id} value={account.id}>
                   {account.name} ({account.currency})
                 </option>
-              ))}
+              )) || []}
           </select>
           {errors.accountId && (
             <p className="text-red-500 text-xs mt-1">{errors.accountId.message}</p>
