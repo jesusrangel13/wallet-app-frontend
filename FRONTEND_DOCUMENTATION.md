@@ -1093,10 +1093,92 @@ npm run build  # ✅ Build exitoso sin errores
 
 
 
-### 6. **Image Optimization**
-- Next.js Image component
-- Lazy loading automático
-- Formatos modernos (WebP)
+### 6. **Image Optimization** ✅ Implementado
+Implementación completa de optimización de imágenes usando el componente `Image` de Next.js para aprovechar lazy loading automático, formatos modernos (WebP/AVIF), y tamaños responsive.
+
+**Implementación:**
+
+#### Configuración en next.config.js
+```javascript
+// next.config.js
+images: {
+  // Support for remote images (avatars, etc.)
+  remotePatterns: [
+    {
+      protocol: 'https',
+      hostname: '**', // Allow all HTTPS domains for user avatars
+    },
+  ],
+  // Modern formats for better compression
+  formats: ['image/avif', 'image/webp'],
+  // Responsive image sizes
+  deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+  imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+  // Quality settings
+  minimumCacheTTL: 60,
+}
+```
+
+#### Conversión de img a Image Component
+Convertidos 2 instancias de `<img>` a `<Image>` en [groups/page.tsx](file:///Users/jesusrangel/finance-app/frontend/src/app/dashboard/groups/page.tsx):
+
+**Antes:**
+```tsx
+{member.user.avatarUrl ? (
+  <img
+    src={member.user.avatarUrl}
+    alt={member.user.name}
+    className="w-5 h-5 rounded-full"
+  />
+) : (
+  <div className="w-5 h-5 rounded-full bg-blue-500">
+    {member.user.name.charAt(0).toUpperCase()}
+  </div>
+)}
+```
+
+**Después:**
+```tsx
+{member.user.avatarUrl ? (
+  <Image
+    src={member.user.avatarUrl}
+    alt={member.user.name}
+    width={20}
+    height={20}
+    className="w-5 h-5 rounded-full"
+    loading="lazy"
+  />
+) : (
+  <div className="w-5 h-5 rounded-full bg-blue-500">
+    {member.user.name.charAt(0).toUpperCase()}
+  </div>
+)}
+```
+
+**Componentes optimizados:**
+1. **[groups/page.tsx:L520-528](file:///Users/jesusrangel/finance-app/frontend/src/app/dashboard/groups/page.tsx#L520-L528)** - Avatar de miembro en preview de grupo (20x20px)
+2. **[groups/page.tsx:L1040-1048](file:///Users/jesusrangel/finance-app/frontend/src/app/dashboard/groups/page.tsx#L1040-L1048)** - Avatar de miembro en modal de detalles (40x40px)
+
+**Características implementadas:**
+- **Lazy loading automático**: Imágenes se cargan solo cuando están visibles en el viewport
+- **Formatos modernos**: Next.js sirve WebP/AVIF automáticamente si el navegador lo soporta
+- **Tamaños responsive**: Múltiples tamaños de imagen generados para diferentes dispositivos
+- **Optimización automática**: Compresión y redimensionamiento en tiempo de build
+- **Remote patterns**: Soporte para avatares de URLs externas (HTTPS)
+
+**Beneficios:**
+- **Reducción de bandwidth**: 30-50% menos datos transferidos con WebP/AVIF
+- **Mejor rendimiento**: Lazy loading reduce carga inicial de la página
+- **Core Web Vitals mejorados**: Mejor LCP (Largest Contentful Paint) y CLS (Cumulative Layout Shift)
+- **SEO optimizado**: Imágenes optimizadas mejoran el ranking en búsquedas
+- **Experiencia de usuario**: Carga más rápida, especialmente en conexiones lentas
+- **Responsive automático**: Tamaños apropiados para cada dispositivo
+
+**Casos de uso:**
+- Usuario ve lista de grupos → Avatares se cargan solo cuando son visibles
+- Navegador moderno → Imágenes servidas en WebP/AVIF (mejor compresión)
+- Dispositivo móvil → Tamaños de imagen más pequeños servidos automáticamente
+- Conexión lenta → Lazy loading previene bloqueo de la página
 
 ---
 

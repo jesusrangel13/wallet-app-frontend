@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { toast } from 'sonner'
 import { Group, CreateGroupForm, SplitType, GroupMemberSplitDefault } from '@/types'
 import { groupAPI, sharedExpenseAPI } from '@/lib/api'
@@ -204,11 +205,11 @@ export default function GroupsPage() {
       const memberSplitSettings =
         formData.defaultSplitType !== 'EQUAL' && Object.keys(splitConfig).length > 0
           ? Object.entries(splitConfig).map(([email, config]) => ({
-              email,
-              percentage: formData.defaultSplitType === 'PERCENTAGE' ? config.percentage : undefined,
-              shares: formData.defaultSplitType === 'SHARES' ? config.shares : undefined,
-              exactAmount: formData.defaultSplitType === 'EXACT' ? config.exactAmount : undefined,
-            }))
+            email,
+            percentage: formData.defaultSplitType === 'PERCENTAGE' ? config.percentage : undefined,
+            shares: formData.defaultSplitType === 'SHARES' ? config.shares : undefined,
+            exactAmount: formData.defaultSplitType === 'EXACT' ? config.exactAmount : undefined,
+          }))
           : undefined
 
       const payload: CreateGroupForm = {
@@ -518,10 +519,13 @@ export default function GroupsPage() {
                             className="flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1"
                           >
                             {member.user.avatarUrl ? (
-                              <img
+                              <Image
                                 src={member.user.avatarUrl}
                                 alt={member.user.name}
+                                width={20}
+                                height={20}
                                 className="w-5 h-5 rounded-full"
+                                loading="lazy"
                               />
                             ) : (
                               <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">
@@ -821,16 +825,16 @@ export default function GroupsPage() {
                           formData.defaultSplitType === 'PERCENTAGE'
                             ? '0.01'
                             : formData.defaultSplitType === 'EXACT'
-                            ? '0.01'
-                            : '1'
+                              ? '0.01'
+                              : '1'
                         }
                         min="0"
                         value={
                           formData.defaultSplitType === 'PERCENTAGE'
                             ? splitConfig[email]?.percentage || ''
                             : formData.defaultSplitType === 'SHARES'
-                            ? splitConfig[email]?.shares || ''
-                            : splitConfig[email]?.exactAmount || ''
+                              ? splitConfig[email]?.shares || ''
+                              : splitConfig[email]?.exactAmount || ''
                         }
                         onChange={(e) => {
                           const value = parseFloat(e.target.value) || 0
@@ -847,8 +851,8 @@ export default function GroupsPage() {
                           formData.defaultSplitType === 'PERCENTAGE'
                             ? '%'
                             : formData.defaultSplitType === 'SHARES'
-                            ? 'shares'
-                            : '$'
+                              ? 'shares'
+                              : '$'
                         }
                         className="text-right text-sm"
                       />
@@ -857,8 +861,8 @@ export default function GroupsPage() {
                       {formData.defaultSplitType === 'PERCENTAGE'
                         ? '%'
                         : formData.defaultSplitType === 'SHARES'
-                        ? 'sh'
-                        : '$'}
+                          ? 'sh'
+                          : '$'}
                     </span>
                   </div>
                 ))}
@@ -890,10 +894,10 @@ export default function GroupsPage() {
               {isSubmitting
                 ? LoadingMessages.creating
                 : editingGroup
-                ? 'Update Group'
-                : formData.memberEmails.length > 0
-                ? `Create Group & Add ${formData.memberEmails.length} Member(s)`
-                : 'Create Group'}
+                  ? 'Update Group'
+                  : formData.memberEmails.length > 0
+                    ? `Create Group & Add ${formData.memberEmails.length} Member(s)`
+                    : 'Create Group'}
             </Button>
             <Button
               type="button"
@@ -950,31 +954,28 @@ export default function GroupsPage() {
               <nav className="-mb-px flex space-x-8">
                 <button
                   onClick={() => setActiveTab('members')}
-                  className={`${
-                    activeTab === 'members'
+                  className={`${activeTab === 'members'
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
+                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
                 >
                   Miembros
                 </button>
                 <button
                   onClick={() => setActiveTab('split')}
-                  className={`${
-                    activeTab === 'split'
+                  className={`${activeTab === 'split'
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
+                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
                 >
                   Configuración
                 </button>
                 <button
                   onClick={() => setActiveTab('balances')}
-                  className={`${
-                    activeTab === 'balances'
+                  className={`${activeTab === 'balances'
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
+                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
                 >
                   Gastos y Balances
                 </button>
@@ -983,365 +984,368 @@ export default function GroupsPage() {
 
             {/* Members Tab */}
             {activeTab === 'members' && (
-            <div>
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="font-semibold text-gray-900">
-                  Members ({viewingGroup.members.length})
-                </h3>
-                <Button
-                  size="sm"
-                  onClick={() => setIsAddMemberModalOpen(true)}
-                >
-                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                  Add Member
-                </Button>
-              </div>
-
-              {isAddMemberModalOpen && (
-                <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <div className="flex gap-2">
-                    <Input
-                      type="email"
-                      value={newMemberEmail}
-                      onChange={(e) => setNewMemberEmail(e.target.value)}
-                      placeholder="Enter email address"
-                      className="flex-1"
-                    />
-                    <Button
-                      onClick={handleAddMember}
-                      disabled={isAddingMember || !newMemberEmail.trim()}
-                      size="sm"
-                    >
-                      {isAddingMember ? 'Adding...' : 'Add'}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setIsAddMemberModalOpen(false)
-                        setNewMemberEmail('')
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              <div className="space-y-2">
-                {viewingGroup.members.map((member) => (
-                  <div
-                    key={member.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              <div>
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="font-semibold text-gray-900">
+                    Members ({viewingGroup.members.length})
+                  </h3>
+                  <Button
+                    size="sm"
+                    onClick={() => setIsAddMemberModalOpen(true)}
                   >
-                    <div className="flex items-center gap-3">
-                      {member.user.avatarUrl ? (
-                        <img
-                          src={member.user.avatarUrl}
-                          alt={member.user.name}
-                          className="w-10 h-10 rounded-full"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-                          {member.user.name.charAt(0).toUpperCase()}
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Member
+                  </Button>
+                </div>
+
+                {isAddMemberModalOpen && (
+                  <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex gap-2">
+                      <Input
+                        type="email"
+                        value={newMemberEmail}
+                        onChange={(e) => setNewMemberEmail(e.target.value)}
+                        placeholder="Enter email address"
+                        className="flex-1"
+                      />
+                      <Button
+                        onClick={handleAddMember}
+                        disabled={isAddingMember || !newMemberEmail.trim()}
+                        size="sm"
+                      >
+                        {isAddingMember ? 'Adding...' : 'Add'}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setIsAddMemberModalOpen(false)
+                          setNewMemberEmail('')
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  {viewingGroup.members.map((member) => (
+                    <div
+                      key={member.id}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        {member.user.avatarUrl ? (
+                          <Image
+                            src={member.user.avatarUrl}
+                            alt={member.user.name}
+                            width={40}
+                            height={40}
+                            className="w-10 h-10 rounded-full"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                            {member.user.name.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-medium text-gray-900">{member.user.name}</p>
+                          <p className="text-sm text-gray-500">{member.user.email}</p>
                         </div>
-                      )}
-                      <div>
-                        <p className="font-medium text-gray-900">{member.user.name}</p>
-                        <p className="text-sm text-gray-500">{member.user.email}</p>
+                        {member.userId === viewingGroup.createdBy && (
+                          <span className="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
+                            Creator
+                          </span>
+                        )}
                       </div>
-                      {member.userId === viewingGroup.createdBy && (
-                        <span className="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
-                          Creator
-                        </span>
+                      {member.userId !== viewingGroup.createdBy && (
+                        <button
+                          onClick={() => handleRemoveMember(member.id, member.user.name)}
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
+                        </button>
                       )}
                     </div>
-                    {member.userId !== viewingGroup.createdBy && (
-                      <button
-                        onClick={() => handleRemoveMember(member.id, member.user.name)}
-                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-                ))}
+                  ))}
 
-                {viewingGroup.members.length === 0 && (
-                  <p className="text-center text-gray-500 py-4">
-                    No members yet. Add the first member!
-                  </p>
-                )}
+                  {viewingGroup.members.length === 0 && (
+                    <p className="text-center text-gray-500 py-4">
+                      No members yet. Add the first member!
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
             )}
 
             {/* Split Configuration Tab */}
             {activeTab === 'split' && (
-            <div>
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="font-semibold text-gray-900">
-                  Default Split Settings
-                </h3>
-                {!isEditingSplit && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setIsEditingSplit(true)}
-                  >
-                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                      />
-                    </svg>
-                    Edit
-                  </Button>
-                )}
-              </div>
-
-              {isEditingSplit ? (
-                <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  {/* Split Type Selector */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Split Type
-                    </label>
-                    <select
-                      value={splitType}
-                      onChange={(e) => setSplitType(e.target.value as SplitType)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    >
-                      <option value="EQUAL">Equal Split</option>
-                      <option value="PERCENTAGE">By Percentage</option>
-                      <option value="SHARES">By Shares</option>
-                      <option value="EXACT">Exact Amounts</option>
-                    </select>
-                  </div>
-
-                  {/* Member Split Inputs */}
-                  {splitType !== 'EQUAL' && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Member Splits
-                      </label>
-                      <div className="space-y-2">
-                        {viewingGroup.members.map((member) => (
-                          <div key={member.id} className="flex items-center gap-3">
-                            <div className="flex-1 flex items-center gap-2">
-                              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold">
-                                {member.user.name.charAt(0).toUpperCase()}
-                              </div>
-                              <span className="text-sm text-gray-700">{member.user.name}</span>
-                            </div>
-                            <div className="w-32">
-                              <Input
-                                type="number"
-                                step={splitType === 'PERCENTAGE' ? '0.01' : splitType === 'EXACT' ? '0.01' : '1'}
-                                min="0"
-                                value={
-                                  splitType === 'PERCENTAGE'
-                                    ? memberSplits[member.userId]?.percentage || ''
-                                    : splitType === 'SHARES'
-                                    ? memberSplits[member.userId]?.shares || ''
-                                    : memberSplits[member.userId]?.exactAmount || ''
-                                }
-                                onChange={(e) => {
-                                  const value = parseFloat(e.target.value) || 0
-                                  setMemberSplits({
-                                    ...memberSplits,
-                                    [member.userId]: {
-                                      percentage: splitType === 'PERCENTAGE' ? value : undefined,
-                                      shares: splitType === 'SHARES' ? value : undefined,
-                                      exactAmount: splitType === 'EXACT' ? value : undefined,
-                                    },
-                                  })
-                                }}
-                                placeholder={
-                                  splitType === 'PERCENTAGE'
-                                    ? '%'
-                                    : splitType === 'SHARES'
-                                    ? 'shares'
-                                    : '$'
-                                }
-                                className="text-right"
-                              />
-                            </div>
-                            <span className="text-sm text-gray-500 w-10">
-                              {splitType === 'PERCENTAGE' ? '%' : splitType === 'SHARES' ? 'sh' : '$'}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                      {splitType === 'PERCENTAGE' && (
-                        <p className="text-xs text-gray-600 mt-2">
-                          Total: {Object.values(memberSplits).reduce((sum, split) => sum + (split.percentage || 0), 0)}%
-                          {Object.values(memberSplits).reduce((sum, split) => sum + (split.percentage || 0), 0) !== 100 && (
-                            <span className="text-red-600 ml-2">(must equal 100%)</span>
-                          )}
-                        </p>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      onClick={handleSaveSplitConfig}
-                    >
-                      Save
-                    </Button>
+              <div>
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="font-semibold text-gray-900">
+                    Default Split Settings
+                  </h3>
+                  {!isEditingSplit && (
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => {
-                        setIsEditingSplit(false)
-                        // Reset to current values
-                        setSplitType(viewingGroup.defaultSplitType || 'EQUAL')
-                        const splits: Record<string, { percentage?: number; shares?: number; exactAmount?: number }> = {}
-                        viewingGroup.defaultSplitSettings?.forEach(setting => {
-                          splits[setting.userId] = {
-                            percentage: setting.percentage ? Number(setting.percentage) : undefined,
-                            shares: setting.shares || undefined,
-                            exactAmount: setting.exactAmount ? Number(setting.exactAmount) : undefined,
-                          }
-                        })
-                        setMemberSplits(splits)
-                      }}
+                      onClick={() => setIsEditingSplit(true)}
                     >
-                      Cancel
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
+                      </svg>
+                      Edit
                     </Button>
-                  </div>
+                  )}
                 </div>
-              ) : (
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-gray-700">Split Type:</span>
-                      <span className="text-sm text-gray-900">
-                        {splitType === 'EQUAL' ? 'Equal Split' :
-                         splitType === 'PERCENTAGE' ? 'By Percentage' :
-                         splitType === 'SHARES' ? 'By Shares' :
-                         'Exact Amounts'}
-                      </span>
+
+                {isEditingSplit ? (
+                  <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    {/* Split Type Selector */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Split Type
+                      </label>
+                      <select
+                        value={splitType}
+                        onChange={(e) => setSplitType(e.target.value as SplitType)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="EQUAL">Equal Split</option>
+                        <option value="PERCENTAGE">By Percentage</option>
+                        <option value="SHARES">By Shares</option>
+                        <option value="EXACT">Exact Amounts</option>
+                      </select>
                     </div>
+
+                    {/* Member Split Inputs */}
                     {splitType !== 'EQUAL' && (
-                      <div className="mt-3 space-y-1">
-                        {viewingGroup.members.map((member) => {
-                          const split = memberSplits[member.userId]
-                          if (!split) return null
-                          return (
-                            <div key={member.id} className="flex items-center justify-between text-sm">
-                              <span className="text-gray-700">{member.user.name}</span>
-                              <span className="font-medium text-gray-900">
-                                {splitType === 'PERCENTAGE' && split.percentage ? `${split.percentage}%` :
-                                 splitType === 'SHARES' && split.shares ? `${split.shares} shares` :
-                                 splitType === 'EXACT' && split.exactAmount ? `$${split.exactAmount}` :
-                                 '-'}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Member Splits
+                        </label>
+                        <div className="space-y-2">
+                          {viewingGroup.members.map((member) => (
+                            <div key={member.id} className="flex items-center gap-3">
+                              <div className="flex-1 flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold">
+                                  {member.user.name.charAt(0).toUpperCase()}
+                                </div>
+                                <span className="text-sm text-gray-700">{member.user.name}</span>
+                              </div>
+                              <div className="w-32">
+                                <Input
+                                  type="number"
+                                  step={splitType === 'PERCENTAGE' ? '0.01' : splitType === 'EXACT' ? '0.01' : '1'}
+                                  min="0"
+                                  value={
+                                    splitType === 'PERCENTAGE'
+                                      ? memberSplits[member.userId]?.percentage || ''
+                                      : splitType === 'SHARES'
+                                        ? memberSplits[member.userId]?.shares || ''
+                                        : memberSplits[member.userId]?.exactAmount || ''
+                                  }
+                                  onChange={(e) => {
+                                    const value = parseFloat(e.target.value) || 0
+                                    setMemberSplits({
+                                      ...memberSplits,
+                                      [member.userId]: {
+                                        percentage: splitType === 'PERCENTAGE' ? value : undefined,
+                                        shares: splitType === 'SHARES' ? value : undefined,
+                                        exactAmount: splitType === 'EXACT' ? value : undefined,
+                                      },
+                                    })
+                                  }}
+                                  placeholder={
+                                    splitType === 'PERCENTAGE'
+                                      ? '%'
+                                      : splitType === 'SHARES'
+                                        ? 'shares'
+                                        : '$'
+                                  }
+                                  className="text-right"
+                                />
+                              </div>
+                              <span className="text-sm text-gray-500 w-10">
+                                {splitType === 'PERCENTAGE' ? '%' : splitType === 'SHARES' ? 'sh' : '$'}
                               </span>
                             </div>
-                          )
-                        })}
+                          ))}
+                        </div>
+                        {splitType === 'PERCENTAGE' && (
+                          <p className="text-xs text-gray-600 mt-2">
+                            Total: {Object.values(memberSplits).reduce((sum, split) => sum + (split.percentage || 0), 0)}%
+                            {Object.values(memberSplits).reduce((sum, split) => sum + (split.percentage || 0), 0) !== 100 && (
+                              <span className="text-red-600 ml-2">(must equal 100%)</span>
+                            )}
+                          </p>
+                        )}
                       </div>
                     )}
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        onClick={handleSaveSplitConfig}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setIsEditingSplit(false)
+                          // Reset to current values
+                          setSplitType(viewingGroup.defaultSplitType || 'EQUAL')
+                          const splits: Record<string, { percentage?: number; shares?: number; exactAmount?: number }> = {}
+                          viewingGroup.defaultSplitSettings?.forEach(setting => {
+                            splits[setting.userId] = {
+                              percentage: setting.percentage ? Number(setting.percentage) : undefined,
+                              shares: setting.shares || undefined,
+                              exactAmount: setting.exactAmount ? Number(setting.exactAmount) : undefined,
+                            }
+                          })
+                          setMemberSplits(splits)
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                ) : (
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-gray-700">Split Type:</span>
+                        <span className="text-sm text-gray-900">
+                          {splitType === 'EQUAL' ? 'Equal Split' :
+                            splitType === 'PERCENTAGE' ? 'By Percentage' :
+                              splitType === 'SHARES' ? 'By Shares' :
+                                'Exact Amounts'}
+                        </span>
+                      </div>
+                      {splitType !== 'EQUAL' && (
+                        <div className="mt-3 space-y-1">
+                          {viewingGroup.members.map((member) => {
+                            const split = memberSplits[member.userId]
+                            if (!split) return null
+                            return (
+                              <div key={member.id} className="flex items-center justify-between text-sm">
+                                <span className="text-gray-700">{member.user.name}</span>
+                                <span className="font-medium text-gray-900">
+                                  {splitType === 'PERCENTAGE' && split.percentage ? `${split.percentage}%` :
+                                    splitType === 'SHARES' && split.shares ? `${split.shares} shares` :
+                                      splitType === 'EXACT' && split.exactAmount ? `$${split.exactAmount}` :
+                                        '-'}
+                                </span>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
 
             {/* Balances Tab */}
             {activeTab === 'balances' && (
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">
-                Gastos compartidos del grupo
-              </h3>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-4">
+                  Gastos compartidos del grupo
+                </h3>
 
-              {loadingExpenses ? (
-                <div className="flex items-center justify-center py-12">
-                  <LoadingSpinner size="lg" />
-                </div>
-              ) : groupExpenses.length === 0 ? (
-                <div className="text-center py-12">
-                  <p className="text-gray-500 mb-4">No hay gastos compartidos en este grupo aún</p>
-                  <p className="text-sm text-gray-400">Crea una transacción compartida desde la página de transacciones</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {groupExpenses.map((expense: any) => (
-                    <div key={expense.id} className="border rounded-lg p-4 bg-gray-50">
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h4 className="font-medium text-gray-900">{expense.description}</h4>
-                          <p className="text-sm text-gray-500">
-                            Pagado por: {expense.paidBy.name} • {new Date(expense.date).toLocaleDateString()}
-                          </p>
-                          <p className="text-lg font-semibold text-gray-900 mt-1">
-                            {formatCurrency(expense.amount, 'CLP')}
-                          </p>
-                        </div>
-                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                          {expense.splitType}
-                        </span>
-                      </div>
-
-                      <div className="space-y-2 mt-4">
-                        <p className="text-sm font-medium text-gray-700 mb-2">Participantes:</p>
-                        {expense.participants.map((participant: any) => (
-                          <div
-                            key={participant.id}
-                            className="flex items-center justify-between bg-white p-3 rounded-lg"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">
-                                {participant.user.name.split(' ').map((n: string) => n[0]).join('')}
-                              </div>
-                              <div>
-                                <p className="font-medium text-gray-900 text-sm">{participant.user.name}</p>
-                                <p className="text-xs text-gray-500">
-                                  Debe: {formatCurrency(participant.amountOwed, 'CLP')}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <PaymentStatusBadge isPaid={participant.isPaid || false} variant="compact" />
-                              {!participant.isPaid && participant.userId === user?.id && (
-                                <button
-                                  onClick={() => {
-                                    setSelectedExpenseForPayment({
-                                      expenseId: expense.id,
-                                      participantUserId: participant.userId,
-                                      description: expense.description,
-                                      amount: Number(participant.amountOwed),
-                                    })
-                                    setIsMarkPaidModalOpen(true)
-                                  }}
-                                  className="text-xs px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-                                >
-                                  {expense.paidByUserId === participant.userId ? 'Me pagaron' : 'Pagué'}
-                                </button>
-                              )}
-                            </div>
+                {loadingExpenses ? (
+                  <div className="flex items-center justify-center py-12">
+                    <LoadingSpinner size="lg" />
+                  </div>
+                ) : groupExpenses.length === 0 ? (
+                  <div className="text-center py-12">
+                    <p className="text-gray-500 mb-4">No hay gastos compartidos en este grupo aún</p>
+                    <p className="text-sm text-gray-400">Crea una transacción compartida desde la página de transacciones</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {groupExpenses.map((expense: any) => (
+                      <div key={expense.id} className="border rounded-lg p-4 bg-gray-50">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h4 className="font-medium text-gray-900">{expense.description}</h4>
+                            <p className="text-sm text-gray-500">
+                              Pagado por: {expense.paidBy.name} • {new Date(expense.date).toLocaleDateString()}
+                            </p>
+                            <p className="text-lg font-semibold text-gray-900 mt-1">
+                              {formatCurrency(expense.amount, 'CLP')}
+                            </p>
                           </div>
-                        ))}
+                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                            {expense.splitType}
+                          </span>
+                        </div>
+
+                        <div className="space-y-2 mt-4">
+                          <p className="text-sm font-medium text-gray-700 mb-2">Participantes:</p>
+                          {expense.participants.map((participant: any) => (
+                            <div
+                              key={participant.id}
+                              className="flex items-center justify-between bg-white p-3 rounded-lg"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                                  {participant.user.name.split(' ').map((n: string) => n[0]).join('')}
+                                </div>
+                                <div>
+                                  <p className="font-medium text-gray-900 text-sm">{participant.user.name}</p>
+                                  <p className="text-xs text-gray-500">
+                                    Debe: {formatCurrency(participant.amountOwed, 'CLP')}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <PaymentStatusBadge isPaid={participant.isPaid || false} variant="compact" />
+                                {!participant.isPaid && participant.userId === user?.id && (
+                                  <button
+                                    onClick={() => {
+                                      setSelectedExpenseForPayment({
+                                        expenseId: expense.id,
+                                        participantUserId: participant.userId,
+                                        description: expense.description,
+                                        amount: Number(participant.amountOwed),
+                                      })
+                                      setIsMarkPaidModalOpen(true)
+                                    }}
+                                    className="text-xs px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+                                  >
+                                    {expense.paidByUserId === participant.userId ? 'Me pagaron' : 'Pagué'}
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
 
             {/* Group Actions */}
