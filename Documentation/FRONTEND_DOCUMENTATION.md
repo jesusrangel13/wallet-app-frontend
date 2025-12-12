@@ -1908,6 +1908,42 @@ const transactionSchema = z.object({
 
 Durante el análisis del proyecto se identificaron las siguientes oportunidades de mejora para optimizar aún más el rendimiento y la experiencia del usuario:
 
+ 
+### 1. **Virtual Scrolling para Listas Largas** 🔄 Recomendado
+
+**Problema**: Listas con 100+ items (transacciones, grupos) pueden causar lag en el renderizado.
+
+**Solución**: Implementar `react-window` o `react-virtualized`
+
+**Aplicar en**:
+- Lista de transacciones (`/dashboard/transactions`)
+- Lista de grupos (`/dashboard/groups`)
+- Listas de gastos compartidos
+
+**Beneficios**:
+- Renderiza solo items visibles en viewport
+- Mejora performance con 1000+ items
+- Reduce uso de memoria
+- Scroll más fluido
+
+### 2. **Service Worker para Offline Support** ✅ Implementado
+
+**Problema**: App no funciona sin conexión a internet y no es instalable como App nativa.
+
+**Solución**: Se implementó PWA (Progressive Web App) utilizando `@ducanh2912/next-pwa`.
+
+**Cambios Realizados**:
+- Se instaló la dependencia `@ducanh2912/next-pwa`.
+- Se configuró `next.config.js` para generar el Service Worker en producción.
+- Se creó el archivo `manifest.json` en la carpeta `public`.
+- Se añadieron iconos de 192x192 y 512x512.
+- Se actualizó el `layout.tsx` para incluir el manifest y configuración de viewport.
+
+**Beneficios**:
+- **Funcionalidad Offline**: Cache automático de assets y páginas visitadas.
+- **Instalable**: Los usuarios pueden instalar la app en su inicio ("Add to Home Screen").
+- **Carga Instantánea**: Mejor rendimiento en visitas repetidas gracias al precaching.
+=======
 ### 1. **Virtual Scrolling para Listas Largas** ✅ Implementado
 
 **Problema**: Listas con 100+ items (transacciones, grupos) pueden causar lag en el renderizado.
@@ -1947,6 +1983,7 @@ Durante el análisis del proyecto se identificaron las siguientes oportunidades 
 **Herramientas**:
 - `next-pwa` plugin
 - Workbox para estrategias de cache
+ 
 
 ### 3. **Prefetching de Rutas y Datos** 🔄 Recomendado
 
