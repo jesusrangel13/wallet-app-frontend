@@ -7,6 +7,8 @@ import { useSidebarStore } from '@/store/sidebarStore'
 import { Sidebar } from '@/components/Sidebar'
 import { DashboardLayoutContent } from '@/components/DashboardLayoutContent'
 
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
+
 export default function DashboardLayout({
   children,
 }: {
@@ -53,7 +55,9 @@ export default function DashboardLayout({
       <Sidebar />
 
       {/* Layout Content with navbar and main content */}
-      <DashboardLayoutContent isCollapsed={isCollapsed}>{children}</DashboardLayoutContent>
+      <ErrorBoundary>
+        <DashboardLayoutContent isCollapsed={isCollapsed}>{children}</DashboardLayoutContent>
+      </ErrorBoundary>
     </div>
   )
 }
