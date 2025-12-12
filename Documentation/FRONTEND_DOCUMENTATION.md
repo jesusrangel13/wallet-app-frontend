@@ -365,47 +365,88 @@ Durante el análisis del proyecto se identificaron las siguientes oportunidades 
 - **Funcionalidad Offline**: Cache automático de assets y páginas visitadas.
 - **Instalable**: Los usuarios pueden instalar la app en su inicio ("Add to Home Screen").
 - **Carga Instantánea**: Mejor rendimiento en visitas repetidas gracias al precaching.
+### 1. **Virtual Scrolling para Listas Largas** ✅ Implementado
 
-### 5. **Memoization** ✅ Implementado
+**Problema**: Listas con 100+ items (transacciones, grupos) pueden causar lag en el renderizado.
 
-**Problema**: Re-renderizados innecesarios en componentes complejos.
+**Solución**: Se implementó `react-virtuoso` (específicamente `GroupedVirtuoso`) para manejar listas de transacciones con alturas variables y agrupamiento por fecha.
 
-**Solución**: Uso estratégico de `React.memo`, `useMemo` y `useCallback`.
-
-**Implementación**:
-- `TransactionItem`: Memorizado con `React.memo` para evitar re-renders en listas largas.
-- `useMemo` en selectores de widgets para cálculos costosos (sumas, filtros).
-- `useCallback` en handlers pasados a componentes hijos.
-
-**Beneficios**:
-- Interacción más fluida.
-- Menor carga en el hilo principal.
-
-### 6. **Image Optimization** ✅ Implementado
-
-**Problema**: Imágenes grandes sin optimizar afectando LCP y consumo de datos.
-
-**Solución**: Uso del componente `Image` de Next.js.
-
-**Implementación**:
-- Reemplazo de etiquetas `<img>` por `<Image />`.
-- Configuración de `sizes` para imágenes responsivas.
-- Uso de formato WebP automático.
-- Lazy loading automático (default en Next.js).
+**Cambios Realizados**:
+- Se instaló `react-virtuoso`.
+- Se refactorizó `TransactionsPage` para usar `GroupedVirtuoso` en lugar de renderizado por mapeo directo.
+- Se implementó la lógica de agrupamiento compatible con virtualización.
+- Se mantuvo la funcionalidad de sticky headers para las fechas.
+- Se preservó la funcionalidad de selección múltiple y acciones en lote.
 
 **Beneficios**:
-- Mejor Core Web Vitals (LCP).
-- Menor consumo de datos para usuarios.
+- Renderizado eficiente de miles de transacciones.
+- Menor consumo de memoria al renderizar solo lo visible.
+- Scroll fluido manteniendo la experiencia de usuario (headers pegajosos).
 
-### 7. **Bundle Analysis y Tree Shaking** ✅ Implementado
+### 2. **Service Worker para Offline Support** 🔄 Recomendado
+
+**Problema**: App no funciona sin conexión a internet.
+
+**Solución**: Implementar PWA (Progressive Web App) con Service Worker
+
+**Características**:
+- Cache de assets estáticos (JS, CSS, imágenes)
+- Cache de datos críticos (cuentas, transacciones recientes)
+- Funcionalidad offline básica
+- Sincronización cuando vuelve la conexión
+
+**Beneficios**:
+- Funcionalidad offline
+- Carga más rápida (cache)
+- Mejor experiencia en conexiones lentas
+- Instalable como app nativa
+
+**Herramientas**:
+- `next-pwa` plugin
+- Workbox para estrategias de cache
+ 
+
+### 3. **Prefetching de Rutas y Datos** 🔄 Recomendado
+
+**Problema**: Navegación entre páginas tiene delay mientras carga datos.
+
+**Solución**: Prefetch de rutas y datos anticipadamente
+
+**Implementación**:
+```typescript
+// Prefetch de rutas con next/link
+<Link href="/dashboard/transactions" prefetch={true}>
+  Transactions
+</Link>
+
+// Prefetch de datos con React Query
+const queryClient = useQueryClient()
+queryClient.prefetchQuery({
+  queryKey: ['transactions'],
+  queryFn: fetchTransactions
+})
+```
+
+**Beneficios**:
+- Navegación instantánea
+- Datos listos antes de navegar
+- Mejor percepción de velocidad
+
+### 4. **Bundle Analysis y Tree Shaking** 🔄 Recomendado
 
 **Problema**: No hay visibilidad del tamaño del bundle y dependencias pesadas.
 
-**Solución**: Se implementó `@next/bundle-analyzer` para visualizar y optimizar el tamaño del bundle.
+**Solución**: Implementar `@next/bundle-analyzer`
 
-**Implementación**:
-- Se instaló la dependencia `@next/bundle-analyzer` como devDependency.
-- Se configuró `next.config.js` para habilitar el análisis mediante la variable de entorno `ANALYZE`.
+**Configuración**:
+```javascript
+// next.config.js
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
+
+module.exports = withBundleAnalyzer(nextConfig)
+```
 
 **Uso**:
 ```bash
@@ -489,7 +530,7 @@ class ErrorBoundary extends React.Component {
 - Transferencia más rápida
 - Menor uso de bandwidth
 
-### 11. **Accessibility (A11y) Improvements** 🔄 Recomendado
+### 8. **Accessibility (A11y) Improvements** 🔄 Recomendado
 
 **Problema**: Falta de ARIA labels y navegación por teclado en algunos componentes.
 
