@@ -34,7 +34,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <QueryProvider>
           <ErrorBoundary>
-            {children}
+            <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-white text-blue-600 px-4 py-2 rounded-md shadow-lg">
+              Skip to main content
+            </a>
+            <div id="main-content">
+              {children}
+            </div>
           </ErrorBoundary>
           <Toaster richColors position="top-right" />
         </QueryProvider>

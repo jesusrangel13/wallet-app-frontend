@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { LoadingPage, LoadingMessages } from '@/components/ui/Loading'
 import { SelectedMonthProvider } from '@/contexts/SelectedMonthContext'
 import { MonthSelector } from '@/components/MonthSelector'
+import { Skeleton } from '@/components/ui/Skeleton'
 
 // Import all widgets - using direct imports to avoid Next.js barrel export bundler issue
 import { TotalBalanceWidget } from '@/components/widgets/TotalBalanceWidget'
@@ -84,8 +85,33 @@ export default function DashboardPage() {
   }, [setPreferences, setIsLoading])
 
   // Show loading state
+  // Show loading state
   if (isLoading || !preferences) {
-    return <LoadingPage message={LoadingMessages.dashboard} />
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <Skeleton className="h-8 w-48 mb-2" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <Skeleton className="h-10 w-32" />
+        </div>
+
+        {/* Fixed Account Balances Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[1, 2, 3].map(i => (
+            <Skeleton key={i} className="h-32 w-full rounded-xl" />
+          ))}
+        </div>
+
+        {/* Dashboard Grid Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <Skeleton key={i} className="h-64 w-full rounded-xl" />
+          ))}
+        </div>
+      </div>
+    )
   }
 
   return (
