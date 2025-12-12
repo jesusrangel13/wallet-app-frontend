@@ -475,11 +475,22 @@ ANALYZE=true npm run build
 - **Mejor UX**: El usuario recibe feedback claro en lugar de una pantalla blanca.
 - **Recuperación**: Botones para "Intentar de nuevo" permiten recuperar el estado sin recargar toda la app si es posible.
 
-### 9. **Skeleton Screens Expandidos** 🔄 Recomendado
+### 9. **Skeleton Screens Expandidos** ✅ Implementado
 
 **Problema**: Loading states inconsistentes, algunos usan spinners.
 
-**Solución**: Expandir uso de skeleton screens en todas las páginas
+
+**Solución**: Se implementó componentes Skeleton reutilizables y se integraron en Dashboard y Transacciones.
+
+**Cambios Realizados**:
+- Componente `Skeleton` base creado con Tailwind.
+- `DashboardPage`: Reemplazo de LoadingPage con grid de esqueletos.
+- `TransactionsPage`: Reemplazo de LoadingPage con tabla de esqueletos.
+
+**Beneficios**:
+- Mejor percepción de velocidad (Perceived Performance).
+- Menor cambio visual brusco (Layout Shift).
+
 
 **Aplicar en**:
 - Todas las listas (transacciones, cuentas, grupos)
@@ -512,11 +523,21 @@ ANALYZE=true npm run build
 - Transferencia más rápida
 - Menor uso de bandwidth
 
-### 8. **Accessibility (A11y) Improvements** 🔄 Recomendado
+### 10. **Accessibility (A11y) Improvements** ✅ Implementado
 
 **Problema**: Falta de ARIA labels y navegación por teclado en algunos componentes.
 
-**Solución**: Mejorar accesibilidad en toda la app
+
+**Solución**: Se mejoró la accesibilidad en Layout y Modales.
+
+**Cambios Realizados**:
+- `layout.tsx`: Se añadió 'Skip to main content'.
+- `Modal.tsx`: Se implementó Focus Trap, ARIA roles y labels.
+
+**Beneficios**:
+- Navegación por teclado funcional en diálogos críticos.
+- Cumplimiento mejorado de WCAG.
+
 
 **Mejoras**:
 - Agregar ARIA labels a todos los botones
@@ -554,9 +575,9 @@ ANALYZE=true npm run build
 1. Virtual Scrolling - Para listas largas
 2. Bundle Analysis - Optimización de dependencias
 3. Error Boundaries - Manejo robusto de errores
-4. Skeleton Screens - Mejor percepción de velocidad
+4. Skeleton Screens - ✅ Implementado
 5. Brotli Compression - Mejor compresión
-6. Accessibility - Mejor UX para todos
+6. Accessibility - ✅ Implementado
 
 **Total**: 13 optimizaciones (8 implementadas + 5 recomendadas)
 
