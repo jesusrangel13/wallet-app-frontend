@@ -228,6 +228,7 @@ export interface Group {
   defaultSplitSettings?: GroupMemberSplitDefault[]
   _count?: {
     expenses: number
+    pendingExpenses: number
   }
 }
 

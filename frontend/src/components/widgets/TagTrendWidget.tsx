@@ -1,0 +1,197 @@
+'use client'
+
+import { useMemo, useState, useEffect } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { TrendingUp } from 'lucide-react'
+import { formatCurrency } from '@/types/currency'
+import { dashboardAPI } from '@/lib/api'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
+
+interface TagTrendData {
+  tagId: string
+  tagName: string
+  tagColor: string | null
+  monthlyData: Array<{
+    month: number
+    year: number
+    amount: number
+  }>
+}
+
+interface TagTrendWidgetProps {
+  gridWidth?: number
+  gridHeight?: number
+  settings?: {
+    tagIds?: string[]
+    months?: number
+  }
+}
+
+// Default colors for tags without a color assigned
+const DEFAULT_COLORS = [
+  '#3b82f6', // blue
+  '#8b5cf6', // purple
+  '#ec4899', // pink
+  '#f59e0b', // amber
+  '#10b981', // green
+]
+
+// Month abbreviations
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+export const TagTrendWidget = ({
+  gridWidth = 3,
+  gridHeight = 2,
+  settings = {}
+}: TagTrendWidgetProps) => {
+  const dimensions = useWidgetDimensions(gridWidth, gridHeight)
+  const [data, setData] = useState<any[]>([])
+  const [tags, setTags] = useState<TagTrendData[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const months = settings.months || 6
+  const tagIds = useMemo(() => settings.tagIds || [], [settings.tagIds])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        const res = await dashboardAPI.getTagTrend(months, tagIds.length > 0 ? tagIds : undefined)
+        const tagsData = res.data.data
+
+        setTags(tagsData)
+
+        // Transform data for the chart
+        // Group by month-year and create a data point for each period
+        if (tagsData.length > 0) {
+          const monthlyPoints: Record<string, any> = {}
+
+          // Get all unique months from the first tag (they all have the same months)
+          const allMonths = tagsData[0].monthlyData
+
+          allMonths.forEach((monthData: any) => {
+            const key = `${MONTH_NAMES[monthData.month - 1]} ${monthData.year}`
+            monthlyPoints[key] = { month: key }
+
+            // Add data for each tag
+            tagsData.forEach((tag: TagTrendData) => {
+              const tagMonthData = tag.monthlyData.find(
+                (m: any) => m.month === monthData.month && m.year === monthData.year
+              )
+              monthlyPoints[key][tag.tagName] = tagMonthData ? tagMonthData.amount : 0
+            })
+          })
+
+          setData(Object.values(monthlyPoints))
+        } else {
+          setData([])
+        }
+      } catch (error) {
+        console.error('Error fetching tag trend:', error)
+        setData([])
+        setTags([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [months, tagIds])
+
+  // Memoize chart configuration
+  const chartConfig = useMemo(() => {
+    const chartHeight = calculateChartHeight(dimensions.contentHeight)
+    const fontSize = dimensions.isSmall ? 10 : 12
+    const strokeWidth = dimensions.isSmall ? 1.5 : 2
+
+    return { chartHeight, fontSize, strokeWidth }
+  }, [dimensions])
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            Tag Trend
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="animate-pulse h-64 bg-gray-200 rounded"></div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  const { chartHeight, fontSize, strokeWidth } = chartConfig
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+          <TrendingUp className="h-4 w-4" />
+          Tag Trend (Last {months} Months)
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {data.length > 0 && tags.length > 0 ? (
+          <ResponsiveContainer width="100%" height={chartHeight}>
+            <LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis
+                dataKey="month"
+                tick={{ fontSize, fill: '#6b7280' }}
+                tickLine={false}
+                axisLine={{ stroke: '#e5e7eb' }}
+              />
+              <YAxis
+                tick={{ fontSize, fill: '#6b7280' }}
+                tickLine={false}
+                axisLine={{ stroke: '#e5e7eb' }}
+                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#fff',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                }}
+                formatter={(value: number) => formatCurrency(value, 'CLP')}
+              />
+              <Legend
+                wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }}
+                iconType="line"
+              />
+              {tags.map((tag, index) => (
+                <Line
+                  key={tag.tagId}
+                  type="monotone"
+                  dataKey={tag.tagName}
+                  stroke={tag.tagColor || DEFAULT_COLORS[index % DEFAULT_COLORS.length]}
+                  strokeWidth={strokeWidth}
+                  dot={{ r: 3 }}
+                  activeDot={{ r: 5 }}
+                />
+              ))}
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <div
+            className="flex flex-col items-center justify-center text-gray-500"
+            style={{ height: chartHeight }}
+          >
+            <TrendingUp className="h-12 w-12 mb-2 text-gray-300" />
+            <p className="text-sm">No tag data available</p>
+            <p className="text-xs text-gray-400 mt-1 text-center px-4">
+              {tagIds.length > 0
+                ? 'The selected tags have no transaction history'
+                : 'Add tags to your transactions to see trends over time'}
+            </p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}

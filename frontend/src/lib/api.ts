@@ -556,6 +556,42 @@ export const dashboardAPI = {
       }
       month: string
     }>>('/dashboard/savings', { params }),
+
+  getExpensesByTag: (params?: { month?: number; year?: number }) =>
+    api.get<ApiResponse<Array<{
+      tagName: string
+      tagColor: string | null
+      totalAmount: number
+      percentage: number
+      transactionCount: number
+    }>>>('/dashboard/expenses-by-tag', { params }),
+
+  getTopTags: (params?: { month?: number; year?: number; limit?: number }) =>
+    api.get<ApiResponse<Array<{
+      tagId: string
+      tagName: string
+      tagColor: string | null
+      transactionCount: number
+      totalAmount: number
+      averageAmount: number
+    }>>>('/dashboard/top-tags', { params }),
+
+  getTagTrend: (months?: number, tagIds?: string[]) =>
+    api.get<ApiResponse<Array<{
+      tagId: string
+      tagName: string
+      tagColor: string | null
+      monthlyData: Array<{
+        month: number
+        year: number
+        amount: number
+      }>
+    }>>>('/dashboard/tag-trend', {
+      params: {
+        months,
+        ...(tagIds && tagIds.length > 0 ? { tagIds } : {})
+      }
+    }),
 }
 
 // Notification API

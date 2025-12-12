@@ -10,11 +10,10 @@ import { Card, CardHeader, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
-import { PaymentStatusBadge } from '@/components/PaymentStatusBadge'
-import { MarkAsPaidButton } from '@/components/MarkAsPaidButton'
-import { MarkExpensePaidModal } from '@/components/MarkExpensePaidModal'
+import { MarkAsPaidButtonStyled } from '@/components/MarkAsPaidButtonStyled'
 import { formatCurrency } from '@/types/currency'
 import { LoadingPage, LoadingSpinner, LoadingMessages } from '@/components/ui/Loading'
+import { Tooltip } from '@/components/ui/Tooltip'
 
 const GROUP_COVER_IMAGES = [
   '🏠', '👨‍👩‍👧‍👦', '🎉', '✈️', '🏖️', '🎓', '💼', '🎮', '🍕', '🎬',
@@ -35,15 +34,6 @@ export default function GroupsPage() {
   const [activeTab, setActiveTab] = useState<'members' | 'split' | 'balances'>('members')
   const [groupExpenses, setGroupExpenses] = useState<any[]>([])
   const [loadingExpenses, setLoadingExpenses] = useState(false)
-
-  // Mark expense as paid modal state
-  const [isMarkPaidModalOpen, setIsMarkPaidModalOpen] = useState(false)
-  const [selectedExpenseForPayment, setSelectedExpenseForPayment] = useState<{
-    expenseId: string
-    participantUserId: string
-    description: string
-    amount: number
-  } | null>(null)
 
   // Split configuration state
   const [isEditingSplit, setIsEditingSplit] = useState(false)
@@ -413,6 +403,16 @@ export default function GroupsPage() {
     try {
       setLoadingExpenses(true)
       const res = await sharedExpenseAPI.getAll(groupId)
+      console.log('📊 Loaded expenses:', res.data.data)
+
+      // Log isPaid status for all participants
+      res.data.data.forEach((expense: any) => {
+        console.log(`💡 Expense ${expense.description}:`)
+        expense.participants.forEach((p: any) => {
+          console.log(`  - ${p.user.name}: isPaid = ${p.isPaid}`)
+        })
+      })
+
       setGroupExpenses(res.data.data)
     } catch (error: any) {
       toast.error('Failed to load group expenses')
@@ -449,159 +449,82 @@ export default function GroupsPage() {
         </Button>
       </div>
 
-      {/* Groups Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Groups Grid - Diseño Compacto */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {groups.map((group) => {
-          const isCreator = group.createdBy === group.members[0]?.userId // Simplified check
+          const isCreator = group.createdBy === group.members[0]?.userId
           const memberCount = group.members.length
-          const expenseCount = group._count?.expenses || 0
+          const totalExpenses = group._count?.expenses || 0
+          const pendingExpenses = group._count?.pendingExpenses || 0
 
           return (
-            <Card key={group.id} className="hover:shadow-lg transition-shadow">
-              <CardContent className="p-0">
-                {/* Cover Image */}
-                <div
-                  className="h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-t-lg flex items-center justify-center text-6xl"
-                  style={{
-                    background: group.coverImageUrl?.startsWith('#')
-                      ? group.coverImageUrl
-                      : undefined,
-                  }}
-                >
-                  {!group.coverImageUrl?.startsWith('#') && (
-                    <span className="text-white drop-shadow-lg">{group.coverImageUrl}</span>
+            <Card key={group.id} className="hover:shadow-md transition-all">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="text-3xl">{group.coverImageUrl}</div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-semibold text-gray-900 truncate">{group.name}</h3>
+                    <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+                      <Tooltip content={`${memberCount} miembro${memberCount !== 1 ? 's' : ''}`} side="top">
+                        <span>{memberCount}👥</span>
+                      </Tooltip>
+                      <Tooltip content={`${totalExpenses} gasto${totalExpenses !== 1 ? 's' : ''} total${totalExpenses !== 1 ? 'es' : ''}`} side="top">
+                        <span>{totalExpenses}📝</span>
+                      </Tooltip>
+                      {pendingExpenses > 0 && (
+                        <Tooltip content={`${pendingExpenses} gasto${pendingExpenses !== 1 ? 's' : ''} pendiente${pendingExpenses !== 1 ? 's' : ''}`} side="top">
+                          <span className="text-orange-600">{pendingExpenses}⏳</span>
+                        </Tooltip>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1 mb-3">
+                  {group.members.slice(0, 4).map((member) => (
+                    <Tooltip key={member.id} content={member.user.name} side="top">
+                      <div
+                        className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-semibold ring-2 ring-white"
+                      >
+                        {member.user.name.charAt(0).toUpperCase()}
+                      </div>
+                    </Tooltip>
+                  ))}
+                  {group.members.length > 4 && (
+                    <Tooltip content={`${group.members.length - 4} miembro${group.members.length - 4 !== 1 ? 's' : ''} más`} side="top">
+                      <div className="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 text-xs font-semibold ring-2 ring-white">
+                        +{group.members.length - 4}
+                      </div>
+                    </Tooltip>
                   )}
                 </div>
 
-                {/* Group Info */}
-                <div className="p-4 space-y-4">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">{group.name}</h3>
-                    {group.description && (
-                      <p className="text-sm text-gray-600 mt-1">{group.description}</p>
-                    )}
-                  </div>
-
-                  {/* Stats */}
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <div className="flex items-center gap-1">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                        />
-                      </svg>
-                      <span>{memberCount} members</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                        />
-                      </svg>
-                      <span>{expenseCount} expenses</span>
-                    </div>
-                  </div>
-
-                  {/* Members Preview */}
-                  {group.members.length > 0 && (
-                    <div>
-                      <p className="text-xs font-medium text-gray-500 uppercase mb-2">Members</p>
-                      <div className="flex flex-wrap gap-2">
-                        {group.members.slice(0, 5).map((member) => (
-                          <div
-                            key={member.id}
-                            className="flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1"
-                          >
-                            {member.user.avatarUrl ? (
-                              <Image
-                                src={member.user.avatarUrl}
-                                alt={member.user.name}
-                                width={20}
-                                height={20}
-                                className="w-5 h-5 rounded-full"
-                                loading="lazy"
-                              />
-                            ) : (
-                              <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">
-                                {member.user.name.charAt(0).toUpperCase()}
-                              </div>
-                            )}
-                            <span className="text-sm text-gray-700">{member.user.name}</span>
-                          </div>
-                        ))}
-                        {group.members.length > 5 && (
-                          <div className="flex items-center px-3 py-1 text-sm text-gray-600">
-                            +{group.members.length - 5} more
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Actions */}
-                  <div className="flex gap-2 pt-2 border-t border-gray-100">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => handleViewGroup(group)}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleViewGroup(group)}
+                    className="flex-1 py-1.5 px-3 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors font-medium"
+                  >
+                    Ver
+                  </button>
+                  {isCreator ? (
+                    <button
+                      onClick={() => handleDelete(group.id, group.name)}
+                      className="py-1.5 px-3 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                     >
-                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
-                      View
-                    </Button>
-                    {isCreator ? (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(group.id, group.name)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleLeaveGroup(group.id, group.name)}
-                        className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                          />
-                        </svg>
-                      </Button>
-                    )}
-                  </div>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleLeaveGroup(group.id, group.name)}
+                      className="py-1.5 px-3 text-sm text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                    </button>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -1319,25 +1242,19 @@ export default function GroupsPage() {
                                   </p>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <PaymentStatusBadge isPaid={participant.isPaid || false} variant="compact" />
-                                {!participant.isPaid && participant.userId === user?.id && (
-                                  <button
-                                    onClick={() => {
-                                      setSelectedExpenseForPayment({
-                                        expenseId: expense.id,
-                                        participantUserId: participant.userId,
-                                        description: expense.description,
-                                        amount: Number(participant.amountOwed),
-                                      })
-                                      setIsMarkPaidModalOpen(true)
-                                    }}
-                                    className="text-xs px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-                                  >
-                                    {expense.paidByUserId === participant.userId ? 'Me pagaron' : 'Pagué'}
-                                  </button>
-                                )}
-                              </div>
+                              <MarkAsPaidButtonStyled
+                                expenseId={expense.id}
+                                participantUserId={participant.userId}
+                                currentUserId={user?.id || ''}
+                                paidByUserId={expense.paidByUserId}
+                                isPaid={participant.isPaid || false}
+                                onSuccess={() => {
+                                  if (viewingGroup) {
+                                    loadGroupExpenses(viewingGroup.id)
+                                  }
+                                }}
+                                designStyle="icon-only"
+                              />
                             </div>
                           ))}
                         </div>
@@ -1377,26 +1294,6 @@ export default function GroupsPage() {
             </div>
           </div>
         </Modal>
-      )}
-
-      {/* Mark Expense as Paid Modal */}
-      {selectedExpenseForPayment && (
-        <MarkExpensePaidModal
-          isOpen={isMarkPaidModalOpen}
-          onClose={() => {
-            setIsMarkPaidModalOpen(false)
-            setSelectedExpenseForPayment(null)
-          }}
-          expenseId={selectedExpenseForPayment.expenseId}
-          participantUserId={selectedExpenseForPayment.participantUserId}
-          expenseDescription={selectedExpenseForPayment.description}
-          amount={selectedExpenseForPayment.amount}
-          onSuccess={() => {
-            if (viewingGroup) {
-              loadGroupExpenses(viewingGroup.id)
-            }
-          }}
-        />
       )}
     </div>
   )

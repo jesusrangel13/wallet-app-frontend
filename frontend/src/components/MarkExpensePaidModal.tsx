@@ -45,7 +45,12 @@ export function MarkExpensePaidModal({
         userAPI.getProfile(),
       ])
 
-      const activeAccounts = accountsRes.data.data.data.filter(
+      // Handle paginated response - data is in accountsRes.data.data.data
+      const accountsData = Array.isArray(accountsRes.data.data)
+        ? accountsRes.data.data
+        : accountsRes.data.data.data || []
+
+      const activeAccounts = accountsData.filter(
         (account: Account) => !account.isArchived
       )
       setAccounts(activeAccounts)

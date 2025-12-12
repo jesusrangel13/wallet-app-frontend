@@ -22,6 +22,9 @@ export type WidgetType =
   | 'group-balances'
   | 'account-balances'
   | 'recent-transactions'
+  | 'expenses-by-tag'
+  | 'top-tags'
+  | 'tag-trend'
 
 export interface WidgetDefinition {
   id: WidgetType
@@ -269,6 +272,45 @@ export const WIDGET_REGISTRY: Record<WidgetType, WidgetDefinition> = {
     icon: 'PieChart',
     defaultWidth: 2,
     defaultHeight: 3,
+    minWidth: 2,
+    minHeight: 2,
+    resizable: true,
+    draggable: true,
+  },
+  'expenses-by-tag': {
+    id: 'expenses-by-tag',
+    name: 'Expenses by Tag',
+    description: 'Distribution of expenses across your custom tags',
+    category: 'insights',
+    icon: 'Tag',
+    defaultWidth: 2,
+    defaultHeight: 2,
+    minWidth: 2,
+    minHeight: 2,
+    resizable: true,
+    draggable: true,
+  },
+  'top-tags': {
+    id: 'top-tags',
+    name: 'Top Tags',
+    description: 'Your most frequently used tags with statistics',
+    category: 'insights',
+    icon: 'TrendingUp',
+    defaultWidth: 2,
+    defaultHeight: 2,
+    minWidth: 2,
+    minHeight: 1,
+    resizable: true,
+    draggable: true,
+  },
+  'tag-trend': {
+    id: 'tag-trend',
+    name: 'Tag Trend',
+    description: 'Spending trends for your tags over time',
+    category: 'insights',
+    icon: 'LineChart',
+    defaultWidth: 3,
+    defaultHeight: 2,
     minWidth: 2,
     minHeight: 2,
     resizable: true,

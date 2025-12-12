@@ -31,6 +31,9 @@ import { AccountBalancesWidget } from '@/components/widgets/AccountBalancesWidge
 import { RecentTransactionsWidget } from '@/components/widgets/RecentTransactionsWidget'
 import { BalancesWidget } from '@/components/BalancesWidget'
 import { FixedAccountBalancesWidget } from '@/components/FixedAccountBalancesWidget'
+import { ExpensesByTagWidget } from '@/components/widgets/ExpensesByTagWidget'
+import { TopTagsWidget } from '@/components/widgets/TopTagsWidget'
+import { TagTrendWidget } from '@/components/widgets/TagTrendWidget'
 
 // Widget component map
 const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -52,6 +55,9 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
   'group-balances': GroupBalancesWidget,
   'account-balances': AccountBalancesWidget,
   'recent-transactions': RecentTransactionsWidget,
+  'expenses-by-tag': ExpensesByTagWidget,
+  'top-tags': TopTagsWidget,
+  'tag-trend': TagTrendWidget,
 }
 
 export default function DashboardPage() {

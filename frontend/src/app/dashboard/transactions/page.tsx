@@ -22,6 +22,7 @@ import { PaymentStatusBadge } from '@/components/PaymentStatusBadge'
 import { LoadingPage, LoadingOverlay, LoadingSpinner, LoadingMessages } from '@/components/ui/Loading'
 import { SharedExpenseIndicator } from '@/components/SharedExpenseIndicator'
 import { DateGroupHeader } from '@/components/DateGroupHeader'
+import { useAuthStore } from '@/store/authStore'
 
 const transactionSchema = z.object({
   accountId: z.string().min(1, 'Account is required'),
@@ -80,6 +81,7 @@ const groupTransactionsByDate = (transactions: Transaction[]) => {
 }
 
 export default function TransactionsPage() {
+  const { user } = useAuthStore()
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [accounts, setAccounts] = useState<Account[]>([])
   const [categories, setCategories] = useState<MergedCategory[]>([])
@@ -294,6 +296,32 @@ export default function TransactionsPage() {
 
         const sharedExpenseResponse = await sharedExpenseAPI.create(sharedExpensePayload)
         sharedExpenseId = sharedExpenseResponse.data.data.id
+
+        // Only create a Transaction if the current user is the one who paid
+        // If someone else paid, the Transaction should only be created when marking as "paid"
+        const currentUserId = user?.id
+        if (sharedExpenseData.paidByUserId === currentUserId) {
+          // Current user paid - create the transaction to affect their balance
+          const payload: CreateTransactionForm = {
+            ...data,
+            date: data.date || new Date().toISOString(),
+            sharedExpenseId: sharedExpenseId
+          }
+          await transactionAPI.create(payload)
+          toast.success('Shared expense created successfully')
+        } else {
+          // Someone else paid - don't create transaction yet
+          // Balance will be affected when marking as "paid"
+          toast.success('Shared expense created successfully. Mark as paid when you settle your portion.')
+        }
+
+        loadTransactions()
+        setIsModalOpen(false)
+        reset()
+        setEditingTransaction(null)
+        setIsSharedExpense(false)
+        setSharedExpenseData(null)
+        return // Exit early to avoid creating duplicate transaction
       }
 
       // Build payload with explicit sharedExpenseId handling
