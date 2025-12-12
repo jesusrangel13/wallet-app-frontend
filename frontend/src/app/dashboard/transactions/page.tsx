@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -23,6 +23,7 @@ import { LoadingPage, LoadingOverlay, LoadingSpinner, LoadingMessages } from '@/
 import { SharedExpenseIndicator } from '@/components/SharedExpenseIndicator'
 import { DateGroupHeader } from '@/components/DateGroupHeader'
 import { useAuthStore } from '@/store/authStore'
+import { GroupedVirtuoso } from 'react-virtuoso'
 
 const transactionSchema = z.object({
   accountId: z.string().min(1, 'Account is required'),
@@ -104,7 +105,7 @@ export default function TransactionsPage() {
   const [totalRecords, setTotalRecords] = useState(0)
   const [hasMore, setHasMore] = useState(false)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
-  const observerTarget = useRef<HTMLDivElement>(null)
+
 
   // Month/Year selector
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
@@ -177,28 +178,13 @@ export default function TransactionsPage() {
     }
   }, [itemsPerPage])
 
-  // Infinite Scroll Observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !isLoadingMore && !isRefreshingList) {
-          loadTransactions(currentPage + 1, true)
-        }
-      },
-      { threshold: 0.1 }
-    )
-
-    const currentTarget = observerTarget.current
-    if (currentTarget) {
-      observer.observe(currentTarget)
-    }
-
-    return () => {
-      if (currentTarget) {
-        observer.unobserve(currentTarget)
-      }
-    }
-  }, [hasMore, isLoadingMore, isRefreshingList, currentPage])
+  // Grouped data memoization needed for Virtuoso
+  const { groupedTransactions, groupCounts, flatTransactions } = useMemo(() => {
+    const groups = groupTransactionsByDate(transactions)
+    const counts = groups.map(g => g.transactions.length)
+    const flat = groups.flatMap(g => g.transactions)
+    return { groupedTransactions: groups, groupCounts: counts, flatTransactions: flat }
+  }, [transactions])
 
   const loadTransactions = async (page: number = 1, append: boolean = false) => {
     try {
@@ -864,7 +850,7 @@ export default function TransactionsPage() {
       )}
 
       {/* Transactions List - Grouped by Date */}
-      <div className={`space-y-6 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} relative`}>
+      <div className={`space-y-6 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} h-[calc(100vh-200px)]`}>
         {isRefreshingList && (
           <LoadingOverlay message={LoadingMessages.transactions} />
         )}
@@ -877,136 +863,154 @@ export default function TransactionsPage() {
             </CardContent>
           </Card>
         ) : (
-          groupTransactionsByDate(transactions).map((group) => (
-            <div key={group.date} className="space-y-2">
-              <DateGroupHeader
-                date={group.date}
-                totalIncome={group.totalIncome}
-                totalExpense={group.totalExpense}
-                currency={group.currency}
-              />
-              <div className="space-y-2">
-                {group.transactions.map((transaction) => (
-            <Card key={transaction.id} className={`transition-colors ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 border-blue-300' : ''}`}>
-              <CardContent className="py-4">
-                <div className="flex items-start justify-between">
-                  {/* Left Section: Checkbox + Category Icon + Details */}
-                  <div className="flex items-start gap-3 flex-1">
-                    <input
-                      type="checkbox"
-                      checked={selectedTransactionIds.has(transaction.id)}
-                      onChange={() => handleSelectTransaction(transaction.id)}
-                      className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer mt-1"
-                    />
-
-                    {/* Category Circle Icon */}
-                    <div
-                      className="flex items-center justify-center w-10 h-10 rounded-full text-lg flex-shrink-0"
-                      style={{
-                        backgroundColor: transaction.category?.color || '#E5E7EB',
-                        color: transaction.category?.icon ? 'inherit' : 'transparent'
-                      }}
-                    >
-                      {transaction.category?.icon || '📌'}
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-baseline gap-2">
-                        <p className="font-semibold text-gray-900">
-                          {transaction.category?.name || 'Uncategorized'}
-                        </p>
-                      </div>
-
-                      {transaction.description && (
-                        <p className="text-sm text-gray-600 truncate">{transaction.description}</p>
-                      )}
-
-                      {/* Shared Expense Indicator - unified display */}
-                      <SharedExpenseIndicator transaction={transaction} variant="compact" className="mt-2" />
-
-                      {/* Show payee only for non-shared transactions (shared ones show it in the indicator) */}
-                      {!transaction.sharedExpenseId && transaction.payee && (
-                        <p className="text-xs text-gray-500 mt-1">→ {transaction.payee}</p>
-                      )}
-
-                      <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
-                        <span>{transaction.account?.name}</span>
-                        {transaction.toAccount && (
-                          <>
-                            <span>→</span>
-                            <span>{transaction.toAccount.name}</span>
-                          </>
-                        )}
-                      </div>
-
-                      {transaction.tags && transaction.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          {transaction.tags.map((t) => (
-                            <span
-                              key={t.id}
-                              className="inline-block px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded text-xs"
-                            >
-                              {t.tag.name}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Right Section: Amount + Date + Actions */}
-                  <div className="flex flex-col items-end gap-3 ml-4">
-                    <div className="text-right">
-                      <p
-                        className={`text-lg font-bold ${getTransactionTypeColor(
-                          transaction.type
-                        )}`}
-                      >
-                        {transaction.type === 'EXPENSE' && '-'}
-                        {transaction.type === 'INCOME' && '+'}
-                        {formatCurrency(
-                          Number(transaction.amount),
-                          transaction.account?.currency || 'CLP'
-                        )}
-                      </p>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={() => handleEdit(transaction)}>
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(transaction.id)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
+          <GroupedVirtuoso
+            useWindowScroll
+            groupCounts={groupCounts}
+            groupContent={(index) => {
+              const group = groupedTransactions[index]
+              return (
+                <div className="pt-6 pb-2 bg-gray-50/95 backdrop-blur z-10 sticky top-0">
+                  <DateGroupHeader
+                    date={group.date}
+                    totalIncome={group.totalIncome}
+                    totalExpense={group.totalExpense}
+                    currency={group.currency}
+                  />
                 </div>
-              </CardContent>
-            </Card>
-                ))}
-              </div>
-            </div>
-          ))
+              )
+            }}
+            itemContent={(index) => {
+              const transaction = flatTransactions[index];
+              if (!transaction) return null;
+
+              return (
+                <div className="pb-2">
+                  <Card className={`transition-colors ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 border-blue-300' : ''}`}>
+                    <CardContent className="py-4">
+                      <div className="flex items-start justify-between">
+                        {/* Left Section: Checkbox + Category Icon + Details */}
+                        <div className="flex items-start gap-3 flex-1">
+                          <input
+                            type="checkbox"
+                            checked={selectedTransactionIds.has(transaction.id)}
+                            onChange={() => handleSelectTransaction(transaction.id)}
+                            className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer mt-1"
+                          />
+
+                          {/* Category Circle Icon */}
+                          <div
+                            className="flex items-center justify-center w-10 h-10 rounded-full text-lg flex-shrink-0"
+                            style={{
+                              backgroundColor: transaction.category?.color || '#E5E7EB',
+                              color: transaction.category?.icon ? 'inherit' : 'transparent'
+                            }}
+                          >
+                            {transaction.category?.icon || '📌'}
+                          </div>
+
+                          {/* Content */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-baseline gap-2">
+                              <p className="font-semibold text-gray-900">
+                                {transaction.category?.name || 'Uncategorized'}
+                              </p>
+                            </div>
+
+                            {transaction.description && (
+                              <p className="text-sm text-gray-600 truncate">{transaction.description}</p>
+                            )}
+
+                            {/* Shared Expense Indicator - unified display */}
+                            <SharedExpenseIndicator transaction={transaction} variant="compact" className="mt-2" />
+
+                            {/* Show payee only for non-shared transactions (shared ones show it in the indicator) */}
+                            {!transaction.sharedExpenseId && transaction.payee && (
+                              <p className="text-xs text-gray-500 mt-1">→ {transaction.payee}</p>
+                            )}
+
+                            <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
+                              <span>{transaction.account?.name}</span>
+                              {transaction.toAccount && (
+                                <>
+                                  <span>→</span>
+                                  <span>{transaction.toAccount.name}</span>
+                                </>
+                              )}
+                            </div>
+
+                            {transaction.tags && transaction.tags.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                {transaction.tags.map((t) => (
+                                  <span
+                                    key={t.id}
+                                    className="inline-block px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded text-xs"
+                                  >
+                                    {t.tag.name}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Right Section: Amount + Date + Actions */}
+                        <div className="flex flex-col items-end gap-3 ml-4">
+                          <div className="text-right">
+                            <p
+                              className={`text-lg font-bold ${getTransactionTypeColor(
+                                transaction.type
+                              )}`}
+                            >
+                              {transaction.type === 'EXPENSE' && '-'}
+                              {transaction.type === 'INCOME' && '+'}
+                              {formatCurrency(
+                                Number(transaction.amount),
+                                transaction.account?.currency || 'CLP'
+                              )}
+                            </p>
+                          </div>
+
+                          <div className="flex gap-2">
+                            <Button variant="outline" size="sm" onClick={() => handleEdit(transaction)}>
+                              Edit
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDelete(transaction.id)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )
+            }}
+            endReached={() => {
+              if (hasMore && !isLoadingMore && !isRefreshingList) {
+                loadTransactions(currentPage + 1, true)
+              }
+            }}
+            components={{
+              Footer: () => (
+                isLoadingMore ? (
+                  <div className="flex justify-center py-8">
+                    <div className="flex items-center gap-2 text-gray-500">
+                      <LoadingSpinner size="sm" />
+                      <span className="text-sm">Cargando más transacciones...</span>
+                    </div>
+                  </div>
+                ) : null
+              )
+            }}
+          />
         )}
       </div>
 
-      {/* Infinite Scroll Observer Target */}
-      {hasMore && (
-        <div ref={observerTarget} className="flex justify-center py-8">
-          {isLoadingMore && (
-            <div className="flex items-center gap-2 text-gray-500">
-              <LoadingSpinner size="sm" />
-              <span className="text-sm">Cargando más transacciones...</span>
-            </div>
-          )}
-        </div>
-      )}
 
       {/* End of list indicator */}
       {!hasMore && transactions.length > 0 && (
@@ -1037,11 +1041,10 @@ export default function TransactionsPage() {
               <button
                 type="button"
                 onClick={() => setValue('type', 'EXPENSE')}
-                className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${
-                  selectedType === 'EXPENSE'
-                    ? 'bg-red-500 text-white shadow-md'
-                    : 'text-gray-700 hover:bg-gray-200'
-                }`}
+                className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'EXPENSE'
+                  ? 'bg-red-500 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-gray-200'
+                  }`}
               >
                 <div className="flex flex-col items-center gap-1">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1053,11 +1056,10 @@ export default function TransactionsPage() {
               <button
                 type="button"
                 onClick={() => setValue('type', 'INCOME')}
-                className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${
-                  selectedType === 'INCOME'
-                    ? 'bg-green-500 text-white shadow-md'
-                    : 'text-gray-700 hover:bg-gray-200'
-                }`}
+                className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'INCOME'
+                  ? 'bg-green-500 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-gray-200'
+                  }`}
               >
                 <div className="flex flex-col items-center gap-1">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1069,11 +1071,10 @@ export default function TransactionsPage() {
               <button
                 type="button"
                 onClick={() => setValue('type', 'TRANSFER')}
-                className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${
-                  selectedType === 'TRANSFER'
-                    ? 'bg-blue-400 text-white shadow-md'
-                    : 'text-gray-700 hover:bg-gray-200'
-                }`}
+                className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'TRANSFER'
+                  ? 'bg-blue-400 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-gray-200'
+                  }`}
               >
                 <div className="flex flex-col items-center gap-1">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1141,17 +1142,16 @@ export default function TransactionsPage() {
                   ? selectedAccount.currency === 'CLP'
                     ? '$'
                     : selectedAccount.currency === 'USD'
-                    ? 'US$'
-                    : '€'
+                      ? 'US$'
+                      : '€'
                   : '$'}
               </span>
               <input
                 type="text"
                 inputMode="decimal"
                 placeholder="0.00"
-                className={`w-full pl-12 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                  errors.amount ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full pl-12 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.amount ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 value={formattedAmount}
                 onChange={handleAmountChange}
                 onFocus={handleAmountFocus}

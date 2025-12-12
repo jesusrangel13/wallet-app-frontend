@@ -24,6 +24,7 @@
     "react-dom": "^18.3.1",
     "react-grid-layout": "^1.5.2",
     "react-hook-form": "^7.54.0",
+    "react-virtuoso": "^4.17.0",
     "recharts": "^2.15.4",
     "sonner": "^1.7.3",
     "tailwind-merge": "^2.5.5",
