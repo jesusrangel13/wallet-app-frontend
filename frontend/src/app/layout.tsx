@@ -10,6 +10,17 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Finance App - Manage Your Money',
   description: 'Complete finance management solution with shared expenses',
+  manifest: '/manifest.json',
+  icons: {
+    icon: '/icon-192x192.png',
+    apple: '/icon-192x192.png',
+  },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false, // Ensures app-like feel
+  },
 }
 
 export default function RootLayout({
