@@ -6,8 +6,8 @@ import { Account, Group, MergedCategory } from '@/types'
 import { accountAPI, categoryAPI, groupAPI, importAPI } from '@/lib/api'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import Papa from 'papaparse'
-import * as XLSX from 'xlsx'
+// import Papa from 'papaparse' // Dynamically imported
+// import * as XLSX from 'xlsx' // Dynamically imported
 import { Upload, FileText, Table, CheckCircle2, AlertCircle, Info, History, Edit2 } from 'lucide-react'
 import Link from 'next/link'
 import TransactionFormModal, { TransactionFormData } from '@/components/TransactionFormModal'
@@ -78,7 +78,7 @@ export default function ImportPage() {
     }
   }
 
-  const downloadTemplate = (format: 'csv' | 'excel') => {
+  const downloadTemplate = async (format: 'csv' | 'excel') => {
     const categoryNames = categories.map(c => c.name).join(', ')
     const groupNames = groups.map(g => g.name).join(', ')
 
@@ -138,6 +138,8 @@ export default function ImportPage() {
       link.click()
       toast.success('CSV template downloaded')
     } else {
+      // Dynamic import for XLSX
+      const XLSX = await import('xlsx')
       const wb = XLSX.utils.book_new()
 
       // Instructions sheet
@@ -230,6 +232,7 @@ export default function ImportPage() {
       if (fileNameLower.endsWith('.csv')) {
         setFileType('CSV')
         const text = await fileToParse.text()
+        const Papa = (await import('papaparse')).default
         Papa.parse(text, {
           header: true,
           skipEmptyLines: true,
@@ -244,6 +247,7 @@ export default function ImportPage() {
       } else {
         setFileType('EXCEL')
         const arrayBuffer = await fileToParse.arrayBuffer()
+        const XLSX = await import('xlsx')
         const workbook = XLSX.read(arrayBuffer, { type: 'array' })
         const sheetName = workbook.SheetNames.find(name => name.toLowerCase() === 'transactions') || workbook.SheetNames[0]
         const worksheet = workbook.Sheets[sheetName]
@@ -739,11 +743,10 @@ export default function ImportPage() {
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                  isDragging
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${isDragging
                     ? 'border-blue-500 bg-blue-50'
                     : 'border-gray-300 hover:border-gray-400'
-                }`}
+                  }`}
               >
                 <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-lg font-medium text-gray-900 mb-2">
@@ -761,9 +764,8 @@ export default function ImportPage() {
                   id="file-upload"
                 />
                 <label htmlFor="file-upload" className={!selectedAccount || isProcessing ? 'cursor-not-allowed' : 'cursor-pointer'}>
-                  <span className={`inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 ${
-                    !selectedAccount || isProcessing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                  }`}>
+                  <span className={`inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 ${!selectedAccount || isProcessing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                    }`}>
                     {isProcessing ? 'Processing...' : 'Choose File'}
                   </span>
                 </label>
@@ -868,11 +870,10 @@ export default function ImportPage() {
                           <tr key={transaction.row} className="hover:bg-gray-50">
                             <td className="px-4 py-3 text-sm text-gray-900">{formatDateForDisplay(transaction.date)}</td>
                             <td className="px-4 py-3">
-                              <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
-                                transaction.type === 'EXPENSE'
+                              <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${transaction.type === 'EXPENSE'
                                   ? 'bg-red-100 text-red-800'
                                   : 'bg-green-100 text-green-800'
-                              }`}>
+                                }`}>
                                 {transaction.type}
                               </span>
                             </td>
