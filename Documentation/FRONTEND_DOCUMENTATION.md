@@ -1908,6 +1908,7 @@ const transactionSchema = z.object({
 
 Durante el análisis del proyecto se identificaron las siguientes oportunidades de mejora para optimizar aún más el rendimiento y la experiencia del usuario:
 
+ 
 ### 1. **Virtual Scrolling para Listas Largas** 🔄 Recomendado
 
 **Problema**: Listas con 100+ items (transacciones, grupos) pueden causar lag en el renderizado.
@@ -1942,6 +1943,47 @@ Durante el análisis del proyecto se identificaron las siguientes oportunidades 
 - **Funcionalidad Offline**: Cache automático de assets y páginas visitadas.
 - **Instalable**: Los usuarios pueden instalar la app en su inicio ("Add to Home Screen").
 - **Carga Instantánea**: Mejor rendimiento en visitas repetidas gracias al precaching.
+=======
+### 1. **Virtual Scrolling para Listas Largas** ✅ Implementado
+
+**Problema**: Listas con 100+ items (transacciones, grupos) pueden causar lag en el renderizado.
+
+**Solución**: Se implementó `react-virtuoso` (específicamente `GroupedVirtuoso`) para manejar listas de transacciones con alturas variables y agrupamiento por fecha.
+
+**Cambios Realizados**:
+- Se instaló `react-virtuoso`.
+- Se refactorizó `TransactionsPage` para usar `GroupedVirtuoso` en lugar de renderizado por mapeo directo.
+- Se implementó la lógica de agrupamiento compatible con virtualización.
+- Se mantuvo la funcionalidad de sticky headers para las fechas.
+- Se preservó la funcionalidad de selección múltiple y acciones en lote.
+
+**Beneficios**:
+- Renderizado eficiente de miles de transacciones.
+- Menor consumo de memoria al renderizar solo lo visible.
+- Scroll fluido manteniendo la experiencia de usuario (headers pegajosos).
+
+### 2. **Service Worker para Offline Support** 🔄 Recomendado
+
+**Problema**: App no funciona sin conexión a internet.
+
+**Solución**: Implementar PWA (Progressive Web App) con Service Worker
+
+**Características**:
+- Cache de assets estáticos (JS, CSS, imágenes)
+- Cache de datos críticos (cuentas, transacciones recientes)
+- Funcionalidad offline básica
+- Sincronización cuando vuelve la conexión
+
+**Beneficios**:
+- Funcionalidad offline
+- Carga más rápida (cache)
+- Mejor experiencia en conexiones lentas
+- Instalable como app nativa
+
+**Herramientas**:
+- `next-pwa` plugin
+- Workbox para estrategias de cache
+ 
 
 ### 3. **Prefetching de Rutas y Datos** 🔄 Recomendado
 
