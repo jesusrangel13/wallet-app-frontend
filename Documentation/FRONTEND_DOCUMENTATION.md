@@ -327,258 +327,73 @@ const transactionSchema = z.object({
 
 ---
 
-## Optimizaciones Recomendadas
 
-Durante el análisis del proyecto se identificaron las siguientes oportunidades de mejora para optimizar aún más el rendimiento y la experiencia del usuario:
+## Optimizaciones y Mejoras
 
-### 1. **Virtual Scrolling para Listas Largas** 🔄 Recomendado
+### ✅ Implementadas
 
-**Problema**: Listas con 100+ items (transacciones, grupos) pueden causar lag en el renderizado.
+1. **PWA / Service Worker**
+   - **Solución**: `@ducanh2912/next-pwa` configurado en `next.config.js`.
+   - **Beneficios**: Soporte offline, instalable (manifest.json), cache de assets.
 
-**Solución**: Implementar `react-window` o `react-virtualized`
+2. **Virtual Scrolling (Transacciones)**
+   - **Solución**: `react-virtuoso` implementado en `TransactionsPage`.
+   - **Beneficios**: Renderizado eficiente de listas largas con agrupamiento por fecha.
 
-**Aplicar en**:
-- Lista de transacciones (`/dashboard/transactions`)
-- Lista de grupos (`/dashboard/groups`)
-- Listas de gastos compartidos
+3. **Prefetching - Navegación Instantánea**
+   - **Solución**: `Link` con `prefetch={true}` en Sidebar y widgets.
+   - **Beneficios**: Navegación inmediata a rutas principales.
 
-**Beneficios**:
-- Renderiza solo items visibles en viewport
-- Mejora performance con 1000+ items
-- Reduce uso de memoria
-- Scroll más fluido
+4. **Optimistic Updates**
+   - **Solución**: React Query `onMutate` en transacciones, cuentas y grupos.
+   - **Beneficios**: Feedback instantáneo al usuario, rollback automático en error.
 
-### 2. **Service Worker para Offline Support** ✅ Implementado
+5. **Debouncing**
+   - **Solución**: Depuración de inputs de búsqueda en `TransactionFilters` y filtros.
+   - **Beneficios**: Reducción de llamadas API innecesarias.
 
-**Problema**: App no funciona sin conexión a internet y no es instalable como App nativa.
+6. **Memoization**
+   - **Solución**: Uso estratégico de `useMemo` y `useCallback` en cálculos costosos y handlers.
+   - **Beneficios**: Prevención de re-renders innecesarios.
 
-**Solución**: Se implementó PWA (Progressive Web App) utilizando `@ducanh2912/next-pwa`.
+7. **Error Boundaries**
+   - **Solución**: Componente global y por ruta para capturar errores de renderizado.
+   - **Beneficios**: Prevención de pantalla blanca total (White Screen of Death).
 
-**Cambios Realizados**:
-- Se instaló la dependencia `@ducanh2912/next-pwa`.
-- Se configuró `next.config.js` para generar el Service Worker en producción.
-- Se creó el archivo `manifest.json` en la carpeta `public`.
-- Se añadieron iconos de 192x192 y 512x512.
-- Se actualizó el `layout.tsx` para incluir el manifest y configuración de viewport.
+8. **Image Optimization**
+   - **Solución**: Uso de `next/image` con formatos modernos (WebP/AVIF).
+   - **Beneficios**: Mejor LCP y menor consumo de ancho de banda.
 
-**Beneficios**:
-- **Funcionalidad Offline**: Cache automático de assets y páginas visitadas.
-- **Instalable**: Los usuarios pueden instalar la app en su inicio ("Add to Home Screen").
-- **Carga Instantánea**: Mejor rendimiento en visitas repetidas gracias al precaching.
-### 1. **Virtual Scrolling para Listas Largas** ✅ Implementado
+9. **Code Splitting**
+   - **Solución**: Automático vía Next.js App Router + Dynamic Imports.
+   - **Beneficios**: Carga inicial más rápida (menor Bundle size).
 
-**Problema**: Listas con 100+ items (transacciones, grupos) pueden causar lag en el renderizado.
+10. **Bundle Analysis**
+   - **Solución**: `@next/bundle-analyzer` configurado.
+   - **Beneficios**: Visibilidad para prevenir regresiones de tamaño de bundle.
 
-**Solución**: Se implementó `react-virtuoso` (específicamente `GroupedVirtuoso`) para manejar listas de transacciones con alturas variables y agrupamiento por fecha.
+11. **Compression**
+   - **Solución**: Compresión Brotli habilitada.
+   - **Beneficios**: Transferencia de assets optimizada.
 
-**Cambios Realizados**:
-- Se instaló `react-virtuoso`.
-- Se refactorizó `TransactionsPage` para usar `GroupedVirtuoso` en lugar de renderizado por mapeo directo.
-- Se implementó la lógica de agrupamiento compatible con virtualización.
-- Se mantuvo la funcionalidad de sticky headers para las fechas.
-- Se preservó la funcionalidad de selección múltiple y acciones en lote.
+12. **Skeleton Screens**
+   - **Solución**: Componentes de carga visuales en lugar de spinners.
+   - **Beneficios**: Mejor percepción de velocidad (Perceived Performance).
 
-**Beneficios**:
-- Renderizado eficiente de miles de transacciones.
-- Menor consumo de memoria al renderizar solo lo visible.
-- Scroll fluido manteniendo la experiencia de usuario (headers pegajosos).
+13. **Accessibility (A11y)**
+   - **Solución**: ARIA labels, focus traps en modales, navegación por teclado.
+   - **Beneficios**: Mejor soporte para lectores de pantalla y navegación sin mouse.
 
-### 2. **Service Worker para Offline Support** 🔄 Recomendado
+14. **Virtual Scrolling (Grupos)**
+   - **Solución**: `react-virtuoso` (Grid) implementado en `GroupsPage`.
+   - **Beneficios**: Renderizado eficiente de grids de grupos con soporte para cientos de elementos.
 
-**Problema**: App no funciona sin conexión a internet.
+### 🔄 Pendientes (Testing Manual)
 
-**Solución**: Implementar PWA (Progressive Web App) con Service Worker
+2. **Testing E2E** - ✅ Implementado
+   - **Problema**: Falta de cobertura de pruebas de flujo completo.
+   - **Recomendación**: Implementar Cypress o Playwright para flujos críticos.
 
-**Características**:
-- Cache de assets estáticos (JS, CSS, imágenes)
-- Cache de datos críticos (cuentas, transacciones recientes)
-- Funcionalidad offline básica
-- Sincronización cuando vuelve la conexión
-
-**Beneficios**:
-- Funcionalidad offline
-- Carga más rápida (cache)
-- Mejor experiencia en conexiones lentas
-- Instalable como app nativa
-
-**Herramientas**:
-- `next-pwa` plugin
-- Workbox para estrategias de cache
- 
-
-### 3. **Prefetching de Rutas y Datos** 🔄 Recomendado
-
-**Problema**: Navegación entre páginas tiene delay mientras carga datos.
-
-**Solución**: Prefetch de rutas y datos anticipadamente
-
-**Implementación**:
-```typescript
-// Prefetch de rutas con next/link
-<Link href="/dashboard/transactions" prefetch={true}>
-  Transactions
-</Link>
-
-// Prefetch de datos con React Query
-const queryClient = useQueryClient()
-queryClient.prefetchQuery({
-  queryKey: ['transactions'],
-  queryFn: fetchTransactions
-})
-```
-
-**Beneficios**:
-- Navegación instantánea
-- Datos listos antes de navegar
-- Mejor percepción de velocidad
-
-### 4. **Bundle Analysis y Tree Shaking** 🔄 Recomendado
-
-**Problema**: No hay visibilidad del tamaño del bundle y dependencias pesadas.
-
-**Solución**: Implementar `@next/bundle-analyzer`
-
-**Configuración**:
-```javascript
-// next.config.js
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-})
-
-module.exports = withBundleAnalyzer(nextConfig)
-```
-
-**Uso**:
-```bash
-ANALYZE=true npm run build
-```
-
-**Beneficios**:
-- Identificación visual de módulos grandes
-- Verificación de Tree Shaking
-- Optimización proactiva de imports
-
-### 8. **Error Boundaries** ✅ Implementado
-
-**Problema**: Errores en componentes pueden romper toda la app.
-
-**Solución**: Se implementó un sistema robusto de manejo de errores utilizando un componente `ErrorBoundary` y una UI de fallback amigable.
-
-**Cambios Realizados**:
-- Se creó el componente `ErrorBoundary` (Class Component) para capturar errores en el ciclo de vida de React.
-- Se creó el componente `ErrorFallback` para mostrar una interfaz amigable cuando ocurre un error, con opciones para recargar o reintentar.
-- Se envolvió el contenido del dashboard en `src/app/dashboard/layout.tsx` con el `ErrorBoundary`.
-- Se implementó un Error Boundary Global en `src/app/layout.tsx` para capturar errores críticos de la aplicación.
-
-**Beneficios**:
-- **Prevención de Crashes**: Un error en un widget no rompe toda la aplicación.
-- **Mejor UX**: El usuario recibe feedback claro en lugar de una pantalla blanca.
-- **Recuperación**: Botones para "Intentar de nuevo" permiten recuperar el estado sin recargar toda la app si es posible.
-
-### 9. **Skeleton Screens Expandidos** ✅ Implementado
-
-**Problema**: Loading states inconsistentes, algunos usan spinners.
-
-
-**Solución**: Se implementó componentes Skeleton reutilizables y se integraron en Dashboard y Transacciones.
-
-**Cambios Realizados**:
-- Componente `Skeleton` base creado con Tailwind.
-- `DashboardPage`: Reemplazo de LoadingPage con grid de esqueletos.
-- `TransactionsPage`: Reemplazo de LoadingPage con tabla de esqueletos.
-
-**Beneficios**:
-- Mejor percepción de velocidad (Perceived Performance).
-- Menor cambio visual brusco (Layout Shift).
-
-
-**Aplicar en**:
-- Todas las listas (transacciones, cuentas, grupos)
-- Formularios mientras cargan datos
-- Widgets del dashboard
-- Páginas completas
-
-**Beneficios**:
-- Mejor percepción de velocidad
-- UX más consistente
-- Reduce sensación de espera
-
-### 10. **Compression (Brotli)** 🔄 Recomendado
-
-**Problema**: Assets servidos sin compresión óptima.
-
-**Solución**: Habilitar Brotli compression en Next.js
-
-**Configuración**:
-```javascript
-// next.config.js
-{
-  compress: true,  // Ya habilitado
-  // Vercel automáticamente usa Brotli
-}
-```
-
-**Beneficios**:
-- 20-30% mejor compresión que Gzip
-- Transferencia más rápida
-- Menor uso de bandwidth
-
-### 10. **Accessibility (A11y) Improvements** ✅ Implementado
-
-**Problema**: Falta de ARIA labels y navegación por teclado en algunos componentes.
-
-
-**Solución**: Se mejoró la accesibilidad en Layout y Modales.
-
-**Cambios Realizados**:
-- `layout.tsx`: Se añadió 'Skip to main content'.
-- `Modal.tsx`: Se implementó Focus Trap, ARIA roles y labels.
-
-**Beneficios**:
-- Navegación por teclado funcional en diálogos críticos.
-- Cumplimiento mejorado de WCAG.
-
-
-**Mejoras**:
-- Agregar ARIA labels a todos los botones
-- Mejorar keyboard navigation en modales
-- Focus management en formularios
-- Skip links para navegación
-- Contraste de colores (WCAG AA)
-
-**Herramientas**:
-- `eslint-plugin-jsx-a11y`
-- Lighthouse audits
-- axe DevTools
-
-**Beneficios**:
-- Mejor accesibilidad para usuarios con discapacidades
-- Mejor SEO
-- Cumplimiento de estándares WCAG
-- Mejor UX para todos
-
----
-
-## Resumen de Optimizaciones
-
-### ✅ Implementadas (8)
-1. React Query Cache - Reducción 30-50% en requests
-2. Code Splitting - Automático con Next.js 15
-3. Prefetching - Navegación Instantánea
-4. Optimistic Updates - UI instantánea
-5. Debouncing - Reducción 60-80% en re-renders
-6. Memoization - Reducción 40-60% en re-renders
-7. Image Optimization - Reducción 30-50% en bandwidth
-8. Service Worker - Soporte Offline
-
-### �� Recomendadas (5)
-1. Virtual Scrolling - Para listas largas
-2. Bundle Analysis - Optimización de dependencias
-3. Error Boundaries - Manejo robusto de errores
-4. Skeleton Screens - ✅ Implementado
-5. Brotli Compression - Mejor compresión
-6. Accessibility - ✅ Implementado
-
-**Total**: 13 optimizaciones (8 implementadas + 5 recomendadas)
-
----
+3. **Unit Testing** - ✅ Iniciado (Hooks)
+   - **Problema**: Cobertura de unit tests podría ser mayor.
+   - **Recomendación**: Aumentar cobertura de tests para hooks y utilidades.
