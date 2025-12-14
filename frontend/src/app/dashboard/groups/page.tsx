@@ -22,6 +22,24 @@ const GROUP_COVER_IMAGES = [
   '⚽', '🎸', '📚', '💪', '🎨', '🌍', '🚗', '🏃', '🎯', '🌟'
 ]
 
+const GroupsGridList = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ style, children, ...props }, ref) => (
+  <div
+    ref={ref}
+    {...props}
+    style={style}
+    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-1"
+  >
+    {children}
+  </div>
+))
+GroupsGridList.displayName = 'GroupsGridList'
+
+const GroupsGridItem = ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div {...props} className="h-full">
+    {children}
+  </div>
+)
+
 export default function GroupsPage() {
   const { user } = useAuthStore()
   const [groups, setGroups] = useState<Group[]>([])
@@ -486,21 +504,8 @@ export default function GroupsPage() {
             style={{ height: '100%' }}
             totalCount={groups.length}
             components={{
-              List: forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ style, children, ...props }, ref) => (
-                <div
-                  ref={ref}
-                  {...props}
-                  style={style}
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-1"
-                >
-                  {children}
-                </div>
-              )),
-              Item: ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-                <div {...props} className="h-full">
-                  {children}
-                </div>
-              )
+              List: GroupsGridList,
+              Item: GroupsGridItem
             }}
             itemContent={(index) => {
               const group = groups[index]
