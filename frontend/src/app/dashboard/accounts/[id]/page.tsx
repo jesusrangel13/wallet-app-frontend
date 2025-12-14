@@ -105,7 +105,8 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
           accountAPI.getAll()
         ])
         setAccount(accountResponse.data.data)
-        setAccounts(accountsResponse.data.data.data)
+        const accountsData = accountsResponse.data as any
+        setAccounts(Array.isArray(accountsData) ? accountsData : accountsData.data)
       } catch (error: any) {
         console.error('Error loading account:', error)
         toast.error('Failed to load account')
