@@ -148,13 +148,17 @@ export default function CreateLoanModal({
             }`}
           >
             <option value="">Selecciona una cuenta</option>
-            {accounts
-              ?.filter((a) => !a.isArchived)
-              .map((account) => (
-                <option key={account.id} value={account.id}>
-                  {account.name} ({account.currency})
-                </option>
-              )) || []}
+            {!accounts || accounts.length === 0 ? (
+              <option disabled>No hay cuentas disponibles</option>
+            ) : (
+              accounts
+                .filter((a) => !a.isArchived)
+                .map((account) => (
+                  <option key={account.id} value={account.id}>
+                    {account.name} ({account.currency})
+                  </option>
+                ))
+            )}
           </select>
           {errors.accountId && (
             <p className="text-red-500 text-xs mt-1">{errors.accountId.message}</p>
