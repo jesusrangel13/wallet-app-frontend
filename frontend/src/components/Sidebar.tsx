@@ -2,33 +2,43 @@
 
 import { useSidebarStore } from '@/store/sidebarStore'
 import { Tooltip } from '@/components/ui/Tooltip'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Menu, X, Home, CreditCard, TrendingUp, Users, Upload, Settings, HandCoins } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 
 interface NavItem {
   label: string
   icon: React.ReactNode
-  href: string
+  path: string
   description: string
 }
 
-const navItems: NavItem[] = [
-  { label: 'Dashboard', icon: <Home className="w-6 h-6" />, href: '/dashboard', description: 'View your financial overview' },
-  { label: 'Accounts', icon: <CreditCard className="w-6 h-6" />, href: '/dashboard/accounts', description: 'Manage your accounts' },
-  { label: 'Transactions', icon: <TrendingUp className="w-6 h-6" />, href: '/dashboard/transactions', description: 'View transactions' },
-  { label: 'Loans', icon: <HandCoins className="w-6 h-6" />, href: '/dashboard/loans', description: 'Track loans' },
-  { label: 'Groups', icon: <Users className="w-6 h-6" />, href: '/dashboard/groups', description: 'Manage shared expenses' },
-  { label: 'Import', icon: <Upload className="w-6 h-6" />, href: '/dashboard/import', description: 'Import transactions' },
-  { label: 'Settings', icon: <Settings className="w-6 h-6" />, href: '/dashboard/settings', description: 'Manage preferences' },
+const baseNavItems: NavItem[] = [
+  { label: 'Dashboard', icon: <Home className="w-6 h-6" />, path: 'dashboard', description: 'View your financial overview' },
+  { label: 'Accounts', icon: <CreditCard className="w-6 h-6" />, path: 'dashboard/accounts', description: 'Manage your accounts' },
+  { label: 'Transactions', icon: <TrendingUp className="w-6 h-6" />, path: 'dashboard/transactions', description: 'View transactions' },
+  { label: 'Loans', icon: <HandCoins className="w-6 h-6" />, path: 'dashboard/loans', description: 'Track loans' },
+  { label: 'Groups', icon: <Users className="w-6 h-6" />, path: 'dashboard/groups', description: 'Manage shared expenses' },
+  { label: 'Import', icon: <Upload className="w-6 h-6" />, path: 'dashboard/import', description: 'Import transactions' },
+  { label: 'Settings', icon: <Settings className="w-6 h-6" />, path: 'dashboard/settings', description: 'Manage preferences' },
 ]
 
 export function Sidebar() {
   const router = useRouter()
   const pathname = usePathname()
+  const params = useParams()
+  const locale = params.locale as string || 'es'
   const { isCollapsed, isMobileOpen, toggleCollapse, setMobileOpen } = useSidebarStore()
   const [mounted, setMounted] = useState(false)
+
+  // Create nav items with locale prefix
+  const navItems = useMemo(() => {
+    return baseNavItems.map(item => ({
+      ...item,
+      href: `/${locale}/${item.path}`
+    }))
+  }, [locale])
 
   useEffect(() => {
     setMounted(true)
@@ -41,8 +51,8 @@ export function Sidebar() {
 
   const isActive = (href: string) => {
     // Exact match for dashboard home
-    if (href === '/dashboard') {
-      return pathname === '/dashboard'
+    if (href.endsWith('/dashboard')) {
+      return pathname === href
     }
     // For other routes, check if pathname starts with href
     return pathname === href || pathname.startsWith(href + '/')
