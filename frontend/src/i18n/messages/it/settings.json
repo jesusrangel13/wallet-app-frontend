@@ -1,0 +1,22 @@
+{
+  "title": "Configuración",
+  "general": {
+    "title": "General",
+    "profile": "Perfil",
+    "preferences": "Preferencias"
+  },
+  "language": {
+    "title": "Idioma",
+    "description": "Selecciona tu idioma preferido",
+    "changeSuccess": "Idioma cambiado exitosamente",
+    "changeError": "Error al cambiar el idioma"
+  },
+  "categories": {
+    "title": "Categorías",
+    "description": "Administra tus categorías de transacciones"
+  },
+  "tags": {
+    "title": "Etiquetas",
+    "description": "Administra tus etiquetas personalizadas"
+  }
+}

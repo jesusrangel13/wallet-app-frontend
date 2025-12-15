@@ -1,0 +1,54 @@
+{
+  "app": {
+    "title": "Finance App - Administra tu Dinero",
+    "description": "Solución completa de gestión financiera con gastos compartidos"
+  },
+  "loading": "Cargando...",
+  "error": "Error",
+  "success": "Éxito",
+  "save": "Guardar",
+  "cancel": "Cancelar",
+  "delete": "Eliminar",
+  "edit": "Editar",
+  "create": "Crear",
+  "close": "Cerrar",
+  "confirm": "Confirmar",
+  "yes": "Sí",
+  "no": "No",
+  "search": "Buscar",
+  "filter": "Filtrar",
+  "clear": "Limpiar",
+  "apply": "Aplicar",
+  "reset": "Restablecer",
+  "back": "Volver",
+  "next": "Siguiente",
+  "previous": "Anterior",
+  "submit": "Enviar",
+  "add": "Agregar",
+  "remove": "Quitar",
+  "view": "Ver",
+  "download": "Descargar",
+  "upload": "Subir",
+  "currencies": {
+    "CLP": "Peso Chileno",
+    "USD": "Dólar Estadounidense",
+    "EUR": "Euro"
+  },
+  "languages": {
+    "es": "Español",
+    "en": "English",
+    "fr": "Français",
+    "pt": "Português",
+    "it": "Italiano",
+    "de": "Deutsch"
+  },
+  "date": {
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "thisWeek": "Esta semana",
+    "thisMonth": "Este mes",
+    "lastMonth": "Mes pasado",
+    "custom": "Personalizado"
+  },
+  "skipToContent": "Saltar al contenido principal"
+}

@@ -1,0 +1,18 @@
+{
+  "title": "Transacciones",
+  "noTransactions": "No hay transacciones",
+  "filters": {
+    "all": "Todas",
+    "expense": "Gastos",
+    "income": "Ingresos",
+    "transfer": "Transferencias"
+  },
+  "columns": {
+    "date": "Fecha",
+    "description": "Descripción",
+    "category": "Categoría",
+    "amount": "Monto",
+    "account": "Cuenta",
+    "actions": "Acciones"
+  }
+}

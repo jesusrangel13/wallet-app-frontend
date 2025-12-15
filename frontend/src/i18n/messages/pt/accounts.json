@@ -1,0 +1,13 @@
+{
+  "title": "Cuentas",
+  "noAccounts": "No hay cuentas",
+  "types": {
+    "CASH": "Efectivo",
+    "DEBIT": "Débito",
+    "CREDIT": "Crédito",
+    "SAVINGS": "Ahorros",
+    "INVESTMENT": "Inversión"
+  },
+  "totalBalance": "Saldo Total",
+  "addAccount": "Agregar Cuenta"
+}

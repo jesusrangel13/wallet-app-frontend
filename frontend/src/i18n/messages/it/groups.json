@@ -1,0 +1,14 @@
+{
+  "title": "Grupos",
+  "noGroups": "No hay grupos",
+  "addGroup": "Crear Grupo",
+  "members": "Miembros",
+  "expenses": "Gastos",
+  "balance": "Balance",
+  "splitTypes": {
+    "EQUAL": "Igualmente",
+    "PERCENTAGE": "Por porcentaje",
+    "SHARES": "Por partes",
+    "EXACT": "Monto exacto"
+  }
+}
