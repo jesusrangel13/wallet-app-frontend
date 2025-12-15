@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
 import { LoadingPage, LoadingSpinner, LoadingMessages } from '@/components/ui/Loading'
+import { Skeleton } from '@/components/ui/Skeleton'
 
 const COLOR_PALETTE = [
   '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
@@ -120,7 +121,25 @@ export default function TagsSettingsPage() {
   }
 
   if (isLoading) {
-    return <LoadingPage message={LoadingMessages.tags} />
+    return (
+      <div className="space-y-6">
+        {/* Header skeleton */}
+        <div className="flex justify-between items-start">
+          <div>
+            <Skeleton className="h-6 w-32 mb-2" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <Skeleton className="h-10 w-28" />
+        </div>
+
+        {/* Tags grid skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+            <Skeleton key={i} className="h-24 w-full rounded-lg" />
+          ))}
+        </div>
+      </div>
+    )
   }
 
   return (

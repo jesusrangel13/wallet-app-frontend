@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { LoadingPage } from '@/components/ui/Loading'
 import CreateLoanModal from '@/components/CreateLoanModal'
+import { Skeleton } from '@/components/ui/Skeleton'
 import { formatCurrency, type Currency } from '@/types/currency'
 import { HandCoins, Plus, Filter } from 'lucide-react'
 
@@ -114,7 +115,34 @@ export default function LoansPage() {
   }
 
   if (isLoading) {
-    return <LoadingPage message="Cargando préstamos..." />
+    return (
+      <div className="space-y-6">
+        {/* Header con título, filtros y botón */}
+        <div className="flex justify-between items-center">
+          <div>
+            <Skeleton className="h-8 w-40 mb-2" />
+            <Skeleton className="h-4 w-56" />
+          </div>
+          <div className="flex gap-3">
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-36" />
+          </div>
+        </div>
+
+        {/* Barra de búsqueda y filtros */}
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-10 flex-1" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+
+        {/* Lista de tarjetas de préstamos */}
+        <div className="space-y-4">
+          {[1, 2, 3, 4].map(i => (
+            <Skeleton key={i} className="h-40 w-full rounded-xl" />
+          ))}
+        </div>
+      </div>
+    )
   }
 
   return (

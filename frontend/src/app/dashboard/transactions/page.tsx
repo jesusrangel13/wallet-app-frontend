@@ -171,12 +171,14 @@ export default function TransactionsPage() {
 
   useEffect(() => {
     loadTransactions(1) // Reset to page 1 when filters change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters])
 
   useEffect(() => {
     if (currentPage > 0) {
       loadTransactions(currentPage) // Reload current page when items per page changes
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemsPerPage])
 
   // Grouped data memoization needed for Virtuoso
