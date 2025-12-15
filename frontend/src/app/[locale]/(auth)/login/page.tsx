@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -13,20 +13,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { authAPI } from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
 
-const registerSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
+const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword'],
+  password: z.string().min(1, 'Password is required'),
 })
 
-type RegisterForm = z.infer<typeof registerSchema>
+type LoginForm = z.infer<typeof loginSchema>
 
-export default function RegisterPage() {
+export default function LoginPage() {
   const router = useRouter()
+  const params = useParams()
+  const locale = params.locale as string
   const setAuth = useAuthStore((state) => state.setAuth)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -34,22 +31,21 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterForm>({
-    resolver: zodResolver(registerSchema),
+  } = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema),
   })
 
-  const onSubmit = async (data: RegisterForm) => {
+  const onSubmit = async (data: LoginForm) => {
     setIsLoading(true)
     try {
-      const { confirmPassword, ...registerData } = data
-      const response = await authAPI.register(registerData)
+      const response = await authAPI.login(data)
       const { user, token } = response.data.data
 
       setAuth(user, token)
-      toast.success('Account created successfully!')
-      router.push('/dashboard')
+      toast.success('Login successful!')
+      router.push(`/${locale}/dashboard`)
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Registration failed')
+      toast.error(error.response?.data?.message || 'Login failed')
     } finally {
       setIsLoading(false)
     }
@@ -58,20 +54,13 @@ export default function RegisterPage() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Create Account</CardTitle>
+        <CardTitle>Sign In</CardTitle>
         <p className="text-sm text-gray-600 mt-1">
-          Sign up to start managing your finances.
+          Welcome back! Please sign in to continue.
         </p>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <Input
-            label="Full Name"
-            placeholder="John Doe"
-            error={errors.name?.message}
-            {...register('name')}
-          />
-
           <Input
             label="Email"
             type="email"
@@ -83,27 +72,19 @@ export default function RegisterPage() {
           <Input
             label="Password"
             type="password"
-            placeholder="Create a password"
+            placeholder="Enter your password"
             error={errors.password?.message}
             {...register('password')}
           />
 
-          <Input
-            label="Confirm Password"
-            type="password"
-            placeholder="Confirm your password"
-            error={errors.confirmPassword?.message}
-            {...register('confirmPassword')}
-          />
-
           <Button type="submit" className="w-full" isLoading={isLoading}>
-            Create Account
+            Sign In
           </Button>
 
           <p className="text-center text-sm text-gray-600">
-            Already have an account?{' '}
-            <Link href="/login" className="text-blue-600 hover:underline">
-              Sign in
+            Don&apos;t have an account?{' '}
+            <Link href={`/${locale}/register`} className="text-blue-600 hover:underline">
+              Sign up
             </Link>
           </p>
         </form>

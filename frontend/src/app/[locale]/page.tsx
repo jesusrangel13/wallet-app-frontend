@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight, Wallet, Users, TrendingUp, PieChart } from 'lucide-react'
 
-export default function HomePage() {
+export default function HomePage({ params: { locale } }: { params: { locale: string } }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Navigation */}
@@ -14,13 +14,13 @@ export default function HomePage() {
             </div>
             <div className="flex items-center gap-4">
               <Link
-                href="/login"
+                href={`/${locale}/login`}
                 className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
               >
                 Login
               </Link>
               <Link
-                href="/register"
+                href={`/${locale}/register`}
                 className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
               >
                 Get Started
@@ -42,14 +42,14 @@ export default function HomePage() {
           </p>
           <div className="mt-10 flex justify-center gap-4">
             <Link
-              href="/register"
+              href={`/${locale}/register`}
               className="flex items-center gap-2 bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition-colors shadow-lg"
             >
               Start Free Trial
               <ArrowRight className="h-5 w-5" />
             </Link>
             <Link
-              href="/login"
+              href={`/${locale}/login`}
               className="flex items-center gap-2 bg-white text-gray-900 px-8 py-3 rounded-lg text-lg font-medium hover:bg-gray-50 transition-colors shadow-lg border border-gray-200"
             >
               Sign In
@@ -127,7 +127,7 @@ export default function HomePage() {
             Join thousands of users managing their money smarter
           </p>
           <Link
-            href="/register"
+            href={`/${locale}/register`}
             className="mt-8 inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition-colors shadow-lg"
           >
             Get Started Now
