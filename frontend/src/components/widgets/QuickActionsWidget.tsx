@@ -26,15 +26,15 @@ export const QuickActionsWidget = ({ gridWidth = 3, gridHeight = 1 }: QuickActio
       </CardHeader>
       <CardContent>
         <div className={`grid ${buttonLayout} gap-4`}>
-          <Link href="/dashboard/accounts" className={`w-full flex items-center justify-center gap-2 bg-blue-600 text-white ${buttonPadding} rounded-lg hover:bg-blue-700 transition-colors ${fontSize}`}>
+          <Link href="/dashboard/accounts" prefetch={true} className={`w-full flex items-center justify-center gap-2 bg-blue-600 text-white ${buttonPadding} rounded-lg hover:bg-blue-700 transition-colors ${fontSize}`}>
             <Wallet className={iconSize} />
             Add Account
           </Link>
-          <Link href="/dashboard/transactions" className={`w-full flex items-center justify-center gap-2 bg-green-600 text-white ${buttonPadding} rounded-lg hover:bg-green-700 transition-colors ${fontSize}`}>
+          <Link href="/dashboard/transactions" prefetch={true} className={`w-full flex items-center justify-center gap-2 bg-green-600 text-white ${buttonPadding} rounded-lg hover:bg-green-700 transition-colors ${fontSize}`}>
             <TrendingUp className={iconSize} />
             New Transaction
           </Link>
-          <Link href="/dashboard/groups" className={`w-full flex items-center justify-center gap-2 bg-purple-600 text-white ${buttonPadding} rounded-lg hover:bg-purple-700 transition-colors ${fontSize}`}>
+          <Link href="/dashboard/groups" prefetch={true} className={`w-full flex items-center justify-center gap-2 bg-purple-600 text-white ${buttonPadding} rounded-lg hover:bg-purple-700 transition-colors ${fontSize}`}>
             <Users className={iconSize} />
             Create Group
           </Link>

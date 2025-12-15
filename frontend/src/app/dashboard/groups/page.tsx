@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, forwardRef } from 'react'
+import { VirtuosoGrid } from 'react-virtuoso'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { Group, CreateGroupForm, SplitType, GroupMemberSplitDefault } from '@/types'
@@ -14,11 +15,30 @@ import { MarkAsPaidButtonStyled } from '@/components/MarkAsPaidButtonStyled'
 import { formatCurrency } from '@/types/currency'
 import { LoadingPage, LoadingSpinner, LoadingMessages } from '@/components/ui/Loading'
 import { Tooltip } from '@/components/ui/Tooltip'
+import { Skeleton } from '@/components/ui/Skeleton'
 
 const GROUP_COVER_IMAGES = [
   '🏠', '👨‍👩‍👧‍👦', '🎉', '✈️', '🏖️', '🎓', '💼', '🎮', '🍕', '🎬',
   '⚽', '🎸', '📚', '💪', '🎨', '🌍', '🚗', '🏃', '🎯', '🌟'
 ]
+
+const GroupsGridList = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ style, children, ...props }, ref) => (
+  <div
+    ref={ref}
+    {...props}
+    style={style}
+    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-1"
+  >
+    {children}
+  </div>
+))
+GroupsGridList.displayName = 'GroupsGridList'
+
+const GroupsGridItem = ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div {...props} className="h-full">
+    {children}
+  </div>
+)
 
 export default function GroupsPage() {
   const { user } = useAuthStore()
@@ -430,7 +450,22 @@ export default function GroupsPage() {
   }, [activeTab, viewingGroup])
 
   if (isLoading) {
-    return <LoadingPage message={LoadingMessages.groups} />
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <Skeleton className="h-8 w-32 mb-1" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+            <Skeleton key={i} className="h-56 w-full rounded-xl" />
+          ))}
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -449,89 +484,9 @@ export default function GroupsPage() {
         </Button>
       </div>
 
-      {/* Groups Grid - Diseño Compacto */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {groups.map((group) => {
-          const isCreator = group.createdBy === group.members[0]?.userId
-          const memberCount = group.members.length
-          const totalExpenses = group._count?.expenses || 0
-          const pendingExpenses = group._count?.pendingExpenses || 0
-
-          return (
-            <Card key={group.id} className="hover:shadow-md transition-all">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="text-3xl">{group.coverImageUrl}</div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-semibold text-gray-900 truncate">{group.name}</h3>
-                    <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
-                      <Tooltip content={`${memberCount} miembro${memberCount !== 1 ? 's' : ''}`} side="top">
-                        <span>{memberCount}👥</span>
-                      </Tooltip>
-                      <Tooltip content={`${totalExpenses} gasto${totalExpenses !== 1 ? 's' : ''} total${totalExpenses !== 1 ? 'es' : ''}`} side="top">
-                        <span>{totalExpenses}📝</span>
-                      </Tooltip>
-                      {pendingExpenses > 0 && (
-                        <Tooltip content={`${pendingExpenses} gasto${pendingExpenses !== 1 ? 's' : ''} pendiente${pendingExpenses !== 1 ? 's' : ''}`} side="top">
-                          <span className="text-orange-600">{pendingExpenses}⏳</span>
-                        </Tooltip>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1 mb-3">
-                  {group.members.slice(0, 4).map((member) => (
-                    <Tooltip key={member.id} content={member.user.name} side="top">
-                      <div
-                        className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-semibold ring-2 ring-white"
-                      >
-                        {member.user.name.charAt(0).toUpperCase()}
-                      </div>
-                    </Tooltip>
-                  ))}
-                  {group.members.length > 4 && (
-                    <Tooltip content={`${group.members.length - 4} miembro${group.members.length - 4 !== 1 ? 's' : ''} más`} side="top">
-                      <div className="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 text-xs font-semibold ring-2 ring-white">
-                        +{group.members.length - 4}
-                      </div>
-                    </Tooltip>
-                  )}
-                </div>
-
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleViewGroup(group)}
-                    className="flex-1 py-1.5 px-3 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors font-medium"
-                  >
-                    Ver
-                  </button>
-                  {isCreator ? (
-                    <button
-                      onClick={() => handleDelete(group.id, group.name)}
-                      className="py-1.5 px-3 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleLeaveGroup(group.id, group.name)}
-                      className="py-1.5 px-3 text-sm text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                      </svg>
-                    </button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
-
-        {groups.length === 0 && (
+      {/* Groups Grid - Diseño Compacto (Virtualizado) */}
+      <div style={{ height: 'calc(100vh - 200px)', width: '100%' }}>
+        {groups.length === 0 ? (
           <div className="col-span-full">
             <Card>
               <CardContent className="py-16 text-center">
@@ -544,6 +499,95 @@ export default function GroupsPage() {
               </CardContent>
             </Card>
           </div>
+        ) : (
+          <VirtuosoGrid
+            style={{ height: '100%' }}
+            totalCount={groups.length}
+            components={{
+              List: GroupsGridList,
+              Item: GroupsGridItem
+            }}
+            itemContent={(index) => {
+              const group = groups[index]
+              const isCreator = group.createdBy === group.members[0]?.userId
+              const memberCount = group.members.length
+              const totalExpenses = group._count?.expenses || 0
+              const pendingExpenses = group._count?.pendingExpenses || 0
+
+              return (
+                <Card key={group.id} className="hover:shadow-md transition-all h-full">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="text-3xl">{group.coverImageUrl}</div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-base font-semibold text-gray-900 truncate">{group.name}</h3>
+                        <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+                          <Tooltip content={`${memberCount} miembro${memberCount !== 1 ? 's' : ''}`} side="top">
+                            <span>{memberCount}👥</span>
+                          </Tooltip>
+                          <Tooltip content={`${totalExpenses} gasto${totalExpenses !== 1 ? 's' : ''} total${totalExpenses !== 1 ? 'es' : ''}`} side="top">
+                            <span>{totalExpenses}📝</span>
+                          </Tooltip>
+                          {pendingExpenses > 0 && (
+                            <Tooltip content={`${pendingExpenses} gasto${pendingExpenses !== 1 ? 's' : ''} pendiente${pendingExpenses !== 1 ? 's' : ''}`} side="top">
+                              <span className="text-orange-600">{pendingExpenses}⏳</span>
+                            </Tooltip>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1 mb-3">
+                      {group.members.slice(0, 4).map((member) => (
+                        <Tooltip key={member.id} content={member.user.name} side="top">
+                          <div
+                            className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-semibold ring-2 ring-white"
+                          >
+                            {member.user.name.charAt(0).toUpperCase()}
+                          </div>
+                        </Tooltip>
+                      ))}
+                      {group.members.length > 4 && (
+                        <Tooltip content={`${group.members.length - 4} miembro${group.members.length - 4 !== 1 ? 's' : ''} más`} side="top">
+                          <div className="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 text-xs font-semibold ring-2 ring-white">
+                            +{group.members.length - 4}
+                          </div>
+                        </Tooltip>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleViewGroup(group)}
+                        className="flex-1 py-1.5 px-3 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors font-medium"
+                      >
+                        Ver
+                      </button>
+                      {isCreator ? (
+                        <button
+                          onClick={() => handleDelete(group.id, group.name)}
+                          className="py-1.5 px-3 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleLeaveGroup(group.id, group.name)}
+                          className="py-1.5 px-3 text-sm text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            }}
+          />
         )}
       </div>
 
@@ -878,8 +922,8 @@ export default function GroupsPage() {
                 <button
                   onClick={() => setActiveTab('members')}
                   className={`${activeTab === 'members'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
                 >
                   Miembros
@@ -887,8 +931,8 @@ export default function GroupsPage() {
                 <button
                   onClick={() => setActiveTab('split')}
                   className={`${activeTab === 'split'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
                 >
                   Configuración
@@ -896,8 +940,8 @@ export default function GroupsPage() {
                 <button
                   onClick={() => setActiveTab('balances')}
                   className={`${activeTab === 'balances'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
                 >
                   Gastos y Balances

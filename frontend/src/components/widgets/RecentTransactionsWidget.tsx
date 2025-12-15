@@ -124,13 +124,12 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
                 </div>
                 <div className="text-right">
                   <p
-                    className={`font-semibold ${
-                      transaction.type === 'EXPENSE'
+                    className={`font-semibold ${transaction.type === 'EXPENSE'
                         ? 'text-red-600'
                         : transaction.type === 'INCOME'
                           ? 'text-green-600'
                           : 'text-blue-600'
-                    }`}
+                      }`}
                   >
                     {transaction.type === 'EXPENSE'
                       ? '-'
@@ -158,7 +157,7 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
           )}
         </div>
         {transactions.length > 0 && (
-          <Link href="/dashboard/transactions" className="block mt-4 w-full text-center py-2 px-4 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg font-medium transition-colors">
+          <Link href="/dashboard/transactions" prefetch={true} className="block mt-4 w-full text-center py-2 px-4 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg font-medium transition-colors">
             Ver más transacciones →
           </Link>
         )}

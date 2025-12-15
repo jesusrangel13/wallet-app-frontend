@@ -3,6 +3,7 @@
 import { useSidebarStore } from '@/store/sidebarStore'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { useRouter, usePathname } from 'next/navigation'
+import Link from 'next/link'
 import { Menu, X, Home, CreditCard, TrendingUp, Users, Upload, Settings, HandCoins } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
@@ -108,38 +109,40 @@ export function Sidebar() {
             <div key={item.href}>
               {isCollapsed ? (
                 <Tooltip content={item.label} side="right">
-                  <button
-                    onClick={() => handleNavigate(item.href)}
+                  <Link
+                    href={item.href}
+                    prefetch={true}
+                    onClick={() => setMobileOpen(false)}
                     className={`
                       w-full flex items-center justify-center p-3 rounded-lg
                       transition-colors duration-200
-                      ${
-                        isActive(item.href)
-                          ? 'bg-blue-100 text-blue-600'
-                          : 'text-gray-600 hover:bg-gray-100'
+                      ${isActive(item.href)
+                        ? 'bg-blue-100 text-blue-600'
+                        : 'text-gray-600 hover:bg-gray-100'
                       }
                     `}
                     title={item.label}
                   >
                     {item.icon}
-                  </button>
+                  </Link>
                 </Tooltip>
               ) : (
-                <button
-                  onClick={() => handleNavigate(item.href)}
+                <Link
+                  href={item.href}
+                  prefetch={true}
+                  onClick={() => setMobileOpen(false)}
                   className={`
                     w-full flex items-center gap-3 px-4 py-3 rounded-lg
                     transition-colors duration-200 text-sm font-medium
-                    ${
-                      isActive(item.href)
-                        ? 'bg-blue-100 text-blue-600'
-                        : 'text-gray-600 hover:bg-gray-100'
+                    ${isActive(item.href)
+                      ? 'bg-blue-100 text-blue-600'
+                      : 'text-gray-600 hover:bg-gray-100'
                     }
                   `}
                 >
                   <span className="flex-shrink-0">{item.icon}</span>
                   <span className="flex-1 text-left">{item.label}</span>
-                </button>
+                </Link>
               )}
             </div>
           ))}
