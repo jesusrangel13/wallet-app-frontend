@@ -124,6 +124,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
     }
 
     loadInitialData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
   const loadAccountData = async () => {
@@ -437,99 +438,97 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
       </div>
 
       {/* Card Grid with Color Accents */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Current Balance Card */}
-          <div
-            className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-white p-2.5 shadow-sm border-l-4"
-            style={{ borderLeftColor: account.color }}
-          >
-            <div className="flex items-start justify-between mb-1">
-              <Wallet className="w-3.5 h-3.5 text-gray-400" />
-            </div>
-            <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
-              Current Balance
-            </p>
-            <p className="text-xl font-bold text-gray-900 tabular-nums">
-              {formatCurrency(Number(account.balance), account.currency as Currency)}
-            </p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Current Balance Card */}
+        <div
+          className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-white p-2.5 shadow-sm border-l-4"
+          style={{ borderLeftColor: account.color }}
+        >
+          <div className="flex items-start justify-between mb-1">
+            <Wallet className="w-3.5 h-3.5 text-gray-400" />
           </div>
-
-          {/* Credit Limit & Used cards (if CREDIT type) */}
-          {account.type === 'CREDIT' && account.creditLimit && (
-            <>
-              <div
-                className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-white p-2.5 shadow-sm border-l-4 border-blue-400"
-              >
-                <div className="flex items-start justify-between mb-1">
-                  <CreditCard className="w-3.5 h-3.5 text-gray-400" />
-                </div>
-                <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
-                  Credit Limit
-                </p>
-                <p className="text-xl font-bold text-gray-900 tabular-nums">
-                  {formatCurrency(Number(account.creditLimit), account.currency as Currency)}
-                </p>
-              </div>
-
-              <div
-                className="relative overflow-hidden rounded-lg bg-gradient-to-br from-red-50 to-white p-2.5 shadow-sm border-l-4 border-red-400"
-              >
-                <div className="flex items-start justify-between mb-1">
-                  <TrendingUp className="w-3.5 h-3.5 text-red-400" />
-                </div>
-                <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
-                  Used
-                </p>
-                <p className="text-xl font-bold text-red-600 tabular-nums">
-                  {formatCurrency(Number(account.creditLimit) - Number(account.balance), account.currency as Currency)}
-                </p>
-                {/* Progress bar */}
-                <div className="mt-1 w-full h-1 bg-gray-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-red-500 rounded-full transition-all"
-                    style={{
-                      width: `${Math.min(((Number(account.creditLimit) - Number(account.balance)) / Number(account.creditLimit) * 100), 100)}%`
-                    }}
-                  />
-                </div>
-                <p className="text-[10px] text-gray-500 mt-0.5">
-                  {((Number(account.creditLimit) - Number(account.balance)) / Number(account.creditLimit) * 100).toFixed(1)}% utilization
-                </p>
-              </div>
-            </>
-          )}
-
-          {/* Currency */}
-          {!(account.type === 'CREDIT' && account.creditLimit) && (
-            <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-white p-2.5 shadow-sm border-l-4 border-gray-300">
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
-                Currency
-              </p>
-              <p className="text-lg font-bold text-gray-900">{account.currency}</p>
-            </div>
-          )}
+          <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
+            Current Balance
+          </p>
+          <p className="text-xl font-bold text-gray-900 tabular-nums">
+            {formatCurrency(Number(account.balance), account.currency as Currency)}
+          </p>
         </div>
+
+        {/* Credit Limit & Used cards (if CREDIT type) */}
+        {account.type === 'CREDIT' && account.creditLimit && (
+          <>
+            <div
+              className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-white p-2.5 shadow-sm border-l-4 border-blue-400"
+            >
+              <div className="flex items-start justify-between mb-1">
+                <CreditCard className="w-3.5 h-3.5 text-gray-400" />
+              </div>
+              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
+                Credit Limit
+              </p>
+              <p className="text-xl font-bold text-gray-900 tabular-nums">
+                {formatCurrency(Number(account.creditLimit), account.currency as Currency)}
+              </p>
+            </div>
+
+            <div
+              className="relative overflow-hidden rounded-lg bg-gradient-to-br from-red-50 to-white p-2.5 shadow-sm border-l-4 border-red-400"
+            >
+              <div className="flex items-start justify-between mb-1">
+                <TrendingUp className="w-3.5 h-3.5 text-red-400" />
+              </div>
+              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
+                Used
+              </p>
+              <p className="text-xl font-bold text-red-600 tabular-nums">
+                {formatCurrency(Number(account.creditLimit) - Number(account.balance), account.currency as Currency)}
+              </p>
+              {/* Progress bar */}
+              <div className="mt-1 w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-red-500 rounded-full transition-all"
+                  style={{
+                    width: `${Math.min(((Number(account.creditLimit) - Number(account.balance)) / Number(account.creditLimit) * 100), 100)}%`
+                  }}
+                />
+              </div>
+              <p className="text-[10px] text-gray-500 mt-0.5">
+                {((Number(account.creditLimit) - Number(account.balance)) / Number(account.creditLimit) * 100).toFixed(1)}% utilization
+              </p>
+            </div>
+          </>
+        )}
+
+        {/* Currency */}
+        {!(account.type === 'CREDIT' && account.creditLimit) && (
+          <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-white p-2.5 shadow-sm border-l-4 border-gray-300">
+            <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
+              Currency
+            </p>
+            <p className="text-lg font-bold text-gray-900">{account.currency}</p>
+          </div>
+        )}
+      </div>
 
       {/* Tabs */}
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           <button
             onClick={() => setActiveTab('balance')}
-            className={`${
-              activeTab === 'balance'
+            className={`${activeTab === 'balance'
                 ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
             Saldo
           </button>
           <button
             onClick={() => setActiveTab('transactions')}
-            className={`${
-              activeTab === 'transactions'
+            className={`${activeTab === 'transactions'
                 ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
             Registros
           </button>
@@ -565,56 +564,56 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                 </div>
 
                 <ResponsiveContainer width="100%" height={400}>
-                <AreaChart
-                  data={filteredBalanceData}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <defs>
-                    <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="date"
-                    tickFormatter={(value) => {
-                      const date = new Date(value)
-                      return `${date.getDate()}/${date.getMonth() + 1}`
-                    }}
-                  />
-                  <YAxis
-                    width={80}
-                    tickFormatter={(value) => {
-                      // Format to shorter display (K for thousands, M for millions)
-                      const absValue = Math.abs(value)
-                      if (absValue >= 1000000) {
-                        return `${account.currency === 'CLP' ? '$' : ''}${(value / 1000000).toFixed(1)}M`
-                      } else if (absValue >= 1000) {
-                        return `${account.currency === 'CLP' ? '$' : ''}${(value / 1000).toFixed(0)}K`
-                      }
-                      return formatCurrency(value, account.currency as Currency)
-                    }}
-                    tick={{ fontSize: 12 }}
-                  />
-                  <Tooltip
-                    formatter={(value: number) => formatCurrency(value, account.currency as Currency)}
-                    labelFormatter={(label) => {
-                      const date = new Date(label)
-                      return date.toLocaleDateString()
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="balance"
-                    stroke="#3b82f6"
-                    strokeWidth={2}
-                    fillOpacity={1}
-                    fill="url(#colorBalance)"
-                    connectNulls={false}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+                  <AreaChart
+                    data={filteredBalanceData}
+                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                  >
+                    <defs>
+                      <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(value) => {
+                        const date = new Date(value)
+                        return `${date.getDate()}/${date.getMonth() + 1}`
+                      }}
+                    />
+                    <YAxis
+                      width={80}
+                      tickFormatter={(value) => {
+                        // Format to shorter display (K for thousands, M for millions)
+                        const absValue = Math.abs(value)
+                        if (absValue >= 1000000) {
+                          return `${account.currency === 'CLP' ? '$' : ''}${(value / 1000000).toFixed(1)}M`
+                        } else if (absValue >= 1000) {
+                          return `${account.currency === 'CLP' ? '$' : ''}${(value / 1000).toFixed(0)}K`
+                        }
+                        return formatCurrency(value, account.currency as Currency)
+                      }}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <Tooltip
+                      formatter={(value: number) => formatCurrency(value, account.currency as Currency)}
+                      labelFormatter={(label) => {
+                        const date = new Date(label)
+                        return date.toLocaleDateString()
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="balance"
+                      stroke="#3b82f6"
+                      strokeWidth={2}
+                      fillOpacity={1}
+                      fill="url(#colorBalance)"
+                      connectNulls={false}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
             ) : (
               <div className="text-center py-12 text-gray-500">
@@ -780,11 +779,10 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                             <div className="flex flex-col items-end gap-3 ml-4">
                               <div className="text-right">
                                 <p
-                                  className={`text-lg font-bold ${
-                                    transaction.type === 'INCOME' ? 'text-green-600' :
-                                    transaction.type === 'EXPENSE' ? 'text-red-600' :
-                                    'text-blue-600'
-                                  }`}
+                                  className={`text-lg font-bold ${transaction.type === 'INCOME' ? 'text-green-600' :
+                                      transaction.type === 'EXPENSE' ? 'text-red-600' :
+                                        'text-blue-600'
+                                    }`}
                                 >
                                   {transaction.type === 'EXPENSE' && '-'}
                                   {transaction.type === 'INCOME' && '+'}
