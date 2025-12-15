@@ -215,56 +215,64 @@ export default function CategoriesPage() {
     if (!subcategories || subcategories.length === 0) return null
 
     return (
-      <div className="ml-6 space-y-2 border-l-2 border-gray-200 pl-4">
+      <div className="ml-4 sm:ml-6 space-y-2 border-l-2 border-gray-200 pl-3 sm:pl-4">
         {subcategories.map((subCat) => {
           const isExpanded = expandedCategories.has(subCat.id)
           const hasSubcategories = (subCat.subcategories?.length || 0) > 0
 
           return (
             <div key={subCat.id} className="space-y-1">
-              <div className="flex items-center gap-2 py-2">
-                {hasSubcategories && (
-                  <button
-                    onClick={() => toggleExpanded(subCat.id)}
-                    className="p-1 hover:bg-gray-100 rounded"
-                  >
-                    <ChevronDown
-                      className={`w-4 h-4 transition-transform ${
-                        isExpanded ? 'rotate-0' : '-rotate-90'
-                      }`}
-                    />
-                  </button>
-                )}
-                {!hasSubcategories && <div className="w-6" />}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 py-2">
+                {/* Icon + Name row */}
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  {hasSubcategories && (
+                    <button
+                      onClick={() => toggleExpanded(subCat.id)}
+                      className="p-1 hover:bg-gray-100 rounded flex-shrink-0"
+                    >
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform ${
+                          isExpanded ? 'rotate-0' : '-rotate-90'
+                        }`}
+                      />
+                    </button>
+                  )}
+                  {!hasSubcategories && <div className="w-6 flex-shrink-0" />}
 
-                <span className="text-2xl">{subCat.icon || '📁'}</span>
-                <span className="text-sm font-medium text-gray-700">{subCat.name}</span>
+                  <span className="text-xl sm:text-2xl flex-shrink-0">{subCat.icon || '📁'}</span>
+                  <span className="text-sm font-medium text-gray-700 truncate">{subCat.name}</span>
+                </div>
 
-                <div className="ml-auto flex items-center gap-2">
+                {/* Action buttons - responsive */}
+                <div className="flex items-center gap-1.5 ml-auto sm:ml-0">
                   {subCat.isCustom ? (
                     <>
                       <button
                         onClick={() => openEditModal(subCat)}
                         disabled={isSubmitting}
-                        className="px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition disabled:opacity-50"
+                        className="p-1.5 sm:px-2 sm:py-1 text-xs bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition disabled:opacity-50"
+                        title="Editar"
                       >
-                        <Edit2 className="inline w-3 h-3" />
+                        <Edit2 className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                       </button>
                       <button
                         onClick={() => handleDelete(subCat.id)}
                         disabled={deleteMutation.isPending}
-                        className="px-2 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 transition disabled:opacity-50"
+                        className="p-1.5 sm:px-2 sm:py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 transition disabled:opacity-50"
+                        title="Eliminar"
                       >
-                        <Trash2 className="w-3 h-3" />
+                        <Trash2 className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                       </button>
                     </>
                   ) : (
                     <button
                       onClick={() => handleDelete(subCat.id)}
                       disabled={deleteMutation.isPending}
-                      className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition disabled:opacity-50"
+                      className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition disabled:opacity-50 whitespace-nowrap"
+                      title="Ocultar subcategoría"
                     >
-                      Ocultar
+                      <span className="hidden sm:inline">Ocultar</span>
+                      <span className="sm:hidden">👁️</span>
                     </button>
                   )}
                 </div>
@@ -361,77 +369,89 @@ export default function CategoriesPage() {
 
                   return (
                     <div key={category.id} className="space-y-1">
-                      <div className="flex items-center gap-3 py-3 px-3 rounded-lg hover:bg-gray-50 transition">
-                        {hasSubcategories && (
-                          <button
-                            onClick={() => toggleExpanded(category.id)}
-                            className="p-1 hover:bg-gray-200 rounded transition"
-                          >
-                            <ChevronDown
-                              className={`w-5 h-5 transition-transform text-gray-600 ${
-                                isExpanded ? 'rotate-0' : '-rotate-90'
-                              }`}
-                            />
-                          </button>
-                        )}
-                        {!hasSubcategories && <div className="w-7" />}
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-3 py-3 px-3 rounded-lg hover:bg-gray-50 transition">
+                        {/* Top row: Chevron + Icon + Name + Subcategory count + Color */}
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          {hasSubcategories && (
+                            <button
+                              onClick={() => toggleExpanded(category.id)}
+                              className="p-1 hover:bg-gray-200 rounded transition flex-shrink-0"
+                            >
+                              <ChevronDown
+                                className={`w-5 h-5 transition-transform text-gray-600 ${
+                                  isExpanded ? 'rotate-0' : '-rotate-90'
+                                }`}
+                              />
+                            </button>
+                          )}
+                          {!hasSubcategories && <div className="w-7 flex-shrink-0" />}
 
-                        <span className="text-3xl">{category.icon || '📁'}</span>
+                          <span className="text-2xl sm:text-3xl flex-shrink-0">{category.icon || '📁'}</span>
 
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-gray-900">{category.name}</h3>
-                            {hasSubcategories && (
-                              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                                {subCatCount} {subCatCount === 1 ? 'subcategoría' : 'subcategorías'}
-                              </span>
-                            )}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h3 className="font-semibold text-gray-900 truncate">{category.name}</h3>
+                              {hasSubcategories && (
+                                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded whitespace-nowrap">
+                                  {subCatCount} {subCatCount === 1 ? 'subcat' : 'subcats'}
+                                </span>
+                              )}
+                            </div>
                           </div>
+
+                          <div
+                            className="w-5 h-5 rounded border-2 border-gray-300 flex-shrink-0 hidden sm:block"
+                            style={{ backgroundColor: category.color || '#FF6B6B' }}
+                          />
                         </div>
 
-                        <div
-                          className="w-5 h-5 rounded border-2 border-gray-300 flex-shrink-0"
-                          style={{ backgroundColor: category.color || '#FF6B6B' }}
-                        />
-
-                        <div className="flex items-center gap-2 flex-shrink-0">
-                          {/* Add subcategory button - available for both custom and template categories */}
+                        {/* Action buttons - responsive */}
+                        <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 ml-auto sm:ml-0">
+                          {/* Add subcategory button */}
                           <button
                             onClick={() => {
                               openNewCategoryModal(category.id)
                             }}
                             disabled={isSubmitting}
-                            className="px-3 py-1 text-sm bg-green-50 text-green-600 rounded hover:bg-green-100 transition disabled:opacity-50"
+                            className="p-2 sm:px-3 sm:py-1 text-sm bg-green-50 text-green-600 rounded hover:bg-green-100 transition disabled:opacity-50"
                             title="Agregar subcategoría"
                           >
-                            <Plus className="w-3 h-3" />
+                            <Plus className="w-4 h-4 sm:w-3 sm:h-3" />
                           </button>
                           {category.isCustom ? (
                             <>
                               <button
                                 onClick={() => openEditModal(category)}
                                 disabled={isSubmitting}
-                                className="px-3 py-1 text-sm bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition disabled:opacity-50"
+                                className="p-2 sm:px-3 sm:py-1 text-sm bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition disabled:opacity-50"
+                                title="Editar"
                               >
-                                <Edit2 className="inline w-3 h-3" />
+                                <Edit2 className="w-4 h-4 sm:w-3 sm:h-3" />
                               </button>
                               <button
                                 onClick={() => handleDelete(category.id)}
                                 disabled={deleteMutation.isPending}
-                                className="px-3 py-1 text-sm bg-red-50 text-red-600 rounded hover:bg-red-100 transition disabled:opacity-50"
+                                className="p-2 sm:px-3 sm:py-1 text-sm bg-red-50 text-red-600 rounded hover:bg-red-100 transition disabled:opacity-50"
+                                title="Eliminar"
                               >
-                                <Trash2 className="w-3 h-3" />
+                                <Trash2 className="w-4 h-4 sm:w-3 sm:h-3" />
                               </button>
                             </>
                           ) : (
                             <button
                               onClick={() => handleDelete(category.id)}
                               disabled={deleteMutation.isPending}
-                              className="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition disabled:opacity-50"
+                              className="px-2 py-1 sm:px-3 text-xs sm:text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition disabled:opacity-50 whitespace-nowrap"
+                              title="Ocultar categoría"
                             >
-                              Ocultar
+                              <span className="hidden sm:inline">Ocultar</span>
+                              <span className="sm:hidden">👁️</span>
                             </button>
                           )}
+                          <div
+                            className="w-4 h-4 rounded border-2 border-gray-300 flex-shrink-0 sm:hidden"
+                            style={{ backgroundColor: category.color || '#FF6B6B' }}
+                          />
                         </div>
                       </div>
 
