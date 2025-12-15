@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios'
+import { toast } from 'sonner'
 import type {
   ApiResponse,
   AuthResponse,
@@ -55,10 +56,21 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError<{ message?: string }>) => {
-    if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('token')
-        window.location.href = '/login'
+    if (error.response) {
+      // Handle 429 Too Many Requests
+      if (error.response.status === 429) {
+        toast.error('Has realizado demasiadas solicitudes. Por favor espera un momento.', {
+          description: 'El servidor ha limitado temporalmente tu acceso por seguridad.',
+          duration: 5000,
+        })
+      }
+
+      // Handle 401 Unauthorized
+      if (error.response.status === 401) {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token')
+          window.location.href = '/login'
+        }
       }
     }
     return Promise.reject(error)
