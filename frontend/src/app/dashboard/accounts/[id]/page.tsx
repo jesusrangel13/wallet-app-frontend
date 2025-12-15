@@ -8,6 +8,7 @@ import { formatCurrency, type Currency } from '@/types/currency'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { LoadingPage, LoadingMessages, LoadingSpinner } from '@/components/ui/Loading'
+import { Skeleton } from '@/components/ui/Skeleton'
 import { ArrowLeft, Edit, Trash2, Wallet, CreditCard, TrendingUp } from 'lucide-react'
 import { getAccountIcon } from '@/utils/accountIcons'
 import { toast } from 'sonner'
@@ -379,7 +380,47 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
   }, [balanceHistory])
 
   if (isLoading || !account) {
-    return <LoadingPage message={LoadingMessages.accounts} />
+    return (
+      <div className="space-y-6">
+        {/* Header Skeleton */}
+        <div className="space-y-4">
+          <Skeleton className="h-9 w-20" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Skeleton className="w-12 h-12 rounded-full" />
+              <div className="space-y-2">
+                <Skeleton className="h-8 w-48" />
+                <Skeleton className="h-5 w-32" />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Skeleton className="h-10 w-20" />
+              <Skeleton className="h-10 w-20" />
+            </div>
+          </div>
+        </div>
+
+        {/* Balance Cards Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Skeleton className="h-24 rounded-lg" />
+          <Skeleton className="h-24 rounded-lg" />
+          <Skeleton className="h-24 rounded-lg" />
+        </div>
+
+        {/* Tabs Skeleton */}
+        <div className="flex gap-2">
+          <Skeleton className="h-10 w-24" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+
+        {/* Content Skeleton */}
+        <div className="space-y-4">
+          <Skeleton className="h-64 rounded-lg" />
+          <Skeleton className="h-32 rounded-lg" />
+          <Skeleton className="h-32 rounded-lg" />
+        </div>
+      </div>
+    )
   }
 
   const groupedTransactions = groupTransactionsByDate(transactions)
@@ -387,19 +428,23 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => router.push('/dashboard/accounts')}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
+      <div className="space-y-4">
+        {/* Back button - always on top on mobile */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => router.push('/dashboard/accounts')}
+          className="w-auto"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back
+        </Button>
+
+        {/* Account info and action buttons */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div
-              className="w-12 h-12 rounded-full flex items-center justify-center"
+              className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
               style={{ backgroundColor: account.color }}
             >
               {(() => {
@@ -407,33 +452,54 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                 return <IconComponent className="w-6 h-6 text-white" />
               })()}
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">{account.name}</h1>
-              <div className="flex items-center gap-2 mt-1">
-                <p className="text-gray-600 capitalize">{account.type.toLowerCase()} Account</p>
+            <div className="min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 truncate">{account.name}</h1>
+              <div className="flex items-center gap-2 mt-1 flex-wrap">
+                <p className="text-sm sm:text-base text-gray-600 capitalize">{account.type.toLowerCase()} Account</p>
                 {account.accountNumber && (
                   <>
                     <span className="text-gray-400">•</span>
-                    <p className="text-sm text-gray-500">#{account.accountNumber}</p>
+                    <p className="text-xs sm:text-sm text-gray-500">#{account.accountNumber}</p>
                   </>
                 )}
               </div>
             </div>
           </div>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleEdit}>
-            <Edit className="h-4 w-4 mr-2" />
-            Edit
-          </Button>
-          <Button
-            variant="outline"
-            onClick={handleDeleteClick}
-            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Delete
-          </Button>
+
+          {/* Action buttons - responsive */}
+          <div className="flex gap-2 w-full sm:w-auto">
+            {/* Mobile: Icon-only buttons */}
+            <Button
+              variant="outline"
+              onClick={handleEdit}
+              className="md:hidden flex-1 px-3"
+              title="Edit account"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleDeleteClick}
+              className="md:hidden flex-1 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
+              title="Delete account"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+
+            {/* Desktop: Text buttons */}
+            <Button variant="outline" onClick={handleEdit} className="hidden md:inline-flex">
+              <Edit className="h-4 w-4 mr-2" />
+              Edit
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleDeleteClick}
+              className="hidden md:inline-flex text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -776,10 +842,10 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                             </div>
 
                             {/* Right Section: Amount + Actions */}
-                            <div className="flex flex-col items-end gap-3 ml-4">
-                              <div className="text-right">
+                            <div className="flex flex-col items-end gap-2 ml-2 md:ml-4 md:gap-3 flex-shrink-0">
+                              <div className="text-right truncate">
                                 <p
-                                  className={`text-lg font-bold ${transaction.type === 'INCOME' ? 'text-green-600' :
+                                  className={`text-sm md:text-lg font-bold whitespace-nowrap ${transaction.type === 'INCOME' ? 'text-green-600' :
                                       transaction.type === 'EXPENSE' ? 'text-red-600' :
                                         'text-blue-600'
                                     }`}
@@ -793,15 +859,45 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                                 </p>
                               </div>
 
-                              <div className="flex gap-2">
-                                <Button variant="outline" size="sm" onClick={() => handleEditTransaction(transaction)}>
+                              <div className="flex gap-1.5 md:gap-2">
+                                {/* Mobile: Icon-only buttons */}
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleEditTransaction(transaction)}
+                                  className="md:hidden px-2.5 py-1.5"
+                                  title="Edit transaction"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                  </svg>
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleDeleteTransaction(transaction.id)}
+                                  className="md:hidden px-2.5 py-1.5 text-red-600 hover:text-red-700"
+                                  title="Delete transaction"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  </svg>
+                                </Button>
+
+                                {/* Desktop: Text buttons */}
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleEditTransaction(transaction)}
+                                  className="hidden md:inline-flex"
+                                >
                                   Edit
                                 </Button>
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   onClick={() => handleDeleteTransaction(transaction.id)}
-                                  className="text-red-600 hover:text-red-700"
+                                  className="hidden md:inline-flex text-red-600 hover:text-red-700"
                                 >
                                   Delete
                                 </Button>

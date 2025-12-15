@@ -662,22 +662,24 @@ export default function TransactionsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Transactions</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-1">
             {totalRecords} transactions
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
           {/* Export Menu */}
-          <div className="relative">
+          <div className="relative flex-1 sm:flex-initial">
             <Button
               variant="outline"
               onClick={() => setShowExportMenu(!showExportMenu)}
               disabled={transactions.length === 0}
+              className="w-full sm:w-auto"
+              title="Export transactions"
             >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -685,7 +687,7 @@ export default function TransactionsPage() {
                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                 />
               </svg>
-              Export
+              <span className="hidden sm:inline">Export</span>
             </Button>
             {showExportMenu && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
@@ -710,8 +712,8 @@ export default function TransactionsPage() {
               </div>
             )}
           </div>
-          <Button onClick={handleAddNew}>
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <Button onClick={handleAddNew} className="flex-1 sm:flex-initial" title="New transaction">
+            <svg className="w-4 h-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -719,7 +721,8 @@ export default function TransactionsPage() {
                 d="M12 4v16m8-8H4"
               />
             </svg>
-            New Transaction
+            <span className="hidden sm:inline">New Transaction</span>
+            <span className="sm:hidden">New</span>
           </Button>
         </div>
       </div>
