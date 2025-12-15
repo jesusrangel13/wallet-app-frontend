@@ -6,6 +6,7 @@ export interface User {
   avatarUrl?: string
   currency: string
   country?: string
+  language: string
   isVerified: boolean
   defaultSharedExpenseAccountId?: string | null
   defaultSharedExpenseAccount?: {
