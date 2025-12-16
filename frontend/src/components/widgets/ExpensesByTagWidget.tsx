@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Tag as TagIcon } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { dashboardAPI } from '@/lib/api'
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
@@ -36,6 +37,7 @@ const DEFAULT_COLORS = [
 ]
 
 export const ExpensesByTagWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesByTagWidgetProps) => {
+  const t = useTranslations('widgets.expensesByTag')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const { month, year } = useSelectedMonth()
   const [data, setData] = useState<TagData[]>([])
@@ -83,7 +85,7 @@ export const ExpensesByTagWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesB
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <TagIcon className="h-4 w-4" />
-            Expenses by Tag
+            {t('label')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -133,8 +135,8 @@ export const ExpensesByTagWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesB
         ) : (
           <div className={`flex flex-col items-center justify-center text-gray-500`} style={{ height: chartHeight }}>
             <TagIcon className="h-12 w-12 mb-2 text-gray-300" />
-            <p className="text-sm">No tagged expenses this month</p>
-            <p className="text-xs text-gray-400 mt-1">Add tags to your transactions to see this data</p>
+            <p className="text-sm">{t('noTaggedExpenses')}</p>
+            <p className="text-xs text-gray-400 mt-1">{t('addTagsHint')}</p>
           </div>
         )}
       </CardContent>

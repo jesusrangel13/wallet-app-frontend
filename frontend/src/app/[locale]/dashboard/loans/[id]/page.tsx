@@ -3,6 +3,7 @@
 import { use, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 import { Loan, Account } from '@/types'
 import { loanAPI, accountAPI } from '@/lib/api'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
@@ -15,6 +16,8 @@ import { ArrowLeft, HandCoins, Calendar, DollarSign, User, FileText } from 'luci
 export default function LoanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
+  const t = useTranslations('loans')
+  const tCommon = useTranslations('common')
   const [loan, setLoan] = useState<Loan | null>(null)
   const [accounts, setAccounts] = useState<Account[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -116,7 +119,7 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
             <HandCoins className="h-8 w-8 text-orange-600" />
-            Préstamo a {loan.borrowerName}
+            {t('title')} - {loan.borrowerName}
           </h1>
           <p className="text-gray-600 mt-1">
             Creado el {new Date(loan.createdAt).toLocaleDateString('es-ES')}
@@ -125,17 +128,17 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
         <div className="flex gap-2">
           {loan.status === 'ACTIVE' && pendingAmount > 0 && (
             <Button onClick={() => setIsPaymentModalOpen(true)}>
-              Registrar Pago
+              {t('recordPayment')}
             </Button>
           )}
           {loan.status === 'ACTIVE' && (
             <Button variant="outline" onClick={handleCancelLoan}>
-              Cancelar Préstamo
+              {tCommon('actions.cancel')}
             </Button>
           )}
           {loan.status === 'ACTIVE' && loan.payments.length === 0 && (
             <Button variant="outline" onClick={handleDeleteLoan}>
-              Eliminar
+              {tCommon('actions.delete')}
             </Button>
           )}
         </div>

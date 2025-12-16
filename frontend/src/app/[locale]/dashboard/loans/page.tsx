@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 import { Loan, LoanStatus, Account } from '@/types'
 import { loanAPI, accountAPI } from '@/lib/api'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -15,6 +16,8 @@ import { HandCoins, Plus, Filter } from 'lucide-react'
 
 export default function LoansPage() {
   const router = useRouter()
+  const t = useTranslations('loans')
+  const tCommon = useTranslations('common')
   const [loans, setLoans] = useState<Loan[]>([])
   const [accounts, setAccounts] = useState<Account[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -152,13 +155,13 @@ export default function LoansPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
             <HandCoins className="h-8 w-8 text-orange-600" />
-            Préstamos
+            {t('title')}
           </h1>
-          <p className="text-gray-600 mt-1">Gestiona el dinero que has prestado</p>
+          <p className="text-gray-600 mt-1">{t('subtitle')}</p>
         </div>
         <Button onClick={() => setIsCreateModalOpen(true)} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
-          Nuevo Préstamo
+          {t('new')}
         </Button>
       </div>
 

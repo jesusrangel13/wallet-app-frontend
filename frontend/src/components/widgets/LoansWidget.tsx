@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { HandCoins } from 'lucide-react'
 import { loanAPI } from '@/lib/api'
@@ -15,6 +16,7 @@ interface LoansWidgetProps {
 }
 
 export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps) => {
+  const t = useTranslations('widgets.loans')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
   const [summary, setSummary] = useState<LoansSummary | null>(null)
@@ -45,7 +47,7 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <HandCoins className="h-4 w-4 text-orange-600" />
-            Mis Préstamos
+            {t('label')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -65,11 +67,11 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <HandCoins className="h-4 w-4 text-orange-600" />
-            Mis Préstamos
+            {t('label')}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-gray-500">No se pudo cargar la información</p>
+          <p className="text-sm text-gray-500">{t('errorLoading')}</p>
         </CardContent>
       </Card>
     )
@@ -80,18 +82,18 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
           <HandCoins className="h-4 w-4 text-orange-600" />
-          Mis Préstamos
+          {t('label')}
         </CardTitle>
       </CardHeader>
       <CardContent>
         {summary.totalLoans === 0 ? (
           <div className="space-y-2">
-            <p className="text-sm text-gray-500">No tienes préstamos registrados</p>
+            <p className="text-sm text-gray-500">{t('noLoansYet')}</p>
             <Link
               href="/dashboard/loans"
               className="block text-sm text-blue-600 hover:text-blue-700 underline"
             >
-              Crear préstamo →
+              {t('createLoan')} →
             </Link>
           </div>
         ) : (
@@ -101,7 +103,7 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
               <div className={`${fontSizes.value} font-bold text-orange-600`}>
                 {formatCurrency(summary.totalPending, summary.currency as Currency)}
               </div>
-              <p className={`${fontSizes.label} text-gray-500`}>Pendiente de cobrar</p>
+              <p className={`${fontSizes.label} text-gray-500`}>{t('pendingToCollect')}</p>
             </div>
 
             {/* Stats Grid */}
@@ -110,20 +112,20 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
                 <div className="text-sm font-semibold text-gray-900">
                   {summary.activeLoans}
                 </div>
-                <p className="text-xs text-gray-500">Préstamos activos</p>
+                <p className="text-xs text-gray-500">{t('activeLoans')}</p>
               </div>
               <div>
                 <div className="text-sm font-semibold text-gray-900">
                   {formatCurrency(summary.totalLent, summary.currency as Currency)}
                 </div>
-                <p className="text-xs text-gray-500">Total prestado</p>
+                <p className="text-xs text-gray-500">{t('totalLent')}</p>
               </div>
             </div>
 
             {/* Recovered Amount */}
             <div className="pt-2 border-t border-gray-200">
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">Recuperado:</span>
+                <span className="text-gray-600">{t('recovered')}:</span>
                 <span className="font-medium text-green-600">
                   {formatCurrency(summary.totalRecovered, summary.currency as Currency)}
                 </span>
@@ -135,7 +137,7 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
               href="/dashboard/loans"
               className="block mt-2 text-sm text-blue-600 hover:text-blue-700 underline"
             >
-              Ver todos →
+              {t('viewAllLink')} →
             </Link>
           </div>
         )}

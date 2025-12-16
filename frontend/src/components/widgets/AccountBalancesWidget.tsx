@@ -2,6 +2,7 @@
 
 import { formatCurrency, type Currency, CURRENCIES } from '@/types/currency'
 import { useState, useEffect, useRef } from 'react'
+import { useTranslations } from 'next-intl'
 import { dashboardAPI, accountAPI } from '@/lib/api'
 import { Plus } from 'lucide-react'
 import { getAccountIcon } from '@/utils/accountIcons'
@@ -66,6 +67,7 @@ interface AccountBalancesWidgetProps {
 }
 
 export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: AccountBalancesWidgetProps) => {
+  const t = useTranslations('widgets.accountBalances')
   const router = useRouter()
   const [accounts, setAccounts] = useState<AccountBalance[]>([])
   const [loading, setLoading] = useState(true)
@@ -191,7 +193,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                           </div>
                         </div>
                         <div className="flex items-baseline justify-between">
-                          <span className="text-[9px] text-gray-500 uppercase tracking-wide">Gastado</span>
+                          <span className="text-[9px] text-gray-500 uppercase tracking-wide">{t('spent')}</span>
                           <p className="font-semibold text-sm text-gray-900 tabular-nums">
                             {formatCurrency(spent, account.currency as Currency)}
                           </p>
@@ -203,7 +205,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                           />
                         </div>
                         <p className="text-[9px] text-gray-500 truncate">
-                          Disponible: <span className="font-medium text-gray-700">{formatCurrency(account.balance, account.currency as Currency)}</span>
+                          {t('available')}: <span className="font-medium text-gray-700">{formatCurrency(account.balance, account.currency as Currency)}</span>
                         </p>
                       </div>
                     ) : (
@@ -217,7 +219,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                           </div>
                         </div>
                         <div className="text-left mt-0.5">
-                          <p className="text-[9px] text-gray-500 uppercase tracking-wide mb-0.5">Balance</p>
+                          <p className="text-[9px] text-gray-500 uppercase tracking-wide mb-0.5">{t('balance')}</p>
                           <p className="font-semibold text-base text-gray-900 tabular-nums">
                             {formatCurrency(account.balance, account.currency as Currency)}
                           </p>
@@ -236,7 +238,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                 <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
                   <Plus className="w-5 h-5 text-blue-600" />
                 </div>
-                <span className="text-xs font-medium text-gray-600">Agregar Cuenta</span>
+                <span className="text-xs font-medium text-gray-600">{t('addAccount')}</span>
               </button>
             </div>
 
@@ -244,13 +246,13 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
         ) : (
           <div className="flex flex-col items-center justify-center h-full w-full px-4">
             <p className="text-gray-500 text-center text-xs mb-4">
-              No cuentas aún. ¡Agrega tu primera cuenta!
+              {t('noAccountsYet')}
             </p>
             <button
               onClick={handleAddAccount}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
             >
-              Agregar Cuenta
+              {t('addAccountButton')}
             </button>
           </div>
         )}

@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Wallet, TrendingUp, Users } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { useWidgetDimensions } from '@/hooks/useWidgetDimensions'
 
 interface QuickActionsWidgetProps {
@@ -11,6 +12,7 @@ interface QuickActionsWidgetProps {
 }
 
 export const QuickActionsWidget = ({ gridWidth = 3, gridHeight = 1 }: QuickActionsWidgetProps) => {
+  const t = useTranslations('widgets.quickActions')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
 
   // Adjust button layout based on widget width
@@ -22,21 +24,21 @@ export const QuickActionsWidget = ({ gridWidth = 3, gridHeight = 1 }: QuickActio
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Quick Actions</CardTitle>
+        <CardTitle>{t('name')}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className={`grid ${buttonLayout} gap-4`}>
           <Link href="/dashboard/accounts" prefetch={true} className={`w-full flex items-center justify-center gap-2 bg-blue-600 text-white ${buttonPadding} rounded-lg hover:bg-blue-700 transition-colors ${fontSize}`}>
             <Wallet className={iconSize} />
-            Add Account
+            {t('newAccount')}
           </Link>
           <Link href="/dashboard/transactions" prefetch={true} className={`w-full flex items-center justify-center gap-2 bg-green-600 text-white ${buttonPadding} rounded-lg hover:bg-green-700 transition-colors ${fontSize}`}>
             <TrendingUp className={iconSize} />
-            New Transaction
+            {t('newTransaction')}
           </Link>
           <Link href="/dashboard/groups" prefetch={true} className={`w-full flex items-center justify-center gap-2 bg-purple-600 text-white ${buttonPadding} rounded-lg hover:bg-purple-700 transition-colors ${fontSize}`}>
             <Users className={iconSize} />
-            Create Group
+            {t('newLoan')}
           </Link>
         </div>
       </CardContent>

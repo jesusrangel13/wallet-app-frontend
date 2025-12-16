@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { DollarSign, ChevronDown, ChevronRight } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { dashboardAPI } from '@/lib/api'
 import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
@@ -28,6 +29,7 @@ interface GroupBalancesWidgetProps {
 }
 
 export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBalancesWidgetProps) => {
+  const t = useTranslations('widgets.groupBalances')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const { month, year } = useSelectedMonth()
   const [balances, setBalances] = useState<GroupBalance[]>([])
@@ -66,7 +68,7 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <DollarSign className="h-4 w-4" />
-            Mis Balances
+            {t('label')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -137,7 +139,7 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
                         {group.groupName}
                       </span>
                       <span className="text-xs text-gray-500 flex-shrink-0">
-                        ({group.memberCount} {group.memberCount === 1 ? 'persona' : 'personas'})
+                        ({group.memberCount} {group.memberCount === 1 ? t('person') : t('people')})
                       </span>
                     </div>
 
@@ -181,7 +183,7 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
             })
           ) : (
             <p className="text-gray-500 text-center py-12 text-sm">
-              No shared expenses yet. Create a group to start tracking!
+              {t('noSharedExpenses')}
             </p>
           )}
         </div>

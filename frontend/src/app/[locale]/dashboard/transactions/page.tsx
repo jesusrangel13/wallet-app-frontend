@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 import { Transaction, Account, TransactionType, CreateTransactionForm, MergedCategory } from '@/types'
 import { transactionAPI, accountAPI, categoryAPI, sharedExpenseAPI } from '@/lib/api'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
@@ -84,6 +85,8 @@ const groupTransactionsByDate = (transactions: Transaction[]) => {
 
 export default function TransactionsPage() {
   const { user } = useAuthStore()
+  const t = useTranslations('transactions')
+  const tCommon = useTranslations('common')
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [accounts, setAccounts] = useState<Account[]>([])
   const [categories, setCategories] = useState<MergedCategory[]>([])
@@ -664,9 +667,9 @@ export default function TransactionsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Transactions</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('title')}</h1>
           <p className="text-sm sm:text-base text-gray-600 mt-1">
-            {totalRecords} transactions
+            {t('subtitle')}
           </p>
         </div>
         <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
@@ -687,7 +690,7 @@ export default function TransactionsPage() {
                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                 />
               </svg>
-              <span className="hidden sm:inline">Export</span>
+              <span className="hidden sm:inline">{tCommon('actions.export')}</span>
             </Button>
             {showExportMenu && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
@@ -721,8 +724,8 @@ export default function TransactionsPage() {
                 d="M12 4v16m8-8H4"
               />
             </svg>
-            <span className="hidden sm:inline">New Transaction</span>
-            <span className="sm:hidden">New</span>
+            <span className="hidden sm:inline">{t('new')}</span>
+            <span className="sm:hidden">{tCommon('actions.add')}</span>
           </Button>
         </div>
       </div>
@@ -1031,7 +1034,7 @@ export default function TransactionsPage() {
                               onClick={() => handleEdit(transaction)}
                               className="hidden md:inline-flex"
                             >
-                              Edit
+                              {tCommon('actions.edit')}
                             </Button>
                             <Button
                               variant="outline"
@@ -1039,7 +1042,7 @@ export default function TransactionsPage() {
                               onClick={() => handleDelete(transaction.id)}
                               className="hidden md:inline-flex text-red-600 hover:text-red-700"
                             >
-                              Delete
+                              {tCommon('actions.delete')}
                             </Button>
                           </div>
                         </div>
@@ -1088,13 +1091,13 @@ export default function TransactionsPage() {
           setSharedExpenseData(null)
           reset()
         }}
-        title={editingTransaction ? 'Edit Transaction' : 'New Transaction'}
+        title={editingTransaction ? t('edit') : t('new')}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Transaction Type - Tabs */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Type <span className="text-red-500">*</span>
+              {t('fields.type')} <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-3 gap-2 bg-gray-100 p-1 rounded-lg">
               <button
@@ -1149,13 +1152,13 @@ export default function TransactionsPage() {
           {/* Account */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Account <span className="text-red-500">*</span>
+              {t('fields.account')} <span className="text-red-500">*</span>
             </label>
             <select
               {...register('accountId')}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="">Select account...</option>
+              <option value="">{t('placeholders.selectAccount')}</option>
               {accounts.map((account) => (
                 <option key={account.id} value={account.id}>
                   {account.name} ({account.currency})
@@ -1171,13 +1174,13 @@ export default function TransactionsPage() {
           {selectedType === 'TRANSFER' && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                To Account <span className="text-red-500">*</span>
+                {t('fields.toAccount')} <span className="text-red-500">*</span>
               </label>
               <select
                 {...register('toAccountId')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="">Select destination account...</option>
+                <option value="">{t('placeholders.selectDestination')}</option>
                 {getAvailableToAccounts().map((account) => (
                   <option key={account.id} value={account.id}>
                     {account.name} ({account.currency})
@@ -1193,7 +1196,7 @@ export default function TransactionsPage() {
           {/* Amount */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Amount <span className="text-red-500">*</span>
+              {t('fields.amount')} <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
@@ -1232,22 +1235,22 @@ export default function TransactionsPage() {
           {/* Payee (quien recibe el pago) */}
           {selectedType !== 'TRANSFER' && (
             <PayeeAutocomplete
-              label="Payee (Who received the payment)"
+              label={t('fields.payee')}
               value={watch('payee') || ''}
               onChange={(value) => setValue('payee', value)}
               error={errors.payee?.message}
-              placeholder="e.g., McDonald's, Uber, Enel"
+              placeholder={t('placeholders.payee')}
             />
           )}
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('fields.description')}</label>
             <textarea
               {...register('description')}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Add details about this transaction..."
+              placeholder={t('placeholders.description')}
             />
             {errors.description && (
               <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
@@ -1256,7 +1259,7 @@ export default function TransactionsPage() {
 
           {/* Date */}
           <Input
-            label="Date & Time"
+            label={t('fields.dateTime')}
             type="datetime-local"
             error={errors.date?.message}
             {...register('date')}
@@ -1289,7 +1292,7 @@ export default function TransactionsPage() {
                   {LoadingMessages.saving}
                 </span>
               ) : (
-                <span>{editingTransaction ? 'Update Transaction' : 'Create Transaction'}</span>
+                <span>{editingTransaction ? tCommon('actions.update') : tCommon('actions.create')}</span>
               )}
             </Button>
             <Button
@@ -1304,7 +1307,7 @@ export default function TransactionsPage() {
               }}
               disabled={isSaving}
             >
-              Cancel
+              {tCommon('actions.cancel')}
             </Button>
           </div>
         </form>
@@ -1314,7 +1317,7 @@ export default function TransactionsPage() {
       <Modal
         isOpen={showBulkDeleteConfirm}
         onClose={() => setShowBulkDeleteConfirm(false)}
-        title="Delete Transactions"
+        title={t('delete')}
       >
         <div className="space-y-4">
           <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -1332,14 +1335,14 @@ export default function TransactionsPage() {
               disabled={isBulkDeleting}
               className="flex-1"
             >
-              Cancel
+              {tCommon('actions.cancel')}
             </Button>
             <Button
               onClick={handleBulkDelete}
               disabled={isBulkDeleting}
               className="flex-1 bg-red-600 hover:bg-red-700 text-white"
             >
-              {isBulkDeleting ? LoadingMessages.deleting : 'Delete'}
+              {isBulkDeleting ? LoadingMessages.deleting : tCommon('actions.delete')}
             </Button>
           </div>
         </div>

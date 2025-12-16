@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { TrendingUp } from 'lucide-react'
 import { formatCurrency, type Currency } from '@/types/currency'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { transactionAPI } from '@/lib/api'
 import Link from 'next/link'
 import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
@@ -39,6 +40,7 @@ interface RecentTransactionsWidgetProps {
 }
 
 export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: RecentTransactionsWidgetProps) => {
+  const t = useTranslations('widgets.recentTransactions')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const [transactions, setTransactions] = useState<RecentTransaction[]>([])
   const [loading, setLoading] = useState(true)
@@ -72,7 +74,7 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
-            Recent Transactions
+            {t('label')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -152,13 +154,13 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
             ))
           ) : (
             <p className="text-gray-500 text-center py-8">
-              No recent transactions. Add your first transaction to get started!
+              {t('noRecentTransactions')}
             </p>
           )}
         </div>
         {transactions.length > 0 && (
           <Link href="/dashboard/transactions" prefetch={true} className="block mt-4 w-full text-center py-2 px-4 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg font-medium transition-colors">
-            Ver más transacciones →
+            {t('viewMoreTransactions')} →
           </Link>
         )}
       </CardContent>

@@ -4,6 +4,7 @@ import { useState, useEffect, forwardRef } from 'react'
 import { VirtuosoGrid } from 'react-virtuoso'
 import Image from 'next/image'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 import { Group, CreateGroupForm, SplitType, GroupMemberSplitDefault } from '@/types'
 import { groupAPI, sharedExpenseAPI } from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
@@ -42,6 +43,8 @@ const GroupsGridItem = ({ children, ...props }: React.HTMLAttributes<HTMLDivElem
 
 export default function GroupsPage() {
   const { user } = useAuthStore()
+  const t = useTranslations('groups')
+  const tCommon = useTranslations('common')
   const [groups, setGroups] = useState<Group[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -473,14 +476,14 @@ export default function GroupsPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Groups</h1>
-          <p className="text-gray-600 mt-1">Manage your expense sharing groups</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
+          <p className="text-gray-600 mt-1">{t('subtitle')}</p>
         </div>
         <Button onClick={handleAddNew}>
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Create Group
+          {t('new')}
         </Button>
       </div>
 
@@ -601,7 +604,7 @@ export default function GroupsPage() {
           setNewEmailInput('')
           setEmailError('')
         }}
-        title={editingGroup ? 'Edit Group' : 'Create Group'}
+        title={editingGroup ? t('edit') : t('new')}
       >
         <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
           {/* Cover Image Selection */}
@@ -639,25 +642,25 @@ export default function GroupsPage() {
 
           {/* Group Name */}
           <Input
-            label="Group Name"
+            label={t('fields.name')}
             type="text"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="e.g., Family Trip, Office Lunch"
+            placeholder={t('placeholders.name')}
             required
           />
 
           {/* Description */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description (optional)
+              {t('fields.description')}
             </label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={2}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Add details about this group..."
+              placeholder={t('placeholders.description')}
             />
           </div>
 
@@ -861,10 +864,10 @@ export default function GroupsPage() {
               {isSubmitting
                 ? LoadingMessages.creating
                 : editingGroup
-                  ? 'Update Group'
+                  ? tCommon('actions.update')
                   : formData.memberEmails.length > 0
-                    ? `Create Group & Add ${formData.memberEmails.length} Member(s)`
-                    : 'Create Group'}
+                    ? `${tCommon('actions.create')} & ${t('addMember')} ${formData.memberEmails.length}`
+                    : tCommon('actions.create')}
             </Button>
             <Button
               type="button"
@@ -878,7 +881,7 @@ export default function GroupsPage() {
               }}
               disabled={isSubmitting}
             >
-              Cancel
+              {tCommon('actions.cancel')}
             </Button>
           </div>
         </form>

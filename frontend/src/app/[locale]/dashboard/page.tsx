@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { dashboardPreferenceAPI } from '@/lib/api'
 import { DashboardGrid } from '@/components/DashboardGrid'
@@ -62,6 +63,7 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
 }
 
 export default function DashboardPage() {
+  const t = useTranslations('dashboard')
   const { preferences, setPreferences, isLoading, setIsLoading } = useDashboardStore()
 
   // Load dashboard preferences on mount
@@ -75,14 +77,14 @@ export default function DashboardPage() {
         setPreferences(preferences)
       } catch (error) {
         console.error('Error loading dashboard preferences:', error)
-        toast.error('Failed to load dashboard preferences')
+        toast.error(t('loadingPreferences'))
       } finally {
         setIsLoading(false)
       }
     }
 
     loadPreferences()
-  }, [setPreferences, setIsLoading])
+  }, [setPreferences, setIsLoading, t])
 
   // Show loading state
   // Show loading state
@@ -120,8 +122,8 @@ export default function DashboardPage() {
         {/* Header with Month Selector */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-600 mt-1">Welcome back! Here&apos;s your financial overview.</p>
+            <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
+            <p className="text-gray-600 mt-1">{t('subtitle')}</p>
           </div>
           <MonthSelector />
         </div>
@@ -177,7 +179,7 @@ export default function DashboardPage() {
         {/* Empty state */}
         {preferences.widgets.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 mb-4">No widgets on your dashboard</p>
+            <p className="text-gray-500 mb-4">{t('noWidgets')}</p>
             <AddWidgetButton />
           </div>
         )}

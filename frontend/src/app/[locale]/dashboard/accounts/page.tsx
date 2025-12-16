@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -47,6 +48,8 @@ type AccountFormData = z.infer<typeof accountSchema>
 
 export default function AccountsPage() {
   const router = useRouter()
+  const t = useTranslations('accounts')
+  const tCommon = useTranslations('common')
   const { handleError } = useGlobalErrorHandler()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -235,12 +238,12 @@ export default function AccountsPage() {
       {/* Header - Always visible */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Accounts</h1>
-          <p className="text-gray-600 mt-1">Manage your financial accounts</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
+          <p className="text-gray-600 mt-1">{t('subtitle')}</p>
         </div>
         <Button onClick={handleAddNew}>
           <Plus className="h-4 w-4 mr-2" />
-          Add Account
+          {t('new')}
         </Button>
       </div>
 
@@ -281,29 +284,29 @@ export default function AccountsPage() {
           setEditingAccount(null)
           reset()
         }}
-        title={editingAccount ? 'Edit Account' : 'Add New Account'}
+        title={editingAccount ? t('edit') : t('new')}
       >
         <form onSubmit={handleSubmit(onSubmit, (errors) => console.log('Form validation failed:', errors))} className="space-y-4">
           <Input
-            label="Account Name"
-            placeholder="e.g., Main Wallet, Savings Account"
+            label={t('name')}
+            placeholder={t('placeholders.name')}
             error={errors.name?.message}
             {...register('name')}
           />
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Account Type
+              {t('type')}
             </label>
             <select
               {...register('type')}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="CASH">Cash</option>
-              <option value="DEBIT">Debit Card</option>
-              <option value="CREDIT">Credit Card</option>
-              <option value="SAVINGS">Savings</option>
-              <option value="INVESTMENT">Investment</option>
+              <option value="CASH">{t('types.CASH')}</option>
+              <option value="DEBIT">{t('types.DEBIT_CARD')}</option>
+              <option value="CREDIT">{t('types.CREDIT_CARD')}</option>
+              <option value="SAVINGS">{t('types.SAVINGS')}</option>
+              <option value="INVESTMENT">{t('types.INVESTMENT')}</option>
             </select>
             {errors.type && (
               <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>
@@ -311,17 +314,17 @@ export default function AccountsPage() {
           </div>
 
           <Input
-            label={editingAccount ? 'Current Balance' : 'Initial Balance'}
+            label={t('balance')}
             type="number"
             step="0.01"
-            placeholder="0.00"
+            placeholder={t('placeholders.initialBalance')}
             error={errors.balance?.message}
             {...register('balance')}
           />
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Currency
+              {t('currency')}
             </label>
             <select
               {...register('currency')}
@@ -397,10 +400,10 @@ export default function AccountsPage() {
               }}
               className="flex-1"
             >
-              Cancel
+              {tCommon('actions.cancel')}
             </Button>
             <Button type="submit" isLoading={isSubmitting} className="flex-1">
-              {editingAccount ? 'Update' : 'Create'} Account
+              {editingAccount ? tCommon('actions.update') : tCommon('actions.create')}
             </Button>
           </div>
         </form>

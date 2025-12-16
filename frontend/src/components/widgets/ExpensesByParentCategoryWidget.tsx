@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { BarChart3 } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { dashboardAPI } from '@/lib/api'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
@@ -23,6 +24,7 @@ interface ExpensesByParentCategoryWidgetProps {
 }
 
 export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesByParentCategoryWidgetProps) => {
+  const t = useTranslations('widgets.expensesByParentCategory')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const { month, year } = useSelectedMonth()
   const [data, setData] = useState<ParentCategoryData[]>([])
@@ -50,7 +52,7 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
-            Gastos por Categoría
+            {t('label')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -133,10 +135,10 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
                   const percentage = props.payload.percentage
                   return [
                     `${formatCurrency(value, 'CLP')} (${percentage.toFixed(1)}%)`,
-                    'Monto'
+                    t('amount')
                   ]
                 }}
-                labelFormatter={(label) => `Categoría: ${label}`}
+                labelFormatter={(label) => `${t('category')}: ${label}`}
               />
               <Bar dataKey="amount" radius={[8, 8, 0, 0]}>
                 {data.map((entry, index) => (
@@ -150,7 +152,7 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
           </ResponsiveContainer>
         ) : (
           <div className="flex items-center justify-center text-gray-500" style={{ height: chartHeight }}>
-            No hay gastos este mes
+            {t('noExpensesThisMonth')}
           </div>
         )}
       </CardContent>

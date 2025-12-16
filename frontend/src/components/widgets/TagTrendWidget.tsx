@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { TrendingUp } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
+import { useTranslations } from 'next-intl'
 import { dashboardAPI } from '@/lib/api'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
@@ -45,6 +46,7 @@ export const TagTrendWidget = ({
   gridHeight = 2,
   settings = {}
 }: TagTrendWidgetProps) => {
+  const t = useTranslations('widgets.tagTrend')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const [data, setData] = useState<any[]>([])
   const [tags, setTags] = useState<TagTrendData[]>([])
@@ -114,7 +116,7 @@ export const TagTrendWidget = ({
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
-            Tag Trend
+            {t('label')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -131,7 +133,7 @@ export const TagTrendWidget = ({
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
           <TrendingUp className="h-4 w-4" />
-          Tag Trend (Last {months} Months)
+          {t('label')} ({t('lastMonths', { months })})
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -183,11 +185,11 @@ export const TagTrendWidget = ({
             style={{ height: chartHeight }}
           >
             <TrendingUp className="h-12 w-12 mb-2 text-gray-300" />
-            <p className="text-sm">No tag data available</p>
+            <p className="text-sm">{t('noTagData')}</p>
             <p className="text-xs text-gray-400 mt-1 text-center px-4">
               {tagIds.length > 0
-                ? 'The selected tags have no transaction history'
-                : 'Add tags to your transactions to see trends over time'}
+                ? t('selectedTagsNoHistory')
+                : t('addTagsForTrends')}
             </p>
           </div>
         )}

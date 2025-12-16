@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { ShoppingCart } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { dashboardAPI } from '@/lib/api'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
@@ -14,6 +15,7 @@ interface PersonalExpensesWidgetProps {
 }
 
 export const PersonalExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: PersonalExpensesWidgetProps) => {
+  const t = useTranslations('widgets.personalExpenses')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
   const { month, year } = useSelectedMonth()
@@ -42,7 +44,7 @@ export const PersonalExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: Person
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <ShoppingCart className="h-4 w-4 text-amber-600" />
-            Gastos Personales
+            {t('label')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -57,14 +59,14 @@ export const PersonalExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: Person
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
           <ShoppingCart className="h-4 w-4 text-amber-600" />
-          Gastos Personales
+          {t('label')}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className={`${fontSizes.value} font-bold text-amber-600`}>
           {formatCurrency(expense, 'CLP')}
         </div>
-        <p className={`${fontSizes.label} text-gray-500 mt-1`}>Este mes</p>
+        <p className={`${fontSizes.label} text-gray-500 mt-1`}>{t('thisMonth')}</p>
       </CardContent>
     </Card>
   )
