@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/Input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { authAPI } from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
+import { useGlobalErrorHandler } from '@/hooks/useGlobalErrorHandler'
 
 export default function LoginPage() {
   const t = useTranslations('auth.login')
@@ -21,6 +22,7 @@ export default function LoginPage() {
   const params = useParams()
   const locale = params.locale as string
   const setAuth = useAuthStore((state) => state.setAuth)
+  const { handleError } = useGlobalErrorHandler()
   const [isLoading, setIsLoading] = useState(false)
 
   const loginSchema = z.object({
@@ -47,8 +49,8 @@ export default function LoginPage() {
       setAuth(user, token)
       toast.success(t('success'))
       router.push(`/${locale}/dashboard`)
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || t('error'))
+    } catch (error) {
+      handleError(error)
     } finally {
       setIsLoading(false)
     }
