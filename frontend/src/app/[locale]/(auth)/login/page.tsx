@@ -7,25 +7,28 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { authAPI } from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
 
-const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(1, 'Password is required'),
-})
-
-type LoginForm = z.infer<typeof loginSchema>
-
 export default function LoginPage() {
+  const t = useTranslations('auth.login')
+  const tv = useTranslations('auth.validation')
   const router = useRouter()
   const params = useParams()
   const locale = params.locale as string
   const setAuth = useAuthStore((state) => state.setAuth)
   const [isLoading, setIsLoading] = useState(false)
+
+  const loginSchema = z.object({
+    email: z.string().email(tv('emailInvalid')),
+    password: z.string().min(1, tv('passwordRequired')),
+  })
+
+  type LoginForm = z.infer<typeof loginSchema>
 
   const {
     register,
@@ -42,10 +45,10 @@ export default function LoginPage() {
       const { user, token } = response.data.data
 
       setAuth(user, token)
-      toast.success('Login successful!')
+      toast.success(t('success'))
       router.push(`/${locale}/dashboard`)
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Login failed')
+      toast.error(error.response?.data?.message || t('error'))
     } finally {
       setIsLoading(false)
     }
@@ -54,37 +57,37 @@ export default function LoginPage() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Sign In</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <p className="text-sm text-gray-600 mt-1">
-          Welcome back! Please sign in to continue.
+          {t('subtitle')}
         </p>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
-            label="Email"
+            label={t('email')}
             type="email"
-            placeholder="john@example.com"
+            placeholder={t('emailPlaceholder')}
             error={errors.email?.message}
             {...register('email')}
           />
 
           <Input
-            label="Password"
+            label={t('password')}
             type="password"
-            placeholder="Enter your password"
+            placeholder={t('passwordPlaceholder')}
             error={errors.password?.message}
             {...register('password')}
           />
 
           <Button type="submit" className="w-full" isLoading={isLoading}>
-            Sign In
+            {t('signInButton')}
           </Button>
 
           <p className="text-center text-sm text-gray-600">
-            Don&apos;t have an account?{' '}
+            {t('noAccount')}{' '}
             <Link href={`/${locale}/register`} className="text-blue-600 hover:underline">
-              Sign up
+              {t('signUpLink')}
             </Link>
           </p>
         </form>
