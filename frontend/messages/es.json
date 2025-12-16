@@ -554,11 +554,61 @@
     "general": "General",
     "categories": "Categorías",
     "tags": "Etiquetas",
-    "language": "Idioma",
-    "currency": "Moneda",
-    "theme": "Tema",
+    "profile": {
+      "title": "Información del Perfil",
+      "subtitle": "Actualiza tu información personal y preferencias",
+      "fields": {
+        "name": "Nombre Completo",
+        "email": "Correo Electrónico",
+        "emailHelper": "Contacta soporte para cambiar tu correo",
+        "currency": "Moneda Predeterminada",
+        "currencyHelper": "Se usará como predeterminada para nuevas cuentas",
+        "country": "País",
+        "defaultAccount": "Cuenta Predeterminada para Gastos Compartidos",
+        "defaultAccountHelper": "Esta cuenta será preseleccionada al saldar saldos de gastos compartidos"
+      },
+      "placeholders": {
+        "name": "Juan Pérez",
+        "country": "ej., Chile"
+      },
+      "currencies": {
+        "CLP": "$ CLP - Peso Chileno",
+        "USD": "US$ USD - Dólar Estadounidense",
+        "EUR": "€ EUR - Euro"
+      },
+      "defaultAccountOptions": {
+        "none": "Sin cuenta predeterminada (seleccionar cada vez)"
+      }
+    },
+    "language": {
+      "label": "Idioma",
+      "helperText": "Selecciona tu idioma preferido para la aplicación",
+      "options": {
+        "en": "English (Inglés)",
+        "es": "Español"
+      }
+    },
+    "accountDetails": {
+      "title": "Detalles de la Cuenta",
+      "userId": "ID de Usuario",
+      "userIdHelper": "Tu identificador único",
+      "email": "Correo",
+      "emailHelper": "Tu correo de inicio de sesión",
+      "currency": "Moneda",
+      "currencyHelper": "Configuración de moneda predeterminada"
+    },
+    "actions": {
+      "save": "Guardar Cambios",
+      "reset": "Restablecer",
+      "saving": "Guardando..."
+    },
+    "validation": {
+      "nameRequired": "El nombre es requerido"
+    },
     "success": {
-      "updated": "Configuración actualizada exitosamente"
+      "updated": "Configuración actualizada exitosamente",
+      "profileUpdated": "Perfil actualizado exitosamente",
+      "languageChanged": "Idioma cambiado exitosamente"
     }
   }
 }

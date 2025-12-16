@@ -1,14 +1,17 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { userAPI, accountAPI } from '@/lib/api'
-import { LoadingPage, LoadingSpinner, LoadingMessages } from '@/components/ui/Loading'
+import { LoadingSpinner, LoadingMessages } from '@/components/ui/Loading'
 import { Account } from '@/types'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { useAuthStore } from '@/store/authStore'
 
 interface UserProfile {
   id: string
@@ -17,9 +20,14 @@ interface UserProfile {
   currency: string
   country?: string
   avatarUrl?: string
+  language?: string
 }
 
 export default function GeneralSettingsPage() {
+  const t = useTranslations('settings')
+  const tCommon = useTranslations('common')
+  const updateUser = useAuthStore((state) => state.updateUser)
+
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [accounts, setAccounts] = useState<Account[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -29,6 +37,7 @@ export default function GeneralSettingsPage() {
     email: '',
     currency: 'CLP',
     country: '',
+    language: 'es',
     defaultSharedExpenseAccountId: null as string | null,
   })
 
@@ -58,10 +67,11 @@ export default function GeneralSettingsPage() {
         email: user.email,
         currency: user.currency,
         country: user.country || '',
+        language: user.language || 'es',
         defaultSharedExpenseAccountId: user.defaultSharedExpenseAccountId || null,
       })
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to load profile')
+      toast.error(error.response?.data?.message || tCommon('errors.loadFailed'))
     } finally {
       setIsLoading(false)
     }
@@ -71,7 +81,7 @@ export default function GeneralSettingsPage() {
     e.preventDefault()
 
     if (!formData.name.trim()) {
-      toast.error('Name is required')
+      toast.error(t('validation.nameRequired'))
       return
     }
 
@@ -84,14 +94,23 @@ export default function GeneralSettingsPage() {
           name: formData.name,
           currency: formData.currency as 'CLP' | 'USD' | 'EUR',
           country: formData.country || undefined,
+          language: formData.language,
         }),
         userAPI.updateDefaultSharedExpenseAccount(formData.defaultSharedExpenseAccountId),
       ])
 
-      toast.success('Profile updated successfully')
+      // Update Zustand store with new user data
+      updateUser({
+        name: formData.name,
+        currency: formData.currency,
+        country: formData.country,
+        language: formData.language,
+      })
+
+      toast.success(t('success.profileUpdated'))
       loadProfile()
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to update profile')
+      toast.error(error.response?.data?.message || tCommon('errors.updateFailed'))
     } finally {
       setIsSaving(false)
     }
@@ -154,8 +173,8 @@ export default function GeneralSettingsPage() {
               {formData.name.charAt(0).toUpperCase()}
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Profile Information</h2>
-              <p className="text-sm text-gray-500">Update your personal information and preferences</p>
+              <h2 className="text-xl font-semibold text-gray-900">{t('profile.title')}</h2>
+              <p className="text-sm text-gray-500">{t('profile.subtitle')}</p>
             </div>
           </div>
         </CardHeader>
@@ -165,11 +184,11 @@ export default function GeneralSettingsPage() {
               {/* Name */}
               <div className="md:col-span-2">
                 <Input
-                  label="Full Name"
+                  label={t('profile.fields.name')}
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="John Doe"
+                  placeholder={t('profile.placeholders.name')}
                   required
                 />
               </div>
@@ -177,18 +196,18 @@ export default function GeneralSettingsPage() {
               {/* Email (read-only) */}
               <div className="md:col-span-2">
                 <Input
-                  label="Email Address"
+                  label={t('profile.fields.email')}
                   type="email"
                   value={formData.email}
                   disabled
-                  helperText="Contact support to change your email"
+                  helperText={t('profile.fields.emailHelper')}
                 />
               </div>
 
               {/* Currency */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Default Currency <span className="text-red-500">*</span>
+                  {t('profile.fields.currency')} <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <select
@@ -197,9 +216,9 @@ export default function GeneralSettingsPage() {
                     className="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white"
                     required
                   >
-                    <option value="CLP">$ CLP - Chilean Peso</option>
-                    <option value="USD">US$ USD - US Dollar</option>
-                    <option value="EUR">€ EUR - Euro</option>
+                    <option value="CLP">{t('profile.currencies.CLP')}</option>
+                    <option value="USD">{t('profile.currencies.USD')}</option>
+                    <option value="EUR">{t('profile.currencies.EUR')}</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -207,24 +226,29 @@ export default function GeneralSettingsPage() {
                     </svg>
                   </div>
                 </div>
-                <p className="mt-1 text-xs text-gray-500">This will be used as the default for new accounts</p>
+                <p className="mt-1 text-xs text-gray-500">{t('profile.fields.currencyHelper')}</p>
               </div>
 
               {/* Country */}
               <div>
                 <Input
-                  label="Country"
+                  label={t('profile.fields.country')}
                   type="text"
                   value={formData.country}
                   onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                  placeholder="e.g., Chile"
+                  placeholder={t('profile.placeholders.country')}
                 />
+              </div>
+
+              {/* Language Switcher */}
+              <div className="md:col-span-2">
+                <LanguageSwitcher />
               </div>
 
               {/* Default Shared Expense Account */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Default Account for Shared Expenses
+                  {t('profile.fields.defaultAccount')}
                 </label>
                 <div className="relative">
                   <select
@@ -237,7 +261,7 @@ export default function GeneralSettingsPage() {
                     }
                     className="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white"
                   >
-                    <option value="">No default account (select each time)</option>
+                    <option value="">{t('profile.defaultAccountOptions.none')}</option>
                     {accounts.map((account) => (
                       <option key={account.id} value={account.id}>
                         {account.name} - {account.currency} ${Number(account.balance).toFixed(2)}
@@ -251,7 +275,7 @@ export default function GeneralSettingsPage() {
                   </div>
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
-                  This account will be pre-selected when settling shared expense balances
+                  {t('profile.fields.defaultAccountHelper')}
                 </p>
               </div>
             </div>
@@ -262,10 +286,10 @@ export default function GeneralSettingsPage() {
                 {isSaving ? (
                   <span className="inline-flex items-center gap-2">
                     <LoadingSpinner size="sm" className="text-current" />
-                    {LoadingMessages.saving}
+                    {t('actions.saving')}
                   </span>
                 ) : (
-                  'Save Changes'
+                  t('actions.save')
                 )}
               </Button>
               <Button
@@ -274,7 +298,7 @@ export default function GeneralSettingsPage() {
                 onClick={loadProfile}
                 disabled={isSaving}
               >
-                Reset
+                {t('actions.reset')}
               </Button>
             </div>
           </form>
@@ -285,7 +309,7 @@ export default function GeneralSettingsPage() {
       {profile && (
         <Card className="mt-6">
           <CardHeader>
-            <h2 className="text-lg font-semibold text-gray-900">Account Details</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{t('accountDetails.title')}</h2>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -297,8 +321,8 @@ export default function GeneralSettingsPage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-700">User ID</p>
-                    <p className="text-xs text-gray-500">Your unique identifier</p>
+                    <p className="text-sm font-medium text-gray-700">{t('accountDetails.userId')}</p>
+                    <p className="text-xs text-gray-500">{t('accountDetails.userIdHelper')}</p>
                   </div>
                 </div>
                 <span className="font-mono text-sm text-gray-900 bg-gray-50 px-3 py-1 rounded">{profile.id.slice(0, 8)}...</span>
@@ -311,8 +335,8 @@ export default function GeneralSettingsPage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-700">Email</p>
-                    <p className="text-xs text-gray-500">Your login email</p>
+                    <p className="text-sm font-medium text-gray-700">{t('accountDetails.email')}</p>
+                    <p className="text-xs text-gray-500">{t('accountDetails.emailHelper')}</p>
                   </div>
                 </div>
                 <span className="text-sm text-gray-900">{profile.email}</span>
@@ -325,8 +349,8 @@ export default function GeneralSettingsPage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-700">Currency</p>
-                    <p className="text-xs text-gray-500">Default currency setting</p>
+                    <p className="text-sm font-medium text-gray-700">{t('accountDetails.currency')}</p>
+                    <p className="text-xs text-gray-500">{t('accountDetails.currencyHelper')}</p>
                   </div>
                 </div>
                 <span className="text-sm font-semibold text-gray-900">{profile.currency}</span>

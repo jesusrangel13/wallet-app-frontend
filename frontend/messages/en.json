@@ -554,11 +554,61 @@
     "general": "General",
     "categories": "Categories",
     "tags": "Tags",
-    "language": "Language",
-    "currency": "Currency",
-    "theme": "Theme",
+    "profile": {
+      "title": "Profile Information",
+      "subtitle": "Update your personal information and preferences",
+      "fields": {
+        "name": "Full Name",
+        "email": "Email Address",
+        "emailHelper": "Contact support to change your email",
+        "currency": "Default Currency",
+        "currencyHelper": "This will be used as the default for new accounts",
+        "country": "Country",
+        "defaultAccount": "Default Account for Shared Expenses",
+        "defaultAccountHelper": "This account will be pre-selected when settling shared expense balances"
+      },
+      "placeholders": {
+        "name": "John Doe",
+        "country": "e.g., Chile"
+      },
+      "currencies": {
+        "CLP": "$ CLP - Chilean Peso",
+        "USD": "US$ USD - US Dollar",
+        "EUR": "€ EUR - Euro"
+      },
+      "defaultAccountOptions": {
+        "none": "No default account (select each time)"
+      }
+    },
+    "language": {
+      "label": "Language",
+      "helperText": "Select your preferred language for the application",
+      "options": {
+        "en": "English",
+        "es": "Español (Spanish)"
+      }
+    },
+    "accountDetails": {
+      "title": "Account Details",
+      "userId": "User ID",
+      "userIdHelper": "Your unique identifier",
+      "email": "Email",
+      "emailHelper": "Your login email",
+      "currency": "Currency",
+      "currencyHelper": "Default currency setting"
+    },
+    "actions": {
+      "save": "Save Changes",
+      "reset": "Reset",
+      "saving": "Saving..."
+    },
+    "validation": {
+      "nameRequired": "Name is required"
+    },
     "success": {
-      "updated": "Settings updated successfully"
+      "updated": "Settings updated successfully",
+      "profileUpdated": "Profile updated successfully",
+      "languageChanged": "Language changed successfully"
     }
   }
 }
