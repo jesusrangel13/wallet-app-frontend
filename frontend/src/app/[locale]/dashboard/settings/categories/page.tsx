@@ -14,6 +14,7 @@ import { ColorPicker } from '@/components/ui/ColorPicker'
 import { EmojiPicker } from '@/components/ui/EmojiPicker'
 import { Trash2, Edit2, Plus, Sparkles, ChevronDown, Loader2 } from 'lucide-react'
 import { LoadingSpinner, SkeletonCard, LoadingMessages } from '@/components/ui/Loading'
+import { useGlobalErrorHandler } from '@/hooks/useGlobalErrorHandler'
 
 const EMOJIS = [
   '🍽️', '🚗', '🛒', '🎮', '🏠', '💊', '✈️', '📚', '👔', '💰',
@@ -42,6 +43,7 @@ interface CategoryItem {
 
 export default function CategoriesPage() {
   const queryClient = useQueryClient()
+  const { getMutationErrorHandler } = useGlobalErrorHandler()
   const { categories: allCategories, isLoading, isFetching } = useMergedCategories()
 
   const [selectedType, setSelectedType] = useState<TransactionType>('EXPENSE')
@@ -73,9 +75,7 @@ export default function CategoriesPage() {
       toast.success('Categoría creada exitosamente')
       closeModal()
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al crear la categoría')
-    },
+    ...getMutationErrorHandler(),
   })
 
   // Update mutation
@@ -92,9 +92,7 @@ export default function CategoriesPage() {
       toast.success('Categoría actualizada exitosamente')
       closeModal()
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al actualizar la categoría')
-    },
+    ...getMutationErrorHandler(),
   })
 
   // Delete mutation
@@ -105,9 +103,7 @@ export default function CategoriesPage() {
       queryClient.invalidateQueries({ queryKey: ['customCategories'] })
       toast.success('Categoría eliminada exitosamente')
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Error al eliminar la categoría')
-    },
+    ...getMutationErrorHandler(),
   })
 
   // Filter categories by type - merged list (templates and custom)
