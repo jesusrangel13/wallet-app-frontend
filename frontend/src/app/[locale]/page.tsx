@@ -1,7 +1,9 @@
 import Link from 'next/link'
 import { ArrowRight, Wallet, Users, TrendingUp, PieChart } from 'lucide-react'
 
-export default function HomePage({ params: { locale } }: { params: { locale: string } }) {
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Navigation */}
