@@ -1,0 +1,61 @@
+{
+  "auth": {
+    "login": {
+      "title": "Iniciar Sesión",
+      "subtitle": "¡Bienvenido de nuevo! Por favor inicia sesión para continuar.",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "juan@ejemplo.com",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Ingresa tu contraseña",
+      "signInButton": "Iniciar Sesión",
+      "noAccount": "¿No tienes una cuenta?",
+      "signUpLink": "Regístrate",
+      "success": "¡Inicio de sesión exitoso!",
+      "error": "Error al iniciar sesión"
+    },
+    "register": {
+      "title": "Crear Cuenta",
+      "subtitle": "Regístrate para comenzar a administrar tus finanzas.",
+      "fullName": "Nombre Completo",
+      "namePlaceholder": "Juan Pérez",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "juan@ejemplo.com",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Crea una contraseña",
+      "confirmPassword": "Confirmar Contraseña",
+      "confirmPasswordPlaceholder": "Confirma tu contraseña",
+      "createAccountButton": "Crear Cuenta",
+      "hasAccount": "¿Ya tienes una cuenta?",
+      "signInLink": "Inicia sesión",
+      "success": "¡Cuenta creada exitosamente!",
+      "error": "Error al registrarse"
+    },
+    "validation": {
+      "emailInvalid": "Correo electrónico inválido",
+      "passwordRequired": "La contraseña es requerida",
+      "nameMinLength": "El nombre debe tener al menos 2 caracteres",
+      "passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
+      "passwordMismatch": "Las contraseñas no coinciden"
+    }
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "dashboardDescription": "Ver resumen financiero",
+    "accounts": "Cuentas",
+    "accountsDescription": "Administrar tus cuentas",
+    "transactions": "Transacciones",
+    "transactionsDescription": "Ver transacciones",
+    "loans": "Préstamos",
+    "loansDescription": "Rastrear préstamos",
+    "groups": "Grupos",
+    "groupsDescription": "Administrar gastos compartidos",
+    "import": "Importar",
+    "importDescription": "Importar transacciones",
+    "settings": "Configuración",
+    "settingsDescription": "Administrar preferencias",
+    "toggleSidebar": "Alternar barra lateral",
+    "toggleMenu": "Alternar menú",
+    "appName": "Finanzas",
+    "version": "v1.0.0"
+  }
+}

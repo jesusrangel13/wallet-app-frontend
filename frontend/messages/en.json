@@ -1,0 +1,61 @@
+{
+  "auth": {
+    "login": {
+      "title": "Sign In",
+      "subtitle": "Welcome back! Please sign in to continue.",
+      "email": "Email",
+      "emailPlaceholder": "john@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "signInButton": "Sign In",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign up",
+      "success": "Login successful!",
+      "error": "Login failed"
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Sign up to start managing your finances.",
+      "fullName": "Full Name",
+      "namePlaceholder": "John Doe",
+      "email": "Email",
+      "emailPlaceholder": "john@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Create a password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "createAccountButton": "Create Account",
+      "hasAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "success": "Account created successfully!",
+      "error": "Registration failed"
+    },
+    "validation": {
+      "emailInvalid": "Invalid email address",
+      "passwordRequired": "Password is required",
+      "nameMinLength": "Name must be at least 2 characters",
+      "passwordMinLength": "Password must be at least 8 characters",
+      "passwordMismatch": "Passwords don't match"
+    }
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "dashboardDescription": "View your financial overview",
+    "accounts": "Accounts",
+    "accountsDescription": "Manage your accounts",
+    "transactions": "Transactions",
+    "transactionsDescription": "View transactions",
+    "loans": "Loans",
+    "loansDescription": "Track loans",
+    "groups": "Groups",
+    "groupsDescription": "Manage shared expenses",
+    "import": "Import",
+    "importDescription": "Import transactions",
+    "settings": "Settings",
+    "settingsDescription": "Manage preferences",
+    "toggleSidebar": "Toggle sidebar",
+    "toggleMenu": "Toggle menu",
+    "appName": "Finance",
+    "version": "v1.0.0"
+  }
+}
