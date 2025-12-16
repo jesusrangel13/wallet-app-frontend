@@ -3,9 +3,9 @@
 ## ⚠️ ESTADO DEL PROYECTO: EN PROGRESO
 
 **Última actualización:** 16 de Diciembre de 2025
-**Fases completadas:** 1, 2, 4
+**Fases completadas:** 1, 2, 3, 4
 **Fase en progreso:** 5
-**Pendientes:** 3, 6
+**Pendientes:** 6
 
 ---
 
@@ -77,14 +77,40 @@
 - `feat(i18n): migrate category services and controller`
 - `feat(i18n): fix missed error codes in group and transaction`
 
-#### ⏸️ Fase 3: API Error Translator Middleware (PENDIENTE)
+#### ✅ Fase 3: API Error Translator Middleware (COMPLETADA)
 **Objetivo:** Crear middleware que traduzca códigos de error del backend al idioma del cliente.
 
-- [ ] Crear middleware traductor de errores en frontend
-- [ ] Mapear ErrorCodes a claves de traducción
-- [ ] Agregar archivos errors.json (en.json y es.json)
-- [ ] Actualizar manejador de errores global
-- [ ] Testing de errores traducidos
+- [x] Crear middleware traductor de errores en frontend
+- [x] Mapear ErrorCodes a claves de traducción
+- [x] Agregar archivos errors.json (en.json y es.json)
+- [x] Actualizar manejador de errores global
+- [x] Migrar componentes principales a usar error handler global
+- [ ] Testing de errores traducidos (pendiente testing manual)
+
+**Archivos creados:**
+- `frontend/src/lib/errorTranslator.ts` - Utilidad de traducción de errores
+- `frontend/src/hooks/useGlobalErrorHandler.ts` - Hook global de manejo de errores
+
+**Componentes migrados:**
+- Login y Register pages
+- Accounts page
+- Categories settings page
+- SettleBalanceModal
+
+**Traducciones agregadas:**
+- 67 códigos de error en EN y ES
+- 3 errores genéricos (UNKNOWN_ERROR, NETWORK_ERROR, TIMEOUT_ERROR)
+- Mensajes de rate limiting
+- Mensaje fallback
+
+**Commits:**
+- `feat(i18n): add complete error translations for all backend error codes`
+- `feat(i18n): create error translation utility and global error handler`
+- `fix(i18n): remove hardcoded error messages from Axios interceptor`
+- `feat(i18n): migrate auth pages to use global error handler`
+- `feat(i18n): migrate SettleBalanceModal to use global error handler`
+- `feat(i18n): migrate accounts page to use global error handler`
+- `feat(i18n): migrate categories settings page to global error handler`
 
 #### ✅ Fase 4: Frontend Auth & Navigation (COMPLETADA)
 **Objetivo:** Migrar autenticación y navegación a next-intl.
@@ -465,11 +491,12 @@ Verificar layouts con idiomas "verbosos" para asegurar que no se rompan (overflo
 - [ ] Modificar POST /api/auth/register para usar `language` (Fase 6)
 - [ ] Modificar PATCH /api/users/profile para actualizar `language` (Fase 6)
 
-### ⏸️ Error Translation Middleware - PENDIENTE (Fase 3)
-- [ ] Crear middleware traductor de errores en frontend
-- [ ] Mapear ErrorCodes a claves de traducción
-- [ ] Actualizar manejador de errores global
-- [ ] Testing de errores traducidos
+### ✅ Error Translation Middleware - COMPLETADO (Fase 3)
+- [x] Crear middleware traductor de errores en frontend
+- [x] Mapear ErrorCodes a claves de traducción
+- [x] Actualizar manejador de errores global
+- [x] Migrar componentes principales
+- [ ] Testing de errores traducidos (pendiente testing manual)
 
 ### ⏸️ Testing - PENDIENTE
 - [ ] Crear script check-translations.ts
@@ -485,15 +512,15 @@ Verificar layouts con idiomas "verbosos" para asegurar que no se rompan (overflo
 
 ## Resumen Final - Estado Actual
 
-### ✅ Logros Alcanzados (Fases 1, 2, 4)
+### ✅ Logros Alcanzados (Fases 1, 2, 3, 4)
 
 **Backend (Fase 2):**
-- ✅ Sistema centralizado de códigos de error (95+ códigos)
+- ✅ Sistema centralizado de códigos de error (67 códigos únicos)
 - ✅ 10 servicios backend migrados (~98 errores)
 - ✅ Backend compila sin errores TypeScript
 - ✅ Base preparada para traducción de errores en frontend
 
-**Frontend (Fases 1 y 4):**
+**Frontend (Fases 1, 3 y 4):**
 - ✅ Configuración next-intl completa
 - ✅ Middleware de detección de idioma
 - ✅ Routing por locale (`/[locale]/...`)
@@ -503,17 +530,21 @@ Verificar layouts con idiomas "verbosos" para asegurar que no se rompan (overflo
 - ✅ Compatibilidad con Next.js 15 (async params)
 - ✅ Campo `language` en base de datos
 
+**Fase 3: Error Translation Middleware (COMPLETADA):**
+- ✅ Utilidad de traducción de errores (`errorTranslator.ts`)
+- ✅ Hook global de manejo de errores (`useGlobalErrorHandler.ts`)
+- ✅ 67 códigos de error traducidos en EN y ES
+- ✅ Mensajes genéricos y rate limiting traducidos
+- ✅ Componentes principales migrados (auth, accounts, categories, modals)
+- ✅ Axios interceptor actualizado (sin mensajes hardcoded)
+
 **Traducciones actuales:**
 - ✅ 27 claves de traducción en namespace `auth`
 - ✅ 14 claves de traducción en namespace `nav`
-- ✅ Total: ~5KB por idioma (comprimido ~2KB)
+- ✅ 73 claves de traducción en namespace `errors` (67 API + 3 generic + rate limiting + fallback)
+- ✅ Total: ~12KB por idioma (comprimido ~4KB)
 
-### ⏸️ Trabajo Pendiente (Fases 3, 5, 6)
-
-**Fase 3: Error Translation Middleware**
-- Crear traductor de ErrorCodes en frontend
-- Agregar namespace `errors` con 95+ códigos
-- Integrar con manejador global de errores
+### ⏸️ Trabajo Pendiente (Fases 5, 6)
 
 **Fase 5: Resto del Frontend**
 - Migrar Dashboard y páginas principales
@@ -531,29 +562,30 @@ Verificar layouts con idiomas "verbosos" para asegurar que no se rompan (overflo
 
 **Archivos modificados/creados:**
 - Backend: 13 archivos (errorCodes + 10 servicios + 2 controllers)
-- Frontend: 7 archivos (config + middleware + 2 pages + Sidebar + 2 JSON)
+- Frontend: 13 archivos (config + middleware + 2 pages + Sidebar + 2 JSON + 2 utilities + 4 migrated pages/components)
 - Base de datos: 1 migración
 
-**Commits realizados:** 13 commits organizados
+**Commits realizados:** 20 commits organizados
 - 5 commits de Fase 1 (Foundation)
 - 4 commits de Fase 2 (Backend Error Codes)
+- 7 commits de Fase 3 (Error Translation Middleware)
 - 4 commits de Fase 4 (Frontend Auth & Nav)
 
 **Cobertura de traducción actual:**
 - ✅ Autenticación: 100%
 - ✅ Navegación: 100%
+- ✅ Errores API: 100% (67 códigos backend traducidos)
 - ⏸️ Dashboard: 0%
 - ⏸️ Widgets: 0%
 - ⏸️ Formularios: 0%
-- ⏸️ Errores API: 0%
 
 ### 🎯 Próximos Pasos Recomendados
 
-1. **Fase 3:** Implementar middleware traductor de errores (~2-3 horas)
-2. **Fase 5:** Migrar Dashboard y widgets principales (~6-8 horas)
-3. **Fase 6:** Crear Language Switcher y settings (~2-3 horas)
+1. **Fase 5:** Migrar Dashboard y widgets principales (~6-8 horas)
+2. **Fase 6:** Crear Language Switcher y settings (~2-3 horas)
+3. **Testing:** Validar errores traducidos y cambio de idioma (~1-2 horas)
 
-**Tiempo estimado total para completar:** ~10-14 horas de desarrollo adicional
+**Tiempo estimado total para completar:** ~9-13 horas de desarrollo adicional
 
 **Impacto estimado final:**
 - ~50KB de archivos de traducción por idioma
