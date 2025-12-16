@@ -18,6 +18,7 @@ import DeleteAccountModal from '@/components/DeleteAccountModal'
 import { LoadingPage, LoadingOverlay, LoadingMessages } from '@/components/ui/Loading'
 import AccountsCardView from '@/components/accounts/AccountsCardView'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { useGlobalErrorHandler } from '@/hooks/useGlobalErrorHandler'
 
 const accountSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -46,6 +47,7 @@ type AccountFormData = z.infer<typeof accountSchema>
 
 export default function AccountsPage() {
   const router = useRouter()
+  const { handleError } = useGlobalErrorHandler()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isRefetching, setIsRefetching] = useState(false)
@@ -115,9 +117,8 @@ export default function AccountsPage() {
       // Handle flexible response format (array or paginated structure)
       const accountsData = response.data as any
       setAccounts(Array.isArray(accountsData) ? accountsData : accountsData.data)
-    } catch (error: any) {
-      toast.error('Failed to load accounts')
-      console.error(error)
+    } catch (error) {
+      handleError(error)
     } finally {
       if (isInitial) {
         setIsLoading(false)
@@ -144,9 +145,8 @@ export default function AccountsPage() {
       setEditingAccount(null)
       reset()
       await loadAccounts(false)
-    } catch (error: any) {
-      console.error('Error saving account:', error)
-      toast.error(error.response?.data?.message || 'Failed to save account')
+    } catch (error) {
+      handleError(error)
     } finally {
       setIsSubmitting(false)
     }
@@ -172,8 +172,8 @@ export default function AccountsPage() {
         toast.success(response.data.data.message)
         await loadAccounts(false)
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to delete account')
+    } catch (error) {
+      handleError(error)
     }
   }
 
@@ -187,8 +187,8 @@ export default function AccountsPage() {
       setIsDeleteModalOpen(false)
       setDeletingAccount(null)
       setTransactionCount(0)
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to delete account')
+    } catch (error) {
+      handleError(error)
       throw error
     }
   }
