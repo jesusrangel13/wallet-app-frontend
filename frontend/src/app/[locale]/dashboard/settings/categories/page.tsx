@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 import { TransactionType } from '@/types'
 import { useMergedCategories } from '@/hooks/useCategories'
 import { categoryTemplateAPI } from '@/lib/api'
@@ -42,6 +43,7 @@ interface CategoryItem {
 }
 
 export default function CategoriesPage() {
+  const t = useTranslations('settings.categoriesPage')
   const queryClient = useQueryClient()
   const { getMutationErrorHandler } = useGlobalErrorHandler()
   const { categories: allCategories, isLoading, isFetching } = useMergedCategories()
@@ -72,7 +74,7 @@ export default function CategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userCategories'] })
       queryClient.invalidateQueries({ queryKey: ['customCategories'] })
-      toast.success('Categoría creada exitosamente')
+      toast.success(t('success.created'))
       closeModal()
     },
     ...getMutationErrorHandler(),
@@ -89,7 +91,7 @@ export default function CategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userCategories'] })
       queryClient.invalidateQueries({ queryKey: ['customCategories'] })
-      toast.success('Categoría actualizada exitosamente')
+      toast.success(t('success.updated'))
       closeModal()
     },
     ...getMutationErrorHandler(),
@@ -101,7 +103,7 @@ export default function CategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userCategories'] })
       queryClient.invalidateQueries({ queryKey: ['customCategories'] })
-      toast.success('Categoría eliminada exitosamente')
+      toast.success(t('success.deleted'))
     },
     ...getMutationErrorHandler(),
   })
@@ -184,7 +186,7 @@ export default function CategoriesPage() {
 
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
-      toast.error('El nombre de la categoría es requerido')
+      toast.error(t('validation.nameRequired'))
       return
     }
 
@@ -200,8 +202,8 @@ export default function CategoriesPage() {
     }
   }
 
-  const handleDelete = (categoryId: string) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar esta categoría?')) {
+  const handleDelete = (categoryId: string, categoryName: string) => {
+    if (window.confirm(t('deleteConfirm', { name: categoryName }))) {
       deleteMutation.mutate(categoryId)
     }
   }
@@ -252,22 +254,22 @@ export default function CategoriesPage() {
                         <Edit2 className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                       </button>
                       <button
-                        onClick={() => handleDelete(subCat.id)}
+                        onClick={() => handleDelete(subCat.id, subCat.name)}
                         disabled={deleteMutation.isPending}
                         className="p-1.5 sm:px-2 sm:py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 transition disabled:opacity-50"
-                        title="Eliminar"
+                        title={t('delete')}
                       >
                         <Trash2 className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                       </button>
                     </>
                   ) : (
                     <button
-                      onClick={() => handleDelete(subCat.id)}
+                      onClick={() => handleDelete(subCat.id, subCat.name)}
                       disabled={deleteMutation.isPending}
                       className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition disabled:opacity-50 whitespace-nowrap"
-                      title="Ocultar subcategoría"
+                      title={t('hideSubcategory')}
                     >
-                      <span className="hidden sm:inline">Ocultar</span>
+                      <span className="hidden sm:inline">{t('hide')}</span>
                       <span className="sm:hidden">👁️</span>
                     </button>
                   )}
@@ -303,9 +305,9 @@ export default function CategoriesPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Mis Categorías</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
         <p className="text-gray-600 mt-1">
-          Crea y personaliza tus categorías de gastos e ingresos
+          {t('description')}
         </p>
       </div>
 
@@ -321,7 +323,7 @@ export default function CategoriesPage() {
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            {type === 'EXPENSE' ? '💸 Gastos' : '💰 Ingresos'}
+            {type === 'EXPENSE' ? t('types.expense') : t('types.income')}
           </button>
         ))}
       </div>
@@ -333,7 +335,7 @@ export default function CategoriesPage() {
           className="bg-green-600 hover:bg-green-700 text-white"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Nueva Categoría
+          {t('newCategory')}
         </Button>
       </div>
 
@@ -425,22 +427,22 @@ export default function CategoriesPage() {
                                 <Edit2 className="w-4 h-4 sm:w-3 sm:h-3" />
                               </button>
                               <button
-                                onClick={() => handleDelete(category.id)}
+                                onClick={() => handleDelete(category.id, category.name)}
                                 disabled={deleteMutation.isPending}
                                 className="p-2 sm:px-3 sm:py-1 text-sm bg-red-50 text-red-600 rounded hover:bg-red-100 transition disabled:opacity-50"
-                                title="Eliminar"
+                                title={t('delete')}
                               >
                                 <Trash2 className="w-4 h-4 sm:w-3 sm:h-3" />
                               </button>
                             </>
                           ) : (
                             <button
-                              onClick={() => handleDelete(category.id)}
+                              onClick={() => handleDelete(category.id, category.name)}
                               disabled={deleteMutation.isPending}
                               className="px-2 py-1 sm:px-3 text-xs sm:text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition disabled:opacity-50 whitespace-nowrap"
-                              title="Ocultar categoría"
+                              title={t('hideSubcategory')}
                             >
-                              <span className="hidden sm:inline">Ocultar</span>
+                              <span className="hidden sm:inline">{t('hide')}</span>
                               <span className="sm:hidden">👁️</span>
                             </button>
                           )}

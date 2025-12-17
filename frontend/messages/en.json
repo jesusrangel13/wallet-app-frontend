@@ -657,6 +657,8 @@
       }
     },
     "categoriesPage": {
+      "title": "My Categories",
+      "description": "Create and customize your expense and income categories",
       "types": {
         "expense": "💸 Expenses",
         "income": "💰 Income"

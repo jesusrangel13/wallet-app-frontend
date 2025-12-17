@@ -657,6 +657,8 @@
       }
     },
     "categoriesPage": {
+      "title": "Mis Categorías",
+      "description": "Crea y personaliza tus categorías de gastos e ingresos",
       "types": {
         "expense": "💸 Gastos",
         "income": "💰 Ingresos"
