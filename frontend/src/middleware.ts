@@ -13,8 +13,8 @@ export default createMiddleware({
   // Used when no locale matches
   defaultLocale,
 
-  // Always show locale in URL (e.g., /es/dashboard, /en/dashboard)
-  localePrefix: 'always',
+  // Only show locale in URL for non-default locales (e.g., /dashboard for Spanish, /en/dashboard for English)
+  localePrefix: 'as-needed',
 
   // Auto-detect user's preferred locale from browser settings
   localeDetection: true,

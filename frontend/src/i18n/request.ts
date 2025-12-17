@@ -8,13 +8,12 @@ import { notFound } from 'next/navigation';
 import { locales, type Locale } from './config';
 
 export default getRequestConfig(async ({ locale }) => {
-  // Validate that the incoming `locale` parameter is valid
-  if (!locale || !locales.includes(locale as Locale)) {
-    notFound();
-  }
+  // The middleware already validates locales, so we just need to load the messages
+  // If locale is not provided, default to the default locale
+  const validLocale = (locale && locales.includes(locale as Locale)) ? locale : 'es';
 
   return {
-    locale: locale as string,
-    messages: (await import(`../../messages/${locale}.json`)).default
+    locale: validLocale as string,
+    messages: (await import(`../../messages/${validLocale}.json`)).default
   };
 });
