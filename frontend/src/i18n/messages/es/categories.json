@@ -86,7 +86,7 @@
   "income": {
     "salary": {
       "name": "Salario",
-      "base": "Salario Base",
+      "baseSalary": "Salario Base",
       "bonus": "Bonificación",
       "commission": "Comisión",
       "overtime": "Horas Extra"
@@ -116,6 +116,8 @@
     }
   },
   "transfer": {
-    "name": "Transferencia entre cuentas"
+    "betweenAccounts": {
+      "name": "Transferencia entre cuentas"
+    }
   }
 }
