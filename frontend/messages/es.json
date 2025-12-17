@@ -616,6 +616,45 @@
       "updated": "Configuración actualizada exitosamente",
       "profileUpdated": "Perfil actualizado exitosamente",
       "languageChanged": "Idioma cambiado exitosamente"
+    },
+    "tagsPage": {
+      "title": "Tus Etiquetas",
+      "description": "Organiza y etiqueta tus transacciones con etiquetas personalizadas",
+      "newTag": "Nueva Etiqueta",
+      "editTag": "Editar Etiqueta",
+      "editButton": "Editar",
+      "deleteButton": "Eliminar",
+      "editTagTitle": "Editar etiqueta",
+      "deleteTagTitle": "Eliminar etiqueta",
+      "noTags": "Aún no hay etiquetas",
+      "noTagsDescription": "Crea tu primera etiqueta para organizar y categorizar mejor tus transacciones",
+      "createFirstTag": "Crear Tu Primera Etiqueta",
+      "modalTitle": {
+        "create": "Nueva Etiqueta",
+        "edit": "Editar Etiqueta"
+      },
+      "form": {
+        "tagName": "Nombre de la Etiqueta",
+        "tagNamePlaceholder": "ej., Negocios, Personal, Urgente",
+        "color": "Color",
+        "updateTag": "Actualizar Etiqueta",
+        "createTag": "Crear Etiqueta",
+        "cancel": "Cancelar"
+      },
+      "validation": {
+        "nameRequired": "El nombre de la etiqueta es requerido"
+      },
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar \"{name}\"?",
+      "success": {
+        "created": "Etiqueta creada exitosamente",
+        "updated": "Etiqueta actualizada exitosamente",
+        "deleted": "Etiqueta eliminada exitosamente"
+      },
+      "errors": {
+        "loadFailed": "Error al cargar las etiquetas",
+        "saveFailed": "Error al guardar la etiqueta",
+        "deleteFailed": "Error al eliminar la etiqueta"
+      }
     }
   }
 }

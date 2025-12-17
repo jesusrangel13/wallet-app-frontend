@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 import { Tag, CreateTagForm } from '@/types'
 import { tagAPI } from '@/lib/api'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -19,6 +20,7 @@ const COLOR_PALETTE = [
 ]
 
 export default function TagsSettingsPage() {
+  const t = useTranslations('settings.tagsPage')
   const [tags, setTags] = useState<Tag[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -47,7 +49,7 @@ export default function TagsSettingsPage() {
       const tagsData = response.data as any
       setTags(Array.isArray(tagsData) ? tagsData : tagsData.data)
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to load tags')
+      toast.error(error.response?.data?.message || t('errors.loadFailed'))
     } finally {
       setIsLoading(false)
     }
@@ -77,7 +79,7 @@ export default function TagsSettingsPage() {
     e.preventDefault()
 
     if (!formData.name.trim()) {
-      toast.error('Tag name is required')
+      toast.error(t('validation.nameRequired'))
       return
     }
 
@@ -90,33 +92,33 @@ export default function TagsSettingsPage() {
 
       if (editingTag) {
         await tagAPI.update(editingTag.id, payload)
-        toast.success('Tag updated successfully')
+        toast.success(t('success.updated'))
       } else {
         await tagAPI.create(payload)
-        toast.success('Tag created successfully')
+        toast.success(t('success.created'))
       }
 
       loadTags()
       setIsModalOpen(false)
       setFormData({ name: '', color: '#FF6B6B' })
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to save tag')
+      toast.error(error.response?.data?.message || t('errors.saveFailed'))
     } finally {
       setIsSaving(false)
     }
   }
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete "${name}"?`)) {
+    if (!confirm(t('deleteConfirm', { name }))) {
       return
     }
 
     try {
       await tagAPI.delete(id)
-      toast.success('Tag deleted successfully')
+      toast.success(t('success.deleted'))
       loadTags()
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to delete tag')
+      toast.error(error.response?.data?.message || t('errors.deleteFailed'))
     }
   }
 
@@ -147,16 +149,16 @@ export default function TagsSettingsPage() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Your Tags</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('title')}</h2>
           <p className="text-sm text-gray-500 mt-1">
-            Organize and label your transactions with custom tags
+            {t('description')}
           </p>
         </div>
         <Button onClick={handleAddNew}>
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          New Tag
+          {t('newTag')}
         </Button>
       </div>
 
@@ -179,16 +181,16 @@ export default function TagsSettingsPage() {
                 <button
                   onClick={() => handleEdit(tag)}
                   className="flex-1 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                  title="Edit tag"
+                  title={t('editTagTitle')}
                 >
-                  Edit
+                  {t('editButton')}
                 </button>
                 <button
                   onClick={() => handleDelete(tag.id, tag.name)}
                   className="flex-1 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 rounded transition-colors"
-                  title="Delete tag"
+                  title={t('deleteTagTitle')}
                 >
-                  Delete
+                  {t('deleteButton')}
                 </button>
               </div>
             </CardContent>
@@ -204,11 +206,11 @@ export default function TagsSettingsPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No tags yet</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('noTags')}</h3>
                 <p className="text-gray-500 mb-6 max-w-sm mx-auto">
-                  Create your first tag to better organize and categorize your transactions
+                  {t('noTagsDescription')}
                 </p>
-                <Button onClick={handleAddNew}>Create Your First Tag</Button>
+                <Button onClick={handleAddNew}>{t('createFirstTag')}</Button>
               </CardContent>
             </Card>
           </div>
@@ -223,23 +225,23 @@ export default function TagsSettingsPage() {
           setEditingTag(null)
           setShowColorPicker(false)
         }}
-        title={editingTag ? 'Edit Tag' : 'New Tag'}
+        title={editingTag ? t('modalTitle.edit') : t('modalTitle.create')}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Tag Name */}
           <Input
-            label="Tag Name"
+            label={t('form.tagName')}
             type="text"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="e.g., Business, Personal, Urgent"
+            placeholder={t('form.tagNamePlaceholder')}
             maxLength={50}
             required
           />
 
           {/* Color Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('form.color')}</label>
             <div className="relative">
               <button
                 type="button"
@@ -287,7 +289,7 @@ export default function TagsSettingsPage() {
                   {LoadingMessages.saving}
                 </span>
               ) : (
-                <span>{editingTag ? 'Update Tag' : 'Create Tag'}</span>
+                <span>{editingTag ? t('form.updateTag') : t('form.createTag')}</span>
               )}
             </Button>
             <Button
@@ -300,7 +302,7 @@ export default function TagsSettingsPage() {
               }}
               disabled={isSaving}
             >
-              Cancel
+              {t('form.cancel')}
             </Button>
           </div>
         </form>

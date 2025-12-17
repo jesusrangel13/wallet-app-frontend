@@ -616,6 +616,45 @@
       "updated": "Settings updated successfully",
       "profileUpdated": "Profile updated successfully",
       "languageChanged": "Language changed successfully"
+    },
+    "tagsPage": {
+      "title": "Your Tags",
+      "description": "Organize and label your transactions with custom tags",
+      "newTag": "New Tag",
+      "editTag": "Edit Tag",
+      "editButton": "Edit",
+      "deleteButton": "Delete",
+      "editTagTitle": "Edit tag",
+      "deleteTagTitle": "Delete tag",
+      "noTags": "No tags yet",
+      "noTagsDescription": "Create your first tag to better organize and categorize your transactions",
+      "createFirstTag": "Create Your First Tag",
+      "modalTitle": {
+        "create": "New Tag",
+        "edit": "Edit Tag"
+      },
+      "form": {
+        "tagName": "Tag Name",
+        "tagNamePlaceholder": "e.g., Business, Personal, Urgent",
+        "color": "Color",
+        "updateTag": "Update Tag",
+        "createTag": "Create Tag",
+        "cancel": "Cancel"
+      },
+      "validation": {
+        "nameRequired": "Tag name is required"
+      },
+      "deleteConfirm": "Are you sure you want to delete \"{name}\"?",
+      "success": {
+        "created": "Tag created successfully",
+        "updated": "Tag updated successfully",
+        "deleted": "Tag deleted successfully"
+      },
+      "errors": {
+        "loadFailed": "Failed to load tags",
+        "saveFailed": "Failed to save tag",
+        "deleteFailed": "Failed to delete tag"
+      }
     }
   }
 }
