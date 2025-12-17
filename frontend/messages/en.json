@@ -655,6 +655,57 @@
         "saveFailed": "Failed to save tag",
         "deleteFailed": "Failed to delete tag"
       }
+    },
+    "categoriesPage": {
+      "types": {
+        "expense": "💸 Expenses",
+        "income": "💰 Income"
+      },
+      "newCategory": "New Category",
+      "editCategory": "Edit Category",
+      "deleteCategory": "Delete Category",
+      "showSubcategory": "Show subcategory",
+      "hideSubcategory": "Hide subcategory",
+      "show": "Show",
+      "hide": "Hide",
+      "edit": "Edit",
+      "delete": "Delete",
+      "noCategories": "No categories yet",
+      "noCategoriesDescription": "Create your first category to start organizing your transactions",
+      "createFirstCategory": "Create Your First Category",
+      "modalTitle": {
+        "create": "New Category",
+        "edit": "Edit Category"
+      },
+      "form": {
+        "categoryName": "Category Name",
+        "categoryNamePlaceholder": "E.g., Movies, Grocery, etc.",
+        "categoryNameSubPlaceholder": "E.g., Specific subcategory",
+        "parentCategory": "Parent Category (Optional)",
+        "parentCategoryPlaceholder": "Select a parent category",
+        "noParentCategory": "None (Main category)",
+        "icon": "Icon (Optional)",
+        "iconPlaceholder": "E.g., 🍕, 🚗, 💡",
+        "color": "Color",
+        "update": "Update",
+        "create": "Create",
+        "cancel": "Cancel"
+      },
+      "validation": {
+        "nameRequired": "Category name is required"
+      },
+      "deleteConfirm": "Are you sure you want to delete the category \"{name}\"?",
+      "deleteWithSubcategoriesConfirm": "This category has {count} subcategories. Are you sure you want to delete it?",
+      "success": {
+        "created": "Category created successfully",
+        "updated": "Category updated successfully",
+        "deleted": "Category deleted successfully"
+      },
+      "errors": {
+        "loadFailed": "Failed to load categories",
+        "saveFailed": "Failed to save category",
+        "deleteFailed": "Failed to delete category"
+      }
     }
   }
 }

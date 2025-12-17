@@ -655,6 +655,57 @@
         "saveFailed": "Error al guardar la etiqueta",
         "deleteFailed": "Error al eliminar la etiqueta"
       }
+    },
+    "categoriesPage": {
+      "types": {
+        "expense": "💸 Gastos",
+        "income": "💰 Ingresos"
+      },
+      "newCategory": "Nueva Categoría",
+      "editCategory": "Editar Categoría",
+      "deleteCategory": "Eliminar Categoría",
+      "showSubcategory": "Mostrar subcategoría",
+      "hideSubcategory": "Ocultar subcategoría",
+      "show": "Mostrar",
+      "hide": "Ocultar",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "noCategories": "Aún no hay categorías",
+      "noCategoriesDescription": "Crea tu primera categoría para empezar a organizar tus transacciones",
+      "createFirstCategory": "Crear Tu Primera Categoría",
+      "modalTitle": {
+        "create": "Nueva Categoría",
+        "edit": "Editar Categoría"
+      },
+      "form": {
+        "categoryName": "Nombre de la Categoría",
+        "categoryNamePlaceholder": "Ej: Cine, Supermercado, etc.",
+        "categoryNameSubPlaceholder": "Ej: Subcategoría específica",
+        "parentCategory": "Categoría Padre (Opcional)",
+        "parentCategoryPlaceholder": "Selecciona una categoría padre",
+        "noParentCategory": "Ninguna (Categoría principal)",
+        "icon": "Icono (Opcional)",
+        "iconPlaceholder": "Ej: 🍕, 🚗, 💡",
+        "color": "Color",
+        "update": "Actualizar",
+        "create": "Crear",
+        "cancel": "Cancelar"
+      },
+      "validation": {
+        "nameRequired": "El nombre de la categoría es requerido"
+      },
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar la categoría \"{name}\"?",
+      "deleteWithSubcategoriesConfirm": "Esta categoría tiene {count} subcategorías. ¿Estás seguro de que quieres eliminarla?",
+      "success": {
+        "created": "Categoría creada exitosamente",
+        "updated": "Categoría actualizada exitosamente",
+        "deleted": "Categoría eliminada exitosamente"
+      },
+      "errors": {
+        "loadFailed": "Error al cargar las categorías",
+        "saveFailed": "Error al guardar la categoría",
+        "deleteFailed": "Error al eliminar la categoría"
+      }
     }
   }
 }
