@@ -1,5 +1,5 @@
 import { X } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface ModalProps {
   isOpen: boolean
@@ -9,6 +9,32 @@ interface ModalProps {
 }
 
 export function Modal({ isOpen, onClose, title, children }: ModalProps) {
+  const hasInitializedFocusRef = useRef(false)
+
+  // Effect for initial focus - only runs when modal opens
+  useEffect(() => {
+    if (isOpen && !hasInitializedFocusRef.current) {
+      const modalElement = document.getElementById('modal-content')
+      if (modalElement) {
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+          // Find focusable elements excluding the close button for initial focus
+          const focusableElementsForInit = modalElement.querySelectorAll(
+            'button:not([data-modal-close]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          )
+          const firstElement = focusableElementsForInit[0] as HTMLElement
+          firstElement?.focus()
+          hasInitializedFocusRef.current = true
+        }, 0)
+      }
+    }
+
+    if (!isOpen) {
+      hasInitializedFocusRef.current = false
+    }
+  }, [isOpen])
+
+  // Effect for escape key and focus trap - doesn't move focus
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -18,18 +44,18 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
       document.addEventListener('keydown', handleEscape)
       document.body.style.overflow = 'hidden'
 
-      // Focus trap
+      // Focus trap for Tab key navigation
       const modalElement = document.getElementById('modal-content')
       if (modalElement) {
-        // Find focusable elements
-        const focusableElements = modalElement.querySelectorAll(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        )
-        const firstElement = focusableElements[0] as HTMLElement
-        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement
-
         const handleTab = (e: KeyboardEvent) => {
           if (e.key === 'Tab') {
+            // Find all focusable elements (including close button for tab trap)
+            const allFocusableElements = modalElement.querySelectorAll(
+              'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            )
+            const firstElement = allFocusableElements[0] as HTMLElement
+            const lastElement = allFocusableElements[allFocusableElements.length - 1] as HTMLElement
+
             if (e.shiftKey) {
               if (document.activeElement === firstElement) {
                 e.preventDefault()
@@ -45,14 +71,15 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
         }
 
         modalElement.addEventListener('keydown', handleTab)
-        // Focus first element on open
-        firstElement?.focus()
 
         return () => {
           modalElement.removeEventListener('keydown', handleTab)
-          document.removeEventListener('keydown', handleEscape)
-          document.body.style.overflow = 'unset'
         }
+      }
+
+      return () => {
+        document.removeEventListener('keydown', handleEscape)
+        document.body.style.overflow = 'unset'
       }
     }
   }, [isOpen, onClose])
@@ -85,6 +112,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
             aria-label="Close modal"
+            data-modal-close="true"
           >
             <X className="h-5 w-5" />
           </button>
