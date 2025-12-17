@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { TransactionType, Account, MergedCategory } from '@/types'
+import { useCategoryTranslation } from '@/hooks/useCategoryTranslation'
 import { cn } from '@/lib/utils'
 
 export interface TransactionFilters {
@@ -30,6 +31,7 @@ export default function TransactionFiltersComponent({
   accounts,
   categories,
 }: TransactionFiltersProps) {
+  const translateCategory = useCategoryTranslation()
   const [isExpanded, setIsExpanded] = useState(false)
   const [searchInput, setSearchInput] = useState(filters.search)
 
@@ -207,13 +209,13 @@ export default function TransactionFiltersComponent({
               >
                 <option value="">All Categories</option>
                 {categories.map((category) => (
-                  <optgroup key={category.id} label={category.name}>
+                  <optgroup key={category.id} label={translateCategory(category)}>
                     <option value={category.id}>
-                      {category.icon} {category.name} (All)
+                      {category.icon} {translateCategory(category)} (All)
                     </option>
                     {category.subcategories?.map((sub) => (
                       <option key={sub.id} value={sub.id}>
-                        &nbsp;&nbsp;{sub.icon} {sub.name}
+                        &nbsp;&nbsp;{sub.icon} {translateCategory(sub)}
                       </option>
                     ))}
                   </optgroup>

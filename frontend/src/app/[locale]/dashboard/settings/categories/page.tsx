@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
 import { TransactionType } from '@/types'
 import { useMergedCategories } from '@/hooks/useCategories'
+import { useCategoryTranslation } from '@/hooks/useCategoryTranslation'
 import { categoryTemplateAPI } from '@/lib/api'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -44,9 +45,10 @@ interface CategoryItem {
 
 export default function CategoriesPage() {
   const t = useTranslations('settings.categoriesPage')
+  const translateCategory = useCategoryTranslation()
   const queryClient = useQueryClient()
   const { getMutationErrorHandler } = useGlobalErrorHandler()
-  const { categories: allCategories, isLoading, isFetching } = useMergedCategories()
+  const { categories: allCategories, isLoading, isFetching} = useMergedCategories()
 
   const [selectedType, setSelectedType] = useState<TransactionType>('EXPENSE')
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -388,7 +390,7 @@ export default function CategoriesPage() {
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <h3 className="font-semibold text-gray-900 truncate">{category.name}</h3>
+                              <h3 className="font-semibold text-gray-900 truncate">{translateCategory(category)}</h3>
                               {hasSubcategories && (
                                 <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded whitespace-nowrap">
                                   {subCatCount} {subCatCount === 1 ? 'subcat' : 'subcats'}
@@ -427,7 +429,7 @@ export default function CategoriesPage() {
                                 <Edit2 className="w-4 h-4 sm:w-3 sm:h-3" />
                               </button>
                               <button
-                                onClick={() => handleDelete(category.id, category.name)}
+                                onClick={() => handleDelete(category.id, translateCategory(category))}
                                 disabled={deleteMutation.isPending}
                                 className="p-2 sm:px-3 sm:py-1 text-sm bg-red-50 text-red-600 rounded hover:bg-red-100 transition disabled:opacity-50"
                                 title={t('delete')}
@@ -437,7 +439,7 @@ export default function CategoriesPage() {
                             </>
                           ) : (
                             <button
-                              onClick={() => handleDelete(category.id, category.name)}
+                              onClick={() => handleDelete(category.id, translateCategory(category))}
                               disabled={deleteMutation.isPending}
                               className="px-2 py-1 sm:px-3 text-xs sm:text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition disabled:opacity-50 whitespace-nowrap"
                               title={t('hideSubcategory')}

@@ -1,121 +1,123 @@
 {
   "expense": {
     "foodAndDrinks": {
-      "name": "Comida y Bebidas",
-      "restaurant": "Restaurante",
+      "name": "Food & Drinks",
+      "restaurant": "Restaurant",
       "delivery": "Delivery",
       "bar": "Bar",
-      "cafe": "Cafetería",
-      "supermarket": "Supermercado"
+      "cafe": "Café",
+      "supermarket": "Supermarket"
     },
     "transport": {
-      "name": "Transporte",
+      "name": "Transportation",
       "taxi": "Taxi/Uber",
-      "fuel": "Combustible",
-      "public": "Transporte Público",
-      "parking": "Estacionamiento",
-      "maintenance": "Mantenimiento Vehículo"
+      "fuel": "Fuel",
+      "public": "Public Transport",
+      "parking": "Parking",
+      "maintenance": "Vehicle Maintenance"
     },
     "shopping": {
-      "name": "Compras",
-      "clothing": "Ropa",
-      "electronics": "Electrónica",
-      "home": "Hogar",
-      "books": "Libros",
-      "other": "Otros"
+      "name": "Shopping",
+      "clothing": "Clothing",
+      "electronics": "Electronics",
+      "home": "Home",
+      "books": "Books",
+      "other": "Other"
     },
     "entertainment": {
-      "name": "Entretenimiento",
-      "cinema": "Cine",
-      "videogames": "Videojuegos",
+      "name": "Entertainment",
+      "cinema": "Cinema",
+      "videogames": "Video Games",
       "streaming": "Streaming",
-      "events": "Eventos",
+      "events": "Events",
       "hobbies": "Hobbies"
     },
     "services": {
-      "name": "Servicios",
+      "name": "Services",
       "internet": "Internet",
-      "electricity": "Electricidad",
-      "water": "Agua",
-      "phone": "Teléfono",
+      "electricity": "Electricity",
+      "water": "Water",
+      "phone": "Phone",
       "gas": "Gas"
     },
     "health": {
-      "name": "Salud",
+      "name": "Health",
       "doctor": "Doctor",
-      "medicine": "Medicinas",
-      "dentist": "Dentista",
-      "psychologist": "Psicólogo",
-      "insurance": "Seguros"
+      "medicine": "Medicine",
+      "dentist": "Dentist",
+      "psychologist": "Psychologist",
+      "insurance": "Insurance"
     },
     "education": {
-      "name": "Educación",
-      "courses": "Cursos",
-      "books": "Libros",
-      "tuition": "Matrícula",
-      "materials": "Materiales",
-      "conferences": "Conferencias"
+      "name": "Education",
+      "courses": "Courses",
+      "books": "Books",
+      "tuition": "Tuition",
+      "materials": "Materials",
+      "conferences": "Conferences"
     },
     "housing": {
-      "name": "Vivienda",
-      "rent": "Arriendo",
-      "mortgage": "Hipoteca",
-      "repairs": "Reparaciones",
-      "furniture": "Muebles",
-      "decoration": "Decoración"
+      "name": "Housing",
+      "rent": "Rent",
+      "mortgage": "Mortgage",
+      "repairs": "Repairs",
+      "furniture": "Furniture",
+      "decoration": "Decoration"
     },
     "travel": {
-      "name": "Viajes",
-      "flights": "Vuelos",
-      "hotels": "Hoteles",
+      "name": "Travel",
+      "flights": "Flights",
+      "hotels": "Hotels",
       "tours": "Tours",
-      "localTransport": "Transporte Local",
-      "food": "Comida"
+      "localTransport": "Local Transport",
+      "food": "Food"
     },
     "other": {
-      "name": "Otros Gastos",
-      "gifts": "Regalos",
-      "donations": "Donaciones",
-      "pets": "Mascotas",
-      "taxes": "Impuestos",
-      "miscellaneous": "Misceláneos",
-      "debtPayment": "Pago de deuda",
-      "loanGiven": "Préstamo otorgado"
+      "name": "Other Expenses",
+      "gifts": "Gifts",
+      "donations": "Donations",
+      "pets": "Pets",
+      "taxes": "Taxes",
+      "miscellaneous": "Miscellaneous",
+      "debtPayment": "Debt Payment",
+      "loanGiven": "Loan Given"
     }
   },
   "income": {
     "salary": {
-      "name": "Salario",
-      "base": "Salario Base",
-      "bonus": "Bonificación",
-      "commission": "Comisión",
-      "overtime": "Horas Extra"
+      "name": "Salary",
+      "baseSalary": "Base Salary",
+      "bonus": "Bonus",
+      "commission": "Commission",
+      "overtime": "Overtime"
     },
     "business": {
-      "name": "Negocio",
-      "sales": "Ventas",
-      "services": "Servicios",
-      "consulting": "Consultoría",
+      "name": "Business",
+      "sales": "Sales",
+      "services": "Services",
+      "consulting": "Consulting",
       "freelance": "Freelance"
     },
     "investments": {
-      "name": "Inversiones",
-      "dividends": "Dividendos",
-      "interest": "Intereses",
-      "stockGains": "Ganancias Bolsa",
-      "rent": "Rentas"
+      "name": "Investments",
+      "dividends": "Dividends",
+      "interest": "Interest",
+      "stockGains": "Stock Gains",
+      "rent": "Rent"
     },
     "other": {
-      "name": "Otros Ingresos",
-      "refunds": "Reembolsos",
-      "inheritance": "Herencias",
-      "gambling": "Apuestas",
-      "other": "Otros",
-      "debtCollection": "Cobro de deuda",
-      "loanRepayment": "Cobro de préstamo"
+      "name": "Other Income",
+      "refunds": "Refunds",
+      "inheritance": "Inheritance",
+      "gambling": "Gambling",
+      "other": "Other",
+      "debtCollection": "Debt Collection",
+      "loanRepayment": "Loan Repayment"
     }
   },
   "transfer": {
-    "name": "Transferencia entre cuentas"
+    "betweenAccounts": {
+      "name": "Transfer Between Accounts"
+    }
   }
 }

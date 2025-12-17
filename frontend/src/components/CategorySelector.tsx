@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import { MergedCategory, TransactionType } from '@/types'
 import { useMergedCategories } from '@/hooks/useCategories'
+import { useCategoryTranslation } from '@/hooks/useCategoryTranslation'
 import { cn } from '@/lib/utils'
 
 interface CategorySelectorProps {
@@ -23,6 +24,7 @@ export default function CategorySelector({
   required = false,
 }: CategorySelectorProps) {
   const { categories, isLoading } = useMergedCategories(type)
+  const translateCategory = useCategoryTranslation()
   const [selectedMainCategory, setSelectedMainCategory] = useState<string>('')
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -111,7 +113,7 @@ export default function CategorySelector({
               {selectedCategoryData.icon || '📁'}
             </span>
             <div className="flex flex-col">
-              <span className="font-medium text-gray-900">{selectedCategoryData.name}</span>
+              <span className="font-medium text-gray-900">{translateCategory(selectedCategoryData)}</span>
               {selectedCategoryData.source !== 'TEMPLATE' && (
                 <span className="text-xs text-gray-500">
                   {selectedCategoryData.source === 'CUSTOM' ? '(Custom)' : '(Override)'}
@@ -156,7 +158,7 @@ export default function CategorySelector({
                 >
                   <span className="text-2xl">{category.icon || '📁'}</span>
                   <span className="text-xs font-medium text-gray-700 text-center leading-tight">
-                    {category.name}
+                    {translateCategory(category)}
                   </span>
                   {category.subcategories && category.subcategories.length > 0 && (
                     <span className="text-xs text-gray-500">→</span>
@@ -199,7 +201,7 @@ export default function CategorySelector({
                 >
                   {selectedMainCategoryData.icon || '📁'}
                 </span>
-                <span className="font-semibold text-gray-900">{selectedMainCategoryData.name}</span>
+                <span className="font-semibold text-gray-900">{translateCategory(selectedMainCategoryData)}</span>
               </div>
 
               {/* Subcategories Grid */}
@@ -223,7 +225,7 @@ export default function CategorySelector({
                   >
                     <span className="text-2xl">{subcategory.icon || '📁'}</span>
                     <span className="text-xs font-medium text-gray-700 text-center leading-tight">
-                      {subcategory.name}
+                      {translateCategory(subcategory)}
                     </span>
                     {subcategory.source !== 'TEMPLATE' && (
                       <span className="text-xs text-gray-500">
