@@ -145,6 +145,10 @@
     "fallback": "Ocurrió un error. Por favor intenta de nuevo"
   },
   "common": {
+    "app": {
+      "title": "App de Finanzas",
+      "description": "Gestiona tus finanzas personales, rastrea gastos y alcanza tus metas financieras"
+    },
     "actions": {
       "save": "Guardar",
       "cancel": "Cancelar",

@@ -145,6 +145,10 @@
     "fallback": "An error occurred. Please try again"
   },
   "common": {
+    "app": {
+      "title": "Finance App",
+      "description": "Manage your personal finances, track expenses, and achieve your financial goals"
+    },
     "actions": {
       "save": "Save",
       "cancel": "Cancel",
