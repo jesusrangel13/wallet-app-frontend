@@ -554,10 +554,13 @@
   },
   "settings": {
     "title": "Configuración",
+    "description": "Gestiona tu cuenta y preferencias",
     "subtitle": "Administra tus preferencias",
-    "general": "General",
-    "categories": "Categorías",
-    "tags": "Etiquetas",
+    "tabs": {
+      "general": "Perfil",
+      "categories": "Categorías",
+      "tags": "Etiquetas"
+    },
     "profile": {
       "title": "Información del Perfil",
       "subtitle": "Actualiza tu información personal y preferencias",

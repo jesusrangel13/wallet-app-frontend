@@ -1,12 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
-const SETTINGS_TABS = [
+const getSettingsTabs = (locale: string) => [
   {
     id: 'general',
-    label: 'Profile',
+    translationKey: 'tabs.general',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -17,11 +18,11 @@ const SETTINGS_TABS = [
         />
       </svg>
     ),
-    href: '/dashboard/settings',
+    href: `/${locale}/dashboard/settings`,
   },
   {
     id: 'categories',
-    label: 'Categories',
+    translationKey: 'tabs.categories',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -32,11 +33,11 @@ const SETTINGS_TABS = [
         />
       </svg>
     ),
-    href: '/dashboard/settings/categories',
+    href: `/${locale}/dashboard/settings/categories`,
   },
   {
     id: 'tags',
-    label: 'Tags',
+    translationKey: 'tabs.tags',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -47,19 +48,24 @@ const SETTINGS_TABS = [
         />
       </svg>
     ),
-    href: '/dashboard/settings/tags',
+    href: `/${locale}/dashboard/settings/tags`,
   },
 ]
 
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const params = useParams()
+  const locale = params.locale as string
+  const t = useTranslations('settings')
+
+  const SETTINGS_TABS = getSettingsTabs(locale)
 
   return (
     <div className="h-full">
       {/* Header with Title */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-sm text-gray-600 mt-1">Manage your account and preferences</p>
+        <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+        <p className="text-sm text-gray-600 mt-1">{t('description')}</p>
       </div>
 
       {/* Tabs Navigation */}
@@ -84,7 +90,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
                 >
                   {tab.icon}
                 </span>
-                {tab.label}
+                {t(tab.translationKey)}
               </Link>
             )
           })}

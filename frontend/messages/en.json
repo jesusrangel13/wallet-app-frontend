@@ -554,10 +554,13 @@
   },
   "settings": {
     "title": "Settings",
+    "description": "Manage your account and preferences",
     "subtitle": "Manage your preferences",
-    "general": "General",
-    "categories": "Categories",
-    "tags": "Tags",
+    "tabs": {
+      "general": "Profile",
+      "categories": "Categories",
+      "tags": "Tags"
+    },
     "profile": {
       "title": "Profile Information",
       "subtitle": "Update your personal information and preferences",

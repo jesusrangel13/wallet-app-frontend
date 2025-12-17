@@ -1,7 +1,7 @@
 'use client'
 
 import { useTransition } from 'react'
-import { useParams, useRouter, usePathname } from 'next/navigation'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { type Locale } from '@/i18n/config'
 
@@ -30,8 +30,17 @@ export function LanguageSwitcher({ variant = 'default' }: LanguageSwitcherProps)
     if (newLocale === currentLocale) return
 
     startTransition(() => {
-      // Replace the locale in the pathname
-      const newPathname = pathname.replace(`/${currentLocale}`, `/${newLocale}`)
+      // Build the new pathname with the new locale
+      // Remove current locale from pathname if it exists
+      let pathWithoutLocale = pathname
+      if (pathname.startsWith(`/${currentLocale}/`)) {
+        pathWithoutLocale = pathname.slice(`/${currentLocale}`.length)
+      } else if (pathname === `/${currentLocale}`) {
+        pathWithoutLocale = '/'
+      }
+
+      // Add new locale prefix (always add it for explicit routing)
+      const newPathname = `/${newLocale}${pathWithoutLocale}`
       router.push(newPathname)
       router.refresh()
     })
