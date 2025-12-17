@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import { Inter } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
@@ -6,6 +7,10 @@ import { locales } from '@/i18n/config'
 import { Toaster } from 'sonner'
 import { QueryProvider } from '@/components/providers/QueryProvider'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
+import '../globals.css'
+import '@/styles/dashboard-grid.css'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
@@ -52,11 +57,11 @@ export default async function LocaleLayout({
   }
 
   // Load messages for the locale
-  const messages = await getMessages()
+  const messages = await getMessages({ locale })
 
   return (
     <html lang={locale}>
-      <body>
+      <body className={inter.className}>
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <ErrorBoundary>

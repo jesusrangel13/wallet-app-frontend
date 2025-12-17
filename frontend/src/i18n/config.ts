@@ -3,7 +3,7 @@
  * Defines supported locales, default locale, and locale metadata
  */
 
-export const locales = ['es', 'en', 'fr', 'pt', 'it', 'de'] as const;
+export const locales = ['es', 'en'] as const;
 export type Locale = (typeof locales)[number];
 
 export const defaultLocale: Locale = 'es';
@@ -14,10 +14,6 @@ export const defaultLocale: Locale = 'es';
 export const localeNames: Record<Locale, string> = {
   es: 'Español',
   en: 'English',
-  fr: 'Français',
-  pt: 'Português',
-  it: 'Italiano',
-  de: 'Deutsch',
 };
 
 /**
@@ -26,8 +22,4 @@ export const localeNames: Record<Locale, string> = {
 export const localeFlags: Record<Locale, string> = {
   es: '🇪🇸',
   en: '🇺🇸',
-  fr: '🇫🇷',
-  pt: '🇵🇹',
-  it: '🇮🇹',
-  de: '🇩🇪',
 };
