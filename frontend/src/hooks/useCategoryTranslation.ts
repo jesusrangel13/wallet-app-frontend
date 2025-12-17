@@ -24,7 +24,7 @@ interface CategoryLike {
  * - Si no se encuentra traducción → Fallback graceful al nombre original
  */
 export function useCategoryTranslation() {
-  const t = useTranslations();
+  const t = useTranslations('categories');
 
   return (category: CategoryLike): string => {
     // Si la categoría tiene templateId, es del sistema
@@ -35,7 +35,9 @@ export function useCategoryTranslation() {
       if (translationKey) {
         // Intentar traducir, con fallback al nombre original
         try {
-          return t(translationKey);
+          // Remover el prefijo 'categories.' ya que el namespace ya está configurado
+          const key = translationKey.replace(/^categories\./, '');
+          return t(key);
         } catch (error) {
           // Si falta la traducción, mostrar advertencia y usar nombre original
           console.warn(`Translation missing for key: ${translationKey} (category: ${category.name})`);
