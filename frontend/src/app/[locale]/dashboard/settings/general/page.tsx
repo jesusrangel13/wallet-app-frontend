@@ -118,7 +118,8 @@ export default function GeneralSettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-3xl">
+      <div className="grid grid-cols-1 lg:grid-cols-[60%_40%] gap-6">
+        {/* Main Content Skeleton - 60% */}
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
@@ -149,13 +150,46 @@ export default function GeneralSettingsPage() {
                   <Skeleton className="h-4 w-24 mb-2" />
                   <Skeleton className="h-10 w-full" />
                 </div>
-                <div>
+                <div className="md:col-span-2">
                   <Skeleton className="h-4 w-32 mb-2" />
                   <Skeleton className="h-10 w-full" />
                 </div>
               </div>
-              <div className="flex justify-end">
+              <div className="flex gap-3 pt-6 border-t">
                 <Skeleton className="h-10 w-32" />
+                <Skeleton className="h-10 w-24" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Sidebar Skeleton - 40% */}
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-32" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="py-3 border-b border-gray-100">
+                <div className="flex items-center gap-3 mb-2">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                  <Skeleton className="h-4 w-20" />
+                </div>
+                <Skeleton className="h-6 w-24" />
+              </div>
+              <div className="py-3 border-b border-gray-100">
+                <div className="flex items-center gap-3 mb-2">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+                <Skeleton className="h-4 w-full" />
+              </div>
+              <div className="py-3">
+                <div className="flex items-center gap-3 mb-2">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                  <Skeleton className="h-4 w-20" />
+                </div>
+                <Skeleton className="h-4 w-16" />
               </div>
             </div>
           </CardContent>
@@ -165,7 +199,8 @@ export default function GeneralSettingsPage() {
   }
 
   return (
-    <div className="max-w-3xl">
+    <div className="grid grid-cols-1 lg:grid-cols-[60%_40%] gap-6">
+      {/* Main Content - 60% */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
@@ -305,59 +340,62 @@ export default function GeneralSettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Account Info */}
+      {/* Sidebar - 40% */}
       {profile && (
-        <Card className="mt-6">
-          <CardHeader>
-            <h2 className="text-lg font-semibold text-gray-900">{t('accountDetails.title')}</h2>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-                    </svg>
+        <div className="space-y-6">
+          {/* Account Info */}
+          <Card>
+            <CardHeader>
+              <h2 className="text-lg font-semibold text-gray-900">{t('accountDetails.title')}</h2>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="py-3 border-b border-gray-100">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center">
+                      <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">{t('accountDetails.userId')}</p>
+                      <p className="text-xs text-gray-500">{t('accountDetails.userIdHelper')}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">{t('accountDetails.userId')}</p>
-                    <p className="text-xs text-gray-500">{t('accountDetails.userIdHelper')}</p>
-                  </div>
+                  <span className="font-mono text-xs text-gray-900 bg-gray-50 px-3 py-1 rounded block w-fit">{profile.id.slice(0, 8)}...</span>
                 </div>
-                <span className="font-mono text-sm text-gray-900 bg-gray-50 px-3 py-1 rounded">{profile.id.slice(0, 8)}...</span>
-              </div>
-              <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
+                <div className="py-3 border-b border-gray-100">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center">
+                      <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">{t('accountDetails.email')}</p>
+                       <p className="text-xs text-gray-500">{t('accountDetails.emailHelper')}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">{t('accountDetails.email')}</p>
-                    <p className="text-xs text-gray-500">{t('accountDetails.emailHelper')}</p>
-                  </div>
+                  <span className="text-sm text-gray-900 break-all">{profile.email}</span>
                 </div>
-                <span className="text-sm text-gray-900">{profile.email}</span>
-              </div>
-              <div className="flex items-center justify-between py-3">
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                <div className="py-3">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center">
+                      <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">{t('accountDetails.currency')}</p>
+                      <p className="text-xs text-gray-500">{t('accountDetails.currencyHelper')}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">{t('accountDetails.currency')}</p>
-                    <p className="text-xs text-gray-500">{t('accountDetails.currencyHelper')}</p>
-                  </div>
+                  <span className="text-sm font-semibold text-gray-900">{profile.currency}</span>
                 </div>
-                <span className="text-sm font-semibold text-gray-900">{profile.currency}</span>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       )}
     </div>
   )
