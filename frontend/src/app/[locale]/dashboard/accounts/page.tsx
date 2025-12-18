@@ -16,7 +16,7 @@ import type { Account, CreateAccountForm } from '@/types'
 import { CURRENCIES, type Currency } from '@/types/currency'
 import { Wallet, Plus } from 'lucide-react'
 import DeleteAccountModal from '@/components/DeleteAccountModal'
-import { LoadingPage, LoadingOverlay, LoadingMessages } from '@/components/ui/Loading'
+import { LoadingPage, LoadingOverlay } from '@/components/ui/Loading'
 import AccountsCardView from '@/components/accounts/AccountsCardView'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useGlobalErrorHandler } from '@/hooks/useGlobalErrorHandler'
@@ -50,6 +50,7 @@ export default function AccountsPage() {
   const router = useRouter()
   const t = useTranslations('accounts')
   const tCommon = useTranslations('common')
+  const tLoading = useTranslations('loading')
   const { handleError } = useGlobalErrorHandler()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -251,7 +252,7 @@ export default function AccountsPage() {
       <div className="relative">
         {/* Refetching overlay */}
         {isRefetching && (
-          <LoadingOverlay message={LoadingMessages.updating} />
+          <LoadingOverlay message={tLoading('updating')} />
         )}
 
         {/* Accounts content */}

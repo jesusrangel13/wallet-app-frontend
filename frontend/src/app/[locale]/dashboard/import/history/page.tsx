@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 import { importAPI } from '@/lib/api'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -9,12 +10,13 @@ import { ArrowLeft, FileText, CheckCircle2, XCircle, Calendar, Upload, Loader2 }
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ImportHistory as ImportHistoryType, ImportHistoryStatus } from '@/types'
-import { LoadingSpinner, LoadingMessages } from '@/components/ui/Loading'
+import { LoadingSpinner } from '@/components/ui/Loading'
 
 type ImportHistory = ImportHistoryType
 
 export default function ImportHistoryPage() {
   const router = useRouter()
+  const tLoading = useTranslations('loading')
   const [imports, setImports] = useState<ImportHistory[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -70,7 +72,7 @@ export default function ImportHistoryPage() {
         return (
           <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
             <LoadingSpinner size="sm" className="text-blue-800" />
-            {LoadingMessages.processing}
+            {tLoading('processing')}
           </span>
         )
       case 'COMPLETED':
@@ -106,7 +108,7 @@ export default function ImportHistoryPage() {
             <h1 className="text-2xl font-bold text-gray-900">Import History</h1>
             <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
               <LoadingSpinner size="sm" />
-              {LoadingMessages.imports}
+              {tLoading('imports')}
             </p>
           </div>
         </div>

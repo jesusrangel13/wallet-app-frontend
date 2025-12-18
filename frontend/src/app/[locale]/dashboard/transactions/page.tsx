@@ -20,7 +20,7 @@ import TransactionFiltersComponent, { TransactionFilters } from '@/components/Tr
 import { formatCurrency } from '@/lib/utils'
 import { exportToCSV, exportToJSON, exportToExcel } from '@/lib/exportTransactions'
 import { PaymentStatusBadge } from '@/components/PaymentStatusBadge'
-import { LoadingPage, LoadingOverlay, LoadingSpinner, LoadingMessages } from '@/components/ui/Loading'
+import { LoadingPage, LoadingOverlay, LoadingSpinner } from '@/components/ui/Loading'
 import { SharedExpenseIndicator } from '@/components/SharedExpenseIndicator'
 import { DateGroupHeader } from '@/components/DateGroupHeader'
 import { useAuthStore } from '@/store/authStore'
@@ -87,6 +87,7 @@ export default function TransactionsPage() {
   const { user } = useAuthStore()
   const t = useTranslations('transactions')
   const tCommon = useTranslations('common')
+  const tLoading = useTranslations('loading')
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [accounts, setAccounts] = useState<Account[]>([])
   const [categories, setCategories] = useState<MergedCategory[]>([])
@@ -842,7 +843,7 @@ export default function TransactionsPage() {
                 disabled={isBulkDeleting}
                 className="bg-red-600 hover:bg-red-700 text-white"
               >
-                {isBulkDeleting ? LoadingMessages.deleting : 'Eliminar'}
+                {isBulkDeleting ? tLoading('deleting') : 'Eliminar'}
               </Button>
             </div>
           )}
@@ -874,7 +875,7 @@ export default function TransactionsPage() {
                 disabled={isBulkDeleting}
                 className="bg-red-600 hover:bg-red-700 text-white"
               >
-                {isBulkDeleting ? LoadingMessages.deleting : 'Delete Selected'}
+                {isBulkDeleting ? tLoading('deleting') : 'Delete Selected'}
               </Button>
             </div>
           </div>
@@ -884,7 +885,7 @@ export default function TransactionsPage() {
       {/* Transactions List - Grouped by Date */}
       <div className={`space-y-6 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} h-[calc(100vh-200px)]`}>
         {isRefreshingList && (
-          <LoadingOverlay message={LoadingMessages.transactions} />
+          <LoadingOverlay message={tLoading('transactions')} />
         )}
         {transactions.length === 0 ? (
           <Card>
@@ -1289,7 +1290,7 @@ export default function TransactionsPage() {
               {isSaving ? (
                 <span className="inline-flex items-center gap-2">
                   <LoadingSpinner size="sm" className="text-current" />
-                  {LoadingMessages.saving}
+                  {tLoading('saving')}
                 </span>
               ) : (
                 <span>{editingTransaction ? tCommon('actions.update') : tCommon('actions.create')}</span>
@@ -1342,7 +1343,7 @@ export default function TransactionsPage() {
               disabled={isBulkDeleting}
               className="flex-1 bg-red-600 hover:bg-red-700 text-white"
             >
-              {isBulkDeleting ? LoadingMessages.deleting : tCommon('actions.delete')}
+              {isBulkDeleting ? tLoading('deleting') : tCommon('actions.delete')}
             </Button>
           </div>
         </div>

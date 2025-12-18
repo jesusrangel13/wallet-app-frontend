@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
 import { MarkAsPaidButtonStyled } from '@/components/MarkAsPaidButtonStyled'
 import { formatCurrency } from '@/types/currency'
-import { LoadingPage, LoadingSpinner, LoadingMessages } from '@/components/ui/Loading'
+import { LoadingPage, LoadingSpinner } from '@/components/ui/Loading'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { Skeleton } from '@/components/ui/Skeleton'
 
@@ -45,6 +45,7 @@ export default function GroupsPage() {
   const { user } = useAuthStore()
   const t = useTranslations('groups')
   const tCommon = useTranslations('common')
+  const tLoading = useTranslations('loading')
   const [groups, setGroups] = useState<Group[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -862,7 +863,7 @@ export default function GroupsPage() {
           <div className="flex gap-3 pt-4 border-t">
             <Button type="submit" className="flex-1" disabled={isSubmitting}>
               {isSubmitting
-                ? LoadingMessages.creating
+                ? tLoading('creating')
                 : editingGroup
                   ? tCommon('actions.update')
                   : formData.memberEmails.length > 0

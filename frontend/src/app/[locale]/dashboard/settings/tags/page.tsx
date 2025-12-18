@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
-import { LoadingPage, LoadingSpinner, LoadingMessages } from '@/components/ui/Loading'
+import { LoadingPage, LoadingSpinner } from '@/components/ui/Loading'
 import { Skeleton } from '@/components/ui/Skeleton'
 
 const COLOR_PALETTE = [
@@ -21,6 +21,7 @@ const COLOR_PALETTE = [
 
 export default function TagsSettingsPage() {
   const t = useTranslations('settings.tagsPage')
+  const tLoading = useTranslations('loading')
   const [tags, setTags] = useState<Tag[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -286,7 +287,7 @@ export default function TagsSettingsPage() {
               {isSaving ? (
                 <span className="inline-flex items-center gap-2">
                   <LoadingSpinner size="sm" className="text-current" />
-                  {LoadingMessages.saving}
+                  {tLoading('saving')}
                 </span>
               ) : (
                 <span>{editingTag ? t('form.updateTag') : t('form.createTag')}</span>

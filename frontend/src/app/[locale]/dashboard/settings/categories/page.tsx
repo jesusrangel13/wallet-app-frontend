@@ -15,7 +15,7 @@ import { Modal } from '@/components/ui/Modal'
 import { ColorPicker } from '@/components/ui/ColorPicker'
 import { EmojiPicker } from '@/components/ui/EmojiPicker'
 import { Trash2, Edit2, Plus, Sparkles, ChevronDown, Loader2 } from 'lucide-react'
-import { LoadingSpinner, SkeletonCard, LoadingMessages } from '@/components/ui/Loading'
+import { LoadingSpinner, SkeletonCard } from '@/components/ui/Loading'
 import { useGlobalErrorHandler } from '@/hooks/useGlobalErrorHandler'
 
 const EMOJIS = [
@@ -45,6 +45,7 @@ interface CategoryItem {
 
 export default function CategoriesPage() {
   const t = useTranslations('settings.categoriesPage')
+  const tLoading = useTranslations('loading')
   const translateCategory = useCategoryTranslation()
   const queryClient = useQueryClient()
   const { getMutationErrorHandler } = useGlobalErrorHandler()
@@ -357,7 +358,7 @@ export default function CategoriesPage() {
             {isFetching && !isLoading && (
               <div className="absolute top-4 right-4 flex items-center gap-2 text-sm text-gray-500">
                 <LoadingSpinner size="sm" />
-                <span>{LoadingMessages.updating}</span>
+                <span>{tLoading('updating')}</span>
               </div>
             )}
             <CardContent className="p-6">
@@ -553,7 +554,7 @@ export default function CategoriesPage() {
                 {isSubmitting ? (
                   <span className="inline-flex items-center gap-2">
                     <LoadingSpinner size="sm" className="text-current" />
-                    {LoadingMessages.saving}
+                    {tLoading('saving')}
                   </span>
                 ) : editingCategory ? (
                   'Actualizar'
