@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import { MergedCategory, TransactionType } from '@/types'
 import { useMergedCategories } from '@/hooks/useCategories'
 import { useCategoryTranslation } from '@/hooks/useCategoryTranslation'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
 interface CategorySelectorProps {
@@ -27,6 +28,7 @@ export default function CategorySelector({
   const translateCategory = useCategoryTranslation()
   const [selectedMainCategory, setSelectedMainCategory] = useState<string>('')
   const [isExpanded, setIsExpanded] = useState(false)
+  const t = useTranslations('transactions.category')
 
   // Find a category by ID in the nested structure
   const findCategoryById = (cats: MergedCategory[], id: string): MergedCategory | null => {
@@ -122,7 +124,7 @@ export default function CategorySelector({
             </div>
           </div>
         ) : (
-          <span className="text-gray-500">Select a category...</span>
+          <span className="text-gray-500">{t('placeholder')}</span>
         )}
         <svg
           className={cn('w-5 h-5 text-gray-400 transition-transform', isExpanded && 'rotate-180')}
@@ -190,7 +192,7 @@ export default function CategorySelector({
                     d="M15 19l-7-7 7-7"
                   />
                 </svg>
-                Back to categories
+                {t('category.backToCategories')}
               </button>
 
               {/* Selected Main Category Display */}
@@ -240,7 +242,7 @@ export default function CategorySelector({
 
           {mainCategories.length === 0 && (
             <p className="text-sm text-gray-500 italic text-center py-4">
-              No categories available. Create your first category to get started.
+              {t('category.noCategories')}
             </p>
           )}
         </div>

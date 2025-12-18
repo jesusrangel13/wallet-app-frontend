@@ -1,4 +1,5 @@
 {
+  "placeholder": "Selecciona una categoría...",
   "expense": {
     "foodAndDrinks": {
       "name": "Comida y Bebidas",

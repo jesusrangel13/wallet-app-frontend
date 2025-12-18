@@ -1,4 +1,5 @@
 {
+  "placeholder": "Select a category...",
   "expense": {
     "foodAndDrinks": {
       "name": "Food & Drinks",

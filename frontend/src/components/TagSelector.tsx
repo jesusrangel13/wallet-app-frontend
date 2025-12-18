@@ -5,6 +5,7 @@ import { Tag } from '@/types'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { useTags, useCreateTag } from '@/hooks/useTags'
+import { useTranslations } from 'next-intl'
 
 interface TagSelectorProps {
   value: string[]
@@ -28,10 +29,11 @@ export default function TagSelector({
   value = [],
   onChange,
   error,
-  label = 'Tags',
+  label,
 }: TagSelectorProps) {
   const { data: tags = [], isLoading } = useTags()
   const createTagMutation = useCreateTag()
+  const t = useTranslations('transactions.tags')
 
   // Asegurar que tags es un array
   const tagsList: Tag[] = Array.isArray(tags) ? tags : []
@@ -138,12 +140,12 @@ export default function TagSelector({
   )
   const showCreateButton = newTagInput.trim() && !exactMatch
 
+  const displayLabel = label || t('label')
+
   if (isLoading) {
     return (
       <div className="w-full">
-        {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-        )}
+        <label className="block text-sm font-medium text-gray-700 mb-1">{displayLabel}</label>
         <div className="animate-pulse bg-gray-200 h-12 rounded-lg"></div>
       </div>
     )
@@ -151,14 +153,12 @@ export default function TagSelector({
 
   return (
     <div className="w-full space-y-2">
-      {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-      )}
+      <label className="block text-sm font-medium text-gray-700 mb-1">{displayLabel}</label>
 
       {/* Selected Tags Display */}
       <div className="min-h-[44px] p-2 border rounded-lg bg-gray-50 flex flex-wrap gap-2 items-center">
         {selectedTags.length === 0 && (
-          <span className="text-sm text-gray-400 px-2">No tags selected</span>
+          <span className="text-sm text-gray-400 px-2">{t('noTagsSelected')}</span>
         )}
         {selectedTags.map((tag, index) => (
           <span
@@ -206,7 +206,7 @@ export default function TagSelector({
         )}
       >
         <span className="text-gray-700">
-          {isExpanded ? 'Close tag selector' : 'Add tags...'}
+          {isExpanded ? t('closeSelector') : t('addTags')}
         </span>
         <svg
           className={cn('w-4 h-4 text-gray-400 transition-transform', isExpanded && 'rotate-180')}
@@ -230,7 +230,7 @@ export default function TagSelector({
                 value={newTagInput}
                 onChange={(e) => setNewTagInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Search or create new tag..."
+                placeholder={t('searchPlaceholder')}
                 className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <svg
@@ -254,7 +254,7 @@ export default function TagSelector({
                 disabled={createTagMutation.isPending}
                 className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {createTagMutation.isPending ? 'Creating...' : `Create "${newTagInput.trim()}"`}
+                {createTagMutation.isPending ? t('creating') : `${t('create')} "${newTagInput.trim()}"`}
               </button>
             )}
           </div>
@@ -263,7 +263,7 @@ export default function TagSelector({
           {availableTags.length > 0 && (
             <div>
               <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
-                Available Tags
+                {t('availableTags')}
               </p>
               <div className="flex flex-wrap gap-2">
                 {availableTags.map((tag, index) => (
@@ -301,13 +301,13 @@ export default function TagSelector({
 
           {tagsList.length === 0 ? (
             <p className="text-sm text-gray-500 italic text-center py-2">
-              No tags yet. Create your first tag above!
+              {t('noTagsYet')}
             </p>
           ) : (
             availableTags.length === 0 &&
             newTagInput.trim() && (
               <p className="text-sm text-gray-500 italic text-center py-2">
-                No tags match &quot;{newTagInput.trim()}&quot;. Press Enter to create it.
+                {t('noMatchFound', { search: newTagInput.trim() })}
               </p>
             )
           )}
