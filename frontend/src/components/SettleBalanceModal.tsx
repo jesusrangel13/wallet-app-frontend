@@ -5,6 +5,7 @@ import { Modal } from './ui/Modal'
 import { Account } from '@/types'
 import { accountAPI, groupAPI, userAPI } from '@/lib/api'
 import { toast } from 'sonner'
+import { useGlobalErrorHandler } from '@/hooks/useGlobalErrorHandler'
 
 interface SettleBalanceModalProps {
   isOpen: boolean
@@ -25,6 +26,7 @@ export function SettleBalanceModal({
   amount,
   onSuccess,
 }: SettleBalanceModalProps) {
+  const { handleError } = useGlobalErrorHandler()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [selectedAccountId, setSelectedAccountId] = useState<string>('')
   const [defaultAccountId, setDefaultAccountId] = useState<string | null>(null)
@@ -66,8 +68,7 @@ export function SettleBalanceModal({
         setSelectedAccountId(activeAccounts[0].id)
       }
     } catch (error) {
-      console.error('Error loading accounts:', error)
-      toast.error('Error al cargar las cuentas')
+      handleError(error)
     } finally {
       setLoadingAccounts(false)
     }
@@ -99,11 +100,8 @@ export function SettleBalanceModal({
 
       onSuccess?.()
       onClose()
-    } catch (error: any) {
-      console.error('Error settling balance:', error)
-      toast.error(
-        error.response?.data?.message || 'Error al saldar el balance'
-      )
+    } catch (error) {
+      handleError(error)
     } finally {
       setLoading(false)
     }

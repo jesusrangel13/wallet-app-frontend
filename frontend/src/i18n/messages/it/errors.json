@@ -1,0 +1,19 @@
+{
+  "AUTH_USER_EXISTS": "Ya existe un usuario con este correo electrónico",
+  "AUTH_INVALID_CREDENTIALS": "Correo electrónico o contraseña inválidos",
+  "AUTH_USER_NOT_FOUND": "Usuario no encontrado",
+  "AUTH_INVALID_TOKEN": "Token inválido",
+  "AUTH_TOKEN_EXPIRED": "Token expirado",
+  "ACCOUNT_NOT_FOUND": "Cuenta no encontrada",
+  "ACCOUNT_INSUFFICIENT_BALANCE": "Saldo insuficiente",
+  "ACCOUNT_ARCHIVED": "La cuenta está archivada",
+  "TRANSACTION_NOT_FOUND": "Transacción no encontrada",
+  "TRANSACTION_INVALID_ACCOUNT": "Cuenta inválida",
+  "GROUP_NOT_FOUND": "Grupo no encontrado",
+  "GROUP_UNAUTHORIZED": "No tienes permisos para este grupo",
+  "LOAN_NOT_FOUND": "Préstamo no encontrado",
+  "DATABASE_ERROR": "Error de base de datos",
+  "INTERNAL_SERVER_ERROR": "Error interno del servidor",
+  "UNAUTHORIZED": "No autorizado",
+  "FORBIDDEN": "Prohibido"
+}

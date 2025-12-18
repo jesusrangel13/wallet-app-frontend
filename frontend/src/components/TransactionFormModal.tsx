@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useTranslations } from 'next-intl'
 import { Account } from '@/types'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
@@ -64,6 +65,8 @@ export default function TransactionFormModal({
   initialData,
   mode = 'create',
 }: TransactionFormModalProps) {
+  const t = useTranslations('transactions')
+  const tCommon = useTranslations('common')
   const [isSharedExpense, setIsSharedExpense] = useState(false)
   const [sharedExpenseData, setSharedExpenseData] = useState<SharedExpenseData | null>(null)
   const [isSaving, setIsSaving] = useState(false)
@@ -192,8 +195,8 @@ export default function TransactionFormModal({
   }
 
   const getModalTitle = () => {
-    if (mode === 'import') return 'Edit Transaction'
-    return editingTransaction ? 'Edit Transaction' : 'New Transaction'
+    if (mode === 'import') return t('edit')
+    return editingTransaction ? t('edit') : t('new')
   }
 
   return (
@@ -202,7 +205,7 @@ export default function TransactionFormModal({
         {/* Transaction Type - Tabs */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Type <span className="text-red-500">*</span>
+            {t('fields.type')} <span className="text-red-500">*</span>
           </label>
           <div className="grid grid-cols-3 gap-2 bg-gray-100 p-1 rounded-lg">
             <button
@@ -218,7 +221,7 @@ export default function TransactionFormModal({
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
-                <span>Expense</span>
+                <span>{t('types.expense')}</span>
               </div>
             </button>
             <button
@@ -234,7 +237,7 @@ export default function TransactionFormModal({
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
                 </svg>
-                <span>Income</span>
+                <span>{t('types.income')}</span>
               </div>
             </button>
             <button
@@ -250,7 +253,7 @@ export default function TransactionFormModal({
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                 </svg>
-                <span>Transfer</span>
+                <span>{t('types.transfer')}</span>
               </div>
             </button>
           </div>
@@ -261,13 +264,13 @@ export default function TransactionFormModal({
         {mode !== 'import' && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Account <span className="text-red-500">*</span>
+              {t('fields.account')} <span className="text-red-500">*</span>
             </label>
             <select
               {...register('accountId')}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="">Select account...</option>
+              <option value="">{t('placeholders.selectAccount')}</option>
               {accounts.map((account) => (
                 <option key={account.id} value={account.id}>
                   {account.name} ({account.currency})
@@ -284,13 +287,13 @@ export default function TransactionFormModal({
         {selectedType === 'TRANSFER' && mode !== 'import' && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              To Account <span className="text-red-500">*</span>
+              {t('fields.toAccount')} <span className="text-red-500">*</span>
             </label>
             <select
               {...register('toAccountId')}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="">Select destination account...</option>
+              <option value="">{t('placeholders.selectDestination')}</option>
               {getAvailableToAccounts().map((account) => (
                 <option key={account.id} value={account.id}>
                   {account.name} ({account.currency})
@@ -306,7 +309,7 @@ export default function TransactionFormModal({
         {/* Amount */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Amount <span className="text-red-500">*</span>
+            {t('fields.amount')} <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
@@ -321,7 +324,7 @@ export default function TransactionFormModal({
             <input
               type="text"
               inputMode="decimal"
-              placeholder="0.00"
+              placeholder={t('placeholders.amount')}
               className={`w-full pl-12 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                 errors.amount ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -355,22 +358,22 @@ export default function TransactionFormModal({
         {/* Payee (quien recibe el pago) */}
         {selectedType !== 'TRANSFER' && mode !== 'import' && (
           <PayeeAutocomplete
-            label="Payee (Who received the payment)"
+            label={t('fields.payee')}
             value={watch('payee') || ''}
             onChange={(value) => setValue('payee', value)}
             error={errors.payee?.message}
-            placeholder="e.g., McDonald's, Uber, Enel"
+            placeholder={t('placeholders.payee')}
           />
         )}
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('fields.description')}</label>
           <textarea
             {...register('description')}
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Add details about this transaction..."
+            placeholder={t('placeholders.description')}
           />
           {errors.description && (
             <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
@@ -380,22 +383,22 @@ export default function TransactionFormModal({
         {/* Date */}
         {mode === 'import' ? (
           <DateTimePicker
-            label="Date"
+            label={t('fields.date')}
             value={watch('date')}
             onChange={(value) => setValue('date', value)}
             error={errors.date?.message}
             includeTime={false}
-            placeholder="Select date..."
+            placeholder={t('placeholders.selectDate')}
           />
         ) : (
-          
+
           <DateTimePicker
-            label="Date & Time"
+            label={t('fields.dateTime')}
             value={watch('date')}
             onChange={(value) => setValue('date', value)}
             error={errors.date?.message}
             includeTime={true}
-            placeholder="Select date and time..."
+            placeholder={t('placeholders.selectDateTime')}
           />
         )}
 
@@ -437,13 +440,13 @@ export default function TransactionFormModal({
         {mode === 'import' && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Notes (optional)
+              {t('fields.notes')}
             </label>
             <textarea
               {...register('notes')}
               rows={2}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Add any additional notes"
+              placeholder={t('placeholders.notes')}
             />
           </div>
         )}
@@ -472,14 +475,14 @@ export default function TransactionFormModal({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                <span>Saving...</span>
+                <span>{tCommon('actions.saving')}</span>
               </div>
             ) : (
-              <span>{mode === 'import' ? 'Save Changes' : editingTransaction ? 'Update Transaction' : 'Create Transaction'}</span>
+              <span>{mode === 'import' ? tCommon('actions.save') : editingTransaction ? tCommon('actions.update') : tCommon('actions.create')}</span>
             )}
           </Button>
           <Button type="button" variant="outline" onClick={handleClose} disabled={isSaving}>
-            Cancel
+            {tCommon('actions.cancel')}
           </Button>
         </div>
       </form>

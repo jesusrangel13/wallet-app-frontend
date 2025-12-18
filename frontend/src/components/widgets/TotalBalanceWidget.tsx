@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Wallet } from 'lucide-react'
 import { formatCurrency, type Currency, CURRENCIES } from '@/types/currency'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { accountAPI } from '@/lib/api'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 
@@ -13,6 +14,7 @@ interface TotalBalanceWidgetProps {
 }
 
 export const TotalBalanceWidget = ({ gridWidth = 1, gridHeight = 1 }: TotalBalanceWidgetProps) => {
+  const t = useTranslations('widgets.totalBalance')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
   const [totalBalance, setTotalBalance] = useState<Record<string, number>>({})
@@ -40,7 +42,7 @@ export const TotalBalanceWidget = ({ gridWidth = 1, gridHeight = 1 }: TotalBalan
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <Wallet className="h-4 w-4" />
-            Total Balance
+            {t('label')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -55,7 +57,7 @@ export const TotalBalanceWidget = ({ gridWidth = 1, gridHeight = 1 }: TotalBalan
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
           <Wallet className="h-4 w-4" />
-          Total Balance
+          {t('label')}
         </CardTitle>
       </CardHeader>
       <CardContent>

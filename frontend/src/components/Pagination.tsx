@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/Button'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 
@@ -21,6 +22,8 @@ export const Pagination = ({
   onItemsPerPageChange,
   totalItems,
 }: PaginationProps) => {
+  const t = useTranslations('pagination')
+
   // Memoize calculations to prevent recalculating on every render
   const startItem = useMemo(
     () => (currentPage - 1) * itemsPerPage + 1,
@@ -66,7 +69,7 @@ export const Pagination = ({
     <div className="flex flex-col gap-4 items-center justify-between px-4 py-4 border-t">
       {/* Items per page selector */}
       <div className="flex items-center gap-2 text-sm text-gray-600">
-        <span>Show:</span>
+        <span>{t('show')}</span>
         {[10, 20, 50, 100].map((limit) => (
           <button
             key={limit}
@@ -82,14 +85,14 @@ export const Pagination = ({
             {limit}
           </button>
         ))}
-        <span>per page</span>
+        <span>{t('perPage')}</span>
       </div>
 
       {/* Info and navigation */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
         {/* Item count info */}
         <div className="text-sm text-gray-600">
-          Showing {startItem}-{endItem} of {totalItems} transactions
+          {t('showing', { start: startItem, end: endItem, total: totalItems })}
         </div>
 
         {/* Pagination controls */}
@@ -100,7 +103,7 @@ export const Pagination = ({
             size="sm"
             onClick={() => onPageChange(1)}
             disabled={currentPage === 1}
-            title="First page"
+            title={t('firstPage')}
           >
             <ChevronsLeft className="w-4 h-4" />
           </Button>
@@ -111,7 +114,7 @@ export const Pagination = ({
             size="sm"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            title="Previous page"
+            title={t('previousPage')}
           >
             <ChevronLeft className="w-4 h-4" />
           </Button>
@@ -141,7 +144,7 @@ export const Pagination = ({
             size="sm"
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            title="Next page"
+            title={t('nextPage')}
           >
             <ChevronRight className="w-4 h-4" />
           </Button>
@@ -152,7 +155,7 @@ export const Pagination = ({
             size="sm"
             onClick={() => onPageChange(totalPages)}
             disabled={currentPage === totalPages}
-            title="Last page"
+            title={t('lastPage')}
           >
             <ChevronsRight className="w-4 h-4" />
           </Button>
@@ -160,7 +163,7 @@ export const Pagination = ({
 
         {/* Page info */}
         <div className="text-sm text-gray-600">
-          Page {currentPage} of {totalPages}
+          {t('pageOf', { current: currentPage, total: totalPages })}
         </div>
       </div>
     </div>

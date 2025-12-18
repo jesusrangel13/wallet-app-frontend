@@ -1,0 +1,124 @@
+{
+  "placeholder": "Select a category...",
+  "expense": {
+    "foodAndDrinks": {
+      "name": "Food & Drinks",
+      "restaurant": "Restaurant",
+      "delivery": "Delivery",
+      "bar": "Bar",
+      "cafe": "Café",
+      "supermarket": "Supermarket"
+    },
+    "transport": {
+      "name": "Transportation",
+      "taxi": "Taxi/Uber",
+      "fuel": "Fuel",
+      "public": "Public Transport",
+      "parking": "Parking",
+      "maintenance": "Vehicle Maintenance"
+    },
+    "shopping": {
+      "name": "Shopping",
+      "clothing": "Clothing",
+      "electronics": "Electronics",
+      "home": "Home",
+      "books": "Books",
+      "other": "Other"
+    },
+    "entertainment": {
+      "name": "Entertainment",
+      "cinema": "Cinema",
+      "videogames": "Video Games",
+      "streaming": "Streaming",
+      "events": "Events",
+      "hobbies": "Hobbies"
+    },
+    "services": {
+      "name": "Services",
+      "internet": "Internet",
+      "electricity": "Electricity",
+      "water": "Water",
+      "phone": "Phone",
+      "gas": "Gas"
+    },
+    "health": {
+      "name": "Health",
+      "doctor": "Doctor",
+      "medicine": "Medicine",
+      "dentist": "Dentist",
+      "psychologist": "Psychologist",
+      "insurance": "Insurance"
+    },
+    "education": {
+      "name": "Education",
+      "courses": "Courses",
+      "books": "Books",
+      "tuition": "Tuition",
+      "materials": "Materials",
+      "conferences": "Conferences"
+    },
+    "housing": {
+      "name": "Housing",
+      "rent": "Rent",
+      "mortgage": "Mortgage",
+      "repairs": "Repairs",
+      "furniture": "Furniture",
+      "decoration": "Decoration"
+    },
+    "travel": {
+      "name": "Travel",
+      "flights": "Flights",
+      "hotels": "Hotels",
+      "tours": "Tours",
+      "localTransport": "Local Transport",
+      "food": "Food"
+    },
+    "other": {
+      "name": "Other Expenses",
+      "gifts": "Gifts",
+      "donations": "Donations",
+      "pets": "Pets",
+      "taxes": "Taxes",
+      "miscellaneous": "Miscellaneous",
+      "debtPayment": "Debt Payment",
+      "loanGiven": "Loan Given"
+    }
+  },
+  "income": {
+    "salary": {
+      "name": "Salary",
+      "baseSalary": "Base Salary",
+      "bonus": "Bonus",
+      "commission": "Commission",
+      "overtime": "Overtime"
+    },
+    "business": {
+      "name": "Business",
+      "sales": "Sales",
+      "services": "Services",
+      "consulting": "Consulting",
+      "freelance": "Freelance"
+    },
+    "investments": {
+      "name": "Investments",
+      "dividends": "Dividends",
+      "interest": "Interest",
+      "stockGains": "Stock Gains",
+      "rent": "Rent"
+    },
+    "other": {
+      "name": "Other Income",
+      "refunds": "Refunds",
+      "inheritance": "Inheritance",
+      "gambling": "Gambling",
+      "other": "Other",
+      "debtCollection": "Debt Collection",
+      "loanRepayment": "Loan Repayment"
+    }
+  },
+  "transfer": {
+    "betweenAccounts": {
+      "name": "Transfer Between Accounts"
+    }
+  }
+}

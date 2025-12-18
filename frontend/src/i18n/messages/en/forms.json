@@ -1,0 +1,140 @@
+{
+  "transaction": {
+    "title": {
+      "create": "Nueva Transacción",
+      "edit": "Editar Transacción"
+    },
+    "fields": {
+      "account": {
+        "label": "Cuenta",
+        "placeholder": "Selecciona una cuenta"
+      },
+      "type": {
+        "label": "Tipo",
+        "expense": "Gasto",
+        "income": "Ingreso",
+        "transfer": "Transferencia"
+      },
+      "amount": {
+        "label": "Monto",
+        "placeholder": "0.00"
+      },
+      "category": {
+        "label": "Categoría",
+        "placeholder": "Selecciona una categoría"
+      },
+      "description": {
+        "label": "Descripción",
+        "placeholder": "Descripción opcional"
+      },
+      "date": {
+        "label": "Fecha",
+        "placeholder": "Selecciona fecha"
+      },
+      "payee": {
+        "label": "Beneficiario",
+        "placeholder": "¿A quién le pagaste?"
+      },
+      "payer": {
+        "label": "Pagador",
+        "placeholder": "¿Quién pagó?"
+      },
+      "toAccount": {
+        "label": "Cuenta destino",
+        "placeholder": "Transferir a..."
+      },
+      "tags": {
+        "label": "Etiquetas",
+        "placeholder": "Añadir etiquetas"
+      },
+      "notes": {
+        "label": "Notas",
+        "placeholder": "Notas adicionales"
+      }
+    },
+    "submit": {
+      "create": "Crear Transacción",
+      "edit": "Guardar Cambios"
+    },
+    "sharedExpense": {
+      "enable": "Marcar como gasto compartido",
+      "group": "Grupo",
+      "splitType": "Tipo de división"
+    }
+  },
+  "account": {
+    "title": {
+      "create": "Nueva Cuenta",
+      "edit": "Editar Cuenta"
+    },
+    "fields": {
+      "name": {
+        "label": "Nombre de la cuenta",
+        "placeholder": "Cuenta corriente"
+      },
+      "type": {
+        "label": "Tipo",
+        "cash": "Efectivo",
+        "debit": "Débito",
+        "credit": "Crédito",
+        "savings": "Ahorros",
+        "investment": "Inversión"
+      },
+      "balance": {
+        "label": "Saldo inicial",
+        "placeholder": "0.00"
+      },
+      "currency": {
+        "label": "Moneda"
+      },
+      "accountNumber": {
+        "label": "Número de cuenta (opcional)",
+        "placeholder": "1234567890"
+      },
+      "color": {
+        "label": "Color"
+      },
+      "creditLimit": {
+        "label": "Límite de crédito",
+        "placeholder": "0.00"
+      },
+      "billingDay": {
+        "label": "Día de corte",
+        "placeholder": "1-31"
+      },
+      "isDefault": {
+        "label": "Cuenta predeterminada"
+      },
+      "includeInTotal": {
+        "label": "Incluir en saldo total"
+      }
+    }
+  },
+  "group": {
+    "title": {
+      "create": "Nuevo Grupo",
+      "edit": "Editar Grupo"
+    },
+    "fields": {
+      "name": {
+        "label": "Nombre del grupo",
+        "placeholder": "Viaje a la playa"
+      },
+      "description": {
+        "label": "Descripción",
+        "placeholder": "Descripción del grupo"
+      },
+      "members": {
+        "label": "Miembros",
+        "placeholder": "Agregar miembros por email"
+      },
+      "splitType": {
+        "label": "Tipo de división",
+        "equal": "Igualmente",
+        "percentage": "Por porcentaje",
+        "shares": "Por partes",
+        "exact": "Monto exacto"
+      }
+    }
+  }
+}

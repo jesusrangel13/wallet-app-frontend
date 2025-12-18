@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Wallet, TrendingUp, TrendingDown } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { dashboardAPI } from '@/lib/api'
 import { AreaChart, Area, ResponsiveContainer, Tooltip } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
@@ -20,6 +21,7 @@ interface BalanceTrendWidgetProps {
 }
 
 export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTrendWidgetProps) => {
+  const t = useTranslations('widgets.balanceTrend')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const { month, year } = useSelectedMonth()
   const [data, setData] = useState<BalanceData[]>([])
@@ -90,7 +92,7 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <Wallet className="h-4 w-4" />
-            Balance Trend
+            {t('label')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -125,22 +127,22 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
         {data.length > 0 ? (
           <div className={`flex flex-col items-center justify-center ${spacingClass}`}>
             <div className="text-center w-full">
-              <p className={`${labelFontSize} text-gray-500 ${dimensions.isSmall ? 'mb-0.5' : 'mb-1.5'}`}>Balance Actual</p>
+              <p className={`${labelFontSize} text-gray-500 ${dimensions.isSmall ? 'mb-0.5' : 'mb-1.5'}`}>{t('currentBalance')}</p>
               <p className={`${valueFontSize} font-bold text-gray-900 ${dimensions.isSmall ? 'mb-1' : 'mb-2'} leading-tight`}>
                 {formatCurrency(currentBalance, 'CLP')}
               </p>
               <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full ${isPositive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                 {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                 <span className={`${badgeFontSize} font-semibold`}>
-                  {changePercentage.toFixed(1)}% desde inicio
+                  {changePercentage.toFixed(1)}% {t('sinceStart')}
                 </span>
               </div>
               {/* Compact info line */}
               <div className="flex items-center justify-center gap-3 mt-2 text-xs text-gray-600">
-                <span>Inicial: <span className="font-semibold">{formatCurrency(initialBalance, 'CLP')}</span></span>
+                <span>{t('initial')}: <span className="font-semibold">{formatCurrency(initialBalance, 'CLP')}</span></span>
                 <span className="text-gray-300">|</span>
                 <span className={isPositive ? 'text-green-600' : 'text-red-600'}>
-                  Cambio: <span className="font-semibold">{isPositive ? '+' : ''}{formatCurrency(change, 'CLP')}</span>
+                  {t('change')}: <span className="font-semibold">{isPositive ? '+' : ''}{formatCurrency(change, 'CLP')}</span>
                 </span>
               </div>
             </div>
@@ -170,7 +172,7 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
           </div>
         ) : (
           <div className="flex items-center justify-center h-full text-gray-500">
-            No hay historial de balance disponible
+            {t('noBalanceHistory')}
           </div>
         )}
       </CardContent>

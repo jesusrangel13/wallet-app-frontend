@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { TransactionType, Account, MergedCategory } from '@/types'
+import { useCategoryTranslation } from '@/hooks/useCategoryTranslation'
 import { cn } from '@/lib/utils'
 
 export interface TransactionFilters {
@@ -30,6 +32,8 @@ export default function TransactionFiltersComponent({
   accounts,
   categories,
 }: TransactionFiltersProps) {
+  const t = useTranslations('filters')
+  const translateCategory = useCategoryTranslation()
   const [isExpanded, setIsExpanded] = useState(false)
   const [searchInput, setSearchInput] = useState(filters.search)
 
@@ -88,7 +92,7 @@ export default function TransactionFiltersComponent({
           type="text"
           value={searchInput}
           onChange={(e) => handleChange('search', e.target.value)}
-          placeholder="Search by description, payee, or amount..."
+          placeholder={t('searchPlaceholder')}
           className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
         <svg
@@ -114,10 +118,10 @@ export default function TransactionFiltersComponent({
           onChange={(e) => handleChange('type', e.target.value)}
           className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
-          <option value="ALL">All Types</option>
-          <option value="EXPENSE">Expenses</option>
-          <option value="INCOME">Income</option>
-          <option value="TRANSFER">Transfers</option>
+          <option value="ALL">{t('allTypes')}</option>
+          <option value="EXPENSE">{t('expenses')}</option>
+          <option value="INCOME">{t('income')}</option>
+          <option value="TRANSFER">{t('transfers')}</option>
         </select>
 
         {/* Sort */}
@@ -130,12 +134,12 @@ export default function TransactionFiltersComponent({
           }}
           className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
-          <option value="date-desc">Newest First</option>
-          <option value="date-asc">Oldest First</option>
-          <option value="amount-desc">Highest Amount</option>
-          <option value="amount-asc">Lowest Amount</option>
-          <option value="payee-asc">Payee A-Z</option>
-          <option value="payee-desc">Payee Z-A</option>
+          <option value="date-desc">{t('newestFirst')}</option>
+          <option value="date-asc">{t('oldestFirst')}</option>
+          <option value="amount-desc">{t('highestAmount')}</option>
+          <option value="amount-asc">{t('lowestAmount')}</option>
+          <option value="payee-asc">{t('payeeAZ')}</option>
+          <option value="payee-desc">{t('payeeZA')}</option>
         </select>
 
         {/* Advanced Filters Toggle */}
@@ -157,7 +161,7 @@ export default function TransactionFiltersComponent({
               d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
             />
           </svg>
-          Advanced Filters
+          {t('advancedFilters')}
           {activeFiltersCount > 0 && (
             <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-blue-600 rounded-full">
               {activeFiltersCount}
@@ -171,7 +175,7 @@ export default function TransactionFiltersComponent({
             onClick={clearFilters}
             className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900"
           >
-            Clear all
+            {t('clearAll')}
           </button>
         )}
       </div>
@@ -182,13 +186,13 @@ export default function TransactionFiltersComponent({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Account Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Account</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('account')}</label>
               <select
                 value={filters.accountId}
                 onChange={(e) => handleChange('accountId', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="">All Accounts</option>
+                <option value="">{t('allAccounts')}</option>
                 {accounts.map((account) => (
                   <option key={account.id} value={account.id}>
                     {account.name} ({account.currency})
@@ -199,21 +203,21 @@ export default function TransactionFiltersComponent({
 
             {/* Category Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('category')}</label>
               <select
                 value={filters.categoryId}
                 onChange={(e) => handleChange('categoryId', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="">All Categories</option>
+                <option value="">{t('allCategories')}</option>
                 {categories.map((category) => (
-                  <optgroup key={category.id} label={category.name}>
+                  <optgroup key={category.id} label={translateCategory(category)}>
                     <option value={category.id}>
-                      {category.icon} {category.name} (All)
+                      {category.icon} {translateCategory(category)} {t('categoryAll')}
                     </option>
                     {category.subcategories?.map((sub) => (
                       <option key={sub.id} value={sub.id}>
-                        &nbsp;&nbsp;{sub.icon} {sub.name}
+                        &nbsp;&nbsp;{sub.icon} {translateCategory(sub)}
                       </option>
                     ))}
                   </optgroup>
@@ -223,7 +227,7 @@ export default function TransactionFiltersComponent({
 
             {/* Date Range */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('startDate')}</label>
               <input
                 type="date"
                 value={filters.startDate}
@@ -233,7 +237,7 @@ export default function TransactionFiltersComponent({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('endDate')}</label>
               <input
                 type="date"
                 value={filters.endDate}
@@ -244,7 +248,7 @@ export default function TransactionFiltersComponent({
 
             {/* Amount Range */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Min Amount</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('minAmount')}</label>
               <input
                 type="number"
                 step="0.01"
@@ -256,7 +260,7 @@ export default function TransactionFiltersComponent({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Max Amount</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('maxAmount')}</label>
               <input
                 type="number"
                 step="0.01"

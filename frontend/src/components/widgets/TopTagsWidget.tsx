@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { TrendingUp, Tag as TagIcon } from 'lucide-react'
 import { formatCurrency, type Currency } from '@/types/currency'
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { dashboardAPI } from '@/lib/api'
 import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
@@ -26,6 +27,7 @@ interface TopTagsWidgetProps {
 const DEFAULT_TAG_COLOR = '#6b7280'
 
 export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetProps) => {
+  const t = useTranslations('widgets.topTags')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const { month, year } = useSelectedMonth()
   const [tags, setTags] = useState<TopTagData[]>([])
@@ -60,7 +62,7 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
-            Top Tags
+            {t('label')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -104,11 +106,11 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
                   <p className="font-semibold text-gray-900 truncate">{tag.tagName}</p>
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-xs text-gray-600">
-                      {tag.transactionCount} {tag.transactionCount === 1 ? 'transaction' : 'transactions'}
+                      {tag.transactionCount} {tag.transactionCount === 1 ? t('transaction') : t('transactions')}
                     </span>
                     <span className="text-xs text-gray-400">•</span>
                     <span className="text-xs text-gray-600">
-                      Avg: {formatCurrency(tag.averageAmount, 'CLP' as Currency)}
+                      {t('avg')}: {formatCurrency(tag.averageAmount, 'CLP' as Currency)}
                     </span>
                   </div>
                 </div>
@@ -118,16 +120,16 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
                   <p className="font-bold text-gray-900">
                     {formatCurrency(tag.totalAmount, 'CLP' as Currency)}
                   </p>
-                  <p className="text-xs text-gray-500">Total</p>
+                  <p className="text-xs text-gray-500">{t('total')}</p>
                 </div>
               </div>
             ))
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-gray-500">
               <TagIcon className="h-12 w-12 mb-3 text-gray-300" />
-              <p className="text-sm font-medium">No tagged transactions</p>
+              <p className="text-sm font-medium">{t('noTaggedTransactions')}</p>
               <p className="text-xs text-gray-400 mt-1 text-center px-4">
-                Start adding tags to your transactions to see your most used tags here
+                {t('addTagsHint')}
               </p>
             </div>
           )}

@@ -1,0 +1,37 @@
+{
+  "transaction": {
+    "created": "Transacción creada exitosamente",
+    "updated": "Transacción actualizada exitosamente",
+    "deleted": "Transacción eliminada exitosamente",
+    "error": "Error al procesar la transacción"
+  },
+  "account": {
+    "created": "Cuenta creada exitosamente",
+    "updated": "Cuenta actualizada exitosamente",
+    "deleted": "Cuenta eliminada exitosamente",
+    "error": "Error al procesar la cuenta"
+  },
+  "group": {
+    "created": "Grupo creado exitosamente",
+    "updated": "Grupo actualizado exitosamente",
+    "deleted": "Grupo eliminado exitosamente",
+    "memberAdded": "Miembro agregado al grupo",
+    "memberRemoved": "Miembro eliminado del grupo",
+    "error": "Error al procesar el grupo"
+  },
+  "loan": {
+    "created": "Préstamo registrado exitosamente",
+    "updated": "Préstamo actualizado exitosamente",
+    "deleted": "Préstamo eliminado exitosamente",
+    "paymentAdded": "Pago de préstamo registrado",
+    "error": "Error al procesar el préstamo"
+  },
+  "profile": {
+    "updated": "Perfil actualizado exitosamente",
+    "error": "Error al actualizar el perfil"
+  },
+  "settings": {
+    "saved": "Configuración guardada exitosamente",
+    "error": "Error al guardar la configuración"
+  }
+}

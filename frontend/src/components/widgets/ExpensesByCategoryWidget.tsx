@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { PieChart as PieChartIcon } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { dashboardAPI } from '@/lib/api'
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
@@ -23,6 +24,7 @@ interface ExpensesByCategoryWidgetProps {
 }
 
 export const ExpensesByCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesByCategoryWidgetProps) => {
+  const t = useTranslations('widgets.expensesByCategory')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const { month, year } = useSelectedMonth()
   const [data, setData] = useState<CategoryData[]>([])
@@ -70,7 +72,7 @@ export const ExpensesByCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }: Expe
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <PieChartIcon className="h-4 w-4" />
-            Expenses by Category
+            {t('name')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -114,7 +116,7 @@ export const ExpensesByCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }: Expe
           </ResponsiveContainer>
         ) : (
           <div className={`flex items-center justify-center text-gray-500`} style={{ height: chartHeight }}>
-            No expenses this month
+            {t('noExpensesThisMonth')}
           </div>
         )}
       </CardContent>

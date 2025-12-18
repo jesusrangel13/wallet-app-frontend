@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Group, SplitType } from '@/types'
 import { groupAPI } from '@/lib/api'
 import { cn } from '@/lib/utils'
@@ -32,29 +33,6 @@ export interface SharedExpenseData {
   participants: Participant[]
 }
 
-const SPLIT_TYPE_OPTIONS: { value: SplitType; label: string; description: string }[] = [
-  {
-    value: 'EQUAL',
-    label: 'Equal Split',
-    description: 'Split equally between all participants',
-  },
-  {
-    value: 'PERCENTAGE',
-    label: 'Percentage',
-    description: 'Each person pays a percentage',
-  },
-  {
-    value: 'EXACT',
-    label: 'Exact Amounts',
-    description: 'Specify exact amount for each person',
-  },
-  {
-    value: 'SHARES',
-    label: 'By Shares',
-    description: 'Divide by shares (e.g., 1 share, 2 shares)',
-  },
-]
-
 export default function SharedExpenseForm({
   enabled,
   onToggle,
@@ -64,9 +42,34 @@ export default function SharedExpenseForm({
   error,
   initialData,
 }: SharedExpenseFormProps) {
+  const t = useTranslations('sharedExpense')
+  const tCommon = useTranslations('common.actions')
   const { user } = useAuthStore()
   const [groups, setGroups] = useState<Group[]>([])
   const [selectedGroupId, setSelectedGroupId] = useState<string>('')
+
+  const SPLIT_TYPE_OPTIONS: { value: SplitType; label: string; description: string }[] = useMemo(() => [
+    {
+      value: 'EQUAL',
+      label: t('splitTypes.equal'),
+      description: t('splitTypes.equalDescription'),
+    },
+    {
+      value: 'PERCENTAGE',
+      label: t('splitTypes.percentage'),
+      description: t('splitTypes.percentageDescription'),
+    },
+    {
+      value: 'EXACT',
+      label: t('splitTypes.exact'),
+      description: t('splitTypes.exactDescription'),
+    },
+    {
+      value: 'SHARES',
+      label: t('splitTypes.shares'),
+      description: t('splitTypes.sharesDescription'),
+    },
+  ], [t])
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null)
   const [paidByUserId, setPaidByUserId] = useState<string>('')
   const [splitType, setSplitType] = useState<SplitType>('EQUAL')
@@ -307,7 +310,7 @@ export default function SharedExpenseForm({
               d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
             />
           </svg>
-          Add as Shared Expense
+          {t('addButton')}
         </button>
       </div>
     )
@@ -325,14 +328,14 @@ export default function SharedExpenseForm({
               d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
             />
           </svg>
-          Shared Expense
+          {t('title')}
         </h3>
         <button
           type="button"
           onClick={() => onToggle(false)}
           className="text-sm text-gray-600 hover:text-gray-900"
         >
-          Remove
+          {t('remove')}
         </button>
       </div>
 
@@ -341,15 +344,13 @@ export default function SharedExpenseForm({
         <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
           <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
         </svg>
-        <p className="text-xs text-blue-800">
-          For best experience, <strong>select a group first</strong> to load split defaults, then enter the amount to calculate automatically.
-        </p>
+        <p className="text-xs text-blue-800" dangerouslySetInnerHTML={{ __html: t('hint') }} />
       </div>
 
       {/* Select Group */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Group <span className="text-red-500">*</span>
+          {t('groupLabel')} <span className="text-red-500">*</span>
         </label>
         {isLoadingGroups ? (
           <div className="animate-pulse bg-gray-200 h-10 rounded-lg"></div>
@@ -359,10 +360,10 @@ export default function SharedExpenseForm({
             onChange={(e) => setSelectedGroupId(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="">Select a group...</option>
+            <option value="">{t('selectGroup')}</option>
             {groups.map((group) => (
               <option key={group.id} value={group.id}>
-                {group.name} ({group.members.length} members)
+                {group.name} ({t('groupMembers', { count: group.members.length })})
               </option>
             ))}
           </select>
@@ -377,9 +378,7 @@ export default function SharedExpenseForm({
               <svg className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
-              <p className="text-xs text-amber-800">
-                Now <strong>enter the amount above</strong> to see splits calculated automatically based on group defaults.
-              </p>
+              <p className="text-xs text-amber-800" dangerouslySetInnerHTML={{ __html: t('noAmountYet') }} />
             </div>
           )}
 
@@ -390,7 +389,7 @@ export default function SharedExpenseForm({
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
               <p className="text-xs text-green-800 font-medium">
-                ✓ Split calculated for {formatCurrency(totalAmount, currency)} based on group defaults
+                {t('calculationComplete', { amount: formatCurrency(totalAmount, currency) })}
               </p>
             </div>
           )}
@@ -398,14 +397,14 @@ export default function SharedExpenseForm({
           {/* Paid By */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Paid By <span className="text-red-500">*</span>
+              {t('paidBy')} <span className="text-red-500">*</span>
             </label>
             <select
               value={paidByUserId}
               onChange={(e) => setPaidByUserId(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="">Select who paid...</option>
+              <option value="">{t('selectWhoPaid')}</option>
               {selectedGroup.members.map((member) => (
                 <option key={member.userId} value={member.userId}>
                   {member.user.name}
@@ -418,11 +417,11 @@ export default function SharedExpenseForm({
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-gray-700">
-                Split Type <span className="text-red-500">*</span>
+                {t('splitType')} <span className="text-red-500">*</span>
               </label>
               {selectedGroup?.defaultSplitType && (
                 <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                  Using group defaults
+                  {t('usingGroupDefaults')}
                 </span>
               )}
             </div>
@@ -450,7 +449,7 @@ export default function SharedExpenseForm({
           {participants.length > 0 && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Split Between ({participants.length} people)
+                {t('splitBetween', { count: participants.length })}
               </label>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {participants.map((participant) => (
@@ -519,7 +518,7 @@ export default function SharedExpenseForm({
                             }
                             className="w-16 px-2 py-1 text-sm border border-gray-300 rounded"
                           />
-                          <span className="text-sm text-gray-600">shares</span>
+                          <span className="text-sm text-gray-600">{t('shares')}</span>
                         </div>
                       )}
 
@@ -537,7 +536,7 @@ export default function SharedExpenseForm({
               <div className="mt-3 pt-3 border-t border-gray-200 space-y-1">
                 {splitType === 'PERCENTAGE' && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Total Percentage:</span>
+                    <span className="text-gray-600">{t('totalPercentage')}</span>
                     <span
                       className={cn(
                         'font-medium',
@@ -549,7 +548,7 @@ export default function SharedExpenseForm({
                   </div>
                 )}
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Total Split:</span>
+                  <span className="text-gray-600">{t('totalSplit')}</span>
                   <span
                     className={cn(
                       'font-medium',
@@ -561,7 +560,7 @@ export default function SharedExpenseForm({
                 </div>
                 {Math.abs(getTotalAmount() - totalAmount) > 0.01 && (
                   <p className="text-xs text-red-600">
-                    Split total doesn&apos;t match transaction amount!
+                    {t('splitMismatch')}
                   </p>
                 )}
               </div>

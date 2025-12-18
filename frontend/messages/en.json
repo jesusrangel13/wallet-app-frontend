@@ -1,0 +1,967 @@
+{
+  "auth": {
+    "login": {
+      "title": "Sign In",
+      "subtitle": "Welcome back! Please sign in to continue.",
+      "email": "Email",
+      "emailPlaceholder": "john@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "signInButton": "Sign In",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign up",
+      "success": "Login successful!",
+      "error": "Login failed"
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Sign up to start managing your finances.",
+      "fullName": "Full Name",
+      "namePlaceholder": "John Doe",
+      "email": "Email",
+      "emailPlaceholder": "john@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Create a password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "createAccountButton": "Create Account",
+      "hasAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "success": "Account created successfully!",
+      "error": "Registration failed"
+    },
+    "validation": {
+      "emailInvalid": "Invalid email address",
+      "passwordRequired": "Password is required",
+      "nameMinLength": "Name must be at least 2 characters",
+      "passwordMinLength": "Password must be at least 8 characters",
+      "passwordMismatch": "Passwords don't match"
+    }
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "dashboardDescription": "View your financial overview",
+    "accounts": "Accounts",
+    "accountsDescription": "Manage your accounts",
+    "transactions": "Transactions",
+    "transactionsDescription": "View transactions",
+    "loans": "Loans",
+    "loansDescription": "Track loans",
+    "groups": "Groups",
+    "groupsDescription": "Manage shared expenses",
+    "import": "Import",
+    "importDescription": "Import transactions",
+    "settings": "Settings",
+    "settingsDescription": "Manage preferences",
+    "toggleSidebar": "Toggle sidebar",
+    "toggleMenu": "Toggle menu",
+    "appName": "Finance",
+    "version": "v1.0.0"
+  },
+  "errors": {
+    "api": {
+      "AUTH_USER_EXISTS": "A user with this email already exists",
+      "AUTH_INVALID_CREDENTIALS": "Invalid email or password",
+      "AUTH_USER_NOT_FOUND": "User not found",
+      "AUTH_NO_TOKEN": "Authentication token is missing",
+      "AUTH_INVALID_TOKEN": "Invalid authentication token",
+      "AUTH_TOKEN_EXPIRED": "Your session has expired. Please log in again",
+      "AUTH_WEAK_PASSWORD": "Password is too weak. Please use a stronger password",
+      "AUTH_EMAIL_REQUIRED": "Email address is required",
+      "AUTH_PASSWORD_REQUIRED": "Password is required",
+      "ACCOUNT_NOT_FOUND": "Account not found",
+      "ACCOUNT_INSUFFICIENT_BALANCE": "Insufficient balance in account",
+      "ACCOUNT_ARCHIVED": "This account is archived",
+      "ACCOUNT_ALREADY_EXISTS": "An account with this name already exists",
+      "ACCOUNT_INVALID_TYPE": "Invalid account type",
+      "ACCOUNT_DELETE_DEFAULT": "Cannot delete the default account",
+      "TRANSACTION_NOT_FOUND": "Transaction not found",
+      "TRANSACTION_INVALID_ACCOUNT": "Invalid account for this transaction",
+      "TRANSACTION_INVALID_AMOUNT": "Invalid transaction amount",
+      "TRANSACTION_INVALID_TYPE": "Invalid transaction type",
+      "TRANSACTION_INVALID_DATE": "Invalid transaction date",
+      "TRANSACTION_SAME_ACCOUNT_TRANSFER": "Cannot transfer to the same account",
+      "CATEGORY_NOT_FOUND": "Category not found",
+      "CATEGORY_ALREADY_EXISTS": "A category with this name already exists",
+      "CATEGORY_SYSTEM_CANNOT_DELETE": "Cannot delete system categories",
+      "CATEGORY_IN_USE": "This category is being used and cannot be deleted",
+      "GROUP_NOT_FOUND": "Group not found",
+      "GROUP_UNAUTHORIZED": "You don't have permission to access this group",
+      "GROUP_ALREADY_MEMBER": "User is already a member of this group",
+      "GROUP_NOT_MEMBER": "User is not a member of this group",
+      "GROUP_CREATOR_CANNOT_LEAVE": "The group creator cannot leave the group",
+      "GROUP_INVALID_SPLIT_TYPE": "Invalid expense split type",
+      "GROUP_SPLIT_TOTAL_INVALID": "Split amounts don't match the total",
+      "SHARED_EXPENSE_NOT_FOUND": "Shared expense not found",
+      "SHARED_EXPENSE_UNAUTHORIZED": "You don't have permission to access this expense",
+      "SHARED_EXPENSE_INVALID_PARTICIPANTS": "Invalid participants for this expense",
+      "SHARED_EXPENSE_ALREADY_PAID": "This expense has already been paid",
+      "SHARED_EXPENSE_NOT_MEMBER": "You are not a member of this expense",
+      "SHARED_EXPENSE_PARTICIPANTS_NOT_MEMBERS": "Some participants are not group members",
+      "SHARED_EXPENSE_PERCENTAGE_INVALID": "Split percentages must total 100%",
+      "SHARED_EXPENSE_EXACT_AMOUNT_INVALID": "Split amounts don't match the expense total",
+      "SHARED_EXPENSE_ONLY_PAYER_CAN_UPDATE": "Only the payer can update this expense",
+      "SHARED_EXPENSE_ONLY_PAYER_CAN_DELETE": "Only the payer can delete this expense",
+      "SHARED_EXPENSE_PARTICIPANT_NOT_FOUND": "Participant not found",
+      "SHARED_EXPENSE_INVALID_PAYMENT_PERMISSION": "Invalid payment permission",
+      "SHARED_EXPENSE_ONLY_PAYER_CAN_UNDO": "Only the payer can undo this payment",
+      "SHARED_EXPENSE_NO_BALANCE": "No balance to settle",
+      "SHARED_EXPENSE_USERS_NOT_IN_GROUP": "Some users are not members of this group",
+      "LOAN_NOT_FOUND": "Loan not found",
+      "LOAN_UNAUTHORIZED": "You don't have permission to access this loan",
+      "LOAN_ALREADY_PAID": "This loan has already been paid",
+      "LOAN_INVALID_AMOUNT": "Invalid loan amount",
+      "LOAN_PAYMENT_EXCEEDS_REMAINING": "Payment amount exceeds remaining balance",
+      "BUDGET_NOT_FOUND": "Budget not found",
+      "BUDGET_ALREADY_EXISTS": "A budget for this period already exists",
+      "BUDGET_INVALID_PERIOD": "Invalid budget period",
+      "TAG_NOT_FOUND": "Tag not found",
+      "TAG_ALREADY_EXISTS": "A tag with this name already exists",
+      "TAG_IN_USE": "This tag is being used and cannot be deleted",
+      "IMPORT_NOT_FOUND": "Import not found",
+      "IMPORT_INVALID_FILE": "Invalid file format",
+      "IMPORT_INVALID_FORMAT": "File format not recognized",
+      "IMPORT_FILE_TOO_LARGE": "File size exceeds maximum limit",
+      "IMPORT_PROCESSING": "Import is currently being processed",
+      "NOTIFICATION_NOT_FOUND": "Notification not found",
+      "NOTIFICATION_UNAUTHORIZED": "You don't have permission to access this notification",
+      "DATABASE_ERROR": "A database error occurred",
+      "INTERNAL_SERVER_ERROR": "An internal server error occurred",
+      "UNAUTHORIZED": "You are not authorized to perform this action",
+      "FORBIDDEN": "Access forbidden",
+      "VALIDATION_ERROR": "Validation error occurred",
+      "NOT_FOUND": "Resource not found",
+      "BAD_REQUEST": "Invalid request"
+    },
+    "generic": {
+      "UNKNOWN_ERROR": "An unexpected error occurred",
+      "NETWORK_ERROR": "Network connection error. Please check your internet connection",
+      "TIMEOUT_ERROR": "Request timed out. Please try again"
+    },
+    "rateLimiting": {
+      "title": "Too many requests",
+      "description": "You've made too many requests. Please wait a moment before trying again"
+    },
+    "fallback": "An error occurred. Please try again"
+  },
+  "common": {
+    "app": {
+      "title": "Finance App",
+      "description": "Manage your personal finances, track expenses, and achieve your financial goals"
+    },
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "create": "Create",
+      "update": "Update",
+      "close": "Close",
+      "confirm": "Confirm",
+      "back": "Back",
+      "next": "Next",
+      "loading": "Loading...",
+      "saving": "Saving...",
+      "add": "Add",
+      "remove": "Remove",
+      "search": "Search",
+      "filter": "Filter",
+      "export": "Export",
+      "import": "Import",
+      "refresh": "Refresh",
+      "select": "Select",
+      "viewDetails": "View Details",
+      "clear": "Clear"
+    },
+    "time": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "lastMonth": "Last Month",
+      "thisYear": "This Year",
+      "custom": "Custom",
+      "month": "Month",
+      "year": "Year"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "completed": "Completed",
+      "failed": "Failed",
+      "archived": "Archived"
+    },
+    "empty": {
+      "noData": "No data available",
+      "noResults": "No results found",
+      "noItems": "No items yet"
+    },
+    "messages": {
+      "success": "Success!",
+      "error": "Error",
+      "warning": "Warning",
+      "info": "Information"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Welcome back! Here's your financial overview.",
+    "loadingPreferences": "Failed to load dashboard preferences",
+    "noWidgets": "No widgets on your dashboard",
+    "addWidget": "Add Widget"
+  },
+  "widgets": {
+    "totalBalance": {
+      "name": "Total Balance",
+      "description": "Your total balance across all currencies",
+      "label": "Total Balance"
+    },
+    "monthlyIncome": {
+      "name": "Monthly Income",
+      "description": "Your income for this month",
+      "label": "Monthly Income",
+      "thisMonth": "This month"
+    },
+    "monthlyExpenses": {
+      "name": "Monthly Expenses",
+      "description": "Your expenses for this month",
+      "label": "Monthly Expenses",
+      "thisMonth": "This month"
+    },
+    "personalExpenses": {
+      "name": "Personal Expenses",
+      "description": "Personal expenses excluding shared and transfers",
+      "label": "Personal Expenses",
+      "thisMonth": "This month"
+    },
+    "sharedExpenses": {
+      "name": "Shared Expenses",
+      "description": "Your share of shared group expenses",
+      "label": "Shared Expenses",
+      "thisMonth": "This month"
+    },
+    "savings": {
+      "name": "Savings",
+      "description": "Monthly savings (income - expenses)",
+      "label": "Savings",
+      "thisMonth": "This month",
+      "savingsRate": "savings rate"
+    },
+    "groups": {
+      "name": "Groups",
+      "description": "Number of groups and accounts",
+      "label": "Groups",
+      "groupsCount": "groups",
+      "membersCount": "members"
+    },
+    "loans": {
+      "name": "Loans",
+      "description": "Active loans summary",
+      "label": "Loans",
+      "active": "Active",
+      "paid": "Paid",
+      "totalAmount": "Total Amount",
+      "remaining": "Remaining",
+      "viewAll": "View All Loans",
+      "noLoansYet": "No loans registered yet",
+      "createLoan": "Create loan",
+      "errorLoading": "Could not load information",
+      "pendingToCollect": "Pending to collect",
+      "activeLoans": "Active loans",
+      "totalLent": "Total lent",
+      "recovered": "Recovered",
+      "viewAllLink": "View all"
+    },
+    "quickActions": {
+      "name": "Quick Actions",
+      "description": "Quick access to main features",
+      "newTransaction": "New Transaction",
+      "newAccount": "New Account",
+      "newLoan": "New Loan",
+      "importTransactions": "Import Transactions"
+    },
+    "balances": {
+      "name": "My Balances",
+      "description": "Group balances with payment tracking",
+      "youOwe": "You owe",
+      "owesYou": "owes you",
+      "settled": "Settled up",
+      "settle": "Settle"
+    },
+    "cashFlow": {
+      "name": "Cash Flow",
+      "description": "Income vs expenses trend (last 6 months)",
+      "income": "Income",
+      "expenses": "Expenses",
+      "averageIncome": "Average Income",
+      "averageExpense": "Average Expense",
+      "netBalance": "Net Balance",
+      "noDataAvailable": "No data available"
+    },
+    "expensesByCategory": {
+      "name": "Expenses by Category",
+      "description": "Expense distribution by category",
+      "noExpensesThisMonth": "No expenses this month"
+    },
+    "expensesByParentCategory": {
+      "name": "Expenses by Category",
+      "description": "Expense distribution by parent category",
+      "label": "Expenses by Category",
+      "amount": "Amount",
+      "category": "Category",
+      "noExpensesThisMonth": "No expenses this month"
+    },
+    "expenseDetailsPie": {
+      "name": "Expense Details",
+      "description": "Detailed expense breakdown with legend",
+      "label": "Expense Details",
+      "thisMonth": "This month",
+      "noExpensesThisMonth": "No expenses this month"
+    },
+    "balanceTrend": {
+      "name": "Balance Trend",
+      "description": "Your balance over the last 30 days",
+      "last30Days": "Last 30 days",
+      "label": "Balance Trend",
+      "currentBalance": "Current Balance",
+      "sinceStart": "since start",
+      "initial": "Initial",
+      "change": "Change",
+      "noBalanceHistory": "No balance history available"
+    },
+    "groupBalances": {
+      "name": "Group Balances",
+      "description": "People who owe you money",
+      "owesYou": "owes you",
+      "label": "My Balances",
+      "person": "person",
+      "people": "people",
+      "noSharedExpenses": "No shared expenses yet. Create a group to start tracking!"
+    },
+    "accountBalances": {
+      "name": "Account Balances",
+      "description": "Your accounts and cards",
+      "accounts": "Accounts",
+      "viewAll": "View All",
+      "spent": "Spent",
+      "available": "Available",
+      "balance": "Balance",
+      "addAccount": "Add Account",
+      "noAccountsYet": "No accounts yet. Add your first account!",
+      "addAccountButton": "Add Account"
+    },
+    "recentTransactions": {
+      "name": "Recent Transactions",
+      "description": "Your most recent transactions",
+      "noTransactions": "No transactions yet",
+      "viewAll": "View All",
+      "label": "Recent Transactions",
+      "noRecentTransactions": "No recent transactions. Add your first transaction to get started!",
+      "viewMoreTransactions": "View more transactions"
+    },
+    "expensesByTag": {
+      "name": "Expenses by Tag",
+      "description": "Distribution of expenses across your custom tags",
+      "label": "Expenses by Tag",
+      "noTaggedExpenses": "No tagged expenses this month",
+      "addTagsHint": "Add tags to your transactions to see this data"
+    },
+    "topTags": {
+      "name": "Top Tags",
+      "description": "Your most frequently used tags with statistics",
+      "transactions": "transactions",
+      "label": "Top Tags",
+      "transaction": "transaction",
+      "avg": "Avg",
+      "total": "Total",
+      "noTaggedTransactions": "No tagged transactions",
+      "addTagsHint": "Start adding tags to your transactions to see your most used tags here"
+    },
+    "tagTrend": {
+      "name": "Tag Trend",
+      "description": "Spending trends for your tags over time",
+      "label": "Tag Trend",
+      "lastMonths": "Last {months} Months",
+      "noTagData": "No tag data available",
+      "selectedTagsNoHistory": "The selected tags have no transaction history",
+      "addTagsForTrends": "Add tags to your transactions to see trends over time"
+    }
+  },
+  "transactions": {
+    "title": "Transactions",
+    "subtitle": "View and manage all your transactions",
+    "new": "New Transaction",
+    "edit": "Edit Transaction",
+    "delete": "Delete Transaction",
+    "deleteConfirm": "Are you sure you want to delete this transaction?",
+    "types": {
+      "expense": "Expense",
+      "income": "Income",
+      "transfer": "Transfer"
+    },
+    "fields": {
+      "type": "Type",
+      "account": "Account",
+      "toAccount": "To Account",
+      "amount": "Amount",
+      "category": "Category",
+      "description": "Description",
+      "date": "Date",
+      "dateTime": "Date & Time",
+      "payee": "Payee",
+      "payer": "Payer",
+      "tags": "Tags",
+      "notes": "Notes"
+    },
+    "placeholders": {
+      "selectAccount": "Select account...",
+      "selectDestination": "Select destination account...",
+      "amount": "0.00",
+      "description": "Add details about this transaction...",
+      "payee": "e.g., McDonald's, Uber, Enel",
+      "selectDate": "Select date...",
+      "selectDateTime": "Select date and time...",
+      "notes": "Add any additional notes"
+    },
+    "validation": {
+      "amountPositive": "Amount must be positive",
+      "destinationRequired": "Destination account is required for transfers",
+      "sameAccountTransfer": "Cannot transfer to the same account"
+    },
+    "success": {
+      "created": "Transaction created successfully",
+      "updated": "Transaction updated successfully",
+      "deleted": "Transaction deleted successfully"
+    }
+  },
+  "accounts": {
+    "title": "Accounts",
+    "subtitle": "Manage your accounts and cards",
+    "new": "New Account",
+    "edit": "Edit Account",
+    "delete": "Delete Account",
+    "deleteConfirm": "Are you sure you want to delete this account?",
+    "viewTransactions": "View Transactions",
+    "balance": "Balance",
+    "currency": "Currency",
+    "type": "Type",
+    "name": "Name",
+    "types": {
+      "CASH": "Cash",
+      "DEBIT_CARD": "Debit Card",
+      "CREDIT_CARD": "Credit Card",
+      "SAVINGS": "Savings",
+      "INVESTMENT": "Investment"
+    },
+    "placeholders": {
+      "name": "Account name",
+      "initialBalance": "Initial balance"
+    },
+    "success": {
+      "created": "Account created successfully",
+      "updated": "Account updated successfully",
+      "deleted": "Account deleted successfully"
+    }
+  },
+  "loans": {
+    "title": "Loans",
+    "subtitle": "Track your loans and debts",
+    "new": "New Loan",
+    "edit": "Edit Loan",
+    "delete": "Delete Loan",
+    "recordPayment": "Record Payment",
+    "markAsPaid": "Mark as Paid",
+    "viewDetails": "View Details",
+    "fields": {
+      "type": "Type",
+      "borrower": "Borrower",
+      "lender": "Lender",
+      "amount": "Amount",
+      "date": "Date",
+      "dueDate": "Due Date",
+      "description": "Description",
+      "status": "Status",
+      "remaining": "Remaining"
+    },
+    "types": {
+      "LENT": "Lent (You lent money)",
+      "BORROWED": "Borrowed (You borrowed money)"
+    },
+    "status": {
+      "active": "Active",
+      "paid": "Paid",
+      "overdue": "Overdue"
+    },
+    "placeholders": {
+      "borrower": "Person who borrows",
+      "lender": "Person who lends",
+      "amount": "Loan amount",
+      "description": "Loan details..."
+    },
+    "success": {
+      "created": "Loan created successfully",
+      "updated": "Loan updated successfully",
+      "deleted": "Loan deleted successfully",
+      "paymentRecorded": "Payment recorded successfully"
+    }
+  },
+  "groups": {
+    "title": "Groups",
+    "subtitle": "Manage shared expenses with groups",
+    "new": "New Group",
+    "edit": "Edit Group",
+    "delete": "Delete Group",
+    "viewDetails": "View Details",
+    "addMember": "Add Member",
+    "removeMember": "Remove Member",
+    "settleBalance": "Settle Balance",
+    "fields": {
+      "name": "Name",
+      "description": "Description",
+      "members": "Members",
+      "balance": "Balance"
+    },
+    "placeholders": {
+      "name": "Group name",
+      "description": "Group description..."
+    },
+    "success": {
+      "created": "Group created successfully",
+      "updated": "Group updated successfully",
+      "deleted": "Group deleted successfully",
+      "memberAdded": "Member added successfully",
+      "memberRemoved": "Member removed successfully",
+      "balanceSettled": "Balance settled successfully"
+    }
+  },
+  "forms": {
+    "required": "Required",
+    "optional": "Optional",
+    "validation": {
+      "required": "This field is required",
+      "invalid": "Invalid value",
+      "minLength": "Must be at least {min} characters",
+      "maxLength": "Must be at most {max} characters",
+      "min": "Must be at least {min}",
+      "max": "Must be at most {max}",
+      "email": "Invalid email address",
+      "url": "Invalid URL",
+      "number": "Must be a number",
+      "positive": "Must be positive",
+      "integer": "Must be an integer"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your account and preferences",
+    "subtitle": "Manage your preferences",
+    "tabs": {
+      "general": "Profile",
+      "categories": "Categories",
+      "tags": "Tags"
+    },
+    "profile": {
+      "title": "Profile Information",
+      "subtitle": "Update your personal information and preferences",
+      "fields": {
+        "name": "Full Name",
+        "email": "Email Address",
+        "emailHelper": "Contact support to change your email",
+        "currency": "Default Currency",
+        "currencyHelper": "This will be used as the default for new accounts",
+        "country": "Country",
+        "defaultAccount": "Default Account for Shared Expenses",
+        "defaultAccountHelper": "This account will be pre-selected when settling shared expense balances"
+      },
+      "placeholders": {
+        "name": "John Doe",
+        "country": "e.g., Chile"
+      },
+      "currencies": {
+        "CLP": "$ CLP - Chilean Peso",
+        "USD": "US$ USD - US Dollar",
+        "EUR": "€ EUR - Euro"
+      },
+      "defaultAccountOptions": {
+        "none": "No default account (select each time)"
+      }
+    },
+    "language": {
+      "label": "Language",
+      "helperText": "Select your preferred language for the application",
+      "options": {
+        "en": "English",
+        "es": "Español (Spanish)"
+      }
+    },
+    "accountDetails": {
+      "title": "Account Details",
+      "userId": "User ID",
+      "userIdHelper": "Your unique identifier",
+      "email": "Email",
+      "emailHelper": "Your login email",
+      "currency": "Currency",
+      "currencyHelper": "Default currency setting"
+    },
+    "actions": {
+      "save": "Save Changes",
+      "reset": "Reset",
+      "saving": "Saving..."
+    },
+    "validation": {
+      "nameRequired": "Name is required"
+    },
+    "success": {
+      "updated": "Settings updated successfully",
+      "profileUpdated": "Profile updated successfully",
+      "languageChanged": "Language changed successfully"
+    },
+    "tagsPage": {
+      "title": "Your Tags",
+      "description": "Organize and label your transactions with custom tags",
+      "newTag": "New Tag",
+      "editTag": "Edit Tag",
+      "editButton": "Edit",
+      "deleteButton": "Delete",
+      "editTagTitle": "Edit tag",
+      "deleteTagTitle": "Delete tag",
+      "noTags": "No tags yet",
+      "noTagsDescription": "Create your first tag to better organize and categorize your transactions",
+      "createFirstTag": "Create Your First Tag",
+      "modalTitle": {
+        "create": "New Tag",
+        "edit": "Edit Tag"
+      },
+      "form": {
+        "tagName": "Tag Name",
+        "tagNamePlaceholder": "e.g., Business, Personal, Urgent",
+        "color": "Color",
+        "updateTag": "Update Tag",
+        "createTag": "Create Tag",
+        "cancel": "Cancel"
+      },
+      "validation": {
+        "nameRequired": "Tag name is required"
+      },
+      "deleteConfirm": "Are you sure you want to delete \"{name}\"?",
+      "success": {
+        "created": "Tag created successfully",
+        "updated": "Tag updated successfully",
+        "deleted": "Tag deleted successfully"
+      },
+      "errors": {
+        "loadFailed": "Failed to load tags",
+        "saveFailed": "Failed to save tag",
+        "deleteFailed": "Failed to delete tag"
+      }
+    },
+    "categoriesPage": {
+      "title": "My Categories",
+      "description": "Create and customize your expense and income categories",
+      "types": {
+        "expense": "💸 Expenses",
+        "income": "💰 Income"
+      },
+      "newCategory": "New Category",
+      "editCategory": "Edit Category",
+      "deleteCategory": "Delete Category",
+      "showSubcategory": "Show subcategory",
+      "hideSubcategory": "Hide subcategory",
+      "show": "Show",
+      "hide": "Hide",
+      "edit": "Edit",
+      "delete": "Delete",
+      "noCategories": "No categories yet",
+      "noCategoriesDescription": "Create your first category to start organizing your transactions",
+      "createFirstCategory": "Create Your First Category",
+      "modalTitle": {
+        "create": "New Category",
+        "edit": "Edit Category"
+      },
+      "form": {
+        "categoryName": "Category Name",
+        "categoryNamePlaceholder": "E.g., Movies, Grocery, etc.",
+        "categoryNameSubPlaceholder": "E.g., Specific subcategory",
+        "parentCategory": "Parent Category (Optional)",
+        "parentCategoryPlaceholder": "Select a parent category",
+        "noParentCategory": "None (Main category)",
+        "icon": "Icon (Optional)",
+        "iconPlaceholder": "E.g., 🍕, 🚗, 💡",
+        "color": "Color",
+        "update": "Update",
+        "create": "Create",
+        "cancel": "Cancel"
+      },
+      "validation": {
+        "nameRequired": "Category name is required"
+      },
+      "deleteConfirm": "Are you sure you want to delete the category \"{name}\"?",
+      "deleteWithSubcategoriesConfirm": "This category has {count} subcategories. Are you sure you want to delete it?",
+      "success": {
+        "created": "Category created successfully",
+        "updated": "Category updated successfully",
+        "deleted": "Category deleted successfully"
+      },
+      "errors": {
+        "loadFailed": "Failed to load categories",
+        "saveFailed": "Failed to save category",
+        "deleteFailed": "Failed to delete category"
+      }
+    }
+  },
+  "deleteAccount": {
+    "title": "Delete Account",
+    "warning": "Warning",
+    "warningMessage": "You are about to delete the account",
+    "transactionCount": "This account has {count} transaction associated with it.|This account has {count} transactions associated with it.",
+    "whatToDo": "What would you like to do with the transactions?",
+    "transferOption": "Transfer transactions to another account",
+    "transferDescription": "All transactions will be moved to the selected account",
+    "selectAccount": "Select an account...",
+    "deleteOption": "Delete all transactions",
+    "deleteWarning": "This action cannot be undone. All {count} transaction will be permanently deleted.|This action cannot be undone. All {count} transactions will be permanently deleted.",
+    "deleting": "Deleting...",
+    "deleteAccountOnly": "Delete Account",
+    "deleteAccountAndTransactions": "Delete Account & Transactions"
+  },
+  "createLoan": {
+    "title": "Create Loan",
+    "borrowerName": "Borrower Name",
+    "borrowerPlaceholder": "John Doe",
+    "accountFrom": "Account from which you lend",
+    "selectAccount": "Select an account",
+    "noAccountsAvailable": "No accounts available",
+    "amount": "Amount",
+    "loanDate": "Loan Date",
+    "notes": "Notes",
+    "notesPlaceholder": "Additional loan details...",
+    "infoTitle": "💡 What happens when creating a loan?",
+    "infoPoint1": "An EXPENSE transaction will be created in your account",
+    "infoPoint2": "The money will leave your account (will affect your balance)",
+    "infoPoint3": "You can record partial or full payments later",
+    "creating": "Creating...",
+    "createButton": "Create Loan"
+  },
+  "recordPayment": {
+    "title": "Record Payment",
+    "borrower": "Borrower",
+    "originalAmount": "Original Amount",
+    "paidAmount": "Paid Amount",
+    "pendingAmount": "Pending",
+    "accountTo": "Account where you receive the payment",
+    "paymentAmount": "Payment Amount",
+    "payAll": "Pay all ({amount})",
+    "paymentExceedsError": "Amount cannot exceed pending {amount}",
+    "paymentDate": "Payment Date",
+    "infoTitle": "💡 What happens when recording a payment?",
+    "infoPoint1": "An INCOME transaction will be created in your account",
+    "infoPoint2": "The money will enter your account (will affect your balance)",
+    "infoPoint3": "The loan status will be automatically updated",
+    "recording": "Recording...",
+    "recordButton": "Record Payment"
+  },
+  "filters": {
+    "searchPlaceholder": "Search by description, payee, or amount...",
+    "allTypes": "All Types",
+    "expenses": "Expenses",
+    "income": "Income",
+    "transfers": "Transfers",
+    "newestFirst": "Newest First",
+    "oldestFirst": "Oldest First",
+    "highestAmount": "Highest Amount",
+    "lowestAmount": "Lowest Amount",
+    "payeeAZ": "Payee A-Z",
+    "payeeZA": "Payee Z-A",
+    "advancedFilters": "Advanced Filters",
+    "clearAll": "Clear all",
+    "account": "Account",
+    "allAccounts": "All Accounts",
+    "category": "Category",
+    "allCategories": "All Categories",
+    "categoryAll": "(All)",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "minAmount": "Min Amount",
+    "maxAmount": "Max Amount"
+  },
+  "pagination": {
+    "show": "Show:",
+    "perPage": "per page",
+    "showing": "Showing {start}-{end} of {total} transactions",
+    "firstPage": "First page",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "lastPage": "Last page",
+    "pageOf": "Page {current} of {total}"
+  },
+  "sharedExpense": {
+    "addButton": "Add as Shared Expense",
+    "title": "Shared Expense",
+    "remove": "Remove",
+    "hint": "For best experience, <strong>select a group first</strong> to load split defaults, then enter the amount to calculate automatically.",
+    "groupLabel": "Group",
+    "selectGroup": "Select a group...",
+    "groupMembers": "{count} members",
+    "noAmountYet": "Now <strong>enter the amount above</strong> to see splits calculated automatically based on group defaults.",
+    "calculationComplete": "✓ Split calculated for {amount} based on group defaults",
+    "paidBy": "Paid By",
+    "selectWhoPaid": "Select who paid...",
+    "splitType": "Split Type",
+    "usingGroupDefaults": "Using group defaults",
+    "splitTypes": {
+      "equal": "Equal Split",
+      "equalDescription": "Split equally between all participants",
+      "percentage": "Percentage",
+      "percentageDescription": "Each person pays a percentage",
+      "exact": "Exact Amounts",
+      "exactDescription": "Specify exact amount for each person",
+      "shares": "By Shares",
+      "sharesDescription": "Divide by shares (e.g., 1 share, 2 shares)"
+    },
+    "splitBetween": "Split Between ({count} people)",
+    "shares": "shares",
+    "totalPercentage": "Total Percentage:",
+    "totalSplit": "Total Split:",
+    "splitMismatch": "Split total doesn't match transaction amount!"
+  },
+  "loading": {
+    "default": "Loading...",
+    "saving": "Saving...",
+    "updating": "Updating...",
+    "deleting": "Deleting...",
+    "processing": "Processing...",
+    "creating": "Creating...",
+    "dashboard": "Loading dashboard...",
+    "transactions": "Loading transactions...",
+    "accounts": "Loading accounts...",
+    "groups": "Loading groups...",
+    "categories": "Loading categories...",
+    "tags": "Loading tags...",
+    "profile": "Loading profile...",
+    "imports": "Loading history..."
+  },
+  "categories": {
+    "expense": {
+      "foodAndDrinks": {
+        "name": "Food & Drinks",
+        "restaurant": "Restaurant",
+        "delivery": "Delivery",
+        "bar": "Bar",
+        "cafe": "Café",
+        "supermarket": "Supermarket"
+      },
+      "transport": {
+        "name": "Transportation",
+        "taxi": "Taxi/Uber",
+        "fuel": "Fuel",
+        "public": "Public Transport",
+        "parking": "Parking",
+        "maintenance": "Vehicle Maintenance"
+      },
+      "shopping": {
+        "name": "Shopping",
+        "clothing": "Clothing",
+        "electronics": "Electronics",
+        "home": "Home",
+        "books": "Books",
+        "other": "Other"
+      },
+      "entertainment": {
+        "name": "Entertainment",
+        "cinema": "Cinema",
+        "videogames": "Video Games",
+        "streaming": "Streaming",
+        "events": "Events",
+        "hobbies": "Hobbies"
+      },
+      "services": {
+        "name": "Services",
+        "internet": "Internet",
+        "electricity": "Electricity",
+        "water": "Water",
+        "phone": "Phone",
+        "gas": "Gas"
+      },
+      "health": {
+        "name": "Health",
+        "doctor": "Doctor",
+        "medicine": "Medicine",
+        "dentist": "Dentist",
+        "psychologist": "Psychologist",
+        "insurance": "Insurance"
+      },
+      "education": {
+        "name": "Education",
+        "courses": "Courses",
+        "books": "Books",
+        "tuition": "Tuition",
+        "materials": "Materials",
+        "conferences": "Conferences"
+      },
+      "housing": {
+        "name": "Housing",
+        "rent": "Rent",
+        "mortgage": "Mortgage",
+        "repairs": "Repairs",
+        "furniture": "Furniture",
+        "decoration": "Decoration"
+      },
+      "travel": {
+        "name": "Travel",
+        "flights": "Flights",
+        "hotels": "Hotels",
+        "tours": "Tours",
+        "localTransport": "Local Transport",
+        "food": "Food"
+      },
+      "other": {
+        "name": "Other Expenses",
+        "gifts": "Gifts",
+        "donations": "Donations",
+        "pets": "Pets",
+        "taxes": "Taxes",
+        "miscellaneous": "Miscellaneous",
+        "debtPayment": "Debt Payment",
+        "loanGiven": "Loan Given"
+      }
+    },
+    "income": {
+      "salary": {
+        "name": "Salary",
+        "baseSalary": "Base Salary",
+        "bonus": "Bonus",
+        "commission": "Commission",
+        "overtime": "Overtime"
+      },
+      "business": {
+        "name": "Business",
+        "sales": "Sales",
+        "services": "Services",
+        "consulting": "Consulting",
+        "freelance": "Freelance"
+      },
+      "investments": {
+        "name": "Investments",
+        "dividends": "Dividends",
+        "interest": "Interest",
+        "stockGains": "Stock Gains",
+        "rent": "Rent"
+      },
+      "other": {
+        "name": "Other Income",
+        "refunds": "Refunds",
+        "inheritance": "Inheritance",
+        "gambling": "Gambling",
+        "other": "Other",
+        "debtCollection": "Debt Collection",
+        "loanRepayment": "Loan Repayment"
+      }
+    },
+    "transfer": {
+      "betweenAccounts": {
+        "name": "Transfer Between Accounts"
+      }
+    }
+  }
+}

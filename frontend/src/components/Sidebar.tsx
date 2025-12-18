@@ -2,33 +2,47 @@
 
 import { useSidebarStore } from '@/store/sidebarStore'
 import { Tooltip } from '@/components/ui/Tooltip'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter, usePathname, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Menu, X, Home, CreditCard, TrendingUp, Users, Upload, Settings, HandCoins } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 
 interface NavItem {
-  label: string
+  labelKey: string
   icon: React.ReactNode
-  href: string
-  description: string
+  path: string
+  descriptionKey: string
 }
 
-const navItems: NavItem[] = [
-  { label: 'Dashboard', icon: <Home className="w-6 h-6" />, href: '/dashboard', description: 'View your financial overview' },
-  { label: 'Accounts', icon: <CreditCard className="w-6 h-6" />, href: '/dashboard/accounts', description: 'Manage your accounts' },
-  { label: 'Transactions', icon: <TrendingUp className="w-6 h-6" />, href: '/dashboard/transactions', description: 'View transactions' },
-  { label: 'Loans', icon: <HandCoins className="w-6 h-6" />, href: '/dashboard/loans', description: 'Track loans' },
-  { label: 'Groups', icon: <Users className="w-6 h-6" />, href: '/dashboard/groups', description: 'Manage shared expenses' },
-  { label: 'Import', icon: <Upload className="w-6 h-6" />, href: '/dashboard/import', description: 'Import transactions' },
-  { label: 'Settings', icon: <Settings className="w-6 h-6" />, href: '/dashboard/settings', description: 'Manage preferences' },
+const baseNavItems: NavItem[] = [
+  { labelKey: 'dashboard', icon: <Home className="w-6 h-6" />, path: 'dashboard', descriptionKey: 'dashboardDescription' },
+  { labelKey: 'accounts', icon: <CreditCard className="w-6 h-6" />, path: 'dashboard/accounts', descriptionKey: 'accountsDescription' },
+  { labelKey: 'transactions', icon: <TrendingUp className="w-6 h-6" />, path: 'dashboard/transactions', descriptionKey: 'transactionsDescription' },
+  { labelKey: 'loans', icon: <HandCoins className="w-6 h-6" />, path: 'dashboard/loans', descriptionKey: 'loansDescription' },
+  { labelKey: 'groups', icon: <Users className="w-6 h-6" />, path: 'dashboard/groups', descriptionKey: 'groupsDescription' },
+  { labelKey: 'import', icon: <Upload className="w-6 h-6" />, path: 'dashboard/import', descriptionKey: 'importDescription' },
+  { labelKey: 'settings', icon: <Settings className="w-6 h-6" />, path: 'dashboard/settings', descriptionKey: 'settingsDescription' },
 ]
 
 export function Sidebar() {
+  const t = useTranslations('nav')
   const router = useRouter()
   const pathname = usePathname()
+  const params = useParams()
+  const locale = params.locale as string || 'es'
   const { isCollapsed, isMobileOpen, toggleCollapse, setMobileOpen } = useSidebarStore()
   const [mounted, setMounted] = useState(false)
+
+  // Create nav items with locale prefix and translations
+  const navItems = useMemo(() => {
+    return baseNavItems.map(item => ({
+      ...item,
+      label: t(item.labelKey as any),
+      description: t(item.descriptionKey as any),
+      href: `/${locale}/${item.path}`
+    }))
+  }, [locale, t])
 
   useEffect(() => {
     setMounted(true)
@@ -41,8 +55,8 @@ export function Sidebar() {
 
   const isActive = (href: string) => {
     // Exact match for dashboard home
-    if (href === '/dashboard') {
-      return pathname === '/dashboard'
+    if (href.endsWith('/dashboard')) {
+      return pathname === href
     }
     // For other routes, check if pathname starts with href
     return pathname === href || pathname.startsWith(href + '/')
@@ -56,7 +70,7 @@ export function Sidebar() {
       <button
         onClick={() => setMobileOpen(!isMobileOpen)}
         className="md:hidden fixed bottom-24 right-6 z-50 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors"
-        aria-label="Toggle menu"
+        aria-label={t('toggleMenu')}
       >
         {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
@@ -88,7 +102,7 @@ export function Sidebar() {
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
                 💰
               </div>
-              <span className="font-bold text-gray-900">Finance</span>
+              <span className="font-bold text-gray-900">{t('appName')}</span>
             </div>
           )}
           {isCollapsed && <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm">💰</div>}
@@ -96,8 +110,8 @@ export function Sidebar() {
           <button
             onClick={toggleCollapse}
             className="hidden md:flex p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label="Toggle sidebar"
-            title="Toggle sidebar"
+            aria-label={t('toggleSidebar')}
+            title={t('toggleSidebar')}
           >
             <Menu className="w-5 h-5 text-gray-600" />
           </button>
@@ -151,7 +165,7 @@ export function Sidebar() {
         {/* Footer - Only visible when expanded */}
         {!isCollapsed && (
           <div className="border-t border-gray-200 p-4 text-xs text-gray-500 text-center">
-            <p>v1.0.0</p>
+            <p>{t('version')}</p>
           </div>
         )}
       </aside>

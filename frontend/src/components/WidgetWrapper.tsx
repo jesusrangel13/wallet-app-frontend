@@ -47,8 +47,8 @@ export const WidgetWrapper = ({ widgetId, children }: WidgetWrapperProps) => {
       <div className="absolute top-0 right-0 h-16 flex items-center gap-1 px-6 py-4 z-10 pointer-events-none">
         {/* Widget Controls */}
         <div className="flex items-center gap-1.5 pointer-events-auto">
-          {/* Drag Handle */}
-          <div className="drag-handle cursor-grab active:cursor-grabbing flex items-center justify-center w-8 h-8 rounded hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900">
+          {/* Drag Handle - Hidden on mobile since drag and drop is disabled on small screens */}
+          <div className="drag-handle cursor-grab active:cursor-grabbing hidden md:flex items-center justify-center w-8 h-8 rounded hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900">
             <GripHorizontal className="w-4 h-4" />
           </div>
 

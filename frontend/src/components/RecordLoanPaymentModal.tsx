@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useTranslations } from 'next-intl'
 import { Account, Loan } from '@/types'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
@@ -34,6 +35,8 @@ export default function RecordLoanPaymentModal({
   loan,
   accounts,
 }: RecordLoanPaymentModalProps) {
+  const t = useTranslations('recordPayment')
+  const tCommon = useTranslations('common.actions')
   const [isSaving, setIsSaving] = useState(false)
   const [formattedAmount, setFormattedAmount] = useState('')
 
@@ -133,24 +136,24 @@ export default function RecordLoanPaymentModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Registrar Pago">
+    <Modal isOpen={isOpen} onClose={handleClose} title={t('title')}>
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
         {/* Loan Info */}
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-1">
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Deudor:</span>
+            <span className="text-gray-600">{t('borrower')}:</span>
             <span className="font-medium">{loan.borrowerName}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Monto original:</span>
+            <span className="text-gray-600">{t('originalAmount')}:</span>
             <span className="font-medium">{formatCurrency(loan.originalAmount, loan.currency as Currency)}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Ya pagado:</span>
+            <span className="text-gray-600">{t('paidAmount')}:</span>
             <span className="font-medium text-green-600">{formatCurrency(loan.paidAmount, loan.currency as Currency)}</span>
           </div>
           <div className="flex justify-between text-sm pt-2 border-t border-gray-300">
-            <span className="text-gray-900 font-semibold">Pendiente:</span>
+            <span className="text-gray-900 font-semibold">{t('pendingAmount')}:</span>
             <span className="font-bold text-orange-600">{formatCurrency(pendingAmount, loan.currency as Currency)}</span>
           </div>
         </div>
@@ -158,7 +161,7 @@ export default function RecordLoanPaymentModal({
         {/* Account */}
         <div>
           <label htmlFor="accountId" className="block text-sm font-medium text-gray-700 mb-1">
-            Cuenta donde recibes el pago *
+            {t('accountTo')} *
           </label>
           <select
             id="accountId"
@@ -167,7 +170,7 @@ export default function RecordLoanPaymentModal({
               errors.accountId ? 'border-red-500' : 'border-gray-300'
             }`}
           >
-            <option value="">Selecciona una cuenta</option>
+            <option value="">{t('selectAccount')}</option>
             {accounts
               ?.filter((a) => !a.isArchived && a.currency === loan.currency)
               .map((account) => (
@@ -185,14 +188,14 @@ export default function RecordLoanPaymentModal({
         <div>
           <div className="flex justify-between items-center mb-1">
             <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
-              Monto del pago *
+              {t('paymentAmount')} *
             </label>
             <button
               type="button"
               onClick={setFullAmount}
               className="text-xs text-blue-600 hover:text-blue-700 underline"
             >
-              Pagar todo ({formatCurrency(pendingAmount, loan.currency as Currency)})
+              {t('payAll', { amount: formatCurrency(pendingAmount, loan.currency as Currency) })}
             </button>
           </div>
           <Input
@@ -210,7 +213,7 @@ export default function RecordLoanPaymentModal({
           )}
           {selectedAmount > pendingAmount && (
             <p className="text-red-500 text-xs mt-1">
-              El monto no puede exceder el pendiente de {formatCurrency(pendingAmount, loan.currency as Currency)}
+              {t('paymentExceedsError', { amount: formatCurrency(pendingAmount, loan.currency as Currency) })}
             </p>
           )}
         </div>
@@ -218,7 +221,7 @@ export default function RecordLoanPaymentModal({
         {/* Payment Date */}
         <div>
           <label htmlFor="paymentDate" className="block text-sm font-medium text-gray-700 mb-1">
-            Fecha del pago
+            {t('paymentDate')}
           </label>
           <Input
             id="paymentDate"
@@ -234,13 +237,13 @@ export default function RecordLoanPaymentModal({
         {/* Notes */}
         <div>
           <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
-            Notas
+            {t('notes')}
           </label>
           <textarea
             id="notes"
             {...register('notes')}
             rows={2}
-            placeholder="Detalles adicionales del pago..."
+            placeholder={t('notesPlaceholder')}
             className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
               errors.notes ? 'border-red-500' : 'border-gray-300'
             }`}
@@ -252,11 +255,11 @@ export default function RecordLoanPaymentModal({
 
         {/* Info Box */}
         <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-800">
-          <p className="font-medium mb-1">💡 ¿Qué sucede al registrar el pago?</p>
+          <p className="font-medium mb-1">{t('infoTitle')}</p>
           <ul className="list-disc list-inside space-y-1 text-xs">
-            <li>Se creará una transacción de INGRESO en tu cuenta</li>
-            <li>El dinero entrará a tu cuenta (afectará tu balance)</li>
-            <li>El estado del préstamo se actualizará automáticamente</li>
+            <li>{t('infoPoint1')}</li>
+            <li>{t('infoPoint2')}</li>
+            <li>{t('infoPoint3')}</li>
           </ul>
         </div>
 
@@ -267,10 +270,10 @@ export default function RecordLoanPaymentModal({
             className="flex-1"
             disabled={isSaving || selectedAmount > pendingAmount || selectedAmount <= 0}
           >
-            {isSaving ? 'Registrando...' : 'Registrar Pago'}
+            {isSaving ? t('recording') : t('recordButton')}
           </Button>
           <Button type="button" variant="outline" onClick={handleClose} disabled={isSaving}>
-            Cancelar
+            {tCommon('cancel')}
           </Button>
         </div>
       </form>

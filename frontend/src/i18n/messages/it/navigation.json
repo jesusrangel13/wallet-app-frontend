@@ -1,0 +1,35 @@
+{
+  "appName": "Finance",
+  "toggleMenu": "Alternar menú",
+  "toggleSidebar": "Alternar barra lateral",
+  "items": {
+    "dashboard": {
+      "label": "Dashboard",
+      "description": "Ver resumen financiero"
+    },
+    "accounts": {
+      "label": "Cuentas",
+      "description": "Administrar tus cuentas"
+    },
+    "transactions": {
+      "label": "Transacciones",
+      "description": "Ver transacciones"
+    },
+    "loans": {
+      "label": "Préstamos",
+      "description": "Rastrear préstamos"
+    },
+    "groups": {
+      "label": "Grupos",
+      "description": "Administrar gastos compartidos"
+    },
+    "import": {
+      "label": "Importar",
+      "description": "Importar transacciones"
+    },
+    "settings": {
+      "label": "Configuración",
+      "description": "Administrar preferencias"
+    }
+  }
+}

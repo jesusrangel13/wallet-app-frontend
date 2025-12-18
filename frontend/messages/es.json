@@ -1,0 +1,967 @@
+{
+  "auth": {
+    "login": {
+      "title": "Iniciar Sesión",
+      "subtitle": "¡Bienvenido de nuevo! Por favor inicia sesión para continuar.",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "juan@ejemplo.com",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Ingresa tu contraseña",
+      "signInButton": "Iniciar Sesión",
+      "noAccount": "¿No tienes una cuenta?",
+      "signUpLink": "Regístrate",
+      "success": "¡Inicio de sesión exitoso!",
+      "error": "Error al iniciar sesión"
+    },
+    "register": {
+      "title": "Crear Cuenta",
+      "subtitle": "Regístrate para comenzar a administrar tus finanzas.",
+      "fullName": "Nombre Completo",
+      "namePlaceholder": "Juan Pérez",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "juan@ejemplo.com",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Crea una contraseña",
+      "confirmPassword": "Confirmar Contraseña",
+      "confirmPasswordPlaceholder": "Confirma tu contraseña",
+      "createAccountButton": "Crear Cuenta",
+      "hasAccount": "¿Ya tienes una cuenta?",
+      "signInLink": "Inicia sesión",
+      "success": "¡Cuenta creada exitosamente!",
+      "error": "Error al registrarse"
+    },
+    "validation": {
+      "emailInvalid": "Correo electrónico inválido",
+      "passwordRequired": "La contraseña es requerida",
+      "nameMinLength": "El nombre debe tener al menos 2 caracteres",
+      "passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
+      "passwordMismatch": "Las contraseñas no coinciden"
+    }
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "dashboardDescription": "Ver resumen financiero",
+    "accounts": "Cuentas",
+    "accountsDescription": "Administrar tus cuentas",
+    "transactions": "Transacciones",
+    "transactionsDescription": "Ver transacciones",
+    "loans": "Préstamos",
+    "loansDescription": "Rastrear préstamos",
+    "groups": "Grupos",
+    "groupsDescription": "Administrar gastos compartidos",
+    "import": "Importar",
+    "importDescription": "Importar transacciones",
+    "settings": "Configuración",
+    "settingsDescription": "Administrar preferencias",
+    "toggleSidebar": "Alternar barra lateral",
+    "toggleMenu": "Alternar menú",
+    "appName": "Finanzas",
+    "version": "v1.0.0"
+  },
+  "errors": {
+    "api": {
+      "AUTH_USER_EXISTS": "Ya existe un usuario con este correo electrónico",
+      "AUTH_INVALID_CREDENTIALS": "Correo electrónico o contraseña inválidos",
+      "AUTH_USER_NOT_FOUND": "Usuario no encontrado",
+      "AUTH_NO_TOKEN": "Falta el token de autenticación",
+      "AUTH_INVALID_TOKEN": "Token de autenticación inválido",
+      "AUTH_TOKEN_EXPIRED": "Tu sesión ha expirado. Por favor inicia sesión nuevamente",
+      "AUTH_WEAK_PASSWORD": "La contraseña es muy débil. Por favor usa una contraseña más fuerte",
+      "AUTH_EMAIL_REQUIRED": "El correo electrónico es requerido",
+      "AUTH_PASSWORD_REQUIRED": "La contraseña es requerida",
+      "ACCOUNT_NOT_FOUND": "Cuenta no encontrada",
+      "ACCOUNT_INSUFFICIENT_BALANCE": "Saldo insuficiente en la cuenta",
+      "ACCOUNT_ARCHIVED": "Esta cuenta está archivada",
+      "ACCOUNT_ALREADY_EXISTS": "Ya existe una cuenta con este nombre",
+      "ACCOUNT_INVALID_TYPE": "Tipo de cuenta inválido",
+      "ACCOUNT_DELETE_DEFAULT": "No se puede eliminar la cuenta predeterminada",
+      "TRANSACTION_NOT_FOUND": "Transacción no encontrada",
+      "TRANSACTION_INVALID_ACCOUNT": "Cuenta inválida para esta transacción",
+      "TRANSACTION_INVALID_AMOUNT": "Monto de transacción inválido",
+      "TRANSACTION_INVALID_TYPE": "Tipo de transacción inválido",
+      "TRANSACTION_INVALID_DATE": "Fecha de transacción inválida",
+      "TRANSACTION_SAME_ACCOUNT_TRANSFER": "No se puede transferir a la misma cuenta",
+      "CATEGORY_NOT_FOUND": "Categoría no encontrada",
+      "CATEGORY_ALREADY_EXISTS": "Ya existe una categoría con este nombre",
+      "CATEGORY_SYSTEM_CANNOT_DELETE": "No se pueden eliminar categorías del sistema",
+      "CATEGORY_IN_USE": "Esta categoría está siendo utilizada y no se puede eliminar",
+      "GROUP_NOT_FOUND": "Grupo no encontrado",
+      "GROUP_UNAUTHORIZED": "No tienes permiso para acceder a este grupo",
+      "GROUP_ALREADY_MEMBER": "El usuario ya es miembro de este grupo",
+      "GROUP_NOT_MEMBER": "El usuario no es miembro de este grupo",
+      "GROUP_CREATOR_CANNOT_LEAVE": "El creador del grupo no puede abandonarlo",
+      "GROUP_INVALID_SPLIT_TYPE": "Tipo de división de gasto inválido",
+      "GROUP_SPLIT_TOTAL_INVALID": "Los montos divididos no coinciden con el total",
+      "SHARED_EXPENSE_NOT_FOUND": "Gasto compartido no encontrado",
+      "SHARED_EXPENSE_UNAUTHORIZED": "No tienes permiso para acceder a este gasto",
+      "SHARED_EXPENSE_INVALID_PARTICIPANTS": "Participantes inválidos para este gasto",
+      "SHARED_EXPENSE_ALREADY_PAID": "Este gasto ya ha sido pagado",
+      "SHARED_EXPENSE_NOT_MEMBER": "No eres miembro de este gasto",
+      "SHARED_EXPENSE_PARTICIPANTS_NOT_MEMBERS": "Algunos participantes no son miembros del grupo",
+      "SHARED_EXPENSE_PERCENTAGE_INVALID": "Los porcentajes de división deben sumar 100%",
+      "SHARED_EXPENSE_EXACT_AMOUNT_INVALID": "Los montos divididos no coinciden con el total del gasto",
+      "SHARED_EXPENSE_ONLY_PAYER_CAN_UPDATE": "Solo el pagador puede actualizar este gasto",
+      "SHARED_EXPENSE_ONLY_PAYER_CAN_DELETE": "Solo el pagador puede eliminar este gasto",
+      "SHARED_EXPENSE_PARTICIPANT_NOT_FOUND": "Participante no encontrado",
+      "SHARED_EXPENSE_INVALID_PAYMENT_PERMISSION": "Permiso de pago inválido",
+      "SHARED_EXPENSE_ONLY_PAYER_CAN_UNDO": "Solo el pagador puede deshacer este pago",
+      "SHARED_EXPENSE_NO_BALANCE": "No hay saldo para saldar",
+      "SHARED_EXPENSE_USERS_NOT_IN_GROUP": "Algunos usuarios no son miembros de este grupo",
+      "LOAN_NOT_FOUND": "Préstamo no encontrado",
+      "LOAN_UNAUTHORIZED": "No tienes permiso para acceder a este préstamo",
+      "LOAN_ALREADY_PAID": "Este préstamo ya ha sido pagado",
+      "LOAN_INVALID_AMOUNT": "Monto de préstamo inválido",
+      "LOAN_PAYMENT_EXCEEDS_REMAINING": "El monto del pago excede el saldo restante",
+      "BUDGET_NOT_FOUND": "Presupuesto no encontrado",
+      "BUDGET_ALREADY_EXISTS": "Ya existe un presupuesto para este período",
+      "BUDGET_INVALID_PERIOD": "Período de presupuesto inválido",
+      "TAG_NOT_FOUND": "Etiqueta no encontrada",
+      "TAG_ALREADY_EXISTS": "Ya existe una etiqueta con este nombre",
+      "TAG_IN_USE": "Esta etiqueta está siendo utilizada y no se puede eliminar",
+      "IMPORT_NOT_FOUND": "Importación no encontrada",
+      "IMPORT_INVALID_FILE": "Formato de archivo inválido",
+      "IMPORT_INVALID_FORMAT": "Formato de archivo no reconocido",
+      "IMPORT_FILE_TOO_LARGE": "El tamaño del archivo excede el límite máximo",
+      "IMPORT_PROCESSING": "La importación se está procesando actualmente",
+      "NOTIFICATION_NOT_FOUND": "Notificación no encontrada",
+      "NOTIFICATION_UNAUTHORIZED": "No tienes permiso para acceder a esta notificación",
+      "DATABASE_ERROR": "Ocurrió un error de base de datos",
+      "INTERNAL_SERVER_ERROR": "Ocurrió un error interno del servidor",
+      "UNAUTHORIZED": "No estás autorizado para realizar esta acción",
+      "FORBIDDEN": "Acceso prohibido",
+      "VALIDATION_ERROR": "Ocurrió un error de validación",
+      "NOT_FOUND": "Recurso no encontrado",
+      "BAD_REQUEST": "Solicitud inválida"
+    },
+    "generic": {
+      "UNKNOWN_ERROR": "Ocurrió un error inesperado",
+      "NETWORK_ERROR": "Error de conexión de red. Por favor verifica tu conexión a internet",
+      "TIMEOUT_ERROR": "Se agotó el tiempo de espera. Por favor intenta de nuevo"
+    },
+    "rateLimiting": {
+      "title": "Demasiadas solicitudes",
+      "description": "Has realizado demasiadas solicitudes. Por favor espera un momento antes de intentar de nuevo"
+    },
+    "fallback": "Ocurrió un error. Por favor intenta de nuevo"
+  },
+  "common": {
+    "app": {
+      "title": "App de Finanzas",
+      "description": "Gestiona tus finanzas personales, rastrea gastos y alcanza tus metas financieras"
+    },
+    "actions": {
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "delete": "Eliminar",
+      "edit": "Editar",
+      "create": "Crear",
+      "update": "Actualizar",
+      "close": "Cerrar",
+      "confirm": "Confirmar",
+      "back": "Atrás",
+      "next": "Siguiente",
+      "loading": "Cargando...",
+      "saving": "Guardando...",
+      "add": "Agregar",
+      "remove": "Remover",
+      "search": "Buscar",
+      "filter": "Filtrar",
+      "export": "Exportar",
+      "import": "Importar",
+      "refresh": "Actualizar",
+      "select": "Seleccionar",
+      "viewDetails": "Ver Detalles",
+      "clear": "Limpiar"
+    },
+    "time": {
+      "today": "Hoy",
+      "yesterday": "Ayer",
+      "thisWeek": "Esta Semana",
+      "thisMonth": "Este Mes",
+      "lastMonth": "Mes Pasado",
+      "thisYear": "Este Año",
+      "custom": "Personalizado",
+      "month": "Mes",
+      "year": "Año"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "pending": "Pendiente",
+      "completed": "Completado",
+      "failed": "Fallido",
+      "archived": "Archivado"
+    },
+    "empty": {
+      "noData": "No hay datos disponibles",
+      "noResults": "No se encontraron resultados",
+      "noItems": "No hay elementos aún"
+    },
+    "messages": {
+      "success": "¡Éxito!",
+      "error": "Error",
+      "warning": "Advertencia",
+      "info": "Información"
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "subtitle": "¡Bienvenido de nuevo! Aquí está tu resumen financiero.",
+    "loadingPreferences": "Error al cargar preferencias del panel",
+    "noWidgets": "No hay widgets en tu panel",
+    "addWidget": "Agregar Widget"
+  },
+  "widgets": {
+    "totalBalance": {
+      "name": "Saldo Total",
+      "description": "Tu saldo total en todas las monedas",
+      "label": "Saldo Total"
+    },
+    "monthlyIncome": {
+      "name": "Ingresos Mensuales",
+      "description": "Tus ingresos de este mes",
+      "label": "Ingresos Mensuales",
+      "thisMonth": "Este mes"
+    },
+    "monthlyExpenses": {
+      "name": "Gastos Mensuales",
+      "description": "Tus gastos de este mes",
+      "label": "Gastos Mensuales",
+      "thisMonth": "Este mes"
+    },
+    "personalExpenses": {
+      "name": "Gastos Personales",
+      "description": "Gastos personales excluyendo compartidos y transferencias",
+      "label": "Gastos Personales",
+      "thisMonth": "Este mes"
+    },
+    "sharedExpenses": {
+      "name": "Gastos Compartidos",
+      "description": "Tu parte de gastos compartidos del grupo",
+      "label": "Gastos Compartidos",
+      "thisMonth": "Este mes"
+    },
+    "savings": {
+      "name": "Ahorros",
+      "description": "Ahorros mensuales (ingresos - gastos)",
+      "label": "Ahorros",
+      "thisMonth": "Este mes",
+      "savingsRate": "tasa de ahorro"
+    },
+    "groups": {
+      "name": "Grupos",
+      "description": "Número de grupos y cuentas",
+      "label": "Grupos",
+      "groupsCount": "grupos",
+      "membersCount": "miembros"
+    },
+    "loans": {
+      "name": "Préstamos",
+      "description": "Resumen de préstamos activos",
+      "label": "Préstamos",
+      "active": "Activos",
+      "paid": "Pagados",
+      "totalAmount": "Monto Total",
+      "remaining": "Restante",
+      "viewAll": "Ver Todos los Préstamos",
+      "noLoansYet": "No hay préstamos registrados aún",
+      "createLoan": "Crear préstamo",
+      "errorLoading": "No se pudo cargar la información",
+      "pendingToCollect": "Pendiente por cobrar",
+      "activeLoans": "Préstamos activos",
+      "totalLent": "Total prestado",
+      "recovered": "Recuperado",
+      "viewAllLink": "Ver todos"
+    },
+    "quickActions": {
+      "name": "Acciones Rápidas",
+      "description": "Acceso rápido a funciones principales",
+      "newTransaction": "Nueva Transacción",
+      "newAccount": "Nueva Cuenta",
+      "newLoan": "Nuevo Préstamo",
+      "importTransactions": "Importar Transacciones"
+    },
+    "balances": {
+      "name": "Mis Saldos",
+      "description": "Saldos de grupo con seguimiento de pagos",
+      "youOwe": "Debes",
+      "owesYou": "te debe",
+      "settled": "Saldado",
+      "settle": "Saldar"
+    },
+    "cashFlow": {
+      "name": "Flujo de Caja",
+      "description": "Tendencia de ingresos vs gastos (últimos 6 meses)",
+      "income": "Ingresos",
+      "expenses": "Gastos",
+      "averageIncome": "Ingreso Promedio",
+      "averageExpense": "Gasto Promedio",
+      "netBalance": "Balance Neto",
+      "noDataAvailable": "No hay datos disponibles"
+    },
+    "expensesByCategory": {
+      "name": "Gastos por Categoría",
+      "description": "Distribución de gastos por categoría",
+      "noExpensesThisMonth": "No hay gastos este mes"
+    },
+    "expensesByParentCategory": {
+      "name": "Gastos por Categoría",
+      "description": "Distribución de gastos por categoría padre",
+      "label": "Gastos por Categoría",
+      "amount": "Monto",
+      "category": "Categoría",
+      "noExpensesThisMonth": "No hay gastos este mes"
+    },
+    "expenseDetailsPie": {
+      "name": "Detalle de Gastos",
+      "description": "Desglose detallado de gastos con leyenda",
+      "label": "Detalle de Gastos",
+      "thisMonth": "Este mes",
+      "noExpensesThisMonth": "No hay gastos este mes"
+    },
+    "balanceTrend": {
+      "name": "Tendencia de Saldo",
+      "description": "Tu saldo durante los últimos 30 días",
+      "last30Days": "Últimos 30 días",
+      "label": "Tendencia de Saldo",
+      "currentBalance": "Saldo Actual",
+      "sinceStart": "desde el inicio",
+      "initial": "Inicial",
+      "change": "Cambio",
+      "noBalanceHistory": "No hay historial de saldo disponible"
+    },
+    "groupBalances": {
+      "name": "Saldos de Grupo",
+      "description": "Personas que te deben dinero",
+      "owesYou": "te debe",
+      "label": "Mis Saldos",
+      "person": "persona",
+      "people": "personas",
+      "noSharedExpenses": "No hay gastos compartidos aún. ¡Crea un grupo para comenzar a rastrear!"
+    },
+    "accountBalances": {
+      "name": "Saldos de Cuentas",
+      "description": "Tus cuentas y tarjetas",
+      "accounts": "Cuentas",
+      "viewAll": "Ver Todas",
+      "spent": "Gastado",
+      "available": "Disponible",
+      "balance": "Saldo",
+      "addAccount": "Agregar Cuenta",
+      "noAccountsYet": "No hay cuentas aún. ¡Agrega tu primera cuenta!",
+      "addAccountButton": "Agregar Cuenta"
+    },
+    "recentTransactions": {
+      "name": "Transacciones Recientes",
+      "description": "Tus transacciones más recientes",
+      "noTransactions": "No hay transacciones aún",
+      "viewAll": "Ver Todas",
+      "label": "Transacciones Recientes",
+      "noRecentTransactions": "No hay transacciones recientes. ¡Agrega tu primera transacción para comenzar!",
+      "viewMoreTransactions": "Ver más transacciones"
+    },
+    "expensesByTag": {
+      "name": "Gastos por Etiqueta",
+      "description": "Distribución de gastos entre tus etiquetas personalizadas",
+      "label": "Gastos por Etiqueta",
+      "noTaggedExpenses": "No hay gastos etiquetados este mes",
+      "addTagsHint": "Agrega etiquetas a tus transacciones para ver estos datos"
+    },
+    "topTags": {
+      "name": "Etiquetas Principales",
+      "description": "Tus etiquetas más utilizadas con estadísticas",
+      "transactions": "transacciones",
+      "label": "Etiquetas Principales",
+      "transaction": "transacción",
+      "avg": "Prom",
+      "total": "Total",
+      "noTaggedTransactions": "No hay transacciones etiquetadas",
+      "addTagsHint": "Comienza a agregar etiquetas a tus transacciones para ver tus etiquetas más usadas aquí"
+    },
+    "tagTrend": {
+      "name": "Tendencia de Etiquetas",
+      "description": "Tendencias de gasto para tus etiquetas a lo largo del tiempo",
+      "label": "Tendencia de Etiquetas",
+      "lastMonths": "Últimos {months} Meses",
+      "noTagData": "No hay datos de etiquetas disponibles",
+      "selectedTagsNoHistory": "Las etiquetas seleccionadas no tienen historial de transacciones",
+      "addTagsForTrends": "Agrega etiquetas a tus transacciones para ver tendencias a lo largo del tiempo"
+    }
+  },
+  "transactions": {
+    "title": "Transacciones",
+    "subtitle": "Ver y administrar todas tus transacciones",
+    "new": "Nueva Transacción",
+    "edit": "Editar Transacción",
+    "delete": "Eliminar Transacción",
+    "deleteConfirm": "¿Estás seguro de que deseas eliminar esta transacción?",
+    "types": {
+      "expense": "Gasto",
+      "income": "Ingreso",
+      "transfer": "Transferencia"
+    },
+    "fields": {
+      "type": "Tipo",
+      "account": "Cuenta",
+      "toAccount": "A Cuenta",
+      "amount": "Monto",
+      "category": "Categoría",
+      "description": "Descripción",
+      "date": "Fecha",
+      "dateTime": "Fecha y Hora",
+      "payee": "Beneficiario",
+      "payer": "Pagador",
+      "tags": "Etiquetas",
+      "notes": "Notas"
+    },
+    "placeholders": {
+      "selectAccount": "Selecciona cuenta...",
+      "selectDestination": "Selecciona cuenta de destino...",
+      "amount": "0.00",
+      "description": "Agrega detalles sobre esta transacción...",
+      "payee": "ej., McDonald's, Uber, Enel",
+      "selectDate": "Selecciona fecha...",
+      "selectDateTime": "Selecciona fecha y hora...",
+      "notes": "Agrega notas adicionales"
+    },
+    "validation": {
+      "amountPositive": "El monto debe ser positivo",
+      "destinationRequired": "La cuenta de destino es requerida para transferencias",
+      "sameAccountTransfer": "No se puede transferir a la misma cuenta"
+    },
+    "success": {
+      "created": "Transacción creada exitosamente",
+      "updated": "Transacción actualizada exitosamente",
+      "deleted": "Transacción eliminada exitosamente"
+    }
+  },
+  "accounts": {
+    "title": "Cuentas",
+    "subtitle": "Administra tus cuentas y tarjetas",
+    "new": "Nueva Cuenta",
+    "edit": "Editar Cuenta",
+    "delete": "Eliminar Cuenta",
+    "deleteConfirm": "¿Estás seguro de que deseas eliminar esta cuenta?",
+    "viewTransactions": "Ver Transacciones",
+    "balance": "Saldo",
+    "currency": "Moneda",
+    "type": "Tipo",
+    "name": "Nombre",
+    "types": {
+      "CASH": "Efectivo",
+      "DEBIT_CARD": "Tarjeta de Débito",
+      "CREDIT_CARD": "Tarjeta de Crédito",
+      "SAVINGS": "Ahorros",
+      "INVESTMENT": "Inversión"
+    },
+    "placeholders": {
+      "name": "Nombre de la cuenta",
+      "initialBalance": "Saldo inicial"
+    },
+    "success": {
+      "created": "Cuenta creada exitosamente",
+      "updated": "Cuenta actualizada exitosamente",
+      "deleted": "Cuenta eliminada exitosamente"
+    }
+  },
+  "loans": {
+    "title": "Préstamos",
+    "subtitle": "Rastrea tus préstamos y deudas",
+    "new": "Nuevo Préstamo",
+    "edit": "Editar Préstamo",
+    "delete": "Eliminar Préstamo",
+    "recordPayment": "Registrar Pago",
+    "markAsPaid": "Marcar como Pagado",
+    "viewDetails": "Ver Detalles",
+    "fields": {
+      "type": "Tipo",
+      "borrower": "Prestatario",
+      "lender": "Prestamista",
+      "amount": "Monto",
+      "date": "Fecha",
+      "dueDate": "Fecha de Vencimiento",
+      "description": "Descripción",
+      "status": "Estado",
+      "remaining": "Restante"
+    },
+    "types": {
+      "LENT": "Prestado (Tú prestaste dinero)",
+      "BORROWED": "Prestado (Tú pediste prestado)"
+    },
+    "status": {
+      "active": "Activo",
+      "paid": "Pagado",
+      "overdue": "Vencido"
+    },
+    "placeholders": {
+      "borrower": "Persona que pide prestado",
+      "lender": "Persona que presta",
+      "amount": "Monto del préstamo",
+      "description": "Detalles del préstamo..."
+    },
+    "success": {
+      "created": "Préstamo creado exitosamente",
+      "updated": "Préstamo actualizado exitosamente",
+      "deleted": "Préstamo eliminado exitosamente",
+      "paymentRecorded": "Pago registrado exitosamente"
+    }
+  },
+  "groups": {
+    "title": "Grupos",
+    "subtitle": "Administra gastos compartidos con grupos",
+    "new": "Nuevo Grupo",
+    "edit": "Editar Grupo",
+    "delete": "Eliminar Grupo",
+    "viewDetails": "Ver Detalles",
+    "addMember": "Agregar Miembro",
+    "removeMember": "Remover Miembro",
+    "settleBalance": "Saldar Saldo",
+    "fields": {
+      "name": "Nombre",
+      "description": "Descripción",
+      "members": "Miembros",
+      "balance": "Saldo"
+    },
+    "placeholders": {
+      "name": "Nombre del grupo",
+      "description": "Descripción del grupo..."
+    },
+    "success": {
+      "created": "Grupo creado exitosamente",
+      "updated": "Grupo actualizado exitosamente",
+      "deleted": "Grupo eliminado exitosamente",
+      "memberAdded": "Miembro agregado exitosamente",
+      "memberRemoved": "Miembro removido exitosamente",
+      "balanceSettled": "Saldo saldado exitosamente"
+    }
+  },
+  "forms": {
+    "required": "Requerido",
+    "optional": "Opcional",
+    "validation": {
+      "required": "Este campo es requerido",
+      "invalid": "Valor inválido",
+      "minLength": "Debe tener al menos {min} caracteres",
+      "maxLength": "Debe tener como máximo {max} caracteres",
+      "min": "Debe ser al menos {min}",
+      "max": "Debe ser como máximo {max}",
+      "email": "Correo electrónico inválido",
+      "url": "URL inválida",
+      "number": "Debe ser un número",
+      "positive": "Debe ser positivo",
+      "integer": "Debe ser un número entero"
+    }
+  },
+  "settings": {
+    "title": "Configuración",
+    "description": "Gestiona tu cuenta y preferencias",
+    "subtitle": "Administra tus preferencias",
+    "tabs": {
+      "general": "Perfil",
+      "categories": "Categorías",
+      "tags": "Etiquetas"
+    },
+    "profile": {
+      "title": "Información del Perfil",
+      "subtitle": "Actualiza tu información personal y preferencias",
+      "fields": {
+        "name": "Nombre Completo",
+        "email": "Correo Electrónico",
+        "emailHelper": "Contacta soporte para cambiar tu correo",
+        "currency": "Moneda Predeterminada",
+        "currencyHelper": "Se usará como predeterminada para nuevas cuentas",
+        "country": "País",
+        "defaultAccount": "Cuenta Predeterminada para Gastos Compartidos",
+        "defaultAccountHelper": "Esta cuenta será preseleccionada al saldar saldos de gastos compartidos"
+      },
+      "placeholders": {
+        "name": "Juan Pérez",
+        "country": "ej., Chile"
+      },
+      "currencies": {
+        "CLP": "$ CLP - Peso Chileno",
+        "USD": "US$ USD - Dólar Estadounidense",
+        "EUR": "€ EUR - Euro"
+      },
+      "defaultAccountOptions": {
+        "none": "Sin cuenta predeterminada (seleccionar cada vez)"
+      }
+    },
+    "language": {
+      "label": "Idioma",
+      "helperText": "Selecciona tu idioma preferido para la aplicación",
+      "options": {
+        "en": "English (Inglés)",
+        "es": "Español"
+      }
+    },
+    "accountDetails": {
+      "title": "Detalles de la Cuenta",
+      "userId": "ID de Usuario",
+      "userIdHelper": "Tu identificador único",
+      "email": "Correo",
+      "emailHelper": "Tu correo de inicio de sesión",
+      "currency": "Moneda",
+      "currencyHelper": "Configuración de moneda predeterminada"
+    },
+    "actions": {
+      "save": "Guardar Cambios",
+      "reset": "Restablecer",
+      "saving": "Guardando..."
+    },
+    "validation": {
+      "nameRequired": "El nombre es requerido"
+    },
+    "success": {
+      "updated": "Configuración actualizada exitosamente",
+      "profileUpdated": "Perfil actualizado exitosamente",
+      "languageChanged": "Idioma cambiado exitosamente"
+    },
+    "tagsPage": {
+      "title": "Tus Etiquetas",
+      "description": "Organiza y etiqueta tus transacciones con etiquetas personalizadas",
+      "newTag": "Nueva Etiqueta",
+      "editTag": "Editar Etiqueta",
+      "editButton": "Editar",
+      "deleteButton": "Eliminar",
+      "editTagTitle": "Editar etiqueta",
+      "deleteTagTitle": "Eliminar etiqueta",
+      "noTags": "Aún no hay etiquetas",
+      "noTagsDescription": "Crea tu primera etiqueta para organizar y categorizar mejor tus transacciones",
+      "createFirstTag": "Crear Tu Primera Etiqueta",
+      "modalTitle": {
+        "create": "Nueva Etiqueta",
+        "edit": "Editar Etiqueta"
+      },
+      "form": {
+        "tagName": "Nombre de la Etiqueta",
+        "tagNamePlaceholder": "ej., Negocios, Personal, Urgente",
+        "color": "Color",
+        "updateTag": "Actualizar Etiqueta",
+        "createTag": "Crear Etiqueta",
+        "cancel": "Cancelar"
+      },
+      "validation": {
+        "nameRequired": "El nombre de la etiqueta es requerido"
+      },
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar \"{name}\"?",
+      "success": {
+        "created": "Etiqueta creada exitosamente",
+        "updated": "Etiqueta actualizada exitosamente",
+        "deleted": "Etiqueta eliminada exitosamente"
+      },
+      "errors": {
+        "loadFailed": "Error al cargar las etiquetas",
+        "saveFailed": "Error al guardar la etiqueta",
+        "deleteFailed": "Error al eliminar la etiqueta"
+      }
+    },
+    "categoriesPage": {
+      "title": "Mis Categorías",
+      "description": "Crea y personaliza tus categorías de gastos e ingresos",
+      "types": {
+        "expense": "💸 Gastos",
+        "income": "💰 Ingresos"
+      },
+      "newCategory": "Nueva Categoría",
+      "editCategory": "Editar Categoría",
+      "deleteCategory": "Eliminar Categoría",
+      "showSubcategory": "Mostrar subcategoría",
+      "hideSubcategory": "Ocultar subcategoría",
+      "show": "Mostrar",
+      "hide": "Ocultar",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "noCategories": "Aún no hay categorías",
+      "noCategoriesDescription": "Crea tu primera categoría para empezar a organizar tus transacciones",
+      "createFirstCategory": "Crear Tu Primera Categoría",
+      "modalTitle": {
+        "create": "Nueva Categoría",
+        "edit": "Editar Categoría"
+      },
+      "form": {
+        "categoryName": "Nombre de la Categoría",
+        "categoryNamePlaceholder": "Ej: Cine, Supermercado, etc.",
+        "categoryNameSubPlaceholder": "Ej: Subcategoría específica",
+        "parentCategory": "Categoría Padre (Opcional)",
+        "parentCategoryPlaceholder": "Selecciona una categoría padre",
+        "noParentCategory": "Ninguna (Categoría principal)",
+        "icon": "Icono (Opcional)",
+        "iconPlaceholder": "Ej: 🍕, 🚗, 💡",
+        "color": "Color",
+        "update": "Actualizar",
+        "create": "Crear",
+        "cancel": "Cancelar"
+      },
+      "validation": {
+        "nameRequired": "El nombre de la categoría es requerido"
+      },
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar la categoría \"{name}\"?",
+      "deleteWithSubcategoriesConfirm": "Esta categoría tiene {count} subcategorías. ¿Estás seguro de que quieres eliminarla?",
+      "success": {
+        "created": "Categoría creada exitosamente",
+        "updated": "Categoría actualizada exitosamente",
+        "deleted": "Categoría eliminada exitosamente"
+      },
+      "errors": {
+        "loadFailed": "Error al cargar las categorías",
+        "saveFailed": "Error al guardar la categoría",
+        "deleteFailed": "Error al eliminar la categoría"
+      }
+    }
+  },
+  "deleteAccount": {
+    "title": "Eliminar Cuenta",
+    "warning": "Advertencia",
+    "warningMessage": "Estás a punto de eliminar la cuenta",
+    "transactionCount": "Esta cuenta tiene {count} transacción asociada.|Esta cuenta tiene {count} transacciones asociadas.",
+    "whatToDo": "¿Qué te gustaría hacer con las transacciones?",
+    "transferOption": "Transferir transacciones a otra cuenta",
+    "transferDescription": "Todas las transacciones se moverán a la cuenta seleccionada",
+    "selectAccount": "Selecciona una cuenta...",
+    "deleteOption": "Eliminar todas las transacciones",
+    "deleteWarning": "Esta acción no se puede deshacer. La {count} transacción será eliminada permanentemente.|Esta acción no se puede deshacer. Las {count} transacciones serán eliminadas permanentemente.",
+    "deleting": "Eliminando...",
+    "deleteAccountOnly": "Eliminar Cuenta",
+    "deleteAccountAndTransactions": "Eliminar Cuenta y Transacciones"
+  },
+  "createLoan": {
+    "title": "Crear Préstamo",
+    "borrowerName": "Nombre del deudor",
+    "borrowerPlaceholder": "Juan Pérez",
+    "accountFrom": "Cuenta desde la que prestas",
+    "selectAccount": "Selecciona una cuenta",
+    "noAccountsAvailable": "No hay cuentas disponibles",
+    "amount": "Monto",
+    "loanDate": "Fecha del préstamo",
+    "notes": "Notas",
+    "notesPlaceholder": "Detalles adicionales del préstamo...",
+    "infoTitle": "💡 ¿Qué sucede al crear un préstamo?",
+    "infoPoint1": "Se creará una transacción de GASTO en tu cuenta",
+    "infoPoint2": "El dinero saldrá de tu cuenta (afectará tu balance)",
+    "infoPoint3": "Podrás registrar pagos parciales o completos más adelante",
+    "creating": "Creando...",
+    "createButton": "Crear Préstamo"
+  },
+  "recordPayment": {
+    "title": "Registrar Pago",
+    "borrower": "Deudor",
+    "originalAmount": "Monto original",
+    "paidAmount": "Ya pagado",
+    "pendingAmount": "Pendiente",
+    "accountTo": "Cuenta donde recibes el pago",
+    "paymentAmount": "Monto del pago",
+    "payAll": "Pagar todo ({amount})",
+    "paymentExceedsError": "El monto no puede exceder el pendiente de {amount}",
+    "paymentDate": "Fecha del pago",
+    "infoTitle": "💡 ¿Qué sucede al registrar el pago?",
+    "infoPoint1": "Se creará una transacción de INGRESO en tu cuenta",
+    "infoPoint2": "El dinero entrará a tu cuenta (afectará tu balance)",
+    "infoPoint3": "El estado del préstamo se actualizará automáticamente",
+    "recording": "Registrando...",
+    "recordButton": "Registrar Pago"
+  },
+  "filters": {
+    "searchPlaceholder": "Buscar por descripción, beneficiario o monto...",
+    "allTypes": "Todos los Tipos",
+    "expenses": "Gastos",
+    "income": "Ingresos",
+    "transfers": "Transferencias",
+    "newestFirst": "Más Recientes",
+    "oldestFirst": "Más Antiguos",
+    "highestAmount": "Mayor Monto",
+    "lowestAmount": "Menor Monto",
+    "payeeAZ": "Beneficiario A-Z",
+    "payeeZA": "Beneficiario Z-A",
+    "advancedFilters": "Filtros Avanzados",
+    "clearAll": "Limpiar todo",
+    "account": "Cuenta",
+    "allAccounts": "Todas las Cuentas",
+    "category": "Categoría",
+    "allCategories": "Todas las Categorías",
+    "categoryAll": "(Todas)",
+    "startDate": "Fecha Inicio",
+    "endDate": "Fecha Fin",
+    "minAmount": "Monto Mínimo",
+    "maxAmount": "Monto Máximo"
+  },
+  "pagination": {
+    "show": "Mostrar:",
+    "perPage": "por página",
+    "showing": "Mostrando {start}-{end} de {total} transacciones",
+    "firstPage": "Primera página",
+    "previousPage": "Página anterior",
+    "nextPage": "Página siguiente",
+    "lastPage": "Última página",
+    "pageOf": "Página {current} de {total}"
+  },
+  "sharedExpense": {
+    "addButton": "Agregar como Gasto Compartido",
+    "title": "Gasto Compartido",
+    "remove": "Remover",
+    "hint": "Para una mejor experiencia, <strong>selecciona un grupo primero</strong> para cargar los valores predeterminados de división, luego ingresa el monto para calcular automáticamente.",
+    "groupLabel": "Grupo",
+    "selectGroup": "Selecciona un grupo...",
+    "groupMembers": "{count} miembros",
+    "noAmountYet": "Ahora <strong>ingresa el monto arriba</strong> para ver las divisiones calculadas automáticamente basadas en los valores predeterminados del grupo.",
+    "calculationComplete": "✓ División calculada para {amount} basada en valores predeterminados del grupo",
+    "paidBy": "Pagado Por",
+    "selectWhoPaid": "Selecciona quién pagó...",
+    "splitType": "Tipo de División",
+    "usingGroupDefaults": "Usando valores predeterminados del grupo",
+    "splitTypes": {
+      "equal": "División Igual",
+      "equalDescription": "Dividir igualmente entre todos los participantes",
+      "percentage": "Porcentaje",
+      "percentageDescription": "Cada persona paga un porcentaje",
+      "exact": "Montos Exactos",
+      "exactDescription": "Especificar monto exacto para cada persona",
+      "shares": "Por Partes",
+      "sharesDescription": "Dividir por partes (ej., 1 parte, 2 partes)"
+    },
+    "splitBetween": "Dividir Entre ({count} personas)",
+    "shares": "partes",
+    "totalPercentage": "Porcentaje Total:",
+    "totalSplit": "División Total:",
+    "splitMismatch": "¡La división total no coincide con el monto de la transacción!"
+  },
+  "loading": {
+    "default": "Cargando...",
+    "saving": "Guardando...",
+    "updating": "Actualizando...",
+    "deleting": "Eliminando...",
+    "processing": "Procesando...",
+    "creating": "Creando...",
+    "dashboard": "Cargando panel...",
+    "transactions": "Cargando transacciones...",
+    "accounts": "Cargando cuentas...",
+    "groups": "Cargando grupos...",
+    "categories": "Cargando categorías...",
+    "tags": "Cargando etiquetas...",
+    "profile": "Cargando perfil...",
+    "imports": "Cargando historial..."
+  },
+  "categories": {
+    "expense": {
+      "foodAndDrinks": {
+        "name": "Comida y Bebidas",
+        "restaurant": "Restaurante",
+        "delivery": "Delivery",
+        "bar": "Bar",
+        "cafe": "Cafetería",
+        "supermarket": "Supermercado"
+      },
+      "transport": {
+        "name": "Transporte",
+        "taxi": "Taxi/Uber",
+        "fuel": "Combustible",
+        "public": "Transporte Público",
+        "parking": "Estacionamiento",
+        "maintenance": "Mantenimiento Vehículo"
+      },
+      "shopping": {
+        "name": "Compras",
+        "clothing": "Ropa",
+        "electronics": "Electrónica",
+        "home": "Hogar",
+        "books": "Libros",
+        "other": "Otros"
+      },
+      "entertainment": {
+        "name": "Entretenimiento",
+        "cinema": "Cine",
+        "videogames": "Videojuegos",
+        "streaming": "Streaming",
+        "events": "Eventos",
+        "hobbies": "Hobbies"
+      },
+      "services": {
+        "name": "Servicios",
+        "internet": "Internet",
+        "electricity": "Electricidad",
+        "water": "Agua",
+        "phone": "Teléfono",
+        "gas": "Gas"
+      },
+      "health": {
+        "name": "Salud",
+        "doctor": "Doctor",
+        "medicine": "Medicinas",
+        "dentist": "Dentista",
+        "psychologist": "Psicólogo",
+        "insurance": "Seguros"
+      },
+      "education": {
+        "name": "Educación",
+        "courses": "Cursos",
+        "books": "Libros",
+        "tuition": "Matrícula",
+        "materials": "Materiales",
+        "conferences": "Conferencias"
+      },
+      "housing": {
+        "name": "Vivienda",
+        "rent": "Arriendo",
+        "mortgage": "Hipoteca",
+        "repairs": "Reparaciones",
+        "furniture": "Muebles",
+        "decoration": "Decoración"
+      },
+      "travel": {
+        "name": "Viajes",
+        "flights": "Vuelos",
+        "hotels": "Hoteles",
+        "tours": "Tours",
+        "localTransport": "Transporte Local",
+        "food": "Comida"
+      },
+      "other": {
+        "name": "Otros Gastos",
+        "gifts": "Regalos",
+        "donations": "Donaciones",
+        "pets": "Mascotas",
+        "taxes": "Impuestos",
+        "miscellaneous": "Misceláneos",
+        "debtPayment": "Pago de deuda",
+        "loanGiven": "Préstamo otorgado"
+      }
+    },
+    "income": {
+      "salary": {
+        "name": "Salario",
+        "baseSalary": "Salario Base",
+        "bonus": "Bonificación",
+        "commission": "Comisión",
+        "overtime": "Horas Extra"
+      },
+      "business": {
+        "name": "Negocio",
+        "sales": "Ventas",
+        "services": "Servicios",
+        "consulting": "Consultoría",
+        "freelance": "Freelance"
+      },
+      "investments": {
+        "name": "Inversiones",
+        "dividends": "Dividendos",
+        "interest": "Intereses",
+        "stockGains": "Ganancias Bolsa",
+        "rent": "Rentas"
+      },
+      "other": {
+        "name": "Otros Ingresos",
+        "refunds": "Reembolsos",
+        "inheritance": "Herencias",
+        "gambling": "Apuestas",
+        "other": "Otros",
+        "debtCollection": "Cobro de deuda",
+        "loanRepayment": "Cobro de préstamo"
+      }
+    },
+    "transfer": {
+      "betweenAccounts": {
+        "name": "Transferencia entre cuentas"
+      }
+    }
+  }
+}

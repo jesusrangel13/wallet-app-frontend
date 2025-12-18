@@ -1,0 +1,35 @@
+{
+  "title": "Transacciones",
+  "noTransactions": "No hay transacciones",
+  "filters": {
+    "all": "Todas",
+    "expense": "Gastos",
+    "income": "Ingresos",
+    "transfer": "Transferencias"
+  },
+  "columns": {
+    "date": "Fecha",
+    "description": "Descripción",
+    "category": "Categoría",
+    "amount": "Monto",
+    "account": "Cuenta",
+    "actions": "Acciones"
+  },
+  "tags": {
+    "label": "Etiquetas",
+    "noTagsSelected": "Sin etiquetas seleccionadas",
+    "addTags": "Agregar etiquetas...",
+    "closeSelector": "Cerrar selector de etiquetas",
+    "searchPlaceholder": "Buscar o crear nueva etiqueta...",
+    "creating": "Creando...",
+    "create": "Crear",
+    "availableTags": "Etiquetas Disponibles",
+    "noTagsYet": "Sin etiquetas aún. ¡Crea tu primera etiqueta arriba!",
+    "noMatchFound": "No hay etiquetas que coincidan con \"{search}\". Presiona Enter para crearla."
+  },
+  "category": {
+    "placeholder": "Selecciona una categoría...",
+    "backToCategories": "Volver a categorías",
+    "noCategories": "No hay categorías disponibles. Crea tu primera categoría para empezar."
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "required": "Este campo es obligatorio",
+  "email": {
+    "invalid": "Correo electrónico inválido"
+  },
+  "password": {
+    "minLength": "La contraseña debe tener al menos 8 caracteres"
+  },
+  "name": {
+    "minLength": "El nombre debe tener al menos 2 caracteres"
+  },
+  "amount": {
+    "positive": "El monto debe ser positivo",
+    "invalid": "Monto inválido"
+  },
+  "number": {
+    "positive": "Debe ser un número positivo",
+    "tooSmall": "El número es demasiado pequeño"
+  },
+  "string": {
+    "tooShort": "Texto demasiado corto",
+    "tooLong": "Texto demasiado largo"
+  },
+  "uuid": {
+    "invalid": "Identificador inválido"
+  },
+  "url": {
+    "invalid": "URL inválida"
+  },
+  "transfer": {
+    "destinationRequired": "La cuenta destino es obligatoria para transferencias"
+  },
+  "type": {
+    "invalid": "Tipo de dato inválido"
+  }
+}

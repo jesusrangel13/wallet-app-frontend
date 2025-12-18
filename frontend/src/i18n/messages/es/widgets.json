@@ -1,0 +1,86 @@
+{
+  "total-balance": {
+    "name": "Saldo Total",
+    "description": "Tu saldo total en todas las monedas"
+  },
+  "monthly-income": {
+    "name": "Ingresos Mensuales",
+    "description": "Tus ingresos de este mes"
+  },
+  "monthly-expenses": {
+    "name": "Gastos Mensuales",
+    "description": "Tus gastos de este mes"
+  },
+  "personal-expenses": {
+    "name": "Gastos Personales",
+    "description": "Gastos personales excluyendo compartidos y transferencias"
+  },
+  "shared-expenses": {
+    "name": "Gastos Compartidos",
+    "description": "Tu parte de gastos compartidos en grupos"
+  },
+  "savings": {
+    "name": "Ahorros",
+    "description": "Ahorros mensuales (ingresos - gastos)"
+  },
+  "groups": {
+    "name": "Grupos",
+    "description": "Número de grupos y cuentas"
+  },
+  "loans": {
+    "name": "Préstamos",
+    "description": "Resumen de préstamos activos"
+  },
+  "quick-actions": {
+    "name": "Acciones Rápidas",
+    "description": "Acceso rápido a funciones principales"
+  },
+  "balances": {
+    "name": "Mis Saldos",
+    "description": "Saldos de grupos con seguimiento de pagos"
+  },
+  "cash-flow": {
+    "name": "Flujo de Efectivo",
+    "description": "Tendencia de ingresos vs gastos (últimos 6 meses)"
+  },
+  "expenses-by-category": {
+    "name": "Gastos por Categoría",
+    "description": "Distribución de gastos por categoría"
+  },
+  "expenses-by-parent-category": {
+    "name": "Gastos por Categoría Principal",
+    "description": "Distribución de gastos por categoría principal"
+  },
+  "expense-details-pie": {
+    "name": "Detalle de Gastos",
+    "description": "Desglose detallado de gastos con leyenda"
+  },
+  "balance-trend": {
+    "name": "Tendencia de Saldo",
+    "description": "Tu saldo en los últimos 30 días"
+  },
+  "group-balances": {
+    "name": "Saldos de Grupos",
+    "description": "Personas que te deben dinero"
+  },
+  "account-balances": {
+    "name": "Saldos de Cuentas",
+    "description": "Tus cuentas y tarjetas"
+  },
+  "recent-transactions": {
+    "name": "Transacciones Recientes",
+    "description": "Tus transacciones más recientes"
+  },
+  "expenses-by-tag": {
+    "name": "Gastos por Etiqueta",
+    "description": "Distribución de gastos entre tus etiquetas personalizadas"
+  },
+  "top-tags": {
+    "name": "Etiquetas Principales",
+    "description": "Tus etiquetas más usadas con estadísticas"
+  },
+  "tag-trend": {
+    "name": "Tendencia de Etiquetas",
+    "description": "Tendencias de gasto para tus etiquetas a lo largo del tiempo"
+  }
+}

@@ -1,6 +1,7 @@
 'use client'
 
 import { Loader2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
 interface LoadingSpinnerProps {
@@ -36,10 +37,13 @@ interface LoadingPageProps {
  * Loading para páginas completas - centrado vertical y horizontal
  */
 export function LoadingPage({
-  message = 'Cargando...',
+  message,
   size = 'lg',
   className,
 }: LoadingPageProps) {
+  const t = useTranslations('loading')
+  const displayMessage = message || t('default')
+
   return (
     <div
       className={cn(
@@ -48,7 +52,7 @@ export function LoadingPage({
       )}
     >
       <LoadingSpinner size={size} />
-      <p className="text-gray-500 text-sm">{message}</p>
+      <p className="text-gray-500 text-sm">{displayMessage}</p>
     </div>
   )
 }
@@ -63,10 +67,13 @@ interface LoadingOverlayProps {
  * Overlay de carga sobre contenido existente
  */
 export function LoadingOverlay({
-  message = 'Actualizando...',
+  message,
   size = 'md',
   className,
 }: LoadingOverlayProps) {
+  const t = useTranslations('loading')
+  const displayMessage = message || t('updating')
+
   return (
     <div
       className={cn(
@@ -75,7 +82,7 @@ export function LoadingOverlay({
       )}
     >
       <LoadingSpinner size={size} />
-      {message && <p className="text-gray-600 text-sm font-medium">{message}</p>}
+      {displayMessage && <p className="text-gray-600 text-sm font-medium">{displayMessage}</p>}
     </div>
   )
 }
@@ -109,11 +116,14 @@ interface LoadingButtonTextProps {
 /**
  * Texto de loading para botones - usar con el prop isLoading del Button
  */
-export function LoadingButtonText({ message = 'Guardando...' }: LoadingButtonTextProps) {
+export function LoadingButtonText({ message }: LoadingButtonTextProps) {
+  const t = useTranslations('loading')
+  const displayMessage = message || t('saving')
+
   return (
     <span className="inline-flex items-center gap-2">
       <LoadingSpinner size="sm" className="text-current" />
-      {message}
+      {displayMessage}
     </span>
   )
 }
@@ -158,26 +168,3 @@ export function SkeletonCard() {
     </div>
   )
 }
-
-/**
- * Mensajes estándar de loading en español
- */
-export const LoadingMessages = {
-  default: 'Cargando...',
-  saving: 'Guardando...',
-  updating: 'Actualizando...',
-  deleting: 'Eliminando...',
-  processing: 'Procesando...',
-  creating: 'Creando...',
-  loading: 'Cargando...',
-
-  // Específicos por módulo
-  dashboard: 'Cargando dashboard...',
-  transactions: 'Cargando transacciones...',
-  accounts: 'Cargando cuentas...',
-  groups: 'Cargando grupos...',
-  categories: 'Cargando categorías...',
-  tags: 'Cargando etiquetas...',
-  profile: 'Cargando perfil...',
-  imports: 'Cargando historial...',
-} as const

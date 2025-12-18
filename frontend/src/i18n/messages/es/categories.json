@@ -1,0 +1,124 @@
+{
+  "placeholder": "Selecciona una categoría...",
+  "expense": {
+    "foodAndDrinks": {
+      "name": "Comida y Bebidas",
+      "restaurant": "Restaurante",
+      "delivery": "Delivery",
+      "bar": "Bar",
+      "cafe": "Cafetería",
+      "supermarket": "Supermercado"
+    },
+    "transport": {
+      "name": "Transporte",
+      "taxi": "Taxi/Uber",
+      "fuel": "Combustible",
+      "public": "Transporte Público",
+      "parking": "Estacionamiento",
+      "maintenance": "Mantenimiento Vehículo"
+    },
+    "shopping": {
+      "name": "Compras",
+      "clothing": "Ropa",
+      "electronics": "Electrónica",
+      "home": "Hogar",
+      "books": "Libros",
+      "other": "Otros"
+    },
+    "entertainment": {
+      "name": "Entretenimiento",
+      "cinema": "Cine",
+      "videogames": "Videojuegos",
+      "streaming": "Streaming",
+      "events": "Eventos",
+      "hobbies": "Hobbies"
+    },
+    "services": {
+      "name": "Servicios",
+      "internet": "Internet",
+      "electricity": "Electricidad",
+      "water": "Agua",
+      "phone": "Teléfono",
+      "gas": "Gas"
+    },
+    "health": {
+      "name": "Salud",
+      "doctor": "Doctor",
+      "medicine": "Medicinas",
+      "dentist": "Dentista",
+      "psychologist": "Psicólogo",
+      "insurance": "Seguros"
+    },
+    "education": {
+      "name": "Educación",
+      "courses": "Cursos",
+      "books": "Libros",
+      "tuition": "Matrícula",
+      "materials": "Materiales",
+      "conferences": "Conferencias"
+    },
+    "housing": {
+      "name": "Vivienda",
+      "rent": "Arriendo",
+      "mortgage": "Hipoteca",
+      "repairs": "Reparaciones",
+      "furniture": "Muebles",
+      "decoration": "Decoración"
+    },
+    "travel": {
+      "name": "Viajes",
+      "flights": "Vuelos",
+      "hotels": "Hoteles",
+      "tours": "Tours",
+      "localTransport": "Transporte Local",
+      "food": "Comida"
+    },
+    "other": {
+      "name": "Otros Gastos",
+      "gifts": "Regalos",
+      "donations": "Donaciones",
+      "pets": "Mascotas",
+      "taxes": "Impuestos",
+      "miscellaneous": "Misceláneos",
+      "debtPayment": "Pago de deuda",
+      "loanGiven": "Préstamo otorgado"
+    }
+  },
+  "income": {
+    "salary": {
+      "name": "Salario",
+      "baseSalary": "Salario Base",
+      "bonus": "Bonificación",
+      "commission": "Comisión",
+      "overtime": "Horas Extra"
+    },
+    "business": {
+      "name": "Negocio",
+      "sales": "Ventas",
+      "services": "Servicios",
+      "consulting": "Consultoría",
+      "freelance": "Freelance"
+    },
+    "investments": {
+      "name": "Inversiones",
+      "dividends": "Dividendos",
+      "interest": "Intereses",
+      "stockGains": "Ganancias Bolsa",
+      "rent": "Rentas"
+    },
+    "other": {
+      "name": "Otros Ingresos",
+      "refunds": "Reembolsos",
+      "inheritance": "Herencias",
+      "gambling": "Apuestas",
+      "other": "Otros",
+      "debtCollection": "Cobro de deuda",
+      "loanRepayment": "Cobro de préstamo"
+    }
+  },
+  "transfer": {
+    "betweenAccounts": {
+      "name": "Transferencia entre cuentas"
+    }
+  }
+}

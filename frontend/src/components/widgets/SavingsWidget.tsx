@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { PiggyBank, TrendingUp, TrendingDown } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { dashboardAPI } from '@/lib/api'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
@@ -14,6 +15,7 @@ interface SavingsWidgetProps {
 }
 
 export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetProps) => {
+  const t = useTranslations('widgets.savings')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
   const { month, year } = useSelectedMonth()
@@ -50,7 +52,7 @@ export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetPr
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <PiggyBank className="h-4 w-4" />
-            Ahorros
+            {t('label')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -65,7 +67,7 @@ export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetPr
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
           <PiggyBank className={`h-4 w-4 ${colorClass}`} />
-          Ahorros
+          {t('label')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -77,7 +79,7 @@ export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetPr
             <TrendIcon className="h-3 w-3" />
             {savingsRate.toFixed(1)}%
           </div>
-          <p className={`${fontSizes.label} text-gray-500`}>de tasa de ahorro</p>
+          <p className={`${fontSizes.label} text-gray-500`}>{t('savingsRate')}</p>
         </div>
       </CardContent>
     </Card>

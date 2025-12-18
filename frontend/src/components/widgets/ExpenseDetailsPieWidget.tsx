@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { PieChart as PieChartIcon } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { dashboardAPI } from '@/lib/api'
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
@@ -22,6 +23,7 @@ interface ExpenseDetailsPieWidgetProps {
 }
 
 export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpenseDetailsPieWidgetProps) => {
+  const t = useTranslations('widgets.expenseDetailsPie')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const { month, year } = useSelectedMonth()
   const [data, setData] = useState<CategoryData[]>([])
@@ -55,7 +57,7 @@ export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: Expen
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
             <PieChartIcon className="h-4 w-4" />
-            Detalle de Gastos
+            {t('label')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -97,9 +99,9 @@ export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: Expen
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
           <PieChartIcon className="h-4 w-4" />
-          Detalle de Gastos
+          {t('label')}
         </CardTitle>
-        <p className="text-sm text-gray-500">Este mes</p>
+        <p className="text-sm text-gray-500">{t('thisMonth')}</p>
       </CardHeader>
       <CardContent>
         {data.length > 0 ? (
@@ -145,7 +147,7 @@ export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: Expen
           </ResponsiveContainer>
         ) : (
           <div className="flex items-center justify-center text-gray-500" style={{ height: chartHeight }}>
-            No hay gastos este mes
+            {t('noExpensesThisMonth')}
           </div>
         )}
       </CardContent>
