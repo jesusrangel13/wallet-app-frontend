@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useTranslations } from 'next-intl'
 import { Account } from '@/types'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
@@ -32,6 +33,8 @@ export default function CreateLoanModal({
   onSubmit,
   accounts,
 }: CreateLoanModalProps) {
+  const t = useTranslations('createLoan')
+  const tCommon = useTranslations('common.actions')
   const [isSaving, setIsSaving] = useState(false)
   const [formattedAmount, setFormattedAmount] = useState('')
 
@@ -117,17 +120,17 @@ export default function CreateLoanModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Crear Préstamo">
+    <Modal isOpen={isOpen} onClose={handleClose} title={t('title')}>
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
         {/* Borrower Name */}
         <div>
           <label htmlFor="borrowerName" className="block text-sm font-medium text-gray-700 mb-1">
-            Nombre del deudor *
+            {t('borrowerName')} *
           </label>
           <Input
             id="borrowerName"
             {...register('borrowerName')}
-            placeholder="Juan Pérez"
+            placeholder={t('borrowerPlaceholder')}
             className={errors.borrowerName ? 'border-red-500' : ''}
           />
           {errors.borrowerName && (
@@ -138,7 +141,7 @@ export default function CreateLoanModal({
         {/* Account */}
         <div>
           <label htmlFor="accountId" className="block text-sm font-medium text-gray-700 mb-1">
-            Cuenta desde la que prestas *
+            {t('accountFrom')} *
           </label>
           <select
             id="accountId"
@@ -147,9 +150,9 @@ export default function CreateLoanModal({
               errors.accountId ? 'border-red-500' : 'border-gray-300'
             }`}
           >
-            <option value="">Selecciona una cuenta</option>
+            <option value="">{t('selectAccount')}</option>
             {!accounts || accounts.length === 0 ? (
-              <option disabled>No hay cuentas disponibles</option>
+              <option disabled>{t('noAccountsAvailable')}</option>
             ) : (
               accounts
                 .filter((a) => !a.isArchived)
@@ -168,7 +171,7 @@ export default function CreateLoanModal({
         {/* Amount */}
         <div>
           <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
-            Monto *
+            {t('amount')} *
           </label>
           <Input
             id="amount"
@@ -188,7 +191,7 @@ export default function CreateLoanModal({
         {/* Loan Date */}
         <div>
           <label htmlFor="loanDate" className="block text-sm font-medium text-gray-700 mb-1">
-            Fecha del préstamo
+            {t('loanDate')}
           </label>
           <Input
             id="loanDate"
@@ -204,13 +207,13 @@ export default function CreateLoanModal({
         {/* Notes */}
         <div>
           <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
-            Notas
+            {t('notes')}
           </label>
           <textarea
             id="notes"
             {...register('notes')}
             rows={3}
-            placeholder="Detalles adicionales del préstamo..."
+            placeholder={t('notesPlaceholder')}
             className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
               errors.notes ? 'border-red-500' : 'border-gray-300'
             }`}
@@ -222,21 +225,21 @@ export default function CreateLoanModal({
 
         {/* Info Box */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
-          <p className="font-medium mb-1">💡 ¿Qué sucede al crear un préstamo?</p>
+          <p className="font-medium mb-1">{t('infoTitle')}</p>
           <ul className="list-disc list-inside space-y-1 text-xs">
-            <li>Se creará una transacción de GASTO en tu cuenta</li>
-            <li>El dinero saldrá de tu cuenta (afectará tu balance)</li>
-            <li>Podrás registrar pagos parciales o completos más adelante</li>
+            <li>{t('infoPoint1')}</li>
+            <li>{t('infoPoint2')}</li>
+            <li>{t('infoPoint3')}</li>
           </ul>
         </div>
 
         {/* Actions */}
         <div className="flex gap-3 pt-4 border-t">
           <Button type="submit" className="flex-1" disabled={isSaving}>
-            {isSaving ? 'Creando...' : 'Crear Préstamo'}
+            {isSaving ? t('creating') : t('createButton')}
           </Button>
           <Button type="button" variant="outline" onClick={handleClose} disabled={isSaving}>
-            Cancelar
+            {tCommon('cancel')}
           </Button>
         </div>
       </form>

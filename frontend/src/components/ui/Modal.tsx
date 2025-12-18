@@ -46,38 +46,38 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
 
       // Focus trap for Tab key navigation
       const modalElement = document.getElementById('modal-content')
-      if (modalElement) {
-        const handleTab = (e: KeyboardEvent) => {
-          if (e.key === 'Tab') {
-            // Find all focusable elements (including close button for tab trap)
-            const allFocusableElements = modalElement.querySelectorAll(
-              'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-            )
-            const firstElement = allFocusableElements[0] as HTMLElement
-            const lastElement = allFocusableElements[allFocusableElements.length - 1] as HTMLElement
+      const handleTab = (e: KeyboardEvent) => {
+        if (e.key === 'Tab' && modalElement) {
+          // Find all focusable elements (including close button for tab trap)
+          const allFocusableElements = modalElement.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          )
+          const firstElement = allFocusableElements[0] as HTMLElement
+          const lastElement = allFocusableElements[allFocusableElements.length - 1] as HTMLElement
 
-            if (e.shiftKey) {
-              if (document.activeElement === firstElement) {
-                e.preventDefault()
-                lastElement.focus()
-              }
-            } else {
-              if (document.activeElement === lastElement) {
-                e.preventDefault()
-                firstElement.focus()
-              }
+          if (e.shiftKey) {
+            if (document.activeElement === firstElement) {
+              e.preventDefault()
+              lastElement.focus()
+            }
+          } else {
+            if (document.activeElement === lastElement) {
+              e.preventDefault()
+              firstElement.focus()
             }
           }
         }
-
-        modalElement.addEventListener('keydown', handleTab)
-
-        return () => {
-          modalElement.removeEventListener('keydown', handleTab)
-        }
       }
 
+      if (modalElement) {
+        modalElement.addEventListener('keydown', handleTab)
+      }
+
+      // Single cleanup function for all event listeners and overflow
       return () => {
+        if (modalElement) {
+          modalElement.removeEventListener('keydown', handleTab)
+        }
         document.removeEventListener('keydown', handleEscape)
         document.body.style.overflow = 'unset'
       }
