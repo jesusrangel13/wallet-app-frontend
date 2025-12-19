@@ -10,5 +10,48 @@
     "PERCENTAGE": "Por porcentaje",
     "SHARES": "Por partes",
     "EXACT": "Monto exacto"
+  },
+  "payment": {
+    "status": {
+      "paid": "Pagado",
+      "pending": "Pendiente"
+    },
+    "actions": {
+      "markAsPaid": "Marcar que pagué",
+      "confirmReceived": "Confirmar pago recibido",
+      "undoPayment": "Deshacer pago",
+      "alreadyPaidWaiting": "Ya pagaste (esperando pago de otros)",
+      "paid": "Pagado",
+      "updating": "Actualizando..."
+    },
+    "modal": {
+      "markAsPaidTitle": "Marcar como Pagado",
+      "settleBalanceTitle": "Saldar Balance",
+      "expenseInfo": "Vas a marcar como pagado el gasto \"{description}\" por ${amount}.",
+      "balanceInfo": "Vas a marcar como pagado el balance de ${amount} con {name}.",
+      "selectAccount": "Selecciona la cuenta donde se registrará el pago",
+      "loadingAccounts": "Cargando cuentas...",
+      "noActiveAccounts": "No tienes cuentas activas. Crea una cuenta primero.",
+      "defaultAccountHint": "Puedes configurar una cuenta por defecto en Configuración para que se seleccione automáticamente.",
+      "confirmInfo": "Al confirmar, se creará una transacción en la cuenta seleccionada y se marcará el gasto como pagado.",
+      "settleInfo": "Al confirmar, se creará una transacción en la cuenta seleccionada y se marcará el balance como saldado.",
+      "cancel": "Cancelar",
+      "confirmPayment": "Confirmar Pago",
+      "marking": "Marcando...",
+      "settling": "Saldando...",
+      "defaultBadge": "(Por defecto)"
+    },
+    "toasts": {
+      "markedAsPaid": "Marcado como pagado",
+      "markedAsUnpaid": "Marcado como no pagado",
+      "expensePaidWithTransactions": "Gasto marcado como pagado. Transacciones creadas en tu cuenta.",
+      "expensePaidNoTransactions": "Gasto marcado como pagado. No se crearon transacciones (configura cuentas por defecto en Configuración).",
+      "balanceSettledWithTransactions": "Balance saldado con éxito. Transacciones creadas en tu cuenta.",
+      "balanceSettledNoTransactions": "Balance marcado como saldado. No se crearon transacciones (configura cuentas por defecto en Configuración).",
+      "errorMarkingPaid": "Error al marcar el gasto como pagado",
+      "errorLoadingAccounts": "Error al cargar las cuentas",
+      "errorUpdatingStatus": "Error al actualizar el estado de pago",
+      "selectAccountFirst": "Por favor selecciona una cuenta"
+    }
   }
 }

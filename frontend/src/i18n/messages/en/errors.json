@@ -1,19 +1,42 @@
 {
-  "AUTH_USER_EXISTS": "Ya existe un usuario con este correo electrónico",
-  "AUTH_INVALID_CREDENTIALS": "Correo electrónico o contraseña inválidos",
-  "AUTH_USER_NOT_FOUND": "Usuario no encontrado",
-  "AUTH_INVALID_TOKEN": "Token inválido",
-  "AUTH_TOKEN_EXPIRED": "Token expirado",
-  "ACCOUNT_NOT_FOUND": "Cuenta no encontrada",
-  "ACCOUNT_INSUFFICIENT_BALANCE": "Saldo insuficiente",
-  "ACCOUNT_ARCHIVED": "La cuenta está archivada",
-  "TRANSACTION_NOT_FOUND": "Transacción no encontrada",
-  "TRANSACTION_INVALID_ACCOUNT": "Cuenta inválida",
-  "GROUP_NOT_FOUND": "Grupo no encontrado",
-  "GROUP_UNAUTHORIZED": "No tienes permisos para este grupo",
-  "LOAN_NOT_FOUND": "Préstamo no encontrado",
-  "DATABASE_ERROR": "Error de base de datos",
-  "INTERNAL_SERVER_ERROR": "Error interno del servidor",
-  "UNAUTHORIZED": "No autorizado",
-  "FORBIDDEN": "Prohibido"
+  "AUTH_USER_EXISTS": "A user with this email already exists",
+  "AUTH_INVALID_CREDENTIALS": "Invalid email or password",
+  "AUTH_USER_NOT_FOUND": "User not found",
+  "AUTH_INVALID_TOKEN": "Invalid token",
+  "AUTH_TOKEN_EXPIRED": "Token expired",
+  "ACCOUNT_NOT_FOUND": "Account not found",
+  "ACCOUNT_INSUFFICIENT_BALANCE": "Insufficient balance",
+  "ACCOUNT_ARCHIVED": "Account is archived",
+  "TRANSACTION_NOT_FOUND": "Transaction not found",
+  "TRANSACTION_INVALID_ACCOUNT": "Invalid account",
+  "GROUP_NOT_FOUND": "Group not found",
+  "GROUP_UNAUTHORIZED": "You don't have permissions for this group",
+  "LOAN_NOT_FOUND": "Loan not found",
+  "DATABASE_ERROR": "Database error",
+  "INTERNAL_SERVER_ERROR": "Internal server error",
+  "UNAUTHORIZED": "Unauthorized",
+  "FORBIDDEN": "Forbidden",
+  "api": {
+    "NETWORK_ERROR": "Network connection error. Please check your internet connection",
+    "TIMEOUT_ERROR": "Request timed out. Please try again",
+    "NOT_FOUND": "Resource not found",
+    "BAD_REQUEST": "Invalid request",
+    "VALIDATION_ERROR": "A validation error occurred",
+    "ERR_NETWORK": "Network connection error. Please check your internet connection"
+  },
+  "generic": {
+    "UNKNOWN_ERROR": "An unexpected error occurred",
+    "NETWORK_ERROR": "Network connection error. Please check your internet connection",
+    "TIMEOUT_ERROR": "Request timed out. Please try again"
+  },
+  "rateLimiting": {
+    "title": "Too many requests",
+    "description": "You've made too many requests. Please wait a moment before trying again"
+  },
+  "fallback": {
+    "title": "Something went wrong",
+    "message": "We encountered an unexpected error. Our team has been notified. You can try reloading the page or checking your connection.",
+    "reloadPage": "Reload Page",
+    "tryAgain": "Try Again"
+  }
 }

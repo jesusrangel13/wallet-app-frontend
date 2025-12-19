@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/Button'
 import { AlertTriangle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface ErrorFallbackProps {
     error: Error
@@ -7,6 +8,8 @@ interface ErrorFallbackProps {
 }
 
 export function ErrorFallback({ error, resetErrorBoundary }: ErrorFallbackProps) {
+    const t = useTranslations('errors')
+
     return (
         <div className="flex flex-col items-center justify-center p-8 bg-white rounded-lg shadow-sm border border-red-100 min-h-[400px] text-center">
             <div className="bg-red-50 p-4 rounded-full mb-4">
@@ -14,12 +17,11 @@ export function ErrorFallback({ error, resetErrorBoundary }: ErrorFallbackProps)
             </div>
 
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                Something went wrong
+                {t('fallback.title')}
             </h2>
 
             <p className="text-gray-500 mb-6 max-w-md">
-                We encountered an unexpected error. Our team has been notified.
-                You can try reloading the page or checking your connection.
+                {t('fallback.message')}
             </p>
 
             {process.env.NODE_ENV === 'development' && (
@@ -34,12 +36,12 @@ export function ErrorFallback({ error, resetErrorBoundary }: ErrorFallbackProps)
                     variant="outline"
                     onClick={() => window.location.reload()}
                 >
-                    Reload Page
+                    {t('fallback.reloadPage')}
                 </Button>
                 <Button
                     onClick={resetErrorBoundary}
                 >
-                    Try Again
+                    {t('fallback.tryAgain')}
                 </Button>
             </div>
         </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useEffect, useState } from 'react'
+import { use, useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
@@ -23,11 +23,7 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
   const [isLoading, setIsLoading] = useState(true)
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
 
-  useEffect(() => {
-    loadData()
-  }, [id])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setIsLoading(true)
       const [loanResponse, accountsResponse] = await Promise.all([
@@ -44,7 +40,11 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [id, router])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
 
   const handleRecordPayment = async (data: any) => {
     if (!loan) return

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { getAllWidgets, type WidgetDefinition } from '@/config/widgets'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { Modal } from '@/components/ui/Modal'
@@ -14,6 +15,7 @@ interface WidgetSelectorProps {
 }
 
 export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
+  const t = useTranslations('widgets')
   const { widgets, setPreferences } = useDashboardStore()
   const [searchInput, setSearchInput] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
@@ -72,25 +74,25 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
       const updatedPreferences = res.data.data as any
       setPreferences(updatedPreferences)
 
-      toast.success(`${widget.name} added to dashboard`)
+      toast.success(t('selector.toasts.added', { name: widget.name }))
       onClose()
     } catch (error) {
       console.error('Error adding widget:', error)
-      toast.error(`Failed to add ${widget.name}`)
+      toast.error(t('selector.toasts.failedToAdd', { name: widget.name }))
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add Widgets">
+    <Modal isOpen={isOpen} onClose={onClose} title={t('selector.title')}>
       <div className="space-y-4 max-w-2xl">
         {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
             type="text"
-            placeholder="Search widgets..."
+            placeholder={t('selector.searchPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -99,7 +101,7 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
 
         {/* Category Filter */}
         <div className="bg-gray-50 p-4 rounded-lg">
-          <p className="text-sm font-semibold text-gray-700 mb-3">Categories</p>
+          <p className="text-sm font-semibold text-gray-700 mb-3">{t('selector.categoriesLabel')}</p>
           <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => setSelectedCategory(null)}
@@ -108,7 +110,7 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
                 : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
                 }`}
             >
-              All
+              {t('selector.all')}
             </button>
             {categories.map((category) => (
               <button
@@ -147,10 +149,10 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
                   <p className="text-sm text-gray-600 mb-3 line-clamp-2">{widget.description}</p>
                   <div className="flex gap-2 text-xs text-gray-500">
                     {widget.resizable && (
-                      <span className="px-2 py-1 bg-gray-100 rounded">Resizable</span>
+                      <span className="px-2 py-1 bg-gray-100 rounded">{t('selector.features.resizable')}</span>
                     )}
                     {widget.draggable && (
-                      <span className="px-2 py-1 bg-gray-100 rounded">Draggable</span>
+                      <span className="px-2 py-1 bg-gray-100 rounded">{t('selector.features.draggable')}</span>
                     )}
                   </div>
                 </button>
@@ -159,9 +161,9 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
           ) : (
             <div className="flex items-center justify-center h-64 text-center">
               <div>
-                <p className="text-gray-500 text-lg font-medium">No widgets found</p>
+                <p className="text-gray-500 text-lg font-medium">{t('selector.noWidgetsFound')}</p>
                 <p className="text-gray-400 text-sm mt-2">
-                  Try adjusting your search or category filter
+                  {t('selector.tryAdjusting')}
                 </p>
               </div>
             </div>

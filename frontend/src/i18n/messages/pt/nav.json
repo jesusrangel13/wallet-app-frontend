@@ -1,0 +1,20 @@
+{
+  "appName": "FinanceApp",
+  "dashboard": "Painel",
+  "accounts": "Contas",
+  "transactions": "Transações",
+  "loans": "Empréstimos",
+  "groups": "Grupos",
+  "import": "Importar",
+  "settings": "Configurações",
+  "dashboardDescription": "Ver sua visão geral financeira",
+  "accountsDescription": "Gerenciar suas contas bancárias",
+  "transactionsDescription": "Ver e gerenciar transações",
+  "loansDescription": "Gerenciar empréstimos e dívidas",
+  "groupsDescription": "Gerenciar despesas compartilhadas",
+  "importDescription": "Importar dados financeiros",
+  "settingsDescription": "Configurações do aplicativo",
+  "toggleMenu": "Alternar menu",
+  "toggleSidebar": "Recolher/Expandir barra lateral",
+  "version": "Versão 1.0.0"
+}

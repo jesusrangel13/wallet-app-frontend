@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
@@ -41,11 +41,7 @@ export default function GeneralSettingsPage() {
     defaultSharedExpenseAccountId: null as string | null,
   })
 
-  useEffect(() => {
-    loadProfile()
-  }, [])
-
-  const loadProfile = async () => {
+  const loadProfile = useCallback(async () => {
     try {
       setIsLoading(true)
       const [profileRes, accountsRes] = await Promise.all([
@@ -75,7 +71,11 @@ export default function GeneralSettingsPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [tCommon])
+
+  useEffect(() => {
+    loadProfile()
+  }, [loadProfile])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

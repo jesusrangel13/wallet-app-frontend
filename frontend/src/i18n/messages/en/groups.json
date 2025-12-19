@@ -1,14 +1,57 @@
 {
-  "title": "Grupos",
-  "noGroups": "No hay grupos",
-  "addGroup": "Crear Grupo",
-  "members": "Miembros",
-  "expenses": "Gastos",
+  "title": "Groups",
+  "noGroups": "No groups",
+  "addGroup": "Create Group",
+  "members": "Members",
+  "expenses": "Expenses",
   "balance": "Balance",
   "splitTypes": {
-    "EQUAL": "Igualmente",
-    "PERCENTAGE": "Por porcentaje",
-    "SHARES": "Por partes",
-    "EXACT": "Monto exacto"
+    "EQUAL": "Equally",
+    "PERCENTAGE": "By percentage",
+    "SHARES": "By shares",
+    "EXACT": "Exact amount"
+  },
+  "payment": {
+    "status": {
+      "paid": "Paid",
+      "pending": "Pending"
+    },
+    "actions": {
+      "markAsPaid": "Mark that I paid",
+      "confirmReceived": "Confirm payment received",
+      "undoPayment": "Undo payment",
+      "alreadyPaidWaiting": "You paid (waiting for others' payment)",
+      "paid": "Paid",
+      "updating": "Updating..."
+    },
+    "modal": {
+      "markAsPaidTitle": "Mark as Paid",
+      "settleBalanceTitle": "Settle Balance",
+      "expenseInfo": "You are about to mark expense \"{description}\" for ${amount} as paid.",
+      "balanceInfo": "You are about to mark the ${amount} balance with {name} as paid.",
+      "selectAccount": "Select the account where the payment will be recorded",
+      "loadingAccounts": "Loading accounts...",
+      "noActiveAccounts": "You don't have active accounts. Create an account first.",
+      "defaultAccountHint": "You can set a default account in Settings to have it automatically selected.",
+      "confirmInfo": "Upon confirmation, a transaction will be created in the selected account and the expense will be marked as paid.",
+      "settleInfo": "Upon confirmation, a transaction will be created in the selected account and the balance will be marked as settled.",
+      "cancel": "Cancel",
+      "confirmPayment": "Confirm Payment",
+      "marking": "Marking...",
+      "settling": "Settling...",
+      "defaultBadge": "(Default)"
+    },
+    "toasts": {
+      "markedAsPaid": "Marked as paid",
+      "markedAsUnpaid": "Marked as unpaid",
+      "expensePaidWithTransactions": "Expense marked as paid. Transactions created in your account.",
+      "expensePaidNoTransactions": "Expense marked as paid. No transactions created (configure default accounts in Settings).",
+      "balanceSettledWithTransactions": "Balance settled successfully. Transactions created in your account.",
+      "balanceSettledNoTransactions": "Balance marked as settled. No transactions created (configure default accounts in Settings).",
+      "errorMarkingPaid": "Error marking expense as paid",
+      "errorLoadingAccounts": "Error loading accounts",
+      "errorUpdatingStatus": "Error updating payment status",
+      "selectAccountFirst": "Please select an account"
+    }
   }
 }

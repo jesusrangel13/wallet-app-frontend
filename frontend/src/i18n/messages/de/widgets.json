@@ -1,86 +1,193 @@
 {
-  "total-balance": {
-    "name": "Saldo Total",
-    "description": "Tu saldo total en todas las monedas"
+  "totalBalance": {
+    "name": "Total Balance",
+    "description": "Your total balance across all currencies",
+    "label": "Total Balance"
   },
-  "monthly-income": {
-    "name": "Ingresos Mensuales",
-    "description": "Tus ingresos de este mes"
+  "monthlyIncome": {
+    "name": "Monthly Income",
+    "description": "Your income for this month",
+    "label": "Monthly Income",
+    "thisMonth": "This month"
   },
-  "monthly-expenses": {
-    "name": "Gastos Mensuales",
-    "description": "Tus gastos de este mes"
+  "monthlyExpenses": {
+    "name": "Monthly Expenses",
+    "description": "Your expenses for this month",
+    "label": "Monthly Expenses",
+    "thisMonth": "This month"
   },
-  "personal-expenses": {
-    "name": "Gastos Personales",
-    "description": "Gastos personales excluyendo compartidos y transferencias"
+  "personalExpenses": {
+    "name": "Personal Expenses",
+    "description": "Personal expenses excluding shared and transfers",
+    "label": "Personal Expenses",
+    "thisMonth": "This month"
   },
-  "shared-expenses": {
-    "name": "Gastos Compartidos",
-    "description": "Tu parte de gastos compartidos en grupos"
+  "sharedExpenses": {
+    "name": "Shared Expenses",
+    "description": "Your share of shared group expenses",
+    "label": "Shared Expenses",
+    "thisMonth": "This month"
   },
   "savings": {
-    "name": "Ahorros",
-    "description": "Ahorros mensuales (ingresos - gastos)"
+    "name": "Savings",
+    "description": "Monthly savings (income - expenses)",
+    "label": "Savings",
+    "thisMonth": "This month",
+    "savingsRate": "savings rate"
   },
   "groups": {
-    "name": "Grupos",
-    "description": "Número de grupos y cuentas"
+    "name": "Groups",
+    "description": "Number of groups and accounts",
+    "label": "Groups",
+    "groupsCount": "groups",
+    "membersCount": "members"
   },
   "loans": {
-    "name": "Préstamos",
-    "description": "Resumen de préstamos activos"
+    "name": "Loans",
+    "description": "Active loans summary",
+    "label": "Loans",
+    "active": "Active",
+    "paid": "Paid",
+    "totalAmount": "Total Amount",
+    "remaining": "Remaining",
+    "viewAll": "View All Loans",
+    "noLoansYet": "No loans registered yet",
+    "createLoan": "Create loan",
+    "errorLoading": "Could not load information",
+    "pendingToCollect": "Pending to collect",
+    "activeLoans": "Active loans",
+    "totalLent": "Total lent",
+    "recovered": "Recovered",
+    "viewAllLink": "View all"
   },
-  "quick-actions": {
-    "name": "Acciones Rápidas",
-    "description": "Acceso rápido a funciones principales"
+  "quickActions": {
+    "name": "Quick Actions",
+    "description": "Quick access to main features",
+    "newTransaction": "New Transaction",
+    "newAccount": "New Account",
+    "newLoan": "New Loan",
+    "importTransactions": "Import Transactions"
   },
   "balances": {
-    "name": "Mis Saldos",
-    "description": "Saldos de grupos con seguimiento de pagos"
+    "name": "My Balances",
+    "description": "Group balances with payment tracking",
+    "youOwe": "You owe",
+    "owesYou": "owes you",
+    "settled": "Settled up",
+    "settle": "Settle"
   },
-  "cash-flow": {
-    "name": "Flujo de Efectivo",
-    "description": "Tendencia de ingresos vs gastos (últimos 6 meses)"
+  "cashFlow": {
+    "name": "Cash Flow",
+    "description": "Income vs expenses trend (last 6 months)",
+    "income": "Income",
+    "expenses": "Expenses",
+    "averageIncome": "Average Income",
+    "averageExpense": "Average Expense",
+    "netBalance": "Net Balance",
+    "noDataAvailable": "No data available"
   },
-  "expenses-by-category": {
-    "name": "Gastos por Categoría",
-    "description": "Distribución de gastos por categoría"
+  "expensesByCategory": {
+    "name": "Expenses by Category",
+    "description": "Expense distribution by category",
+    "noExpensesThisMonth": "No expenses this month"
   },
-  "expenses-by-parent-category": {
-    "name": "Gastos por Categoría Principal",
-    "description": "Distribución de gastos por categoría principal"
+  "expensesByParentCategory": {
+    "name": "Expenses by Category",
+    "description": "Expense distribution by parent category",
+    "label": "Expenses by Category",
+    "amount": "Amount",
+    "category": "Category",
+    "noExpensesThisMonth": "No expenses this month"
   },
-  "expense-details-pie": {
-    "name": "Detalle de Gastos",
-    "description": "Desglose detallado de gastos con leyenda"
+  "expenseDetailsPie": {
+    "name": "Expense Details",
+    "description": "Detailed expense breakdown with legend",
+    "label": "Expense Details",
+    "thisMonth": "This month",
+    "noExpensesThisMonth": "No expenses this month"
   },
-  "balance-trend": {
-    "name": "Tendencia de Saldo",
-    "description": "Tu saldo en los últimos 30 días"
+  "balanceTrend": {
+    "name": "Balance Trend",
+    "description": "Your balance over the last 30 days",
+    "last30Days": "Last 30 days",
+    "label": "Balance Trend",
+    "currentBalance": "Current Balance",
+    "sinceStart": "since start",
+    "initial": "Initial",
+    "change": "Change",
+    "noBalanceHistory": "No balance history available"
   },
-  "group-balances": {
-    "name": "Saldos de Grupos",
-    "description": "Personas que te deben dinero"
+  "groupBalances": {
+    "name": "Group Balances",
+    "description": "People who owe you money",
+    "owesYou": "owes you",
+    "label": "My Balances",
+    "person": "person",
+    "people": "people",
+    "noSharedExpenses": "No shared expenses yet. Create a group to start tracking!"
   },
-  "account-balances": {
-    "name": "Saldos de Cuentas",
-    "description": "Tus cuentas y tarjetas"
+  "accountBalances": {
+    "name": "Account Balances",
+    "description": "Your accounts and cards",
+    "accounts": "Accounts",
+    "viewAll": "View All",
+    "spent": "Spent",
+    "available": "Available",
+    "balance": "Balance",
+    "addAccount": "Add Account",
+    "noAccountsYet": "No accounts yet. Add your first account!",
+    "addAccountButton": "Add Account"
   },
-  "recent-transactions": {
-    "name": "Transacciones Recientes",
-    "description": "Tus transacciones más recientes"
+  "recentTransactions": {
+    "name": "Recent Transactions",
+    "description": "Your most recent transactions",
+    "noTransactions": "No transactions yet",
+    "viewAll": "View All",
+    "label": "Recent Transactions",
+    "noRecentTransactions": "No recent transactions. Add your first transaction to get started!",
+    "viewMoreTransactions": "View more transactions"
   },
-  "expenses-by-tag": {
-    "name": "Gastos por Etiqueta",
-    "description": "Distribución de gastos entre tus etiquetas personalizadas"
+  "expensesByTag": {
+    "name": "Expenses by Tag",
+    "description": "Distribution of expenses across your custom tags",
+    "label": "Expenses by Tag",
+    "noTaggedExpenses": "No tagged expenses this month",
+    "addTagsHint": "Add tags to your transactions to see this data"
   },
-  "top-tags": {
-    "name": "Etiquetas Principales",
-    "description": "Tus etiquetas más usadas con estadísticas"
+  "topTags": {
+    "name": "Top Tags",
+    "description": "Your most frequently used tags with statistics",
+    "transactions": "transactions",
+    "label": "Top Tags",
+    "transaction": "transaction",
+    "avg": "Avg",
+    "total": "Total",
+    "noTaggedTransactions": "No tagged transactions",
+    "addTagsHint": "Start adding tags to your transactions to see your most used tags here"
   },
-  "tag-trend": {
-    "name": "Tendencia de Etiquetas",
-    "description": "Tendencias de gasto para tus etiquetas a lo largo del tiempo"
+  "tagTrend": {
+    "name": "Tag Trend",
+    "description": "Spending trends for your tags over time",
+    "label": "Tag Trend",
+    "lastMonths": "Last {months} Months",
+    "noTagData": "No tag data available",
+    "selectedTagsNoHistory": "The selected tags have no transaction history",
+    "addTagsForTrends": "Add tags to your transactions to see trends over time"
+  },
+  "selector": {
+    "title": "Widget Hinzufügen",
+    "searchPlaceholder": "Widgets suchen...",
+    "categoriesLabel": "Kategorien",
+    "all": "Alle",
+    "noWidgetsFound": "Keine Widgets gefunden",
+    "tryAdjusting": "Versuchen Sie, Ihre Suche oder Ihren Kategoriefilter anzupassen",
+    "features": {
+      "resizable": "Größenveränderbar",
+      "draggable": "Verschiebbar"
+    },
+    "toasts": {
+      "added": "Widget {name} hinzugefügt",
+      "failedToAdd": "Fehler beim Hinzufügen von Widget {name}"
+    }
   }
 }

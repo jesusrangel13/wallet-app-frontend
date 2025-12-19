@@ -1,6 +1,7 @@
 'use client';
 
 import { memo } from 'react';
+import { useTranslations } from 'next-intl';
 import { CheckCircle2, Clock, XCircle } from 'lucide-react';
 
 interface PaymentStatusBadgeProps {
@@ -12,6 +13,8 @@ export const PaymentStatusBadge = memo(function PaymentStatusBadge({
   isPaid,
   variant = 'default'
 }: PaymentStatusBadgeProps) {
+  const t = useTranslations('groups');
+
   if (variant === 'compact') {
     return (
       <span className={`inline-flex items-center text-sm ${isPaid ? 'text-green-600' : 'text-amber-600'}`}>
@@ -34,12 +37,12 @@ export const PaymentStatusBadge = memo(function PaymentStatusBadge({
       {isPaid ? (
         <>
           <CheckCircle2 className="h-3.5 w-3.5" />
-          Pagado
+          {t('payment.status.paid')}
         </>
       ) : (
         <>
           <Clock className="h-3.5 w-3.5" />
-          Pendiente
+          {t('payment.status.pending')}
         </>
       )}
     </span>

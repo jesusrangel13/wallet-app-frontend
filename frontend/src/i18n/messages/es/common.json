@@ -1,7 +1,8 @@
 {
   "app": {
     "title": "Finance App - Administra tu Dinero",
-    "description": "Solución completa de gestión financiera con gastos compartidos"
+    "description": "Solución completa de gestión financiera con gastos compartidos",
+    "name": "FinanceApp"
   },
   "loading": "Cargando...",
   "error": "Error",
@@ -48,7 +49,19 @@
     "thisWeek": "Esta semana",
     "thisMonth": "Este mes",
     "lastMonth": "Mes pasado",
-    "custom": "Personalizado"
+    "custom": "Personalizado",
+    "navigation": {
+      "previousMonth": "Mes anterior",
+      "nextMonth": "Mes siguiente",
+      "currentMonth": "Ir al mes actual"
+    }
   },
-  "skipToContent": "Saltar al contenido principal"
+  "skipToContent": "Saltar al contenido principal",
+  "welcome": "Bienvenido, ",
+  "logout": "Cerrar sesión",
+  "saving": "Guardando...",
+  "savingLayout": "Guardando diseño...",
+  "closeModal": "Cerrar modal",
+  "addWidget": "Agregar widget",
+  "widget": "Widget"
 }

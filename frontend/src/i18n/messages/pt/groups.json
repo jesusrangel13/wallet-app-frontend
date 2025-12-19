@@ -1,14 +1,57 @@
 {
   "title": "Grupos",
-  "noGroups": "No hay grupos",
-  "addGroup": "Crear Grupo",
-  "members": "Miembros",
-  "expenses": "Gastos",
-  "balance": "Balance",
+  "noGroups": "Nenhum grupo",
+  "addGroup": "Criar grupo",
+  "members": "Membros",
+  "expenses": "Despesas",
+  "balance": "Saldo",
   "splitTypes": {
     "EQUAL": "Igualmente",
-    "PERCENTAGE": "Por porcentaje",
-    "SHARES": "Por partes",
-    "EXACT": "Monto exacto"
+    "PERCENTAGE": "Por porcentagem",
+    "SHARES": "Por cotas",
+    "EXACT": "Valor exato"
+  },
+  "payment": {
+    "status": {
+      "paid": "Pago",
+      "pending": "Pendente"
+    },
+    "actions": {
+      "markAsPaid": "Marcar que eu paguei",
+      "confirmReceived": "Confirmar pagamento recebido",
+      "undoPayment": "Desfazer pagamento",
+      "alreadyPaidWaiting": "Você pagou (aguardando pagamento dos outros)",
+      "paid": "Pago",
+      "updating": "Atualizando..."
+    },
+    "modal": {
+      "markAsPaidTitle": "Marcar como pago",
+      "settleBalanceTitle": "Liquidar saldo",
+      "expenseInfo": "Você está prestes a marcar a despesa \"{description}\" de ${amount} como paga.",
+      "balanceInfo": "Você está prestes a marcar o saldo de ${amount} com {name} como pago.",
+      "selectAccount": "Selecione a conta onde o pagamento será registrado",
+      "loadingAccounts": "Carregando contas...",
+      "noActiveAccounts": "Você não tem contas ativas. Crie uma conta primeiro.",
+      "defaultAccountHint": "Você pode definir uma conta padrão nas configurações para tê-la selecionada automaticamente.",
+      "confirmInfo": "Ao confirmar, uma transação será criada na conta selecionada e a despesa será marcada como paga.",
+      "settleInfo": "Ao confirmar, uma transação será criada na conta selecionada e o saldo será marcado como liquidado.",
+      "cancel": "Cancelar",
+      "confirmPayment": "Confirmar pagamento",
+      "marking": "Marcando...",
+      "settling": "Liquidando...",
+      "defaultBadge": "(Padrão)"
+    },
+    "toasts": {
+      "markedAsPaid": "Marcado como pago",
+      "markedAsUnpaid": "Marcado como não pago",
+      "expensePaidWithTransactions": "Despesa marcada como paga. Transações criadas na sua conta.",
+      "expensePaidNoTransactions": "Despesa marcada como paga. Nenhuma transação criada (configure contas padrão nas configurações).",
+      "balanceSettledWithTransactions": "Saldo liquidado com sucesso. Transações criadas na sua conta.",
+      "balanceSettledNoTransactions": "Saldo marcado como liquidado. Nenhuma transação criada (configure contas padrão nas configurações).",
+      "errorMarkingPaid": "Erro ao marcar despesa como paga",
+      "errorLoadingAccounts": "Erro ao carregar contas",
+      "errorUpdatingStatus": "Erro ao atualizar status do pagamento",
+      "selectAccountFirst": "Por favor, selecione uma conta"
+    }
   }
 }

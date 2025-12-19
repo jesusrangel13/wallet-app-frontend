@@ -13,7 +13,30 @@
   "GROUP_UNAUTHORIZED": "No tienes permisos para este grupo",
   "LOAN_NOT_FOUND": "Préstamo no encontrado",
   "DATABASE_ERROR": "Error de base de datos",
-  "INTERNAL_SERVER_ERROR": "Error interno del servidor",
-  "UNAUTHORIZED": "No autorizado",
-  "FORBIDDEN": "Prohibido"
+  "INTERNAL_SERVER_ERROR": "Erreur interne du serveur",
+  "UNAUTHORIZED": "Non autorisé",
+  "FORBIDDEN": "Interdit",
+  "api": {
+    "NETWORK_ERROR": "Erreur de connexion réseau. Veuillez vérifier votre connexion Internet",
+    "TIMEOUT_ERROR": "Délai d'attente dépassé. Veuillez réessayer",
+    "NOT_FOUND": "Ressource non trouvée",
+    "BAD_REQUEST": "Requête invalide",
+    "VALIDATION_ERROR": "Une erreur de validation s'est produite",
+    "ERR_NETWORK": "Erreur de connexion réseau. Veuillez vérifier votre connexion Internet"
+  },
+  "generic": {
+    "UNKNOWN_ERROR": "Une erreur inattendue s'est produite",
+    "NETWORK_ERROR": "Erreur de connexion réseau. Veuillez vérifier votre connexion Internet",
+    "TIMEOUT_ERROR": "Délai d'attente dépassé. Veuillez réessayer"
+  },
+  "rateLimiting": {
+    "title": "Trop de requêtes",
+    "description": "Vous avez fait trop de requêtes. Veuillez attendre un moment avant de réessayer"
+  },
+  "fallback": {
+    "title": "Quelque chose s'est mal passé",
+    "message": "Nous avons rencontré une erreur inattendue. Notre équipe a été notifiée. Vous pouvez essayer de recharger la page ou vérifier votre connexion.",
+    "reloadPage": "Recharger la page",
+    "tryAgain": "Réessayer"
+  }
 }
