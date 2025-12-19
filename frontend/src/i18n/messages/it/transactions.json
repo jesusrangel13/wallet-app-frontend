@@ -1,18 +1,56 @@
 {
-  "title": "Transacciones",
-  "noTransactions": "No hay transacciones",
+  "title": "Transazioni",
+  "subtitle": "Gestisci tutte le tue transazioni finanziarie",
+  "new": "Nuova Transazione",
+  "edit": "Modifica Transazione",
+  "delete": "Elimina Transazioni",
+  "noTransactions": "Nessuna transazione",
   "filters": {
-    "all": "Todas",
-    "expense": "Gastos",
-    "income": "Ingresos",
-    "transfer": "Transferencias"
+    "all": "Tutte",
+    "expense": "Spese",
+    "income": "Entrate",
+    "transfer": "Trasferimenti"
+  },
+  "fields": {
+    "type": "Tipo",
+    "account": "Conto",
+    "toAccount": "Conto di destinazione",
+    "amount": "Importo",
+    "category": "Categoria",
+    "payee": "Beneficiario",
+    "description": "Descrizione",
+    "dateTime": "Data e ora",
+    "tags": "Etichette"
+  },
+  "placeholders": {
+    "selectAccount": "Seleziona un conto",
+    "selectDestination": "Seleziona conto di destinazione",
+    "payee": "Nome del beneficiario",
+    "description": "Aggiungi una descrizione (facoltativo)"
   },
   "columns": {
-    "date": "Fecha",
-    "description": "Descripción",
-    "category": "Categoría",
-    "amount": "Monto",
-    "account": "Cuenta",
-    "actions": "Acciones"
+    "date": "Data",
+    "description": "Descrizione",
+    "category": "Categoria",
+    "amount": "Importo",
+    "account": "Conto",
+    "actions": "Azioni"
+  },
+  "tags": {
+    "label": "Etichette",
+    "noTagsSelected": "Nessuna etichetta selezionata",
+    "addTags": "Aggiungi etichette...",
+    "closeSelector": "Chiudi selettore etichette",
+    "searchPlaceholder": "Cerca o crea nuova etichetta...",
+    "creating": "Creazione in corso...",
+    "create": "Crea",
+    "availableTags": "Etichette Disponibili",
+    "noTagsYet": "Nessuna etichetta ancora. Crea la tua prima etichetta sopra!",
+    "noMatchFound": "Nessuna etichetta corrisponde a \"{search}\". Premi Invio per crearla."
+  },
+  "category": {
+    "placeholder": "Seleziona una categoria...",
+    "backToCategories": "Torna alle categorie",
+    "noCategories": "Nessuna categoria disponibile. Crea la tua prima categoria per iniziare."
   }
 }

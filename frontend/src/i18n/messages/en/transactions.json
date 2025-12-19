@@ -1,19 +1,40 @@
 {
-  "title": "Transacciones",
-  "noTransactions": "No hay transacciones",
+  "title": "Transactions",
+  "subtitle": "Manage all your financial transactions",
+  "new": "New Transaction",
+  "edit": "Edit Transaction",
+  "delete": "Delete Transactions",
+  "noTransactions": "No transactions",
   "filters": {
-    "all": "Todas",
-    "expense": "Gastos",
-    "income": "Ingresos",
-    "transfer": "Transferencias"
+    "all": "All",
+    "expense": "Expenses",
+    "income": "Income",
+    "transfer": "Transfers"
+  },
+  "fields": {
+    "type": "Type",
+    "account": "Account",
+    "toAccount": "Destination account",
+    "amount": "Amount",
+    "category": "Category",
+    "payee": "Payee",
+    "description": "Description",
+    "dateTime": "Date and time",
+    "tags": "Tags"
+  },
+  "placeholders": {
+    "selectAccount": "Select an account",
+    "selectDestination": "Select destination account",
+    "payee": "Payee name",
+    "description": "Add a description (optional)"
   },
   "columns": {
-    "date": "Fecha",
-    "description": "Descripción",
-    "category": "Categoría",
-    "amount": "Monto",
-    "account": "Cuenta",
-    "actions": "Acciones"
+    "date": "Date",
+    "description": "Description",
+    "category": "Category",
+    "amount": "Amount",
+    "account": "Account",
+    "actions": "Actions"
   },
   "tags": {
     "label": "Tags",

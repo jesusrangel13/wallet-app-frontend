@@ -29,7 +29,8 @@ export default getRequestConfig(async ({ locale }) => {
     validation,
     errors,
     notifications,
-    settings
+    settings,
+    loading
   ] = await Promise.all([
     import(`./messages/${validLocale}/common.json`),
     import(`./messages/${validLocale}/auth.json`),
@@ -46,7 +47,8 @@ export default getRequestConfig(async ({ locale }) => {
     import(`./messages/${validLocale}/validation.json`),
     import(`./messages/${validLocale}/errors.json`),
     import(`./messages/${validLocale}/notifications.json`),
-    import(`./messages/${validLocale}/settings.json`)
+    import(`./messages/${validLocale}/settings.json`),
+    import(`./messages/${validLocale}/loading.json`)
   ]);
 
   return {
@@ -67,7 +69,8 @@ export default getRequestConfig(async ({ locale }) => {
       validation: validation.default,
       errors: errors.default,
       notifications: notifications.default,
-      settings: settings.default
+      settings: settings.default,
+      loading: loading.default
     }
   };
 });

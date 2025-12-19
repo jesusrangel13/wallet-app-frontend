@@ -63,5 +63,22 @@
   "savingLayout": "Enregistrement de la disposition...",
   "closeModal": "Fermer la fenêtre",
   "addWidget": "Ajouter un widget",
-  "widget": "Widget"
+  "widget": "Widget",
+  "actions": {
+    "add": "Ajouter",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "create": "Créer",
+    "update": "Mettre à jour",
+    "export": "Exporter",
+    "import": "Importer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "clear": "Effacer",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "view": "Voir"
+  }
 }

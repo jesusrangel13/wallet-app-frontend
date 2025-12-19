@@ -1,0 +1,13 @@
+{
+  "loading": "Cargando...",
+  "saving": "Guardando...",
+  "deleting": "Eliminando...",
+  "updating": "Actualizando...",
+  "creating": "Creando...",
+  "transactions": "Cargando transacciones...",
+  "accounts": "Cargando cuentas...",
+  "categories": "Cargando categorías...",
+  "groups": "Cargando grupos...",
+  "loans": "Cargando préstamos...",
+  "pleaseWait": "Por favor espera..."
+}

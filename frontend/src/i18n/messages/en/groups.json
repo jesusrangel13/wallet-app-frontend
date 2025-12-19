@@ -1,5 +1,7 @@
 {
+  "new": "New Group",
   "title": "Groups",
+  "subtitle": "Manage shared expenses with friends and family",
   "noGroups": "No groups",
   "addGroup": "Create Group",
   "members": "Members",

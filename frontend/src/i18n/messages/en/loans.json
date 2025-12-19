@@ -1,14 +1,14 @@
 {
-  "title": "Préstamos",
-  "noLoans": "No hay préstamos",
-  "addLoan": "Registrar Préstamo",
+  "title": "Loans",
+  "noLoans": "No loans",
+  "addLoan": "Register Loan",
   "status": {
-    "ACTIVE": "Activo",
-    "PAID": "Pagado",
-    "CANCELLED": "Cancelado"
+    "ACTIVE": "Active",
+    "PAID": "Paid",
+    "CANCELLED": "Cancelled"
   },
-  "borrower": "Prestatario",
-  "amount": "Monto",
-  "remaining": "Pendiente",
-  "paid": "Pagado"
+  "borrower": "Borrower",
+  "amount": "Amount",
+  "remaining": "Remaining",
+  "paid": "Paid"
 }

@@ -1,0 +1,16 @@
+{
+  "title": "Eliminar Cuenta",
+  "warning": "Advertencia: Esta acción no se puede deshacer",
+  "warningMessage": "Estás a punto de eliminar permanentemente la cuenta",
+  "transactionCount": "{count, plural, =1 {Esta cuenta tiene 1 transacción} other {Esta cuenta tiene # transacciones}}",
+  "whatToDo": "¿Qué deseas hacer con estas transacciones?",
+  "transferOption": "Transferir transacciones a otra cuenta",
+  "transferDescription": "Todas las transacciones se transferirán a la cuenta seleccionada",
+  "selectAccount": "Selecciona una cuenta",
+  "deleteOption": "Eliminar todas las transacciones",
+  "deleteWarning": "{count, plural, =1 {Esto eliminará permanentemente 1 transacción} other {Esto eliminará permanentemente # transacciones}}",
+  "deleteAccountOnly": "Eliminar Cuenta",
+  "deleteAccountAndTransactions": "Eliminar Cuenta y Transacciones",
+  "deleting": "Eliminando...",
+  "deleteAccount": "Eliminar Cuenta"
+}

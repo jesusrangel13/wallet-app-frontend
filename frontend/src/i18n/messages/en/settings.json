@@ -1,22 +1,132 @@
 {
-  "title": "Configuración",
+  "title": "Settings",
   "general": {
     "title": "General",
-    "profile": "Perfil",
-    "preferences": "Preferencias"
+    "profile": "Profile",
+    "preferences": "Preferences"
   },
   "language": {
-    "title": "Idioma",
-    "description": "Selecciona tu idioma preferido",
-    "changeSuccess": "Idioma cambiado exitosamente",
-    "changeError": "Error al cambiar el idioma"
+    "title": "Language",
+    "label": "Language",
+    "description": "Select your preferred language",
+    "helperText": "Changes will take effect immediately",
+    "changeSuccess": "Language changed successfully",
+    "changeError": "Error changing language",
+    "options": {
+      "en": "English",
+      "es": "Spanish"
+    }
+  },
+  "description": "Manage your account",
+  "tabs": {
+    "general": "General",
+    "categories": "Categories",
+    "tags": "Tags"
   },
   "categories": {
-    "title": "Categorías",
-    "description": "Administra tus categorías de transacciones"
+    "title": "Categories",
+    "description": "Manage your transaction categories"
   },
   "tags": {
-    "title": "Etiquetas",
-    "description": "Administra tus etiquetas personalizadas"
+    "title": "Tags",
+    "description": "Manage your custom tags"
+  },
+  "categoriesPage": {
+    "title": "Categories",
+    "description": "Manage your transaction categories",
+    "newCategory": "Add Category",
+    "editButton": "Edit",
+    "deleteButton": "Delete",
+    "delete": "Delete",
+    "hideSubcategory" : "Hide",
+    "hide": "Hide",
+    "types": {
+      "expense": "Expenses",
+      "income": "Income"
+    }
+  },
+  "tagsPage": {
+    "title": "Tags",
+    "description": "Manage your custom tags",
+    "newTag": "Add Tag",
+    "editButton": "Edit",
+    "deleteButton": "Delete",
+    "editTagTitle": "Edit tag",
+    "deleteTagTitle": "Delete tag",
+    "noTags": "No tags yet",
+    "noTagsDescription": "Tags help you organize and filter your transactions. Create your first tag to get started.",
+    "createFirstTag": "Create First Tag",
+    "deleteConfirm": "Are you sure you want to delete the tag \"{name}\"? This action cannot be undone.",
+    "modalTitle": {
+      "create": "Create Tag",
+      "edit": "Edit Tag"
+    },
+    "form": {
+      "tagName": "Tag Name",
+      "tagNamePlaceholder": "Enter tag name",
+      "color": "Color",
+      "createTag": "Create Tag",
+      "updateTag": "Update Tag",
+      "cancel": "Cancel"
+    },
+    "validation": {
+      "nameRequired": "Tag name is required"
+    },
+    "success": {
+      "created": "Tag created successfully",
+      "updated": "Tag updated successfully",
+      "deleted": "Tag deleted successfully"
+    },
+    "errors": {
+      "loadFailed": "Failed to load tags",
+      "saveFailed": "Failed to save tag",
+      "deleteFailed": "Failed to delete tag"
+    }
+  },
+  "profile": {
+    "title": "Profile Settings",
+    "subtitle": "Manage your personal information",
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "emailHelper": "Email cannot be changed",
+      "currency": "Default Currency",
+      "currencyHelper": "This will be your default currency for new accounts",
+      "country": "Country",
+      "defaultAccount": "Default Shared Expense Account",
+      "defaultAccountHelper": "This account will be automatically selected when marking group expenses as paid"
+    },
+    "placeholders": {
+      "name": "Enter your name",
+      "country": "Enter your country"
+    },
+    "currencies": {
+      "CLP": "Chilean Peso (CLP)",
+      "USD": "US Dollar (USD)",
+      "EUR": "Euro (EUR)"
+    },
+    "defaultAccountOptions": {
+      "none": "None (ask each time)"
+    }
+  },
+  "accountDetails": {
+    "title": "Account Details",
+    "userId": "User ID",
+    "userIdHelper": "Your unique identifier",
+    "email": "Email Address",
+    "emailHelper": "Cannot be changed",
+    "currency": "Currency",
+    "currencyHelper": "Your default currency"
+  },
+  "validation": {
+    "nameRequired": "Name is required"
+  },
+  "success": {
+    "profileUpdated": "Profile updated successfully"
+  },
+  "actions": {
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "reset": "Reset"
   }
 }

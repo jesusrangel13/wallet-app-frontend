@@ -1,0 +1,18 @@
+{
+  "title": "Registrar Préstamo",
+  "borrowerName": "Nombre del Prestatario",
+  "borrowerPlaceholder": "Ingresa el nombre del prestatario",
+  "accountFrom": "Cuenta",
+  "selectAccount": "Selecciona una cuenta",
+  "noAccountsAvailable": "No hay cuentas disponibles",
+  "amount": "Monto",
+  "loanDate": "Fecha del Préstamo",
+  "notes": "Notas",
+  "notesPlaceholder": "Notas adicionales (opcional)",
+  "infoTitle": "Importante:",
+  "infoPoint1": "Se creará una transacción en la cuenta seleccionada",
+  "infoPoint2": "El préstamo se rastreará en tu sección de Préstamos",
+  "infoPoint3": "Puedes registrar pagos más tarde para actualizar el estado del préstamo",
+  "creating": "Creando...",
+  "createButton": "Registrar Préstamo"
+}

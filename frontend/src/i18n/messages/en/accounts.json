@@ -1,13 +1,27 @@
 {
-  "title": "Cuentas",
-  "noAccounts": "No hay cuentas",
+  "title": "Accounts",
+  "subtitle": "Manage your financial accounts",
+  "noAccounts": "No accounts",
   "types": {
-    "CASH": "Efectivo",
-    "DEBIT": "Débito",
-    "CREDIT": "Crédito",
-    "SAVINGS": "Ahorros",
-    "INVESTMENT": "Inversión"
+    "CASH": "Cash",
+    "DEBIT": "Debit",
+    "DEBIT_CARD": "Debit Card",
+    "CREDIT": "Credit",
+    "CREDIT_CARD": "Credit Card",
+    "SAVINGS": "Savings",
+    "INVESTMENT": "Investment"
   },
-  "totalBalance": "Saldo Total",
-  "addAccount": "Agregar Cuenta"
+  "totalBalance": "Total Balance",
+  "addAccount": "Add Account",
+  "deleteAccount": "Delete Account",
+  "new": "New Account",
+  "edit": "Edit Account",
+  "name": "Name",
+  "type": "Type",
+  "balance": "Balance",
+  "currency": "Currency",
+  "placeholders": {
+    "name": "Enter account name",
+    "initialBalance": "Enter initial balance"
+  }
 }

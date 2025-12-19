@@ -1,5 +1,11 @@
 {
   "title": "Configuración",
+  "description": "Administra tu cuenta",
+  "tabs":{
+    "general": "General",
+    "categories": "Categorías",
+    "tags": "Tags"
+  },
   "general": {
     "title": "General",
     "profile": "Perfil",
@@ -7,16 +13,112 @@
   },
   "language": {
     "title": "Idioma",
+    "label": "Idioma",
     "description": "Selecciona tu idioma preferido",
+    "helperText": "Los cambios tendrán efecto inmediatamente",
     "changeSuccess": "Idioma cambiado exitosamente",
-    "changeError": "Error al cambiar el idioma"
+    "changeError": "Error al cambiar el idioma",
+    "options": {
+      "en": "Inglés",
+      "es": "Español"
+    }
   },
-  "categories": {
+  "categoriesPage": {
     "title": "Categorías",
-    "description": "Administra tus categorías de transacciones"
+    "description": "Administra tus categorías de transacciones",
+    "newCategory": "Agregar Categoría",
+    "editButton": "Editar",
+    "deleteButton": "Eliminar",
+    "delete": "Delete",
+    "hideSubcategory" : "Ocultar",
+    "hide": "Ocultar",
+    "types": {
+      "expense": "Gastos",
+      "income": "Ingresos"
+    }
   },
-  "tags": {
+  "tagsPage": {
     "title": "Etiquetas",
-    "description": "Administra tus etiquetas personalizadas"
+    "description": "Administra tus etiquetas personalizadas",
+    "newTag": "Agregar Etiqueta",
+    "editButton": "Editar",
+    "deleteButton": "Eliminar",
+    "editTagTitle": "Editar etiqueta",
+    "deleteTagTitle": "Eliminar etiqueta",
+    "noTags": "No hay etiquetas todavía",
+    "noTagsDescription": "Las etiquetas te ayudan a organizar y filtrar tus transacciones. Crea tu primera etiqueta para comenzar.",
+    "createFirstTag": "Crear Primera Etiqueta",
+    "deleteConfirm": "¿Estás seguro de que deseas eliminar la etiqueta \"{name}\"? Esta acción no se puede deshacer.",
+    "modalTitle": {
+      "create": "Crear Etiqueta",
+      "edit": "Editar Etiqueta"
+    },
+    "form": {
+      "tagName": "Nombre de la Etiqueta",
+      "tagNamePlaceholder": "Ingresa el nombre de la etiqueta",
+      "color": "Color",
+      "createTag": "Crear Etiqueta",
+      "updateTag": "Actualizar Etiqueta",
+      "cancel": "Cancelar"
+    },
+    "validation": {
+      "nameRequired": "El nombre de la etiqueta es requerido"
+    },
+    "success": {
+      "created": "Etiqueta creada exitosamente",
+      "updated": "Etiqueta actualizada exitosamente",
+      "deleted": "Etiqueta eliminada exitosamente"
+    },
+    "errors": {
+      "loadFailed": "Error al cargar las etiquetas",
+      "saveFailed": "Error al guardar la etiqueta",
+      "deleteFailed": "Error al eliminar la etiqueta"
+    }
+  },
+  "profile": {
+    "title": "Configuración de Perfil",
+    "subtitle": "Administra tu información personal",
+    "fields": {
+      "name": "Nombre",
+      "email": "Correo Electrónico",
+      "emailHelper": "El correo electrónico no se puede cambiar",
+      "currency": "Moneda Predeterminada",
+      "currencyHelper": "Esta será tu moneda predeterminada para nuevas cuentas",
+      "country": "País",
+      "defaultAccount": "Cuenta Predeterminada para Gastos Compartidos",
+      "defaultAccountHelper": "Esta cuenta se seleccionará automáticamente al marcar gastos de grupo como pagados"
+    },
+    "placeholders": {
+      "name": "Ingresa tu nombre",
+      "country": "Ingresa tu país"
+    },
+    "currencies": {
+      "CLP": "Peso Chileno (CLP)",
+      "USD": "Dólar Estadounidense (USD)",
+      "EUR": "Euro (EUR)"
+    },
+    "defaultAccountOptions": {
+      "none": "Ninguna (preguntar cada vez)"
+    }
+  },
+  "accountDetails": {
+    "title": "Detalles de la Cuenta",
+    "userId": "ID de Usuario",
+    "userIdHelper": "Tu identificador único",
+    "email": "Correo Electrónico",
+    "emailHelper": "No se puede cambiar",
+    "currency": "Moneda",
+    "currencyHelper": "Tu moneda predeterminada"
+  },
+  "validation": {
+    "nameRequired": "El nombre es requerido"
+  },
+  "success": {
+    "profileUpdated": "Perfil actualizado exitosamente"
+  },
+  "actions": {
+    "save": "Guardar Cambios",
+    "saving": "Guardando...",
+    "reset": "Restablecer"
   }
 }
