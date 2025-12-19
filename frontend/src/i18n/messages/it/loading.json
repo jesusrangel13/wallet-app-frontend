@@ -1,0 +1,13 @@
+{
+  "loading": "Caricamento...",
+  "saving": "Salvataggio...",
+  "deleting": "Eliminazione...",
+  "updating": "Aggiornamento...",
+  "creating": "Creazione...",
+  "transactions": "Caricamento transazioni...",
+  "accounts": "Caricamento conti...",
+  "categories": "Caricamento categorie...",
+  "groups": "Caricamento gruppi...",
+  "loans": "Caricamento prestiti...",
+  "pleaseWait": "Attendere prego..."
+}

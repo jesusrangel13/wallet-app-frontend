@@ -1,18 +1,56 @@
 {
-  "title": "Transacciones",
-  "noTransactions": "No hay transacciones",
+  "title": "Transações",
+  "subtitle": "Gerencie todas as suas transações financeiras",
+  "new": "Nova Transação",
+  "edit": "Editar Transação",
+  "delete": "Excluir Transações",
+  "noTransactions": "Nenhuma transação",
   "filters": {
     "all": "Todas",
-    "expense": "Gastos",
-    "income": "Ingresos",
-    "transfer": "Transferencias"
+    "expense": "Despesas",
+    "income": "Receitas",
+    "transfer": "Transferências"
+  },
+  "fields": {
+    "type": "Tipo",
+    "account": "Conta",
+    "toAccount": "Conta de destino",
+    "amount": "Valor",
+    "category": "Categoria",
+    "payee": "Beneficiário",
+    "description": "Descrição",
+    "dateTime": "Data e hora",
+    "tags": "Tags"
+  },
+  "placeholders": {
+    "selectAccount": "Selecione uma conta",
+    "selectDestination": "Selecione conta de destino",
+    "payee": "Nome do beneficiário",
+    "description": "Adicione uma descrição (opcional)"
   },
   "columns": {
-    "date": "Fecha",
-    "description": "Descripción",
-    "category": "Categoría",
-    "amount": "Monto",
-    "account": "Cuenta",
-    "actions": "Acciones"
+    "date": "Data",
+    "description": "Descrição",
+    "category": "Categoria",
+    "amount": "Valor",
+    "account": "Conta",
+    "actions": "Ações"
+  },
+  "tags": {
+    "label": "Tags",
+    "noTagsSelected": "Nenhuma tag selecionada",
+    "addTags": "Adicionar tags...",
+    "closeSelector": "Fechar seletor de tags",
+    "searchPlaceholder": "Pesquisar ou criar nova tag...",
+    "creating": "Criando...",
+    "create": "Criar",
+    "availableTags": "Tags Disponíveis",
+    "noTagsYet": "Sem tags ainda. Crie sua primeira tag acima!",
+    "noMatchFound": "Nenhuma tag corresponde a \"{search}\". Pressione Enter para criá-la."
+  },
+  "category": {
+    "placeholder": "Selecione uma categoria...",
+    "backToCategories": "Voltar para categorias",
+    "noCategories": "Nenhuma categoria disponível. Crie sua primeira categoria para começar."
   }
 }

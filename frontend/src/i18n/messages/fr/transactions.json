@@ -1,18 +1,56 @@
 {
-  "title": "Transacciones",
-  "noTransactions": "No hay transacciones",
+  "title": "Transactions",
+  "subtitle": "Gérez toutes vos transactions financières",
+  "new": "Nouvelle Transaction",
+  "edit": "Modifier Transaction",
+  "delete": "Supprimer Transactions",
+  "noTransactions": "Pas de transactions",
   "filters": {
-    "all": "Todas",
-    "expense": "Gastos",
-    "income": "Ingresos",
-    "transfer": "Transferencias"
+    "all": "Toutes",
+    "expense": "Dépenses",
+    "income": "Revenus",
+    "transfer": "Transferts"
+  },
+  "fields": {
+    "type": "Type",
+    "account": "Compte",
+    "toAccount": "Compte destination",
+    "amount": "Montant",
+    "category": "Catégorie",
+    "payee": "Bénéficiaire",
+    "description": "Description",
+    "dateTime": "Date et heure",
+    "tags": "Étiquettes"
+  },
+  "placeholders": {
+    "selectAccount": "Sélectionnez un compte",
+    "selectDestination": "Sélectionnez compte destination",
+    "payee": "Nom du bénéficiaire",
+    "description": "Ajouter une description (facultatif)"
   },
   "columns": {
-    "date": "Fecha",
-    "description": "Descripción",
-    "category": "Categoría",
-    "amount": "Monto",
-    "account": "Cuenta",
-    "actions": "Acciones"
+    "date": "Date",
+    "description": "Description",
+    "category": "Catégorie",
+    "amount": "Montant",
+    "account": "Compte",
+    "actions": "Actions"
+  },
+  "tags": {
+    "label": "Étiquettes",
+    "noTagsSelected": "Aucune étiquette sélectionnée",
+    "addTags": "Ajouter des étiquettes...",
+    "closeSelector": "Fermer le sélecteur d'étiquettes",
+    "searchPlaceholder": "Rechercher ou créer une nouvelle étiquette...",
+    "creating": "Création...",
+    "create": "Créer",
+    "availableTags": "Étiquettes Disponibles",
+    "noTagsYet": "Pas d'étiquettes pour le moment. Créez votre première étiquette ci-dessus!",
+    "noMatchFound": "Aucune étiquette ne correspond à \"{search}\". Appuyez sur Entrée pour la créer."
+  },
+  "category": {
+    "placeholder": "Sélectionnez une catégorie...",
+    "backToCategories": "Retour aux catégories",
+    "noCategories": "Aucune catégorie disponible. Créez votre première catégorie pour commencer."
   }
 }

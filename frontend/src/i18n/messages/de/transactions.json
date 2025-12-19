@@ -1,18 +1,56 @@
 {
-  "title": "Transacciones",
-  "noTransactions": "No hay transacciones",
+  "title": "Transaktionen",
+  "subtitle": "Verwalten Sie alle Ihre Finanztransaktionen",
+  "new": "Neue Transaktion",
+  "edit": "Transaktion bearbeiten",
+  "delete": "Transaktionen löschen",
+  "noTransactions": "Keine Transaktionen",
   "filters": {
-    "all": "Todas",
-    "expense": "Gastos",
-    "income": "Ingresos",
-    "transfer": "Transferencias"
+    "all": "Alle",
+    "expense": "Ausgaben",
+    "income": "Einnahmen",
+    "transfer": "Überweisungen"
+  },
+  "fields": {
+    "type": "Typ",
+    "account": "Konto",
+    "toAccount": "Zielkonto",
+    "amount": "Betrag",
+    "category": "Kategorie",
+    "payee": "Empfänger",
+    "description": "Beschreibung",
+    "dateTime": "Datum und Uhrzeit",
+    "tags": "Etiketten"
+  },
+  "placeholders": {
+    "selectAccount": "Wählen Sie ein Konto",
+    "selectDestination": "Wählen Sie Zielkonto",
+    "payee": "Name des Empfängers",
+    "description": "Beschreibung hinzufügen (optional)"
   },
   "columns": {
-    "date": "Fecha",
-    "description": "Descripción",
-    "category": "Categoría",
-    "amount": "Monto",
-    "account": "Cuenta",
-    "actions": "Acciones"
+    "date": "Datum",
+    "description": "Beschreibung",
+    "category": "Kategorie",
+    "amount": "Betrag",
+    "account": "Konto",
+    "actions": "Aktionen"
+  },
+  "tags": {
+    "label": "Etiketten",
+    "noTagsSelected": "Keine Etiketten ausgewählt",
+    "addTags": "Etiketten hinzufügen...",
+    "closeSelector": "Etikett-Auswahl schließen",
+    "searchPlaceholder": "Etikett suchen oder neu erstellen...",
+    "creating": "Wird erstellt...",
+    "create": "Erstellen",
+    "availableTags": "Verfügbare Etiketten",
+    "noTagsYet": "Noch keine Etiketten. Erstellen Sie oben Ihr erstes Etikett!",
+    "noMatchFound": "Keine Etiketten passen zu \"{search}\". Drücken Sie die Eingabetaste zum Erstellen."
+  },
+  "category": {
+    "placeholder": "Wählen Sie eine Kategorie...",
+    "backToCategories": "Zurück zu Kategorien",
+    "noCategories": "Keine Kategorien verfügbar. Erstellen Sie Ihre erste Kategorie, um zu beginnen."
   }
 }

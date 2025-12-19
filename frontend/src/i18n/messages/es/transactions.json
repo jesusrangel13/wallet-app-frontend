@@ -1,11 +1,32 @@
 {
   "title": "Transacciones",
+  "subtitle": "Gestiona todas tus transacciones financieras",
+  "new": "Nueva Transacción",
+  "edit": "Editar Transacción",
+  "delete": "Eliminar Transacciones",
   "noTransactions": "No hay transacciones",
   "filters": {
     "all": "Todas",
     "expense": "Gastos",
     "income": "Ingresos",
     "transfer": "Transferencias"
+  },
+  "fields": {
+    "type": "Tipo",
+    "account": "Cuenta",
+    "toAccount": "Cuenta destino",
+    "amount": "Monto",
+    "category": "Categoría",
+    "payee": "Beneficiario",
+    "description": "Descripción",
+    "dateTime": "Fecha y hora",
+    "tags": "Etiquetas"
+  },
+  "placeholders": {
+    "selectAccount": "Selecciona una cuenta",
+    "selectDestination": "Selecciona cuenta destino",
+    "payee": "Nombre del beneficiario",
+    "description": "Agrega una descripción (opcional)"
   },
   "columns": {
     "date": "Fecha",

@@ -1,0 +1,13 @@
+{
+  "loading": "Loading...",
+  "saving": "Saving...",
+  "deleting": "Deleting...",
+  "updating": "Updating...",
+  "creating": "Creating...",
+  "transactions": "Loading transactions...",
+  "accounts": "Loading accounts...",
+  "categories": "Loading categories...",
+  "groups": "Loading groups...",
+  "loans": "Loading loans...",
+  "pleaseWait": "Please wait..."
+}

@@ -63,5 +63,22 @@
   "savingLayout": "Salvando layout...",
   "closeModal": "Fechar modal",
   "addWidget": "Adicionar widget",
-  "widget": "Widget"
+  "widget": "Widget",
+  "actions": {
+    "add": "Adicionar",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "create": "Criar",
+    "update": "Atualizar",
+    "export": "Exportar",
+    "import": "Importar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "clear": "Limpar",
+    "close": "Fechar",
+    "confirm": "Confirmar",
+    "view": "Ver"
+  }
 }

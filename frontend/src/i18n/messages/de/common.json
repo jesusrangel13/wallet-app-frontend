@@ -63,5 +63,22 @@
   "savingLayout": "Layout wird gespeichert...",
   "closeModal": "Modal schließen",
   "addWidget": "Widget hinzufügen",
-  "widget": "Widget"
+  "widget": "Widget",
+  "actions": {
+    "add": "Hinzufügen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "create": "Erstellen",
+    "update": "Aktualisieren",
+    "export": "Exportieren",
+    "import": "Importieren",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "clear": "Löschen",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "view": "Ansehen"
+  }
 }

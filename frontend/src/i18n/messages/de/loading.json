@@ -1,0 +1,13 @@
+{
+  "loading": "Wird geladen...",
+  "saving": "Wird gespeichert...",
+  "deleting": "Wird gelöscht...",
+  "updating": "Wird aktualisiert...",
+  "creating": "Wird erstellt...",
+  "transactions": "Transaktionen werden geladen...",
+  "accounts": "Konten werden geladen...",
+  "categories": "Kategorien werden geladen...",
+  "groups": "Gruppen werden geladen...",
+  "loans": "Kredite werden geladen...",
+  "pleaseWait": "Bitte warten..."
+}
