@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { Modal } from './ui/Modal'
 import { Account } from '@/types'
 import { accountAPI, sharedExpenseAPI, userAPI } from '@/lib/api'
@@ -25,19 +26,14 @@ export function MarkExpensePaidModal({
   amount,
   onSuccess,
 }: MarkExpensePaidModalProps) {
+  const t = useTranslations('groups')
   const [accounts, setAccounts] = useState<Account[]>([])
   const [selectedAccountId, setSelectedAccountId] = useState<string>('')
   const [defaultAccountId, setDefaultAccountId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [loadingAccounts, setLoadingAccounts] = useState(true)
 
-  useEffect(() => {
-    if (isOpen) {
-      loadAccountsAndDefault()
-    }
-  }, [isOpen])
-
-  const loadAccountsAndDefault = async () => {
+  const loadAccountsAndDefault = useCallback(async () => {
     try {
       setLoadingAccounts(true)
       const [accountsRes, profileRes] = await Promise.all([
@@ -67,15 +63,21 @@ export function MarkExpensePaidModal({
       }
     } catch (error) {
       console.error('Error loading accounts:', error)
-      toast.error('Error al cargar las cuentas')
+      toast.error(t('payment.toasts.errorLoadingAccounts'))
     } finally {
       setLoadingAccounts(false)
     }
-  }
+  }, [t])
+
+  useEffect(() => {
+    if (isOpen) {
+      loadAccountsAndDefault()
+    }
+  }, [isOpen, loadAccountsAndDefault])
 
   const handleMarkAsPaid = async () => {
     if (!selectedAccountId) {
-      toast.error('Por favor selecciona una cuenta')
+      toast.error(t('payment.toasts.selectAccountFirst'))
       return
     }
 
@@ -88,13 +90,9 @@ export function MarkExpensePaidModal({
       )
 
       if (response.data.data.transactionsCreated) {
-        toast.success(
-          'Gasto marcado como pagado. Transacciones creadas en tu cuenta.'
-        )
+        toast.success(t('payment.toasts.expensePaidWithTransactions'))
       } else {
-        toast.success(
-          'Gasto marcado como pagado. No se crearon transacciones (configura cuentas por defecto en Configuración).'
-        )
+        toast.success(t('payment.toasts.expensePaidNoTransactions'))
       }
 
       onSuccess?.()
@@ -102,7 +100,7 @@ export function MarkExpensePaidModal({
     } catch (error: any) {
       console.error('Error marking expense as paid:', error)
       toast.error(
-        error.response?.data?.message || 'Error al marcar el gasto como pagado'
+        error.response?.data?.message || t('payment.toasts.errorMarkingPaid')
       )
     } finally {
       setLoading(false)
@@ -110,14 +108,12 @@ export function MarkExpensePaidModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Marcar como Pagado">
+    <Modal isOpen={isOpen} onClose={onClose} title={t('payment.modal.markAsPaidTitle')}>
       <div className="space-y-4">
         {/* Expense info */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm text-blue-900">
-            Vas a marcar como pagado el gasto{' '}
-            <span className="font-semibold">&quot;{expenseDescription}&quot;</span> por{' '}
-            <span className="font-semibold">${amount.toFixed(0)}</span>.
+            {t('payment.modal.expenseInfo', { description: expenseDescription, amount: amount.toFixed(0) })}
           </p>
         </div>
 
@@ -127,14 +123,14 @@ export function MarkExpensePaidModal({
             htmlFor="account"
             className="block text-sm font-medium text-gray-700 mb-2"
           >
-            Selecciona la cuenta donde se registrará el pago
+            {t('payment.modal.selectAccount')}
           </label>
 
           {loadingAccounts ? (
-            <div className="text-sm text-gray-500">Cargando cuentas...</div>
+            <div className="text-sm text-gray-500">{t('payment.modal.loadingAccounts')}</div>
           ) : accounts.length === 0 ? (
             <div className="text-sm text-red-600">
-              No tienes cuentas activas. Crea una cuenta primero.
+              {t('payment.modal.noActiveAccounts')}
             </div>
           ) : (
             <select
@@ -148,7 +144,7 @@ export function MarkExpensePaidModal({
                 <option key={account.id} value={account.id}>
                   {account.name} - {account.currency} $
                   {Number(account.balance).toFixed(2)}
-                  {defaultAccountId === account.id ? ' (Por defecto)' : ''}
+                  {defaultAccountId === account.id ? ` ${t('payment.modal.defaultBadge')}` : ''}
                 </option>
               ))}
             </select>
@@ -156,8 +152,7 @@ export function MarkExpensePaidModal({
 
           {!loadingAccounts && defaultAccountId === null && accounts.length > 0 && (
             <p className="mt-2 text-xs text-gray-500">
-              Puedes configurar una cuenta por defecto en Configuración para que
-              se seleccione automáticamente.
+              {t('payment.modal.defaultAccountHint')}
             </p>
           )}
         </div>
@@ -165,8 +160,7 @@ export function MarkExpensePaidModal({
         {/* Info message */}
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
           <p className="text-xs text-gray-600">
-            Al confirmar, se creará una transacción en la cuenta seleccionada y
-            se marcará el gasto como pagado.
+            {t('payment.modal.confirmInfo')}
           </p>
         </div>
 
@@ -177,14 +171,14 @@ export function MarkExpensePaidModal({
             disabled={loading}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
           >
-            Cancelar
+            {t('payment.modal.cancel')}
           </button>
           <button
             onClick={handleMarkAsPaid}
             disabled={loading || loadingAccounts || !selectedAccountId}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Marcando...' : 'Confirmar Pago'}
+            {loading ? t('payment.modal.marking') : t('payment.modal.confirmPayment')}
           </button>
         </div>
       </div>

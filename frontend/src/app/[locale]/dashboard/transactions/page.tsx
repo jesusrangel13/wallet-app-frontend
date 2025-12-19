@@ -151,49 +151,7 @@ export default function TransactionsPage() {
   const selectedAmount = watch('amount') || 0
   const selectedAccount = accounts.find((a) => a.id === selectedAccountId)
 
-  useEffect(() => {
-    const loadInitialData = async () => {
-      try {
-        setIsLoading(true)
-        await Promise.all([loadTransactions(), loadAccounts(), loadCategories()])
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadInitialData()
-    // Set initial date filters to current month
-    const now = new Date()
-    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
-    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0]
-    setFilters((prev) => ({
-      ...prev,
-      startDate: firstDay,
-      endDate: lastDay,
-    }))
-  }, [])
-
-  useEffect(() => {
-    loadTransactions(1) // Reset to page 1 when filters change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters])
-
-  useEffect(() => {
-    if (currentPage > 0) {
-      loadTransactions(currentPage) // Reload current page when items per page changes
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [itemsPerPage])
-
-  // Grouped data memoization needed for Virtuoso
-  const { groupedTransactions, groupCounts, flatTransactions } = useMemo(() => {
-    const groups = groupTransactionsByDate(transactions)
-    const counts = groups.map(g => g.transactions.length)
-    const flat = groups.flatMap(g => g.transactions)
-    return { groupedTransactions: groups, groupCounts: counts, flatTransactions: flat }
-  }, [transactions])
-
-  const loadTransactions = async (page: number = 1, append: boolean = false) => {
+  const loadTransactions = useCallback(async (page: number = 1, append: boolean = false) => {
     try {
       if (append) {
         setIsLoadingMore(true)
@@ -240,7 +198,47 @@ export default function TransactionsPage() {
       setIsRefreshingList(false)
       setIsLoadingMore(false)
     }
-  }
+  }, [itemsPerPage, filters])
+
+  useEffect(() => {
+    const loadInitialData = async () => {
+      try {
+        setIsLoading(true)
+        await Promise.all([loadTransactions(), loadAccounts(), loadCategories()])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadInitialData()
+    // Set initial date filters to current month
+    const now = new Date()
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0]
+    setFilters((prev) => ({
+      ...prev,
+      startDate: firstDay,
+      endDate: lastDay,
+    }))
+  }, [loadTransactions])
+
+  useEffect(() => {
+    loadTransactions(1) // Reset to page 1 when filters change
+  }, [filters, loadTransactions])
+
+  useEffect(() => {
+    if (currentPage > 0) {
+      loadTransactions(currentPage) // Reload current page when items per page changes
+    }
+  }, [itemsPerPage, currentPage, loadTransactions])
+
+  // Grouped data memoization needed for Virtuoso
+  const { groupedTransactions, groupCounts, flatTransactions } = useMemo(() => {
+    const groups = groupTransactionsByDate(transactions)
+    const counts = groups.map(g => g.transactions.length)
+    const flat = groups.flatMap(g => g.transactions)
+    return { groupedTransactions: groups, groupCounts: counts, flatTransactions: flat }
+  }, [transactions])
 
   const loadAccounts = async () => {
     try {

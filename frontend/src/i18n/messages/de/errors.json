@@ -13,7 +13,30 @@
   "GROUP_UNAUTHORIZED": "No tienes permisos para este grupo",
   "LOAN_NOT_FOUND": "Préstamo no encontrado",
   "DATABASE_ERROR": "Error de base de datos",
-  "INTERNAL_SERVER_ERROR": "Error interno del servidor",
-  "UNAUTHORIZED": "No autorizado",
-  "FORBIDDEN": "Prohibido"
+  "INTERNAL_SERVER_ERROR": "Interner Serverfehler",
+  "UNAUTHORIZED": "Nicht autorisiert",
+  "FORBIDDEN": "Verboten",
+  "api": {
+    "NETWORK_ERROR": "Netzwerkverbindungsfehler. Bitte überprüfen Sie Ihre Internetverbindung",
+    "TIMEOUT_ERROR": "Zeitüberschreitung der Anfrage. Bitte versuchen Sie es erneut",
+    "NOT_FOUND": "Ressource nicht gefunden",
+    "BAD_REQUEST": "Ungültige Anfrage",
+    "VALIDATION_ERROR": "Ein Validierungsfehler ist aufgetreten",
+    "ERR_NETWORK": "Netzwerkverbindungsfehler. Bitte überprüfen Sie Ihre Internetverbindung"
+  },
+  "generic": {
+    "UNKNOWN_ERROR": "Ein unerwarteter Fehler ist aufgetreten",
+    "NETWORK_ERROR": "Netzwerkverbindungsfehler. Bitte überprüfen Sie Ihre Internetverbindung",
+    "TIMEOUT_ERROR": "Zeitüberschreitung der Anfrage. Bitte versuchen Sie es erneut"
+  },
+  "rateLimiting": {
+    "title": "Zu viele Anfragen",
+    "description": "Sie haben zu viele Anfragen gestellt. Bitte warten Sie einen Moment, bevor Sie es erneut versuchen"
+  },
+  "fallback": {
+    "title": "Etwas ist schief gelaufen",
+    "message": "Wir sind auf einen unerwarteten Fehler gestoßen. Unser Team wurde benachrichtigt. Sie können versuchen, die Seite neu zu laden oder Ihre Verbindung zu überprüfen.",
+    "reloadPage": "Seite neu laden",
+    "tryAgain": "Erneut versuchen"
+  }
 }

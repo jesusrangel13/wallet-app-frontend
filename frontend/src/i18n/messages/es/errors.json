@@ -15,5 +15,28 @@
   "DATABASE_ERROR": "Error de base de datos",
   "INTERNAL_SERVER_ERROR": "Error interno del servidor",
   "UNAUTHORIZED": "No autorizado",
-  "FORBIDDEN": "Prohibido"
+  "FORBIDDEN": "Prohibido",
+  "api": {
+    "NETWORK_ERROR": "Error de conexión de red. Por favor verifica tu conexión a internet",
+    "TIMEOUT_ERROR": "Se agotó el tiempo de espera. Por favor intenta de nuevo",
+    "NOT_FOUND": "Recurso no encontrado",
+    "BAD_REQUEST": "Solicitud inválida",
+    "VALIDATION_ERROR": "Ocurrió un error de validación",
+    "ERR_NETWORK": "Error de conexión de red. Por favor verifica tu conexión a internet"
+  },
+  "generic": {
+    "UNKNOWN_ERROR": "Ocurrió un error inesperado",
+    "NETWORK_ERROR": "Error de conexión de red. Por favor verifica tu conexión a internet",
+    "TIMEOUT_ERROR": "Se agotó el tiempo de espera. Por favor intenta de nuevo"
+  },
+  "rateLimiting": {
+    "title": "Demasiadas solicitudes",
+    "description": "Has realizado demasiadas solicitudes. Por favor espera un momento antes de intentar de nuevo"
+  },
+  "fallback": {
+    "title": "Algo salió mal",
+    "message": "Encontramos un error inesperado. Nuestro equipo ha sido notificado. Puedes intentar recargar la página o verificar tu conexión.",
+    "reloadPage": "Recargar página",
+    "tryAgain": "Intentar de nuevo"
+  }
 }

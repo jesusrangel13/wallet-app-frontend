@@ -13,7 +13,30 @@
   "GROUP_UNAUTHORIZED": "No tienes permisos para este grupo",
   "LOAN_NOT_FOUND": "Préstamo no encontrado",
   "DATABASE_ERROR": "Error de base de datos",
-  "INTERNAL_SERVER_ERROR": "Error interno del servidor",
-  "UNAUTHORIZED": "No autorizado",
-  "FORBIDDEN": "Prohibido"
+  "INTERNAL_SERVER_ERROR": "Errore interno del server",
+  "UNAUTHORIZED": "Non autorizzato",
+  "FORBIDDEN": "Vietato",
+  "api": {
+    "NETWORK_ERROR": "Errore di connessione di rete. Controlla la tua connessione Internet",
+    "TIMEOUT_ERROR": "Timeout della richiesta. Riprova",
+    "NOT_FOUND": "Risorsa non trovata",
+    "BAD_REQUEST": "Richiesta non valida",
+    "VALIDATION_ERROR": "Si è verificato un errore di validazione",
+    "ERR_NETWORK": "Errore di connessione di rete. Controlla la tua connessione Internet"
+  },
+  "generic": {
+    "UNKNOWN_ERROR": "Si è verificato un errore imprevisto",
+    "NETWORK_ERROR": "Errore di connessione di rete. Controlla la tua connessione Internet",
+    "TIMEOUT_ERROR": "Timeout della richiesta. Riprova"
+  },
+  "rateLimiting": {
+    "title": "Troppe richieste",
+    "description": "Hai fatto troppe richieste. Attendi un momento prima di riprovare"
+  },
+  "fallback": {
+    "title": "Qualcosa è andato storto",
+    "message": "Abbiamo riscontrato un errore imprevisto. Il nostro team è stato avvisato. Puoi provare a ricaricare la pagina o verificare la tua connessione.",
+    "reloadPage": "Ricarica pagina",
+    "tryAgain": "Riprova"
+  }
 }

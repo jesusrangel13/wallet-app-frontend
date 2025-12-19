@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { CheckCircle2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
@@ -24,6 +25,7 @@ export const MarkAsPaidButton = ({
   onSuccess,
   variant = 'button',
 }: MarkAsPaidButtonProps) => {
+  const t = useTranslations('groups');
   const [loading, setLoading] = useState(false);
 
   const handleMarkAsPaid = async () => {
@@ -35,11 +37,11 @@ export const MarkAsPaidButton = ({
         `/shared-expenses/${expenseId}/participants/${participantUserId}/${action}`
       );
 
-      toast.success(isPaid ? 'Marcado como no pagado' : 'Marcado como pagado');
+      toast.success(isPaid ? t('payment.toasts.markedAsUnpaid') : t('payment.toasts.markedAsPaid'));
       onSuccess?.();
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message || 'Error al actualizar el estado de pago'
+        error.response?.data?.message || t('payment.toasts.errorUpdatingStatus')
       );
     } finally {
       setLoading(false);
@@ -87,7 +89,7 @@ export const MarkAsPaidButton = ({
         {loading ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin" />
-            Actualizando...
+            {t('payment.actions.updating')}
           </>
         ) : (
           <>
@@ -103,14 +105,14 @@ export const MarkAsPaidButton = ({
   // → Show button "Marcar que pagué"
   if (isDebtor && !participantIsPayer && !isPaid) {
     // You owe money, you're viewing your own row
-    return renderButton('Marcar que pagué');
+    return renderButton(t('payment.actions.markAsPaid'));
   }
 
   // CASO 2: You're the payee viewing another participant's row (not paid yet)
   // → Show button "Confirmar pago recibido"
   if (isPayee && !isDebtor && !isPaid) {
     // You paid, you're viewing someone else's row who owes you
-    return renderButton('Confirmar pago recibido');
+    return renderButton(t('payment.actions.confirmReceived'));
   }
 
   // CASO 3: You're the payee viewing your own row (you paid and you're also a participant)
@@ -119,7 +121,7 @@ export const MarkAsPaidButton = ({
     return (
       <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 rounded-lg border border-blue-200">
         <CheckCircle2 className="h-3.5 w-3.5" />
-        Ya pagaste (esperando pago de otros)
+        {t('payment.actions.alreadyPaidWaiting')}
       </span>
     );
   }
@@ -128,13 +130,13 @@ export const MarkAsPaidButton = ({
   if (isPaid) {
     if (isPayee) {
       // Payee can undo the payment
-      return renderButton('Deshacer pago');
+      return renderButton(t('payment.actions.undoPayment'));
     } else {
       // Others just see the status
       return (
         <span className="inline-flex items-center gap-1.5 text-sm text-green-600">
           <CheckCircle2 className="h-4 w-4" />
-          Pagado
+          {t('payment.actions.paid')}
         </span>
       );
     }

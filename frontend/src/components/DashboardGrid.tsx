@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useCallback, useEffect, useState, useRef } from 'react'
+import { useTranslations } from 'next-intl'
 import GridLayout, { Layout } from 'react-grid-layout'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { dashboardPreferenceAPI } from '@/lib/api'
@@ -13,6 +14,7 @@ interface DashboardGridProps {
 }
 
 export const DashboardGrid = ({ children }: DashboardGridProps) => {
+  const t = useTranslations('common');
   const { layout, saveLayout } = useDashboardStore()
   const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null)
   const [isSaving, setIsSaving] = useState(false)
@@ -131,7 +133,7 @@ export const DashboardGrid = ({ children }: DashboardGridProps) => {
       {/* Saving indicator */}
       {isSaving && (
         <div className="fixed bottom-4 right-4 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm">
-          Saving layout...
+          {t('savingLayout')}
         </div>
       )}
     </div>

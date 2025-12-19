@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { ChevronDown, ChevronUp, CheckCircle, Clock, Eye, Wallet } from 'lucide-react';
 import { userAPI } from '@/lib/api';
@@ -81,11 +81,7 @@ export const BalancesWidget = () => {
     });
   };
 
-  useEffect(() => {
-    loadBalances();
-  }, [month, year]);
-
-  const loadBalances = async () => {
+  const loadBalances = useCallback(async () => {
     try {
       setLoading(true);
       const res = await userAPI.getMyBalances({ month, year });
@@ -96,7 +92,11 @@ export const BalancesWidget = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [month, year]);
+
+  useEffect(() => {
+    loadBalances();
+  }, [loadBalances]);
 
   const handleSettleBalance = (groupId: string, otherUserId: string, userName: string, amount: number) => {
     setSettleModalData({

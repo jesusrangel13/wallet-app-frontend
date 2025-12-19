@@ -1,14 +1,57 @@
 {
-  "title": "Grupos",
-  "noGroups": "No hay grupos",
-  "addGroup": "Crear Grupo",
-  "members": "Miembros",
-  "expenses": "Gastos",
-  "balance": "Balance",
+  "title": "Gruppi",
+  "noGroups": "Nessun gruppo",
+  "addGroup": "Crea gruppo",
+  "members": "Membri",
+  "expenses": "Spese",
+  "balance": "Saldo",
   "splitTypes": {
-    "EQUAL": "Igualmente",
-    "PERCENTAGE": "Por porcentaje",
-    "SHARES": "Por partes",
-    "EXACT": "Monto exacto"
+    "EQUAL": "Ugualmente",
+    "PERCENTAGE": "Per percentuale",
+    "SHARES": "Per quote",
+    "EXACT": "Importo esatto"
+  },
+  "payment": {
+    "status": {
+      "paid": "Pagato",
+      "pending": "In attesa"
+    },
+    "actions": {
+      "markAsPaid": "Segna che ho pagato",
+      "confirmReceived": "Conferma pagamento ricevuto",
+      "undoPayment": "Annulla pagamento",
+      "alreadyPaidWaiting": "Hai pagato (in attesa del pagamento degli altri)",
+      "paid": "Pagato",
+      "updating": "Aggiornamento..."
+    },
+    "modal": {
+      "markAsPaidTitle": "Segna come pagato",
+      "settleBalanceTitle": "Salda saldo",
+      "expenseInfo": "Stai per segnare la spesa \"{description}\" di ${amount} come pagata.",
+      "balanceInfo": "Stai per segnare il saldo di ${amount} con {name} come pagato.",
+      "selectAccount": "Seleziona il conto dove verrà registrato il pagamento",
+      "loadingAccounts": "Caricamento conti...",
+      "noActiveAccounts": "Non hai conti attivi. Crea prima un conto.",
+      "defaultAccountHint": "Puoi impostare un conto predefinito nelle impostazioni per averlo selezionato automaticamente.",
+      "confirmInfo": "Alla conferma, verrà creata una transazione nel conto selezionato e la spesa verrà segnata come pagata.",
+      "settleInfo": "Alla conferma, verrà creata una transazione nel conto selezionato e il saldo verrà segnato come saldato.",
+      "cancel": "Annulla",
+      "confirmPayment": "Conferma pagamento",
+      "marking": "Segnando...",
+      "settling": "Saldando...",
+      "defaultBadge": "(Predefinito)"
+    },
+    "toasts": {
+      "markedAsPaid": "Segnato come pagato",
+      "markedAsUnpaid": "Segnato come non pagato",
+      "expensePaidWithTransactions": "Spesa segnata come pagata. Transazioni create nel tuo conto.",
+      "expensePaidNoTransactions": "Spesa segnata come pagata. Nessuna transazione creata (configura i conti predefiniti nelle impostazioni).",
+      "balanceSettledWithTransactions": "Saldo saldato con successo. Transazioni create nel tuo conto.",
+      "balanceSettledNoTransactions": "Saldo segnato come saldato. Nessuna transazione creata (configura i conti predefiniti nelle impostazioni).",
+      "errorMarkingPaid": "Errore nel segnare la spesa come pagata",
+      "errorLoadingAccounts": "Errore nel caricamento dei conti",
+      "errorUpdatingStatus": "Errore nell'aggiornamento dello stato del pagamento",
+      "selectAccountFirst": "Seleziona prima un conto"
+    }
   }
 }

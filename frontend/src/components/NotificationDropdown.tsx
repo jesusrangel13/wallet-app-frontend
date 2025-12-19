@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   DollarSign,
   UserPlus,
@@ -10,12 +11,12 @@ import {
   Loader2
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { useNotificationStore, type Notification } from '@/store/notificationStore';
 import { notificationAPI } from '@/lib/api';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 import { toast } from 'sonner';
+import { useDateFnsLocale } from '@/hooks/useDateFnsLocale';
 
 interface NotificationDropdownProps {
   onClose: () => void;
@@ -23,10 +24,25 @@ interface NotificationDropdownProps {
 }
 
 export const NotificationDropdown = ({ onClose, onNotificationRead }: NotificationDropdownProps) => {
+  const t = useTranslations('notifications');
+  const dateFnsLocale = useDateFnsLocale();
   const { notifications, setNotifications, addNotification, markAsRead, markAllAsRead } = useNotificationStore();
   const { user } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [markingAllRead, setMarkingAllRead] = useState(false);
+
+  const fetchNotifications = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await notificationAPI.getAll(20);
+      setNotifications(response.data.data);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+      toast.error(t('dropdown.errorLoading'));
+    } finally {
+      setLoading(false);
+    }
+  }, [setNotifications, t]);
 
   // Fetch notifications on mount and subscribe to Realtime
   useEffect(() => {
@@ -62,20 +78,7 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
         subscription.unsubscribe();
       };
     }
-  }, [user?.id]);
-
-  const fetchNotifications = async () => {
-    setLoading(true);
-    try {
-      const response = await notificationAPI.getAll(20);
-      setNotifications(response.data.data);
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-      toast.error('Error al cargar notificaciones');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [user?.id, fetchNotifications, addNotification, onNotificationRead]);
 
   const handleNotificationClick = async (notification: Notification) => {
     if (!notification.isRead) {
@@ -95,10 +98,10 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
       await notificationAPI.markAllAsRead();
       markAllAsRead();
       onNotificationRead();
-      toast.success('Todas las notificaciones marcadas como leídas');
+      toast.success(t('dropdown.allMarkedRead'));
     } catch (error) {
       console.error('Error marking all as read:', error);
-      toast.error('Error al marcar como leídas');
+      toast.error(t('dropdown.errorMarkingRead'));
     } finally {
       setMarkingAllRead(false);
     }
@@ -127,10 +130,10 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
       {/* Header */}
       <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between bg-gray-50 rounded-t-lg">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Notificaciones</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{t('dropdown.title')}</h3>
           {unreadNotifications.length > 0 && (
             <p className="text-xs text-gray-500">
-              {unreadNotifications.length} nueva(s)
+              {t('dropdown.newCount', { count: unreadNotifications.length })}
             </p>
           )}
         </div>
@@ -141,7 +144,7 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
             disabled={markingAllRead}
             className="text-xs text-blue-600 hover:text-blue-700 font-medium disabled:opacity-50"
           >
-            {markingAllRead ? 'Marcando...' : 'Marcar todas'}
+            {markingAllRead ? t('dropdown.marking') : t('dropdown.markAll')}
           </button>
         )}
       </div>
@@ -155,7 +158,7 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
         ) : notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 px-4">
             <Bell className="h-12 w-12 text-gray-300 mb-3" />
-            <p className="text-gray-500 text-center">No tienes notificaciones</p>
+            <p className="text-gray-500 text-center">{t('dropdown.empty')}</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
@@ -189,7 +192,7 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
                     <p className="text-xs text-gray-400 mt-1">
                       {formatDistanceToNow(new Date(notification.createdAt), {
                         addSuffix: true,
-                        locale: es,
+                        locale: dateFnsLocale,
                       })}
                     </p>
                   </div>
@@ -207,7 +210,7 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
             onClick={onClose}
             className="w-full text-center text-sm text-blue-600 hover:text-blue-700 font-medium"
           >
-            Ver todas las notificaciones
+            {t('dropdown.viewAll')}
           </button>
         </div>
       )}

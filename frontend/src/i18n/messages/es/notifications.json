@@ -33,5 +33,19 @@
   "settings": {
     "saved": "Configuración guardada exitosamente",
     "error": "Error al guardar la configuración"
+  },
+  "bell": {
+    "ariaLabel": "Notificaciones"
+  },
+  "dropdown": {
+    "title": "Notificaciones",
+    "newCount": "{count} nueva(s)",
+    "markAll": "Marcar todas",
+    "marking": "Marcando...",
+    "empty": "No tienes notificaciones",
+    "viewAll": "Ver todas las notificaciones",
+    "errorLoading": "Error al cargar notificaciones",
+    "allMarkedRead": "Todas las notificaciones marcadas como leídas",
+    "errorMarkingRead": "Error al marcar como leídas"
   }
 }

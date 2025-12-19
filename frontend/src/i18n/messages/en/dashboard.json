@@ -1,0 +1,6 @@
+{
+  "title": "Dashboard",
+  "subtitle": "Welcome back! Here's your financial summary.",
+  "noWidgets": "You don't have any widgets on your dashboard. Add some to get started.",
+  "loadingPreferences": "Error loading dashboard preferences"
+}

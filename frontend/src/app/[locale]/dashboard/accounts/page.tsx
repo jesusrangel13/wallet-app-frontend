@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -80,9 +80,31 @@ export default function AccountsPage() {
 
   const selectedType = watch('type')
 
+  const loadAccounts = useCallback(async (isInitial = false) => {
+    try {
+      if (isInitial) {
+        setIsLoading(true)
+      } else {
+        setIsRefetching(true)
+      }
+      const response = await accountAPI.getAll()
+      // Handle flexible response format (array or paginated structure)
+      const accountsData = response.data as any
+      setAccounts(Array.isArray(accountsData) ? accountsData : accountsData.data)
+    } catch (error) {
+      handleError(error)
+    } finally {
+      if (isInitial) {
+        setIsLoading(false)
+      } else {
+        setIsRefetching(false)
+      }
+    }
+  }, [handleError])
+
   useEffect(() => {
     loadAccounts(true)
-  }, [])
+  }, [loadAccounts])
 
   useEffect(() => {
     if (editingAccount) {
@@ -109,28 +131,6 @@ export default function AccountsPage() {
       })
     }
   }, [editingAccount, reset])
-
-  const loadAccounts = async (isInitial = false) => {
-    try {
-      if (isInitial) {
-        setIsLoading(true)
-      } else {
-        setIsRefetching(true)
-      }
-      const response = await accountAPI.getAll()
-      // Handle flexible response format (array or paginated structure)
-      const accountsData = response.data as any
-      setAccounts(Array.isArray(accountsData) ? accountsData : accountsData.data)
-    } catch (error) {
-      handleError(error)
-    } finally {
-      if (isInitial) {
-        setIsLoading(false)
-      } else {
-        setIsRefetching(false)
-      }
-    }
-  }
 
   const onSubmit = async (data: AccountFormData) => {
     try {

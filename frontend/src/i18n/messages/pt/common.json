@@ -1,37 +1,38 @@
 {
   "app": {
-    "title": "Finance App - Administra tu Dinero",
-    "description": "Solución completa de gestión financiera con gastos compartidos"
+    "title": "Finance App - Gerencie seu dinheiro",
+    "description": "Solução completa de gestão financeira com despesas compartilhadas",
+    "name": "FinanceApp"
   },
-  "loading": "Cargando...",
-  "error": "Error",
-  "success": "Éxito",
-  "save": "Guardar",
+  "loading": "Carregando...",
+  "error": "Erro",
+  "success": "Sucesso",
+  "save": "Salvar",
   "cancel": "Cancelar",
-  "delete": "Eliminar",
+  "delete": "Excluir",
   "edit": "Editar",
-  "create": "Crear",
-  "close": "Cerrar",
+  "create": "Criar",
+  "close": "Fechar",
   "confirm": "Confirmar",
-  "yes": "Sí",
-  "no": "No",
+  "yes": "Sim",
+  "no": "Não",
   "search": "Buscar",
   "filter": "Filtrar",
-  "clear": "Limpiar",
+  "clear": "Limpar",
   "apply": "Aplicar",
-  "reset": "Restablecer",
-  "back": "Volver",
-  "next": "Siguiente",
+  "reset": "Redefinir",
+  "back": "Voltar",
+  "next": "Próximo",
   "previous": "Anterior",
   "submit": "Enviar",
-  "add": "Agregar",
-  "remove": "Quitar",
+  "add": "Adicionar",
+  "remove": "Remover",
   "view": "Ver",
-  "download": "Descargar",
-  "upload": "Subir",
+  "download": "Baixar",
+  "upload": "Enviar",
   "currencies": {
     "CLP": "Peso Chileno",
-    "USD": "Dólar Estadounidense",
+    "USD": "Dólar Americano",
     "EUR": "Euro"
   },
   "languages": {
@@ -43,12 +44,24 @@
     "de": "Deutsch"
   },
   "date": {
-    "today": "Hoy",
-    "yesterday": "Ayer",
+    "today": "Hoje",
+    "yesterday": "Ontem",
     "thisWeek": "Esta semana",
-    "thisMonth": "Este mes",
-    "lastMonth": "Mes pasado",
-    "custom": "Personalizado"
+    "thisMonth": "Este mês",
+    "lastMonth": "Mês passado",
+    "custom": "Personalizado",
+    "navigation": {
+      "previousMonth": "Mês anterior",
+      "nextMonth": "Próximo mês",
+      "currentMonth": "Ir para o mês atual"
+    }
   },
-  "skipToContent": "Saltar al contenido principal"
+  "skipToContent": "Pular para o conteúdo principal",
+  "welcome": "Bem-vindo, ",
+  "logout": "Sair",
+  "saving": "Salvando...",
+  "savingLayout": "Salvando layout...",
+  "closeModal": "Fechar modal",
+  "addWidget": "Adicionar widget",
+  "widget": "Widget"
 }

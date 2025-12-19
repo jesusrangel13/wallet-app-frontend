@@ -1,14 +1,57 @@
 {
-  "title": "Grupos",
-  "noGroups": "No hay grupos",
-  "addGroup": "Crear Grupo",
-  "members": "Miembros",
-  "expenses": "Gastos",
-  "balance": "Balance",
+  "title": "Gruppen",
+  "noGroups": "Keine Gruppen",
+  "addGroup": "Gruppe erstellen",
+  "members": "Mitglieder",
+  "expenses": "Ausgaben",
+  "balance": "Saldo",
   "splitTypes": {
-    "EQUAL": "Igualmente",
-    "PERCENTAGE": "Por porcentaje",
-    "SHARES": "Por partes",
-    "EXACT": "Monto exacto"
+    "EQUAL": "Gleich",
+    "PERCENTAGE": "Nach Prozentsatz",
+    "SHARES": "Nach Anteilen",
+    "EXACT": "Exakter Betrag"
+  },
+  "payment": {
+    "status": {
+      "paid": "Bezahlt",
+      "pending": "Ausstehend"
+    },
+    "actions": {
+      "markAsPaid": "Als bezahlt markieren",
+      "confirmReceived": "Zahlungseingang bestätigen",
+      "undoPayment": "Zahlung rückgängig machen",
+      "alreadyPaidWaiting": "Sie haben bezahlt (warte auf andere Zahlungen)",
+      "paid": "Bezahlt",
+      "updating": "Wird aktualisiert..."
+    },
+    "modal": {
+      "markAsPaidTitle": "Als bezahlt markieren",
+      "settleBalanceTitle": "Saldo ausgleichen",
+      "expenseInfo": "Sie sind dabei, die Ausgabe \"{description}\" für ${amount} als bezahlt zu markieren.",
+      "balanceInfo": "Sie sind dabei, den Saldo von ${amount} mit {name} als bezahlt zu markieren.",
+      "selectAccount": "Wählen Sie das Konto aus, auf dem die Zahlung erfasst wird",
+      "loadingAccounts": "Konten werden geladen...",
+      "noActiveAccounts": "Sie haben keine aktiven Konten. Erstellen Sie zuerst ein Konto.",
+      "defaultAccountHint": "Sie können in den Einstellungen ein Standardkonto festlegen, damit es automatisch ausgewählt wird.",
+      "confirmInfo": "Bei Bestätigung wird eine Transaktion im ausgewählten Konto erstellt und die Ausgabe als bezahlt markiert.",
+      "settleInfo": "Bei Bestätigung wird eine Transaktion im ausgewählten Konto erstellt und der Saldo als ausgeglichen markiert.",
+      "cancel": "Abbrechen",
+      "confirmPayment": "Zahlung bestätigen",
+      "marking": "Wird markiert...",
+      "settling": "Wird ausgeglichen...",
+      "defaultBadge": "(Standard)"
+    },
+    "toasts": {
+      "markedAsPaid": "Als bezahlt markiert",
+      "markedAsUnpaid": "Als unbezahlt markiert",
+      "expensePaidWithTransactions": "Ausgabe als bezahlt markiert. Transaktionen in Ihrem Konto erstellt.",
+      "expensePaidNoTransactions": "Ausgabe als bezahlt markiert. Keine Transaktionen erstellt (konfigurieren Sie Standardkonten in den Einstellungen).",
+      "balanceSettledWithTransactions": "Saldo erfolgreich ausgeglichen. Transaktionen in Ihrem Konto erstellt.",
+      "balanceSettledNoTransactions": "Saldo als ausgeglichen markiert. Keine Transaktionen erstellt (konfigurieren Sie Standardkonten in den Einstellungen).",
+      "errorMarkingPaid": "Fehler beim Markieren der Ausgabe als bezahlt",
+      "errorLoadingAccounts": "Fehler beim Laden der Konten",
+      "errorUpdatingStatus": "Fehler beim Aktualisieren des Zahlungsstatus",
+      "selectAccountFirst": "Bitte wählen Sie ein Konto aus"
+    }
   }
 }

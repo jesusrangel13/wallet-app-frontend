@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import { NotificationBell } from '@/components/NotificationBell'
 import { AddWidgetButton } from '@/components/AddWidgetButton'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 
 interface DashboardLayoutContentProps {
   children: React.ReactNode
@@ -15,6 +16,7 @@ interface DashboardLayoutContentProps {
 }
 
 export function DashboardLayoutContent({ children, isCollapsed }: DashboardLayoutContentProps) {
+  const t = useTranslations('common')
   const router = useRouter()
   const pathname = usePathname()
   const sidebarState = useSidebarStore()
@@ -42,11 +44,11 @@ export function DashboardLayoutContent({ children, isCollapsed }: DashboardLayou
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-2 md:hidden">
               <Wallet className="h-8 w-8 text-blue-600" />
-              <span className="text-lg font-bold text-gray-900">FinanceApp</span>
+              <span className="text-lg font-bold text-gray-900">{t('app.name')}</span>
             </div>
             <div className="hidden md:flex items-center">
               <span className="text-sm text-gray-600">
-                Welcome, <span className="font-semibold">{user?.name}</span>
+                {t('welcome')}<span className="font-semibold">{user?.name}</span>
               </span>
             </div>
             <div className="flex items-center gap-2 md:gap-4">
@@ -62,7 +64,7 @@ export function DashboardLayoutContent({ children, isCollapsed }: DashboardLayou
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">{t('logout')}</span>
               </button>
             </div>
           </div>

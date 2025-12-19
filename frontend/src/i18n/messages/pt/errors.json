@@ -13,7 +13,30 @@
   "GROUP_UNAUTHORIZED": "No tienes permisos para este grupo",
   "LOAN_NOT_FOUND": "Préstamo no encontrado",
   "DATABASE_ERROR": "Error de base de datos",
-  "INTERNAL_SERVER_ERROR": "Error interno del servidor",
-  "UNAUTHORIZED": "No autorizado",
-  "FORBIDDEN": "Prohibido"
+  "INTERNAL_SERVER_ERROR": "Erro interno do servidor",
+  "UNAUTHORIZED": "Não autorizado",
+  "FORBIDDEN": "Proibido",
+  "api": {
+    "NETWORK_ERROR": "Erro de conexão de rede. Verifique sua conexão com a internet",
+    "TIMEOUT_ERROR": "Tempo limite esgotado. Tente novamente",
+    "NOT_FOUND": "Recurso não encontrado",
+    "BAD_REQUEST": "Solicitação inválida",
+    "VALIDATION_ERROR": "Ocorreu um erro de validação",
+    "ERR_NETWORK": "Erro de conexão de rede. Verifique sua conexão com a internet"
+  },
+  "generic": {
+    "UNKNOWN_ERROR": "Ocorreu um erro inesperado",
+    "NETWORK_ERROR": "Erro de conexão de rede. Verifique sua conexão com a internet",
+    "TIMEOUT_ERROR": "Tempo limite esgotado. Tente novamente"
+  },
+  "rateLimiting": {
+    "title": "Muitas solicitações",
+    "description": "Você fez muitas solicitações. Aguarde um momento antes de tentar novamente"
+  },
+  "fallback": {
+    "title": "Algo deu errado",
+    "message": "Encontramos um erro inesperado. Nossa equipe foi notificada. Você pode tentar recarregar a página ou verificar sua conexão.",
+    "reloadPage": "Recarregar página",
+    "tryAgain": "Tentar novamente"
+  }
 }

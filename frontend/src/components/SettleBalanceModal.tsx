@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { Modal } from './ui/Modal'
 import { Account } from '@/types'
 import { accountAPI, groupAPI, userAPI } from '@/lib/api'
@@ -26,6 +27,7 @@ export function SettleBalanceModal({
   amount,
   onSuccess,
 }: SettleBalanceModalProps) {
+  const t = useTranslations('groups')
   const { handleError } = useGlobalErrorHandler()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [selectedAccountId, setSelectedAccountId] = useState<string>('')
@@ -33,13 +35,7 @@ export function SettleBalanceModal({
   const [loading, setLoading] = useState(false)
   const [loadingAccounts, setLoadingAccounts] = useState(true)
 
-  useEffect(() => {
-    if (isOpen) {
-      loadAccountsAndDefault()
-    }
-  }, [isOpen])
-
-  const loadAccountsAndDefault = async () => {
+  const loadAccountsAndDefault = useCallback(async () => {
     try {
       setLoadingAccounts(true)
       const [accountsRes, profileRes] = await Promise.all([
@@ -72,11 +68,17 @@ export function SettleBalanceModal({
     } finally {
       setLoadingAccounts(false)
     }
-  }
+  }, [handleError])
+
+  useEffect(() => {
+    if (isOpen) {
+      loadAccountsAndDefault()
+    }
+  }, [isOpen, loadAccountsAndDefault])
 
   const handleSettle = async () => {
     if (!selectedAccountId) {
-      toast.error('Por favor selecciona una cuenta')
+      toast.error(t('payment.toasts.selectAccountFirst'))
       return
     }
 
@@ -89,13 +91,9 @@ export function SettleBalanceModal({
       )
 
       if (response.data.data.transactionsCreated) {
-        toast.success(
-          `Balance saldado con éxito. Transacciones creadas en tu cuenta.`
-        )
+        toast.success(t('payment.toasts.balanceSettledWithTransactions'))
       } else {
-        toast.success(
-          `Balance marcado como saldado. No se crearon transacciones (configura cuentas por defecto en Configuración).`
-        )
+        toast.success(t('payment.toasts.balanceSettledNoTransactions'))
       }
 
       onSuccess?.()
@@ -108,16 +106,12 @@ export function SettleBalanceModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Saldar Balance">
+    <Modal isOpen={isOpen} onClose={onClose} title={t('payment.modal.settleBalanceTitle')}>
       <div className="space-y-4">
         {/* Amount info */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm text-blue-900">
-            Vas a marcar como pagado el balance de{' '}
-            <span className="font-semibold">
-              ${amount.toFixed(0)}
-            </span>{' '}
-            con {otherUserName}.
+            {t('payment.modal.balanceInfo', { amount: amount.toFixed(0), name: otherUserName })}
           </p>
         </div>
 
@@ -127,14 +121,14 @@ export function SettleBalanceModal({
             htmlFor="account"
             className="block text-sm font-medium text-gray-700 mb-2"
           >
-            Selecciona la cuenta donde se registrará el pago
+            {t('payment.modal.selectAccount')}
           </label>
 
           {loadingAccounts ? (
-            <div className="text-sm text-gray-500">Cargando cuentas...</div>
+            <div className="text-sm text-gray-500">{t('payment.modal.loadingAccounts')}</div>
           ) : accounts.length === 0 ? (
             <div className="text-sm text-red-600">
-              No tienes cuentas activas. Crea una cuenta primero.
+              {t('payment.modal.noActiveAccounts')}
             </div>
           ) : (
             <select
@@ -148,7 +142,7 @@ export function SettleBalanceModal({
                 <option key={account.id} value={account.id}>
                   {account.name} - {account.currency} $
                   {Number(account.balance).toFixed(2)}
-                  {defaultAccountId === account.id ? ' (Por defecto)' : ''}
+                  {defaultAccountId === account.id ? ` ${t('payment.modal.defaultBadge')}` : ''}
                 </option>
               ))}
             </select>
@@ -156,8 +150,7 @@ export function SettleBalanceModal({
 
           {!loadingAccounts && defaultAccountId === null && accounts.length > 0 && (
             <p className="mt-2 text-xs text-gray-500">
-              Puedes configurar una cuenta por defecto en Configuración para que
-              se seleccione automáticamente.
+              {t('payment.modal.defaultAccountHint')}
             </p>
           )}
         </div>
@@ -165,8 +158,7 @@ export function SettleBalanceModal({
         {/* Info message */}
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
           <p className="text-xs text-gray-600">
-            Al confirmar, se creará una transacción en la cuenta seleccionada y
-            se marcará el balance como saldado.
+            {t('payment.modal.settleInfo')}
           </p>
         </div>
 
@@ -177,14 +169,14 @@ export function SettleBalanceModal({
             disabled={loading}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
           >
-            Cancelar
+            {t('payment.modal.cancel')}
           </button>
           <button
             onClick={handleSettle}
             disabled={loading || loadingAccounts || !selectedAccountId}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Saldando...' : 'Confirmar Pago'}
+            {loading ? t('payment.modal.settling') : t('payment.modal.confirmPayment')}
           </button>
         </div>
       </div>

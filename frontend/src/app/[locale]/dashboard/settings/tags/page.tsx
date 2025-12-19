@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
 import { Tag, CreateTagForm } from '@/types'
@@ -38,11 +38,7 @@ export default function TagsSettingsPage() {
     color: '#FF6B6B',
   })
 
-  useEffect(() => {
-    loadTags()
-  }, [])
-
-  const loadTags = async () => {
+  const loadTags = useCallback(async () => {
     try {
       setIsLoading(true)
       const response = await tagAPI.getAll()
@@ -54,7 +50,11 @@ export default function TagsSettingsPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [t])
+
+  useEffect(() => {
+    loadTags()
+  }, [loadTags])
 
   const handleAddNew = () => {
     setEditingTag(null)

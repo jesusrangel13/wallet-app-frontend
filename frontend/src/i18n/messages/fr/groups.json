@@ -1,14 +1,57 @@
 {
-  "title": "Grupos",
-  "noGroups": "No hay grupos",
-  "addGroup": "Crear Grupo",
-  "members": "Miembros",
-  "expenses": "Gastos",
-  "balance": "Balance",
+  "title": "Groupes",
+  "noGroups": "Aucun groupe",
+  "addGroup": "Créer un groupe",
+  "members": "Membres",
+  "expenses": "Dépenses",
+  "balance": "Solde",
   "splitTypes": {
-    "EQUAL": "Igualmente",
-    "PERCENTAGE": "Por porcentaje",
-    "SHARES": "Por partes",
-    "EXACT": "Monto exacto"
+    "EQUAL": "Également",
+    "PERCENTAGE": "Par pourcentage",
+    "SHARES": "Par parts",
+    "EXACT": "Montant exact"
+  },
+  "payment": {
+    "status": {
+      "paid": "Payé",
+      "pending": "En attente"
+    },
+    "actions": {
+      "markAsPaid": "Marquer que j'ai payé",
+      "confirmReceived": "Confirmer le paiement reçu",
+      "undoPayment": "Annuler le paiement",
+      "alreadyPaidWaiting": "Vous avez payé (en attente du paiement des autres)",
+      "paid": "Payé",
+      "updating": "Mise à jour..."
+    },
+    "modal": {
+      "markAsPaidTitle": "Marquer comme payé",
+      "settleBalanceTitle": "Régler le solde",
+      "expenseInfo": "Vous êtes sur le point de marquer la dépense \"{description}\" de ${amount} comme payée.",
+      "balanceInfo": "Vous êtes sur le point de marquer le solde de ${amount} avec {name} comme payé.",
+      "selectAccount": "Sélectionnez le compte où le paiement sera enregistré",
+      "loadingAccounts": "Chargement des comptes...",
+      "noActiveAccounts": "Vous n'avez pas de comptes actifs. Créez d'abord un compte.",
+      "defaultAccountHint": "Vous pouvez définir un compte par défaut dans les paramètres pour qu'il soit automatiquement sélectionné.",
+      "confirmInfo": "Lors de la confirmation, une transaction sera créée dans le compte sélectionné et la dépense sera marquée comme payée.",
+      "settleInfo": "Lors de la confirmation, une transaction sera créée dans le compte sélectionné et le solde sera marqué comme réglé.",
+      "cancel": "Annuler",
+      "confirmPayment": "Confirmer le paiement",
+      "marking": "Marquage...",
+      "settling": "Règlement...",
+      "defaultBadge": "(Par défaut)"
+    },
+    "toasts": {
+      "markedAsPaid": "Marqué comme payé",
+      "markedAsUnpaid": "Marqué comme non payé",
+      "expensePaidWithTransactions": "Dépense marquée comme payée. Transactions créées dans votre compte.",
+      "expensePaidNoTransactions": "Dépense marquée comme payée. Aucune transaction créée (configurez les comptes par défaut dans les paramètres).",
+      "balanceSettledWithTransactions": "Solde réglé avec succès. Transactions créées dans votre compte.",
+      "balanceSettledNoTransactions": "Solde marqué comme réglé. Aucune transaction créée (configurez les comptes par défaut dans les paramètres).",
+      "errorMarkingPaid": "Erreur lors du marquage de la dépense comme payée",
+      "errorLoadingAccounts": "Erreur lors du chargement des comptes",
+      "errorUpdatingStatus": "Erreur lors de la mise à jour du statut de paiement",
+      "selectAccountFirst": "Veuillez sélectionner un compte"
+    }
   }
 }

@@ -1,30 +1,32 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { Bell } from 'lucide-react';
 import { useNotificationStore } from '@/store/notificationStore';
 import { notificationAPI } from '@/lib/api';
 import { NotificationDropdown } from './NotificationDropdown';
 
 export const NotificationBell = () => {
+  const t = useTranslations('notifications');
   const [isOpen, setIsOpen] = useState(false);
   const { unreadCount, setUnreadCount } = useNotificationStore();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Fetch unread count
-  const fetchUnreadCount = async () => {
+  const fetchUnreadCount = useCallback(async () => {
     try {
       const response = await notificationAPI.getCount();
       setUnreadCount(response.data.data.count);
     } catch (error) {
       console.error('Error fetching notification count:', error);
     }
-  };
+  }, [setUnreadCount]);
 
   // Initial fetch
   useEffect(() => {
     fetchUnreadCount();
-  }, []);
+  }, [fetchUnreadCount]);
 
   // Polling every 30 seconds
   useEffect(() => {
@@ -33,7 +35,7 @@ export const NotificationBell = () => {
     }, 30000); // 30 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchUnreadCount]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -57,7 +59,7 @@ export const NotificationBell = () => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-        aria-label="Notificaciones"
+        aria-label={t('bell.ariaLabel')}
       >
         <Bell className="h-6 w-6" />
 

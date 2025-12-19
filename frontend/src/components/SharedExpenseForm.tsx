@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import { Group, SplitType } from '@/types'
 import { groupAPI } from '@/lib/api'
@@ -78,11 +78,64 @@ export default function SharedExpenseForm({
   const [isInitialized, setIsInitialized] = useState(false)
   const [showCalculationFeedback, setShowCalculationFeedback] = useState(false)
 
+  const loadGroups = useCallback(async () => {
+    try {
+      setIsLoadingGroups(true)
+      const response = await groupAPI.getAll()
+      // El backend devuelve array directo sin paginación params
+      const groupsData = Array.isArray(response.data) ? response.data : (response.data as any).data
+      setGroups(groupsData)
+    } catch (error) {
+      console.error('Failed to load groups:', error)
+    } finally {
+      setIsLoadingGroups(false)
+    }
+  }, [])
+
+  const calculateSplit = useCallback(() => {
+    if (!totalAmount || participants.length === 0) return
+
+    let updatedParticipants = [...participants]
+
+    switch (splitType) {
+      case 'EQUAL':
+        const equalAmount = totalAmount / participants.length
+        updatedParticipants = participants.map((p) => ({
+          ...p,
+          amountOwed: equalAmount,
+          percentage: undefined,
+          shares: undefined,
+        }))
+        break
+
+      case 'PERCENTAGE':
+        updatedParticipants = participants.map((p) => ({
+          ...p,
+          amountOwed: (totalAmount * (p.percentage || 0)) / 100,
+        }))
+        break
+
+      case 'EXACT':
+        // Keep manual amounts
+        break
+
+      case 'SHARES':
+        const totalShares = participants.reduce((sum, p) => sum + (p.shares || 1), 0)
+        updatedParticipants = participants.map((p) => ({
+          ...p,
+          amountOwed: (totalAmount * (p.shares || 1)) / totalShares,
+        }))
+        break
+    }
+
+    setParticipants(updatedParticipants)
+  }, [totalAmount, participants, splitType])
+
   useEffect(() => {
     if (enabled) {
       loadGroups()
     }
-  }, [enabled])
+  }, [enabled, loadGroups])
 
   // Reset initialization when initialData changes (to support editing different expenses)
   useEffect(() => {
@@ -150,11 +203,13 @@ export default function SharedExpenseForm({
   // This prevents infinite loops while still recalculating when needed
   const participantsKey = useMemo(() => {
     if (splitType === 'PERCENTAGE') {
-      return participants.map(p => `${p.userId}:${p.percentage || 0}`).join('|')
+      return participants.map(p => `${p.userId}:${p.percentage || 0}:${p.amountOwed}`).join('|')
     } else if (splitType === 'SHARES') {
-      return participants.map(p => `${p.userId}:${p.shares || 1}`).join('|')
+      return participants.map(p => `${p.userId}:${p.shares || 1}:${p.amountOwed}`).join('|')
+    } else if (splitType === 'EXACT') {
+      return participants.map(p => `${p.userId}:${p.amountOwed}`).join('|')
     } else {
-      return `${participants.length}`
+      return `${participants.length}:${participants.map(p => p.amountOwed).join(',')}`
     }
   }, [participants, splitType])
 
@@ -179,7 +234,7 @@ export default function SharedExpenseForm({
         // The first condition above will trigger when totalAmount > 0
       }
     }
-  }, [splitType, totalAmount, participantsKey])
+  }, [splitType, totalAmount, participantsKey, calculateSplit, initialData, selectedGroupId, participants.length])
 
   useEffect(() => {
     // Notify parent of changes
@@ -193,60 +248,7 @@ export default function SharedExpenseForm({
     } else {
       onChange(null)
     }
-  }, [enabled, selectedGroupId, paidByUserId, splitType, participants])
-
-  const loadGroups = async () => {
-    try {
-      setIsLoadingGroups(true)
-      const response = await groupAPI.getAll()
-      // El backend devuelve array directo sin paginación params
-      const groupsData = Array.isArray(response.data) ? response.data : (response.data as any).data
-      setGroups(groupsData)
-    } catch (error) {
-      console.error('Failed to load groups:', error)
-    } finally {
-      setIsLoadingGroups(false)
-    }
-  }
-
-  const calculateSplit = () => {
-    if (!totalAmount || participants.length === 0) return
-
-    let updatedParticipants = [...participants]
-
-    switch (splitType) {
-      case 'EQUAL':
-        const equalAmount = totalAmount / participants.length
-        updatedParticipants = participants.map((p) => ({
-          ...p,
-          amountOwed: equalAmount,
-          percentage: undefined,
-          shares: undefined,
-        }))
-        break
-
-      case 'PERCENTAGE':
-        updatedParticipants = participants.map((p) => ({
-          ...p,
-          amountOwed: (totalAmount * (p.percentage || 0)) / 100,
-        }))
-        break
-
-      case 'EXACT':
-        // Keep manual amounts
-        break
-
-      case 'SHARES':
-        const totalShares = participants.reduce((sum, p) => sum + (p.shares || 1), 0)
-        updatedParticipants = participants.map((p) => ({
-          ...p,
-          amountOwed: (totalAmount * (p.shares || 1)) / totalShares,
-        }))
-        break
-    }
-
-    setParticipants(updatedParticipants)
-  }
+  }, [enabled, selectedGroupId, paidByUserId, splitType, participantsKey, onChange, participants])
 
   const handleParticipantChange = (userId: string, field: string, value: number) => {
     setParticipants((prevParticipants) => {

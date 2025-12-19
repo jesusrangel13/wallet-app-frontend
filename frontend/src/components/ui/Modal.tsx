@@ -1,5 +1,6 @@
 import { X } from 'lucide-react'
 import { useEffect, useRef } from 'react'
+import { useTranslations } from 'next-intl'
 
 interface ModalProps {
   isOpen: boolean
@@ -9,6 +10,7 @@ interface ModalProps {
 }
 
 export function Modal({ isOpen, onClose, title, children }: ModalProps) {
+  const t = useTranslations('common');
   const hasInitializedFocusRef = useRef(false)
 
   // Effect for initial focus - only runs when modal opens
@@ -111,7 +113,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
-            aria-label="Close modal"
+            aria-label={t('closeModal')}
             data-modal-close="true"
           >
             <X className="h-5 w-5" />

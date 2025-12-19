@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { toast } from 'sonner'
 import { importAPI } from '@/lib/api'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
@@ -60,11 +60,7 @@ export default function ImportDetailPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | 'success' | 'failed'>('all')
 
-  useEffect(() => {
-    loadImportDetail()
-  }, [id])
-
-  const loadImportDetail = async () => {
+  const loadImportDetail = useCallback(async () => {
     try {
       setIsLoading(true)
       const response = await importAPI.getHistoryById(id)
@@ -74,7 +70,11 @@ export default function ImportDetailPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [id])
+
+  useEffect(() => {
+    loadImportDetail()
+  }, [loadImportDetail])
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)

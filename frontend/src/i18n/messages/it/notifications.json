@@ -31,7 +31,21 @@
     "error": "Error al actualizar el perfil"
   },
   "settings": {
-    "saved": "Configuración guardada exitosamente",
-    "error": "Error al guardar la configuración"
+    "saved": "Impostazioni salvate con successo",
+    "error": "Errore nel salvataggio delle impostazioni"
+  },
+  "bell": {
+    "ariaLabel": "Notifiche"
+  },
+  "dropdown": {
+    "title": "Notifiche",
+    "newCount": "{count} nuova/e",
+    "markAll": "Segna tutto",
+    "marking": "Marcatura...",
+    "empty": "Non hai notifiche",
+    "viewAll": "Visualizza tutte le notifiche",
+    "errorLoading": "Errore nel caricamento delle notifiche",
+    "allMarkedRead": "Tutte le notifiche contrassegnate come lette",
+    "errorMarkingRead": "Errore nel contrassegnare come lette"
   }
 }

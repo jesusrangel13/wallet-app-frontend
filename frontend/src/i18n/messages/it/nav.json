@@ -1,0 +1,20 @@
+{
+  "appName": "FinanceApp",
+  "dashboard": "Dashboard",
+  "accounts": "Conti",
+  "transactions": "Transazioni",
+  "loans": "Prestiti",
+  "groups": "Gruppi",
+  "import": "Importa",
+  "settings": "Impostazioni",
+  "dashboardDescription": "Visualizza la panoramica finanziaria",
+  "accountsDescription": "Gestisci i tuoi conti bancari",
+  "transactionsDescription": "Visualizza e gestisci le transazioni",
+  "loansDescription": "Gestisci prestiti e debiti",
+  "groupsDescription": "Gestisci spese condivise",
+  "importDescription": "Importa dati finanziari",
+  "settingsDescription": "Impostazioni dell'applicazione",
+  "toggleMenu": "Attiva/Disattiva menu",
+  "toggleSidebar": "Comprimi/Espandi barra laterale",
+  "version": "Versione 1.0.0"
+}
