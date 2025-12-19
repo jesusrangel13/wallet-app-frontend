@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { AxiosError } from 'axios';
+import { useCallback, useMemo } from 'react';
 
 /**
  * Extracts error code from various error types
@@ -74,7 +75,7 @@ function extractErrorCode(error: unknown): string | null {
 export function useErrorTranslator() {
   const t = useTranslations('errors');
 
-  return (error: unknown): string => {
+  return useCallback((error: unknown): string => {
     const code = extractErrorCode(error);
 
     // Special handling for rate limiting
@@ -103,7 +104,7 @@ export function useErrorTranslator() {
 
     // Fallback to generic error message
     return t('fallback');
-  };
+  }, [t]);
 }
 
 /**
@@ -113,8 +114,8 @@ export function useErrorTranslator() {
 export function useRateLimitMessage() {
   const t = useTranslations('errors.rateLimiting');
 
-  return {
+  return useMemo(() => ({
     title: t('title'),
     description: t('description')
-  };
+  }), [t]);
 }

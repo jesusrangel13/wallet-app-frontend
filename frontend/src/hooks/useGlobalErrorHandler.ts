@@ -1,6 +1,7 @@
 import { toast } from 'sonner';
 import { useErrorTranslator, useRateLimitMessage } from '@/lib/errorTranslator';
 import { AxiosError } from 'axios';
+import { useCallback } from 'react';
 
 /**
  * Global error handler hook for consistent error handling across the application
@@ -24,7 +25,7 @@ export function useGlobalErrorHandler() {
    * @param error - The error to handle
    * @param customMessage - Optional custom message to override translation
    */
-  const handleError = (error: unknown, customMessage?: string) => {
+  const handleError = useCallback((error: unknown, customMessage?: string) => {
     // Log error for debugging
     console.error('Error:', error);
 
@@ -43,7 +44,7 @@ export function useGlobalErrorHandler() {
     // Use custom message or translate error
     const message = customMessage || translateError(error);
     toast.error(message);
-  };
+  }, [translateError, rateLimitMessage]);
 
   /**
    * Get error handler for React Query mutations
@@ -56,11 +57,11 @@ export function useGlobalErrorHandler() {
    *   ...getMutationErrorHandler()
    * })
    */
-  const getMutationErrorHandler = (customMessage?: string) => ({
+  const getMutationErrorHandler = useCallback((customMessage?: string) => ({
     onError: (error: unknown) => {
       handleError(error, customMessage);
     }
-  });
+  }), [handleError]);
 
   /**
    * Get the translated error message without showing toast
@@ -70,9 +71,9 @@ export function useGlobalErrorHandler() {
    * const errorMessage = getErrorMessage(error);
    * setFormError(errorMessage);
    */
-  const getErrorMessage = (error: unknown): string => {
+  const getErrorMessage = useCallback((error: unknown): string => {
     return translateError(error);
-  };
+  }, [translateError]);
 
   return {
     handleError,
