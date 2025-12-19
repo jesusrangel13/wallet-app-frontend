@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react'
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react'
 
 interface SelectedMonthContextType {
   month: number
@@ -17,12 +17,15 @@ interface SelectedMonthContextType {
 const SelectedMonthContext = createContext<SelectedMonthContextType | undefined>(undefined)
 
 export const SelectedMonthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const now = new Date()
+  const now = useMemo(() => new Date(), [])
   const [month, setMonthState] = useState<number>(now.getMonth())
   const [year, setYearState] = useState<number>(now.getFullYear())
 
-  // Check if the selected month is the current month
-  const isCurrentMonth = month === now.getMonth() && year === now.getFullYear()
+  // Check if the selected month is the current month - memoize to prevent recalculation
+  const isCurrentMonth = useMemo(() => {
+    const current = new Date()
+    return month === current.getMonth() && year === current.getFullYear()
+  }, [month, year])
 
   const setMonth = useCallback((newMonth: number) => {
     setMonthState(newMonth)
@@ -71,7 +74,8 @@ export const SelectedMonthProvider: React.FC<{ children: React.ReactNode }> = ({
     setYearState(now.getFullYear())
   }, [])
 
-  const value: SelectedMonthContextType = {
+  // Memoize the context value to prevent unnecessary re-renders of all widgets
+  const value: SelectedMonthContextType = useMemo(() => ({
     month,
     year,
     isCurrentMonth,
@@ -81,7 +85,7 @@ export const SelectedMonthProvider: React.FC<{ children: React.ReactNode }> = ({
     goToPreviousMonth,
     goToNextMonth,
     resetToCurrentMonth,
-  }
+  }), [month, year, isCurrentMonth, setMonth, setYear, setMonthYear, goToPreviousMonth, goToNextMonth, resetToCurrentMonth])
 
   return <SelectedMonthContext.Provider value={value}>{children}</SelectedMonthContext.Provider>
 }

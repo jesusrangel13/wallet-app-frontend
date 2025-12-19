@@ -151,6 +151,18 @@ export default function TransactionsPage() {
   const selectedAmount = watch('amount') || 0
   const selectedAccount = accounts.find((a) => a.id === selectedAccountId)
 
+  // Use ref to avoid recreating loadTransactions on every filter change
+  const filtersRef = useRef(filters)
+  const itemsPerPageRef = useRef(itemsPerPage)
+
+  useEffect(() => {
+    filtersRef.current = filters
+  }, [filters])
+
+  useEffect(() => {
+    itemsPerPageRef.current = itemsPerPage
+  }, [itemsPerPage])
+
   const loadTransactions = useCallback(async (page: number = 1, append: boolean = false) => {
     try {
       if (append) {
@@ -159,19 +171,22 @@ export default function TransactionsPage() {
         setIsRefreshingList(true)
       }
 
+      const currentFilters = filtersRef.current
+      const currentItemsPerPage = itemsPerPageRef.current
+
       const response = await transactionAPI.getAll({
         page,
-        limit: itemsPerPage,
-        search: filters.search || undefined,
-        type: filters.type !== 'ALL' ? filters.type : undefined,
-        accountId: filters.accountId || undefined,
-        categoryId: filters.categoryId || undefined,
-        startDate: filters.startDate || undefined,
-        endDate: filters.endDate || undefined,
-        minAmount: filters.minAmount ? Number(filters.minAmount) : undefined,
-        maxAmount: filters.maxAmount ? Number(filters.maxAmount) : undefined,
-        sortBy: (filters.sortBy as any) || undefined,
-        sortOrder: (filters.sortOrder as any) || undefined,
+        limit: currentItemsPerPage,
+        search: currentFilters.search || undefined,
+        type: currentFilters.type !== 'ALL' ? currentFilters.type : undefined,
+        accountId: currentFilters.accountId || undefined,
+        categoryId: currentFilters.categoryId || undefined,
+        startDate: currentFilters.startDate || undefined,
+        endDate: currentFilters.endDate || undefined,
+        minAmount: currentFilters.minAmount ? Number(currentFilters.minAmount) : undefined,
+        maxAmount: currentFilters.maxAmount ? Number(currentFilters.maxAmount) : undefined,
+        sortBy: (currentFilters.sortBy as any) || undefined,
+        sortOrder: (currentFilters.sortOrder as any) || undefined,
       })
 
       const newTransactions = response.data.data.data || []
@@ -198,39 +213,47 @@ export default function TransactionsPage() {
       setIsRefreshingList(false)
       setIsLoadingMore(false)
     }
-  }, [itemsPerPage, filters])
+  }, []) // No dependencies - stable function
 
   useEffect(() => {
     const loadInitialData = async () => {
       try {
         setIsLoading(true)
-        await Promise.all([loadTransactions(), loadAccounts(), loadCategories()])
+        // Set initial date filters to current month FIRST
+        const now = new Date()
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0]
+        setFilters((prev) => ({
+          ...prev,
+          startDate: firstDay,
+          endDate: lastDay,
+        }))
+
+        await Promise.all([loadAccounts(), loadCategories()])
       } finally {
         setIsLoading(false)
       }
     }
 
     loadInitialData()
-    // Set initial date filters to current month
-    const now = new Date()
-    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
-    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0]
-    setFilters((prev) => ({
-      ...prev,
-      startDate: firstDay,
-      endDate: lastDay,
-    }))
-  }, [loadTransactions])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Run only once on mount
 
   useEffect(() => {
-    loadTransactions(1) // Reset to page 1 when filters change
-  }, [filters, loadTransactions])
-
-  useEffect(() => {
-    if (currentPage > 0) {
-      loadTransactions(currentPage) // Reload current page when items per page changes
+    // Only load transactions when filters actually change (not on initial mount with empty filters)
+    if (filters.startDate && filters.endDate) {
+      loadTransactions(1) // Reset to page 1 when filters change
     }
-  }, [itemsPerPage, currentPage, loadTransactions])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.search, filters.type, filters.accountId, filters.categoryId, filters.startDate, filters.endDate, filters.minAmount, filters.maxAmount, filters.sortBy, filters.sortOrder])
+
+  useEffect(() => {
+    // Reload when items per page changes
+    if (filters.startDate && filters.endDate) {
+      loadTransactions(1)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemsPerPage])
 
   // Grouped data memoization needed for Virtuoso
   const { groupedTransactions, groupCounts, flatTransactions } = useMemo(() => {
@@ -240,7 +263,7 @@ export default function TransactionsPage() {
     return { groupedTransactions: groups, groupCounts: counts, flatTransactions: flat }
   }, [transactions])
 
-  const loadAccounts = async () => {
+  const loadAccounts = useCallback(async () => {
     try {
       const response = await accountAPI.getAll()
       // Handle flexible response format (array or paginated structure)
@@ -249,16 +272,16 @@ export default function TransactionsPage() {
     } catch (error) {
       console.error('Failed to load accounts:', error)
     }
-  }
+  }, [])
 
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     try {
       const response = await categoryAPI.getAll()
       setCategories(response.data.data)
     } catch (error) {
       console.error('Failed to load categories:', error)
     }
-  }
+  }, [])
 
   const onSubmit = async (data: TransactionFormData) => {
     if (isSaving) return // Prevent multiple submissions
