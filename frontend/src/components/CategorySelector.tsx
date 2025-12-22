@@ -192,7 +192,7 @@ export default function CategorySelector({
                     d="M15 19l-7-7 7-7"
                   />
                 </svg>
-                {t('category.backToCategories')}
+                {t('backToCategories')}
               </button>
 
               {/* Selected Main Category Display */}
@@ -242,7 +242,7 @@ export default function CategorySelector({
 
           {mainCategories.length === 0 && (
             <p className="text-sm text-gray-500 italic text-center py-4">
-              {t('category.noCategories')}
+              {t('noCategories')}
             </p>
           )}
         </div>

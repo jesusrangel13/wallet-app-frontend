@@ -1,0 +1,16 @@
+{
+  "title": "Delete Account",
+  "warning": "Warning: This action cannot be undone",
+  "warningMessage": "You are about to permanently delete the account",
+  "transactionCount": "{count, plural, =1 {This account has 1 transaction} other {This account has # transactions}}",
+  "whatToDo": "What do you want to do with these transactions?",
+  "transferOption": "Transfer transactions to another account",
+  "transferDescription": "All transactions will be transferred to the selected account",
+  "selectAccount": "Select an account",
+  "deleteOption": "Delete all transactions",
+  "deleteWarning": "{count, plural, =1 {This will permanently delete 1 transaction} other {This will permanently delete # transactions}}",
+  "deleteAccountOnly": "Delete Account",
+  "deleteAccountAndTransactions": "Delete Account & Transactions",
+  "deleting": "Deleting...",
+  "deleteAccount": "Delete Account"
+}

@@ -1,0 +1,18 @@
+{
+  "title": "Register Loan",
+  "borrowerName": "Borrower Name",
+  "borrowerPlaceholder": "Enter borrower's name",
+  "accountFrom": "Account",
+  "selectAccount": "Select an account",
+  "noAccountsAvailable": "No accounts available",
+  "amount": "Amount",
+  "loanDate": "Loan Date",
+  "notes": "Notes",
+  "notesPlaceholder": "Additional notes (optional)",
+  "infoTitle": "Important:",
+  "infoPoint1": "A transaction will be created in the selected account",
+  "infoPoint2": "The loan will be tracked in your Loans section",
+  "infoPoint3": "You can record payments later to update the loan status",
+  "creating": "Creating...",
+  "createButton": "Register Loan"
+}

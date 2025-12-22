@@ -1,0 +1,18 @@
+{
+  "title": "Record Payment",
+  "borrower": "Borrower",
+  "originalAmount": "Original Amount",
+  "paidAmount": "Paid Amount",
+  "pendingAmount": "Pending",
+  "accountTo": "Account where you receive the payment",
+  "paymentAmount": "Payment Amount",
+  "payAll": "Pay all ({amount})",
+  "paymentExceedsError": "Amount cannot exceed pending {amount}",
+  "paymentDate": "Payment Date",
+  "infoTitle": "💡 What happens when recording a payment?",
+  "infoPoint1": "An INCOME transaction will be created in your account",
+  "infoPoint2": "The money will enter your account (will affect your balance)",
+  "infoPoint3": "The loan status will be automatically updated",
+  "recording": "Recording...",
+  "recordButton": "Record Payment"
+}

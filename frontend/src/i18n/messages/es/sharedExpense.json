@@ -1,0 +1,30 @@
+{
+  "addButton": "Agregar como Gasto Compartido",
+  "title": "Gasto Compartido",
+  "remove": "Remover",
+  "hint": "Para una mejor experiencia, selecciona un grupo primero para cargar los valores predeterminados de división, luego ingresa el monto para calcular automáticamente.",
+  "groupLabel": "Grupo",
+  "selectGroup": "Selecciona un grupo...",
+  "groupMembers": "{count} miembros",
+  "noAmountYet": "Ahora ingresa el monto arriba para ver las divisiones calculadas automáticamente basadas en los valores predeterminados del grupo.",
+  "calculationComplete": "✓ División calculada para {amount} basada en valores predeterminados del grupo",
+  "paidBy": "Pagado Por",
+  "selectWhoPaid": "Selecciona quién pagó...",
+  "splitType": "Tipo de División",
+  "usingGroupDefaults": "Usando valores predeterminados del grupo",
+  "splitTypes": {
+    "equal": "División Igual",
+    "equalDescription": "Dividir igualmente entre todos los participantes",
+    "percentage": "Porcentaje",
+    "percentageDescription": "Cada persona paga un porcentaje",
+    "exact": "Montos Exactos",
+    "exactDescription": "Especificar monto exacto para cada persona",
+    "shares": "Por Partes",
+    "sharesDescription": "Dividir por partes (ej., 1 parte, 2 partes)"
+  },
+  "splitBetween": "Dividir Entre ({count} personas)",
+  "shares": "partes",
+  "totalPercentage": "Porcentaje Total:",
+  "totalSplit": "División Total:",
+  "splitMismatch": "¡La división total no coincide con el monto de la transacción!"
+}
