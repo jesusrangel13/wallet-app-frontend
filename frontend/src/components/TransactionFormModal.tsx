@@ -106,6 +106,28 @@ export default function TransactionFormModal({
     }
   }, [initialData, setValue])
 
+  // Initialize form from editingTransaction when not using initialData
+  useEffect(() => {
+    if (editingTransaction && !initialData) {
+      const amount = Number(editingTransaction.amount)
+      setValue('accountId', editingTransaction.accountId)
+      setValue('type', editingTransaction.type)
+      setValue('amount', amount)
+      setValue('categoryId', editingTransaction.categoryId || undefined)
+      setValue('description', editingTransaction.description || '')
+      setValue('date', editingTransaction.date ? new Date(editingTransaction.date).toISOString() : '')
+      setValue('payee', editingTransaction.payee || '')
+      setValue('payer', editingTransaction.payer || '')
+      setValue('toAccountId', editingTransaction.toAccountId || undefined)
+      setValue('tags', editingTransaction.tags?.map((t) => t.tagId) || [])
+
+      if (amount) {
+        const currency = accounts.find(a => a.id === editingTransaction.accountId)?.currency || 'CLP'
+        setFormattedAmount(formatAmountDisplay(amount, currency))
+      }
+    }
+  }, [editingTransaction, initialData, setValue, accounts, formatAmountDisplay])
+
   const getAvailableToAccounts = () => {
     if (!selectedAccountId) return []
     const selectedAcc = accounts.find((a) => a.id === selectedAccountId)
