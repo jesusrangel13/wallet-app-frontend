@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { Group, SplitType } from '@/types'
 import { groupAPI } from '@/lib/api'
@@ -77,6 +77,12 @@ export default function SharedExpenseForm({
   const [isLoadingGroups, setIsLoadingGroups] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
   const [showCalculationFeedback, setShowCalculationFeedback] = useState(false)
+  const participantsRef = useRef<Participant[]>([])
+
+  // Keep ref in sync with participants state
+  useEffect(() => {
+    participantsRef.current = participants
+  }, [participants])
 
   const loadGroups = useCallback(async () => {
     try {
@@ -93,14 +99,15 @@ export default function SharedExpenseForm({
   }, [])
 
   const calculateSplit = useCallback(() => {
-    if (!totalAmount || participants.length === 0) return
+    const currentParticipants = participantsRef.current
+    if (!totalAmount || currentParticipants.length === 0) return
 
-    let updatedParticipants = [...participants]
+    let updatedParticipants = [...currentParticipants]
 
     switch (splitType) {
       case 'EQUAL':
-        const equalAmount = totalAmount / participants.length
-        updatedParticipants = participants.map((p) => ({
+        const equalAmount = totalAmount / currentParticipants.length
+        updatedParticipants = currentParticipants.map((p) => ({
           ...p,
           amountOwed: equalAmount,
           percentage: undefined,
@@ -109,7 +116,7 @@ export default function SharedExpenseForm({
         break
 
       case 'PERCENTAGE':
-        updatedParticipants = participants.map((p) => ({
+        updatedParticipants = currentParticipants.map((p) => ({
           ...p,
           amountOwed: (totalAmount * (p.percentage || 0)) / 100,
         }))
@@ -120,8 +127,8 @@ export default function SharedExpenseForm({
         break
 
       case 'SHARES':
-        const totalShares = participants.reduce((sum, p) => sum + (p.shares || 1), 0)
-        updatedParticipants = participants.map((p) => ({
+        const totalShares = currentParticipants.reduce((sum, p) => sum + (p.shares || 1), 0)
+        updatedParticipants = currentParticipants.map((p) => ({
           ...p,
           amountOwed: (totalAmount * (p.shares || 1)) / totalShares,
         }))
@@ -129,7 +136,7 @@ export default function SharedExpenseForm({
     }
 
     setParticipants(updatedParticipants)
-  }, [totalAmount, participants, splitType])
+  }, [totalAmount, splitType])
 
   useEffect(() => {
     if (enabled) {
@@ -201,15 +208,14 @@ export default function SharedExpenseForm({
 
   // Create a memoized key that tracks only the input values (percentage/shares)
   // This prevents infinite loops while still recalculating when needed
+  // CRITICAL: Do NOT include amountOwed (the OUTPUT) in the key
   const participantsKey = useMemo(() => {
     if (splitType === 'PERCENTAGE') {
-      return participants.map(p => `${p.userId}:${p.percentage || 0}:${p.amountOwed}`).join('|')
+      return participants.map(p => `${p.userId}:${p.percentage || 0}`).join('|')
     } else if (splitType === 'SHARES') {
-      return participants.map(p => `${p.userId}:${p.shares || 1}:${p.amountOwed}`).join('|')
-    } else if (splitType === 'EXACT') {
-      return participants.map(p => `${p.userId}:${p.amountOwed}`).join('|')
+      return participants.map(p => `${p.userId}:${p.shares || 1}`).join('|')
     } else {
-      return `${participants.length}:${participants.map(p => p.amountOwed).join(',')}`
+      return `${participants.length}`
     }
   }, [participants, splitType])
 
@@ -234,10 +240,10 @@ export default function SharedExpenseForm({
         // The first condition above will trigger when totalAmount > 0
       }
     }
-  }, [splitType, totalAmount, participantsKey, calculateSplit, initialData, selectedGroupId, participants.length])
+  }, [splitType, totalAmount, participantsKey])
 
+  // Notify parent when data changes
   useEffect(() => {
-    // Notify parent of changes
     if (enabled && selectedGroupId && paidByUserId && participants.length > 0) {
       onChange({
         groupId: selectedGroupId,
@@ -248,7 +254,7 @@ export default function SharedExpenseForm({
     } else {
       onChange(null)
     }
-  }, [enabled, selectedGroupId, paidByUserId, splitType, participantsKey, onChange, participants])
+  }, [enabled, selectedGroupId, paidByUserId, splitType, participants])
 
   const handleParticipantChange = (userId: string, field: string, value: number) => {
     setParticipants((prevParticipants) => {
@@ -346,7 +352,7 @@ export default function SharedExpenseForm({
         <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
           <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
         </svg>
-        <p className="text-xs text-blue-800" dangerouslySetInnerHTML={{ __html: t('hint') }} />
+        <p className="text-xs text-blue-800">{t('hint')}</p>
       </div>
 
       {/* Select Group */}
@@ -380,7 +386,7 @@ export default function SharedExpenseForm({
               <svg className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
-              <p className="text-xs text-amber-800" dangerouslySetInnerHTML={{ __html: t('noAmountYet') }} />
+              <p className="text-xs text-amber-800">{t('noAmountYet')}</p>
             </div>
           )}
 
