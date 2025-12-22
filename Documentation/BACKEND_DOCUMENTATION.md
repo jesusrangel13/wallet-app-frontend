@@ -3,12 +3,44 @@
 ## 📋 Tabla de Contenidos
 - [Descripción General](#descripción-general)
 - [Arquitectura](#arquitectura)
+  - [Estructura del Proyecto](#estructura-del-proyecto)
+  - [Patrón de Diseño](#patrón-de-diseño)
+  - [Sistema de Tipos](#sistema-de-tipos)
 - [Stack Tecnológico](#stack-tecnológico)
+  - [Core](#core)
+  - [Dependencias Principales](#dependencias-principales)
+  - [Características de Seguridad](#características-de-seguridad)
+- [Configuración y Entorno](#configuración-y-entorno)
+  - [Validación de Variables de Entorno](#validación-de-variables-de-entorno)
+  - [Variables de Entorno Requeridas](#variables-de-entorno-requeridas)
 - [Base de Datos](#base-de-datos)
 - [API Endpoints](#api-endpoints)
+- [Documentación de API (Swagger)](#documentación-de-api-swagger)
 - [Servicios](#servicios)
+- [Middleware](#middleware)
+  - [Autenticación](#autenticación)
+  - [Rate Limiting](#rate-limiting)
+  - [Validación de Requests](#validación-de-requests)
+  - [Request Logger](#request-logger)
+  - [Manejo de Errores](#manejo-de-errores)
+- [Sistema de Logging](#sistema-de-logging)
+  - [Configuración de Winston](#configuración-de-winston)
+  - [Niveles de Log](#niveles-de-log)
+  - [Archivos de Log](#archivos-de-log)
+- [Manejo de Errores y Códigos](#manejo-de-errores-y-códigos)
+  - [Códigos de Error](#códigos-de-error)
+  - [Clase AppError](#clase-apperror)
+  - [Soporte i18n](#soporte-i18n)
 - [Características Principales](#características-principales)
 - [Configuración](#configuración)
+- [Deployment](#deployment)
+  - [Render.com Configuration](#rendercom-configuration)
+  - [Variables de Entorno de Producción](#variables-de-entorno-de-producción)
+- [Testing](#testing)
+  - [Infraestructura de Testing](#infraestructura-de-testing)
+  - [Tests Unitarios](#tests-unitarios)
+  - [Tests de Integración](#tests-de-integración)
+  - [Best Practices](#best-practices)
 
 ---
 
@@ -53,6 +85,74 @@ El backend sigue una arquitectura **MVC (Model-View-Controller)** adaptada:
 - **Services**: Contienen la lógica de negocio
 - **Prisma Models**: Representan las entidades de la base de datos
 
+### Sistema de Tipos
+
+El backend utiliza TypeScript con un sistema de tipos robusto para garantizar seguridad de tipos en toda la aplicación.
+
+#### Directorio `@types`
+
+**Estructura**:
+```
+src/@types/
+├── express/
+│   └── index.d.ts       # Extensiones de Express Request
+└── pagination.types.ts  # Tipos de paginación
+```
+
+**Express Request Extensions** (`@types/express/index.d.ts`):
+```typescript
+declare namespace Express {
+  export interface Request {
+    user?: {
+      userId: string;
+    };
+  }
+}
+```
+- Agrega propiedad `user` al objeto Request de Express
+- Permite acceso type-safe a datos del usuario autenticado
+- Evita uso de `(req as any).user`
+
+**Pagination Types** (`@types/pagination.types.ts`):
+```typescript
+export interface PaginationParams {
+  page?: number;
+  limit?: number;
+}
+
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasMore: boolean;
+}
+
+export interface PaginatedResponse<T> {
+  success: boolean;
+  data: T[];
+  pagination: PaginationMeta;
+}
+```
+- Tipos reutilizables para paginación consistente
+- Funciones helper: `calculatePagination()`, `calculateSkip()`
+
+#### Tipos Adicionales
+
+**Auth Types** (`types/auth.ts`):
+```typescript
+export interface TokenPayload {
+  userId: string;
+}
+
+export interface UserRegistration {
+  email: string;
+  password: string;
+  name: string;
+  currency?: string;
+}
+```
+
 ---
 
 ## Stack Tecnológico
@@ -73,6 +173,12 @@ El backend sigue una arquitectura **MVC (Model-View-Controller)** adaptada:
   "cors": "^2.8.5",
   "compression": "^1.8.1",
   "express-validator": "^7.0.1",
+  "express-rate-limit": "^8.2.1",
+  "helmet": "^8.1.0",
+  "isomorphic-dompurify": "^2.34.0",
+  "winston": "^3.19.0",
+  "swagger-jsdoc": "^6.2.8",
+  "swagger-ui-express": "^5.0.1",
   "zod": "^3.22.4",
   "multer": "^1.4.5-lts.1"
 }
@@ -87,6 +193,91 @@ El backend sigue una arquitectura **MVC (Model-View-Controller)** adaptada:
 ### Optimizaciones
 - **Compression**: Compresión gzip de respuestas (~70% reducción)
 - **Indexación de BD**: Índices en campos frecuentemente consultados
+
+---
+
+## Configuración y Entorno
+
+### Validación de Variables de Entorno
+
+El backend implementa validación estricta de variables de entorno usando **Zod** en `src/config/env.ts`. Esto garantiza que el servidor no inicie con configuración incorrecta o incompleta (fail-fast).
+
+**Archivo**: `src/config/env.ts`
+
+```typescript
+import { z } from 'zod';
+
+const envSchema = z.object({
+  DATABASE_URL: z.string().url(),
+  DIRECT_URL: z.string().url(),
+  JWT_SECRET: z.string().min(32),
+  JWT_EXPIRES_IN: z.string().default('7d'),
+  ALLOWED_ORIGINS: z.string(),
+  PORT: z.coerce.number().default(5000),
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('development')
+});
+
+export const env = envSchema.parse(process.env);
+```
+
+**Características**:
+- ✅ Validación automática al inicio del servidor
+- ✅ Tipos TypeScript generados automáticamente
+- ✅ Valores por defecto para variables opcionales
+- ✅ Error descriptivo si falta alguna variable requerida
+- ✅ Previene errores en runtime por configuración incorrecta
+
+### Variables de Entorno Requeridas
+
+**Desarrollo** (`.env`):
+```env
+# Base de datos
+DATABASE_URL=postgresql://user:password@host:5432/database
+DIRECT_URL=postgresql://user:password@host:5432/database
+
+# JWT
+JWT_SECRET=your-secret-key-min-32-characters
+JWT_EXPIRES_IN=7d
+
+# CORS
+ALLOWED_ORIGINS=http://localhost:3000
+
+# Server
+PORT=5000
+NODE_ENV=development
+```
+
+**Producción** (`.env.production`):
+```env
+# Base de datos (Supabase)
+DATABASE_URL=postgresql://...
+DIRECT_URL=postgresql://...
+
+# JWT (usar clave segura generada)
+JWT_SECRET=<secure-random-string-min-32-chars>
+JWT_EXPIRES_IN=7d
+
+# CORS (dominios permitidos separados por coma)
+ALLOWED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+
+# Server
+PORT=5000
+NODE_ENV=production
+```
+
+**Validación al inicio**:
+```bash
+# Si falta una variable requerida:
+$ npm start
+Error: [
+  {
+    "code": "invalid_string",
+    "validation": "url",
+    "path": ["DATABASE_URL"],
+    "message": "Invalid url"
+  }
+]
+```
 
 ---
 
@@ -260,10 +451,37 @@ Permite a usuarios personalizar o crear categorías:
 | GET | `/stats` | Estadísticas del usuario |
 | GET | `/my-balances` | Balances de gastos compartidos |
 | PATCH | `/me/default-shared-expense-account` | Configurar cuenta por defecto para liquidaciones |
-| GET | `/dashboard-preferences` | Obtener preferencias de dashboard |
-| PUT | `/dashboard-preferences` | Guardar preferencias |
 
 **Nota**: La cuenta por defecto se usa automáticamente al liquidar balances de gastos compartidos.
+
+### 🎨 Preferencias de Dashboard (`/api/users/dashboard-preferences`)
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/dashboard-preferences` | Obtener preferencias completas |
+| PUT | `/dashboard-preferences` | Guardar preferencias completas |
+| POST | `/dashboard-preferences/widgets` | Agregar nuevo widget |
+| DELETE | `/dashboard-preferences/widgets/:widgetId` | Eliminar widget |
+| PATCH | `/dashboard-preferences/widgets/:widgetId/settings` | Actualizar configuración de widget |
+| PATCH | `/dashboard-preferences/layout` | Actualizar layout del grid |
+| DELETE | `/dashboard-preferences/reset` | Restablecer a valores por defecto |
+
+**Widgets disponibles**:
+- `cashflow` - Flujo de caja mensual
+- `expenses-by-category` - Gastos por categoría
+- `balance-history` - Historial de balance (30 días)
+- `group-balances` - Balances de grupos
+- `account-balances` - Balances por cuenta
+- `personal-expenses` - Gastos personales
+- `shared-expenses` - Gastos compartidos
+- `savings` - Ahorros mensuales
+- `expenses-by-tag` - Gastos por etiqueta
+- `top-tags` - Etiquetas más usadas
+- `tag-trend` - Tendencia de etiquetas
+
+**Configuración de layout**:
+- Basado en react-grid-layout
+- Cada widget tiene: `x`, `y`, `w` (width), `h` (height)
+- Grid responsive con breakpoints
 
 ### 💳 Cuentas (`/api/accounts`)
 | Método | Endpoint | Descripción |
@@ -407,8 +625,16 @@ Permite a usuarios personalizar o crear categorías:
 | GET | `/personal-expenses` | Gastos personales |
 | GET | `/shared-expenses` | Total de gastos compartidos |
 | GET | `/savings` | Ahorros mensuales |
+| GET | `/expenses-by-tag` | Gastos agrupados por etiqueta |
+| GET | `/top-tags` | Top 10 etiquetas más usadas |
+| GET | `/tag-trend` | Tendencia de uso de etiquetas en el tiempo |
 
 **Optimización**: El endpoint `/summary` retorna todos los datos del dashboard en una sola llamada, reduciendo ~70% el tiempo de carga.
+
+**Parámetros disponibles para endpoints de tag**:
+- `month` (opcional): Mes específico (1-12)
+- `year` (opcional): Año específico
+- `limit` (opcional): Número de resultados (default: 10 para top-tags)
 
 ### 🔔 Notificaciones (`/api/notifications`)
 | Método | Endpoint | Descripción |
@@ -420,6 +646,126 @@ Permite a usuarios personalizar o crear categorías:
 | PATCH | `/read-all` | Marcar todas como leídas |
 | DELETE | `/:id` | Eliminar notificación |
 | DELETE | `/read/all` | Eliminar todas las leídas |
+
+---
+
+## Documentación de API (Swagger)
+
+El backend incluye documentación interactiva de API generada automáticamente con **Swagger/OpenAPI 3.0**.
+
+### Acceso a la Documentación
+
+**URL de desarrollo**:
+```
+http://localhost:5000/api-docs
+```
+
+**URL de producción**:
+```
+https://your-domain.com/api-docs
+```
+
+### Configuración
+
+**Archivo**: `src/config/swagger.ts`
+
+```typescript
+import swaggerJsdoc from 'swagger-jsdoc';
+
+const options: swaggerJsdoc.Options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Finance App API',
+      version: '1.0.0',
+      description: 'API Documentation for Finance App'
+    },
+    servers: [
+      {
+        url: 'http://localhost:5000/api/v1',
+        description: 'Development server'
+      },
+      {
+        url: 'http://localhost:5000/api',
+        description: 'Legacy alias'
+      }
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      }
+    },
+    security: [{ bearerAuth: [] }]
+  },
+  apis: ['./src/routes/*.ts']
+};
+
+export const specs = swaggerJsdoc(options);
+```
+
+### Características
+
+- ✅ **Interfaz interactiva**: Prueba endpoints directamente desde el navegador
+- ✅ **Autenticación JWT**: Botón "Authorize" para agregar token Bearer
+- ✅ **Validación de schemas**: Muestra modelos de request/response
+- ✅ **Generación automática**: Basada en JSDoc comments en routes
+- ✅ **Versionado**: Soporte para `/api/v1` y alias `/api`
+
+### Cómo Documentar Endpoints
+
+**Ejemplo de JSDoc en routes**:
+
+```typescript
+/**
+ * @swagger
+ * /accounts:
+ *   get:
+ *     summary: Listar todas las cuentas
+ *     tags: [Accounts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Número de página
+ *     responses:
+ *       200:
+ *         description: Lista de cuentas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Account'
+ */
+router.get('/', authenticate, accountController.getAccounts);
+```
+
+### Uso en Desarrollo
+
+1. Iniciar servidor: `npm run dev`
+2. Abrir navegador: `http://localhost:5000/api-docs`
+3. Click en "Authorize" y pegar token JWT
+4. Expandir endpoint y click en "Try it out"
+5. Completar parámetros y ejecutar
+
+### Beneficios
+
+- **Onboarding rápido**: Nuevos desarrolladores entienden la API rápidamente
+- **Testing manual**: Prueba endpoints sin Postman
+- **Documentación siempre actualizada**: Se genera desde el código fuente
+- **Contratos de API**: Sirve como especificación para frontend
 
 ---
 
@@ -699,6 +1045,455 @@ class AppError extends Error {
 ### 3. **notFoundHandler** (`middleware/notFoundHandler.ts`)
 - Maneja rutas no encontradas (404)
 - Retorna mensaje de error consistente
+
+### 4. **rateLimiter** (`middleware/rateLimiter.ts`)
+Rate limiting para protección contra abuso de API y ataques de fuerza bruta.
+
+**Auth Limiter** (endpoints de autenticación):
+```typescript
+export const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,  // 15 minutos
+  max: 5,                     // 5 intentos máximo
+  message: 'Too many login attempts, please try again after 15 minutes'
+});
+```
+- Aplicado a: `/api/v1/auth/*`
+- Límite: 5 requests por 15 minutos
+- Previene ataques de fuerza bruta
+
+**API Limiter** (endpoints generales):
+```typescript
+export const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,  // 15 minutos
+  max: 1000,                 // 1000 requests máximo
+  message: 'Too many requests, please try again after 15 minutes'
+});
+```
+- Aplicado a: Todos los endpoints `/api/v1/*` excepto auth
+- Límite: 1000 requests por 15 minutos
+- Previene abuso de recursos
+
+**Características**:
+- Headers estándar: `RateLimit-*` (RFC)
+- Por IP address
+- Mensajes personalizados en español
+- Respuestas consistentes con formato de error de la API
+
+### 5. **requestLogger** (`middleware/requestLogger.ts`)
+Logging de todas las peticiones HTTP usando Winston.
+
+**Implementación**:
+```typescript
+export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
+  const start = Date.now();
+
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    const logData = {
+      method: req.method,
+      path: req.path,
+      statusCode: res.statusCode,
+      duration: `${duration}ms`,
+      ip: req.ip
+    };
+
+    logger.http(JSON.stringify(logData));
+
+    // Alerta para requests lentos
+    if (duration > 1000) {
+      logger.warn(`Slow request: ${req.method} ${req.path} took ${duration}ms`);
+    }
+  });
+
+  next();
+};
+```
+
+**Características**:
+- Log de método, ruta, status code, duración
+- Alerta automática para requests > 1000ms
+- Integrado con Winston logger
+- Log level: `http`
+
+### 6. **validate** (`middleware/validate.ts`)
+Middleware genérico de validación usando esquemas Zod.
+
+**Implementación**:
+```typescript
+export const validate = (schema: z.ZodSchema) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      req.body = await schema.parseAsync(req.body);
+      next();
+    } catch (error) {
+      res.status(400).json({
+        status: 'error',
+        message: 'Validation failed',
+        errors: error.errors
+      });
+    }
+  };
+};
+```
+
+**Uso en routes**:
+```typescript
+import { validate } from '../middleware/validate';
+import { createTransactionSchema } from '../utils/validation';
+
+router.post('/',
+  authenticate,
+  validate(createTransactionSchema),
+  transactionController.createTransaction
+);
+```
+
+**Beneficios**:
+- Validación centralizada y reutilizable
+- Mensajes de error descriptivos
+- Type-safe (TypeScript infiere tipos del schema)
+- Previene datos inválidos antes de llegar al controller
+
+---
+
+## Sistema de Logging
+
+El backend implementa un sistema de logging robusto usando **Winston** para registrar eventos, errores y métricas de performance.
+
+### Configuración de Winston
+
+**Archivo**: `src/utils/logger.ts`
+
+```typescript
+import winston from 'winston';
+
+const levels = {
+  error: 0,
+  warn: 1,
+  info: 2,
+  http: 3,
+  debug: 4
+};
+
+const level = () => {
+  const env = process.env.NODE_ENV || 'development';
+  return env === 'development' ? 'debug' : 'warn';
+};
+
+const colors = {
+  error: 'red',
+  warn: 'yellow',
+  info: 'green',
+  http: 'magenta',
+  debug: 'white'
+};
+
+winston.addColors(colors);
+
+const format = winston.format.combine(
+  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
+  winston.format.colorize({ all: true }),
+  winston.format.printf(
+    (info) => `${info.timestamp} ${info.level}: ${info.message}`
+  )
+);
+
+const transports = [
+  new winston.transports.Console(),
+  new winston.transports.File({
+    filename: 'logs/error.log',
+    level: 'error',
+    format: winston.format.json()
+  }),
+  new winston.transports.File({
+    filename: 'logs/all.log',
+    format: winston.format.json()
+  })
+];
+
+const logger = winston.createLogger({
+  level: level(),
+  levels,
+  format,
+  transports
+});
+
+export default logger;
+```
+
+### Niveles de Log
+
+| Nivel | Prioridad | Uso | Ejemplo |
+|-------|-----------|-----|---------|
+| `error` | 0 | Errores críticos | Falla de BD, excepciones no manejadas |
+| `warn` | 1 | Advertencias | Requests lentos, recursos limitados |
+| `info` | 2 | Información general | Server iniciado, configuración cargada |
+| `http` | 3 | Requests HTTP | Todas las peticiones API |
+| `debug` | 4 | Debugging detallado | Valores de variables, flujo de ejecución |
+
+**Nivel por ambiente**:
+- **Development**: `debug` (muestra todo)
+- **Production**: `warn` (solo advertencias y errores)
+
+### Archivos de Log
+
+**Ubicación**: `/backend/logs/`
+
+#### `error.log`
+- **Nivel**: Solo errores (`error`)
+- **Formato**: JSON
+- **Uso**: Debugging de errores en producción
+- **Ejemplo**:
+```json
+{
+  "level": "error",
+  "message": "Database connection failed",
+  "timestamp": "2025-12-03 14:25:30:123",
+  "stack": "Error: Connection timeout..."
+}
+```
+
+#### `all.log`
+- **Nivel**: Todos los niveles
+- **Formato**: JSON
+- **Uso**: Auditoría completa de eventos
+- **Ejemplo**:
+```json
+{
+  "level": "http",
+  "message": "{\"method\":\"GET\",\"path\":\"/api/transactions\",\"statusCode\":200,\"duration\":\"45ms\"}",
+  "timestamp": "2025-12-03 14:25:30:123"
+}
+```
+
+### Uso en Código
+
+**Logging de errores**:
+```typescript
+try {
+  await prisma.transaction.create({ data });
+} catch (error) {
+  logger.error(`Failed to create transaction: ${error.message}`);
+  throw error;
+}
+```
+
+**Logging de info**:
+```typescript
+logger.info('Server started on port 5000');
+logger.info(`User ${userId} logged in`);
+```
+
+**Logging de warnings**:
+```typescript
+if (duration > 1000) {
+  logger.warn(`Slow query: ${query} took ${duration}ms`);
+}
+```
+
+### Características
+
+- ✅ **Console colorizada**: Logs legibles en desarrollo
+- ✅ **Archivos persistentes**: Logs en JSON para análisis
+- ✅ **Niveles configurables**: Por ambiente
+- ✅ **Timestamps precisos**: Con milisegundos
+- ✅ **Rotación manual**: Archivos pueden crecer, rotación manual recomendada
+- ✅ **Formato JSON**: Fácil parsing con herramientas
+
+### Mejoras Recomendadas
+
+- **Log Rotation**: Implementar `winston-daily-rotate-file`
+- **Agregación**: Enviar logs a servicio externo (Logtail, Datadog)
+- **Alertas**: Notificaciones automáticas en errores críticos
+- **Filtrado sensible**: Evitar logging de passwords, tokens
+
+---
+
+## Manejo de Errores y Códigos
+
+### Códigos de Error
+
+**Archivo**: `src/constants/errorCodes.ts`
+
+Sistema de códigos de error estandarizados con soporte para internacionalización (i18n).
+
+```typescript
+export const ERROR_CODES = {
+  // Authentication
+  INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
+  TOKEN_EXPIRED: 'TOKEN_EXPIRED',
+  TOKEN_INVALID: 'TOKEN_INVALID',
+  UNAUTHORIZED: 'UNAUTHORIZED',
+
+  // Validation
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  INVALID_INPUT: 'INVALID_INPUT',
+  MISSING_REQUIRED_FIELD: 'MISSING_REQUIRED_FIELD',
+
+  // Resources
+  NOT_FOUND: 'NOT_FOUND',
+  ALREADY_EXISTS: 'ALREADY_EXISTS',
+  FORBIDDEN: 'FORBIDDEN',
+
+  // Database
+  DATABASE_ERROR: 'DATABASE_ERROR',
+  CONSTRAINT_VIOLATION: 'CONSTRAINT_VIOLATION',
+
+  // Business Logic
+  INSUFFICIENT_BALANCE: 'INSUFFICIENT_BALANCE',
+  INVALID_SPLIT_TOTAL: 'INVALID_SPLIT_TOTAL',
+  LOAN_HAS_PAYMENTS: 'LOAN_HAS_PAYMENTS',
+
+  // Generic
+  INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
+  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT_EXCEEDED'
+} as const;
+```
+
+### Clase AppError
+
+**Archivo**: `src/middleware/errorHandler.ts`
+
+```typescript
+export class AppError extends Error {
+  statusCode: number;
+  errorCode?: string;
+  isOperational: boolean;
+
+  constructor(
+    message: string,
+    statusCode: number,
+    errorCode?: string,
+    isOperational = true
+  ) {
+    super(message);
+    this.statusCode = statusCode;
+    this.errorCode = errorCode;
+    this.isOperational = isOperational;
+
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+```
+
+**Uso en servicios**:
+```typescript
+import { AppError } from '../middleware/errorHandler';
+import { ERROR_CODES } from '../constants/errorCodes';
+
+// Ejemplo de uso
+if (!user) {
+  throw new AppError(
+    'User not found',
+    404,
+    ERROR_CODES.NOT_FOUND
+  );
+}
+
+if (balance < amount) {
+  throw new AppError(
+    'Insufficient balance',
+    400,
+    ERROR_CODES.INSUFFICIENT_BALANCE
+  );
+}
+```
+
+### Error Handler Middleware
+
+**Procesamiento centralizado de errores**:
+
+```typescript
+export const errorHandler = (
+  err: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  logger.error(err.message);
+
+  // AppError (operacional)
+  if (err instanceof AppError) {
+    return res.status(err.statusCode).json({
+      status: 'error',
+      errorCode: err.errorCode,
+      message: err.message
+    });
+  }
+
+  // Prisma errors
+  if (err instanceof PrismaClientKnownRequestError) {
+    if (err.code === 'P2002') {
+      return res.status(409).json({
+        status: 'error',
+        errorCode: ERROR_CODES.ALREADY_EXISTS,
+        message: 'Resource already exists'
+      });
+    }
+  }
+
+  // JWT errors
+  if (err.name === 'JsonWebTokenError') {
+    return res.status(401).json({
+      status: 'error',
+      errorCode: ERROR_CODES.TOKEN_INVALID,
+      message: 'Invalid token'
+    });
+  }
+
+  // Default (programmatic error)
+  return res.status(500).json({
+    status: 'error',
+    errorCode: ERROR_CODES.INTERNAL_SERVER_ERROR,
+    message: 'Internal server error'
+  });
+};
+```
+
+### Soporte i18n
+
+**Frontend puede traducir por código**:
+
+```typescript
+// Frontend - translations/es.json
+{
+  "errors": {
+    "INVALID_CREDENTIALS": "Credenciales inválidas",
+    "INSUFFICIENT_BALANCE": "Saldo insuficiente",
+    "NOT_FOUND": "No encontrado"
+  }
+}
+
+// Frontend - error handling
+const errorMessage = t(`errors.${error.errorCode}`) || error.message;
+```
+
+**Beneficios**:
+- Mensajes consistentes entre frontend y backend
+- Fácil traducción a múltiples idiomas
+- Códigos únicos para debugging
+- Separación de mensaje técnico vs. mensaje de usuario
+
+### Formato de Respuesta de Error
+
+**Success Response**:
+```json
+{
+  "success": true,
+  "data": { ... },
+  "message": "Operation completed successfully"
+}
+```
+
+**Error Response**:
+```json
+{
+  "status": "error",
+  "errorCode": "INSUFFICIENT_BALANCE",
+  "message": "Insufficient balance to complete transaction",
+  "details": { ... }  // opcional
+}
+```
 
 ---
 
@@ -1141,30 +1936,30 @@ async function getUniquePayees(userId: string, search?: string) {
 ## Optimizaciones Recomendadas
 
 ### 1. **Rate Limiting** ✅ **IMPLEMENTADO**
-- **Problema**: Sin protección contra abuso de API o ataques DDoS
-- **Solución**: Implementar `express-rate-limit`
-- **Configuración sugerida**:
+- **Estado**: Activo en producción
+- **Archivo**: `src/middleware/rateLimiter.ts`
+- **Configuración implementada**:
   ```typescript
   import rateLimit from 'express-rate-limit';
-  
+
   // Auth endpoints - más restrictivo
-  const authLimiter = rateLimit({
+  export const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 5, // 5 intentos
-    message: 'Too many login attempts, please try again later'
+    max: 5, // 5 intentos máximo
+    message: 'Too many login attempts, please try again after 15 minutes'
   });
-  
+
   // API general
-  const apiLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100 // 100 requests por 15 min
+  export const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 1000 // 1000 requests máximo
   });
-  
-  app.use('/api/auth', authLimiter);
-  app.use('/api', apiLimiter);
   ```
+- **Aplicación**:
+  - `/api/v1/auth/*`: 5 requests/15min (authLimiter)
+  - `/api/v1/*`: 1000 requests/15min (apiLimiter)
 - **Beneficio**: Previene ataques de fuerza bruta y abuso de recursos
-- **Prioridad**: Alta
+- **Ver detalles**: Sección [Middleware](#middleware)
 
 ### 2. **Request Validation Middleware** ✅ **IMPLEMENTADO**
 - **Estado**: Activo en producción
@@ -1449,25 +2244,26 @@ async function getUniquePayees(userId: string, search?: string) {
 - **Prioridad**: Alta.
 
 ### 14. **Documentación de API (Swagger)** ✅ **IMPLEMENTADO**
-- **Estado**: Disponible en `/api-docs`.
-- **Problema**: Documentación dispersa y no interactiva.
-- **Solución**: Integrar `swagger-ui-express` y `swagger-jsdoc`.
-- **Beneficio**: Facilita el consumo de la API y el onboarding.
-- **Prioridad**: Media.
+- **Estado**: Activo en producción, disponible en `/api-docs`
+- **Archivo**: `src/config/swagger.ts`
+- **Implementación**: Swagger UI con OpenAPI 3.0
+- **Beneficio**: Facilita el consumo de la API y el onboarding
+- **Ver detalles**: Sección [Documentación de API (Swagger)](#documentación-de-api-swagger)
 
 ### 15. **Tipado Estricto (No Any)** ✅ **IMPLEMENTADO**
-- **Estado**: `req.user` tipado.
-- **Problema**: Uso de casting `as any` en controladores (ej. `(req as any).user`).
-- **Solución**: Extender la interfaz `Request` de Express globalmente.
-- **Beneficio**: Mejor seguridad de tipos y autocompletado; previene errores en runtime.
-- **Prioridad**: Baja.
+- **Estado**: Activo en producción
+- **Archivo**: `src/@types/express/index.d.ts`
+- **Implementación**: Extensión de interfaz `Request` de Express con propiedad `user`
+- **Beneficio**: Mejor seguridad de tipos y autocompletado; previene errores en runtime
+- **Ver detalles**: Sección [Sistema de Tipos](#sistema-de-tipos)
 
 ### 16. **Testing de Integración** ✅ **IMPLEMENTADO**
-- **Estado**: Infraestructura configurada y test de health creado.
-- **Problema**: Dependencia principal de pruebas manuales.
-- **Solución**: Implementar tests automatizados con `supertest` para endpoints críticos.
-- **Beneficio**: Detección temprana de regresiones en flujos complejos (ej. transacciones + balances).
-- **Prioridad**: Media.
+- **Estado**: Infraestructura completa con Jest + Supertest
+- **Archivos**: `jest.config.js`, `jest.setup.js`, `src/tests/integration/`, `src/services/__tests__/`
+- **Tests implementados**: CategoryTemplateService, UserCategoryService, Health endpoint
+- **Comandos**: `npm test`, `npm run test:watch`, `npm run test:coverage`
+- **Beneficio**: Detección temprana de regresiones en flujos complejos
+- **Ver detalles**: Sección [Testing](#testing)
 
 ---
 
@@ -1526,3 +2322,710 @@ El algoritmo minimiza el número de transacciones necesarias para liquidar deuda
 - **CORS**: Configurado con whitelist de orígenes
 - **SQL Injection**: Prevenido por Prisma (queries parametrizadas)
 - **Recomendaciones**: Rate limiting, input sanitization (ver Optimizaciones)
+
+---
+
+## Testing
+
+El backend cuenta con infraestructura de testing completa usando **Jest** y **Supertest** para garantizar calidad y prevenir regresiones.
+
+### Infraestructura de Testing
+
+**Framework**: Jest + ts-jest
+**Ubicación**: `/backend/src/`
+
+#### Configuración de Jest
+
+**Archivo**: `jest.config.js`
+
+```javascript
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  roots: ['<rootDir>/src'],
+  testMatch: [
+    '**/__tests__/**/*.test.ts',
+    '**/*.test.ts'
+  ],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/**/*.d.ts',
+    '!src/server.ts'
+  ],
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'html'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js']
+};
+```
+
+**Archivo**: `jest.setup.js`
+
+```javascript
+// Global test setup
+beforeAll(() => {
+  // Setup code ejecutado antes de todos los tests
+});
+
+afterAll(() => {
+  // Cleanup code ejecutado después de todos los tests
+});
+```
+
+#### Comandos de Testing
+
+```bash
+# Ejecutar todos los tests
+npm test
+
+# Tests en modo watch (desarrollo)
+npm run test:watch
+
+# Tests con coverage
+npm run test:coverage
+
+# Tests específicos
+npm test -- auth.service.test.ts
+```
+
+### Tests Unitarios
+
+**Ubicación**: `src/services/__tests__/`
+
+#### Ejemplo: Service Tests
+
+**Archivo**: `src/services/__tests__/categoryTemplate.service.test.ts`
+
+```typescript
+import { describe, it, expect, beforeAll } from '@jest/globals';
+import { CategoryTemplateService } from '../categoryTemplate.service';
+
+describe('CategoryTemplateService', () => {
+  describe('initializeDefaultTemplates', () => {
+    it('should initialize category templates', async () => {
+      const result = await CategoryTemplateService.initializeDefaultTemplates();
+      expect(result).toBeDefined();
+    });
+
+    it('should be idempotent (safe to call multiple times)', async () => {
+      await CategoryTemplateService.initializeDefaultTemplates();
+      const result = await CategoryTemplateService.initializeDefaultTemplates();
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe('getAllTemplates', () => {
+    it('should return all templates', async () => {
+      const templates = await CategoryTemplateService.getAllTemplates();
+      expect(templates.length).toBeGreaterThan(0);
+    });
+
+    it('should return templates with required fields', async () => {
+      const templates = await CategoryTemplateService.getAllTemplates();
+      templates.forEach(template => {
+        expect(template).toHaveProperty('id');
+        expect(template).toHaveProperty('name');
+        expect(template).toHaveProperty('type');
+      });
+    });
+  });
+});
+```
+
+### Tests de Integración
+
+**Ubicación**: `src/tests/integration/`
+
+#### Ejemplo: API Integration Tests
+
+**Archivo**: `src/tests/integration/health.test.ts`
+
+```typescript
+import request from 'supertest';
+import app from '../../server';
+
+describe('Health Check', () => {
+  it('should return 200 OK', async () => {
+    const response = await request(app).get('/health');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('status', 'ok');
+    expect(response.body).toHaveProperty('timestamp');
+    expect(response.body).toHaveProperty('environment');
+  });
+
+  it('should verify database connection', async () => {
+    const response = await request(app).get('/health');
+
+    expect(response.body).toHaveProperty('database');
+    expect(['connected', 'disconnected']).toContain(response.body.database);
+  });
+});
+```
+
+#### Testing Endpoints Autenticados
+
+**Ejemplo**: Testing con JWT token
+
+```typescript
+import request from 'supertest';
+import app from '../../server';
+import { generateToken } from '../../utils/jwt';
+
+describe('Protected Endpoints', () => {
+  let authToken: string;
+  let userId: string;
+
+  beforeAll(async () => {
+    // Crear usuario de test
+    const signupResponse = await request(app)
+      .post('/api/auth/register')
+      .send({
+        email: 'test@example.com',
+        password: 'Test123456',
+        name: 'Test User'
+      });
+
+    userId = signupResponse.body.user.id;
+    authToken = signupResponse.body.token;
+  });
+
+  afterAll(async () => {
+    // Cleanup: eliminar usuario de test
+    // ...
+  });
+
+  describe('GET /api/users/profile', () => {
+    it('should return 401 without token', async () => {
+      const response = await request(app)
+        .get('/api/users/profile');
+
+      expect(response.status).toBe(401);
+    });
+
+    it('should return user profile with valid token', async () => {
+      const response = await request(app)
+        .get('/api/users/profile')
+        .set('Authorization', `Bearer ${authToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toHaveProperty('email', 'test@example.com');
+    });
+  });
+});
+```
+
+### Best Practices
+
+#### 1. **Mock de Prisma Client**
+
+**Patrón recomendado**:
+
+```typescript
+import { PrismaClient } from '@prisma/client';
+import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended';
+
+// Mock global de Prisma
+jest.mock('@prisma/client', () => ({
+  __esModule: true,
+  PrismaClient: jest.fn(() => mockDeep<PrismaClient>())
+}));
+
+let prismaMock: DeepMockProxy<PrismaClient>;
+
+beforeEach(() => {
+  prismaMock = new PrismaClient() as DeepMockProxy<PrismaClient>;
+});
+
+afterEach(() => {
+  mockReset(prismaMock);
+});
+
+// Uso en tests
+it('should create transaction', async () => {
+  prismaMock.transaction.create.mockResolvedValue({
+    id: '123',
+    amount: 100,
+    // ...
+  });
+
+  const result = await TransactionService.createTransaction(userId, data);
+  expect(result.id).toBe('123');
+});
+```
+
+#### 2. **Test Data Builders**
+
+**Ejemplo**: Builders para objetos de test
+
+```typescript
+class TransactionBuilder {
+  private transaction: Partial<Transaction> = {
+    type: 'EXPENSE',
+    amount: 100,
+    date: new Date()
+  };
+
+  withAmount(amount: number) {
+    this.transaction.amount = amount;
+    return this;
+  }
+
+  withType(type: TransactionType) {
+    this.transaction.type = type;
+    return this;
+  }
+
+  build() {
+    return this.transaction as Transaction;
+  }
+}
+
+// Uso
+it('should calculate total expenses', () => {
+  const transaction = new TransactionBuilder()
+    .withAmount(500)
+    .withType('EXPENSE')
+    .build();
+
+  // test logic...
+});
+```
+
+#### 3. **Testing de Errores**
+
+**Ejemplo**: Verificar errores esperados
+
+```typescript
+it('should throw error if user not found', async () => {
+  prismaMock.user.findUnique.mockResolvedValue(null);
+
+  await expect(
+    UserService.getProfile('invalid-id')
+  ).rejects.toThrow('User not found');
+});
+
+it('should return 404 on non-existent resource', async () => {
+  const response = await request(app)
+    .get('/api/accounts/invalid-id')
+    .set('Authorization', `Bearer ${authToken}`);
+
+  expect(response.status).toBe(404);
+  expect(response.body.errorCode).toBe('NOT_FOUND');
+});
+```
+
+#### 4. **Setup y Teardown**
+
+**Ejemplo**: Gestión de estado entre tests
+
+```typescript
+describe('Account Service', () => {
+  let testUserId: string;
+  let testAccountId: string;
+
+  beforeAll(async () => {
+    // Setup global para toda la suite
+    testUserId = await createTestUser();
+  });
+
+  beforeEach(async () => {
+    // Setup antes de cada test
+    testAccountId = await createTestAccount(testUserId);
+  });
+
+  afterEach(async () => {
+    // Cleanup después de cada test
+    await deleteTestAccount(testAccountId);
+  });
+
+  afterAll(async () => {
+    // Cleanup global
+    await deleteTestUser(testUserId);
+    await prisma.$disconnect();
+  });
+
+  // Tests...
+});
+```
+
+#### 5. **Testing Asíncrono**
+
+**Ejemplo**: Promises y async/await
+
+```typescript
+// ✅ CORRECTO: async/await
+it('should create account', async () => {
+  const account = await AccountService.createAccount(userId, data);
+  expect(account.id).toBeDefined();
+});
+
+// ✅ CORRECTO: Promise
+it('should create account', () => {
+  return AccountService.createAccount(userId, data)
+    .then(account => {
+      expect(account.id).toBeDefined();
+    });
+});
+
+// ❌ INCORRECTO: No espera la Promise
+it('should create account', () => {
+  AccountService.createAccount(userId, data); // No await!
+  // Test termina antes que la Promise
+});
+```
+
+#### 6. **Cobertura de Tests**
+
+**Objetivos recomendados**:
+- **Statements**: > 80%
+- **Branches**: > 75%
+- **Functions**: > 80%
+- **Lines**: > 80%
+
+**Ver reporte**:
+```bash
+npm run test:coverage
+open coverage/lcov-report/index.html
+```
+
+#### 7. **Testing de Validación**
+
+**Ejemplo**: Schemas y validación
+
+```typescript
+describe('Validation', () => {
+  it('should reject invalid email', async () => {
+    const response = await request(app)
+      .post('/api/auth/register')
+      .send({
+        email: 'invalid-email',
+        password: 'Test123',
+        name: 'Test'
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toContain('email');
+  });
+
+  it('should reject short password', async () => {
+    const response = await request(app)
+      .post('/api/auth/register')
+      .send({
+        email: 'test@example.com',
+        password: '123',  // Muy corto
+        name: 'Test'
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toContain('password');
+  });
+});
+```
+
+### Estructura Recomendada de Tests
+
+```
+src/
+├── services/
+│   ├── __tests__/
+│   │   ├── account.service.test.ts
+│   │   ├── transaction.service.test.ts
+│   │   └── ...
+│   ├── account.service.ts
+│   └── ...
+├── tests/
+│   ├── integration/
+│   │   ├── auth.test.ts
+│   │   ├── accounts.test.ts
+│   │   ├── transactions.test.ts
+│   │   └── ...
+│   └── helpers/
+│       ├── testData.ts
+│       ├── builders.ts
+│       └── ...
+```
+
+### Estado Actual de Tests
+
+**Tests implementados**:
+- ✅ CategoryTemplateService (unitario)
+- ✅ UserCategoryService (unitario)
+- ✅ Health endpoint (integración)
+
+**Tests recomendados** (pendientes):
+- AuthService (registro, login, JWT)
+- TransactionService (CRUD, balance updates)
+- SharedExpenseService (splits, settlements)
+- AccountService (CRUD, balance calculations)
+- LoanService (payments, status updates)
+- API endpoints críticos (auth, transactions, shared expenses)
+
+---
+
+## Deployment
+
+El backend está configurado para deployment en **Render.com** con configuración lista para producción.
+
+### Render.com Configuration
+
+**Archivo**: `render.yaml`
+
+```yaml
+services:
+  - type: web
+    name: finance-app-backend
+    runtime: node
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+
+    disk:
+      name: uploads
+      mountPath: /app/uploads
+      sizeGB: 1
+```
+
+### Configuración de Deployment
+
+#### 1. **Variables de Entorno en Render**
+
+Configurar en Render Dashboard → Service → Environment:
+
+```env
+# Base de datos (Supabase)
+DATABASE_URL=postgresql://user:password@host:5432/database?pgbouncer=true
+DIRECT_URL=postgresql://user:password@host:5432/database
+
+# JWT (IMPORTANTE: usar clave segura de 32+ caracteres)
+JWT_SECRET=<generar-con-openssl-rand-base64-32>
+JWT_EXPIRES_IN=7d
+
+# CORS (dominios de producción)
+ALLOWED_ORIGINS=https://yourapp.com,https://www.yourapp.com
+
+# Environment
+NODE_ENV=production
+PORT=5000
+```
+
+#### 2. **Build Commands**
+
+**Build Command** (ejecutado una vez en deploy):
+```bash
+npm install && npx prisma generate && npm run build
+```
+
+**Pasos**:
+1. Instala dependencias (`npm install`)
+2. Genera Prisma Client (`npx prisma generate`)
+3. Compila TypeScript a JavaScript (`npm run build`)
+
+**Start Command** (ejecutado al iniciar):
+```bash
+npm start
+```
+
+**Ejecuta**: `node dist/server.js`
+
+#### 3. **Health Check**
+
+Render verifica `/health` cada 30 segundos:
+
+```typescript
+// src/routes/health.routes.ts
+router.get('/health', async (req, res) => {
+  try {
+    // Ping database
+    await prisma.$queryRaw`SELECT 1`;
+
+    res.json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      database: 'connected'
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: 'error',
+      database: 'disconnected'
+    });
+  }
+});
+```
+
+**Beneficios**:
+- Auto-restart si health check falla
+- Status visible en Render Dashboard
+- Verificación de conectividad a BD
+
+#### 4. **Persistent Disk**
+
+**Configuración**: 1GB disk montado en `/app/uploads`
+
+**Uso**: Archivos subidos por usuarios (importaciones CSV, avatars)
+
+**Importante**:
+- Archivos persisten entre deploys
+- 1GB máximo en plan free
+- Alternativa: usar S3 o Cloudinary para files
+
+#### 5. **Database Migrations**
+
+**Estrategia recomendada**:
+
+1. **Desarrollo**: Ejecutar migraciones localmente
+```bash
+npx prisma migrate dev
+```
+
+2. **Producción**: Ejecutar antes de deploy
+```bash
+# Opción 1: Desde local hacia prod DB
+DATABASE_URL="prod-url" npx prisma migrate deploy
+
+# Opción 2: Render.com manual command
+# Dashboard → Shell → npx prisma migrate deploy
+```
+
+**IMPORTANTE**: No usar `prisma migrate dev` en producción
+
+#### 6. **Logs y Monitoring**
+
+**Ver logs en Render**:
+- Dashboard → Service → Logs
+- Logs en tiempo real
+- Búsqueda y filtrado
+
+**Winston logs**:
+- `logs/error.log` - Solo errores
+- `logs/all.log` - Todos los logs
+
+**Alertas automáticas**:
+- Configurar en Render Dashboard
+- Email en deploy failures
+- Slack/Discord webhooks disponibles
+
+### Variables de Entorno de Producción
+
+**Checklist de seguridad**:
+
+- ✅ `JWT_SECRET`: Generar con `openssl rand -base64 32`
+- ✅ `DATABASE_URL`: Connection pooling habilitado (`?pgbouncer=true`)
+- ✅ `ALLOWED_ORIGINS`: Solo dominios de producción
+- ✅ `NODE_ENV`: Establecer a `production`
+- ⚠️ Nunca commitear `.env` al repositorio
+- ⚠️ Usar variables sincronizadas desde Render Dashboard
+
+### Deployment Workflow
+
+```bash
+# 1. Desarrollo local
+git checkout -b feature/nueva-feature
+# ... código y tests ...
+
+# 2. Commit y push
+git add .
+git commit -m "feat: agregar nueva feature"
+git push origin feature/nueva-feature
+
+# 3. Pull Request & Review
+# Crear PR en GitHub
+# Code review y aprobación
+
+# 4. Merge to main
+git checkout main
+git merge feature/nueva-feature
+
+# 5. Push to main (trigger auto-deploy en Render)
+git push origin main
+
+# 6. Verificar deploy en Render Dashboard
+# - Build logs
+# - Deploy logs
+# - Health check status
+```
+
+### CI/CD con GitHub Actions (Opcional)
+
+**Archivo**: `.github/workflows/ci.yml`
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - run: npm ci
+    - run: npx prisma generate
+    - run: npm run build
+    - run: npm test
+
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+```
+
+**Beneficios**:
+- Tests automáticos en cada PR
+- Previene merges que rompen el build
+- Reportes de cobertura automáticos
+
+### Troubleshooting Común
+
+**1. Build falla: "Prisma Client no generado"**
+```bash
+# Solución: Agregar a build command
+npx prisma generate
+```
+
+**2. Health check falla: "Database disconnected"**
+```bash
+# Verificar DATABASE_URL es correcta
+# Verificar Supabase permite conexiones desde Render IPs
+```
+
+**3. CORS errors en producción**
+```bash
+# Verificar ALLOWED_ORIGINS incluye frontend domain
+ALLOWED_ORIGINS=https://yourapp.com
+```
+
+**4. Memoria/CPU excedida (plan free)**
+```bash
+# Optimizar:
+# - Reducir tamaño de respuestas (pagination)
+# - Implementar caching
+# - Upgrade a plan Starter ($7/mo)
+```
+
+---
