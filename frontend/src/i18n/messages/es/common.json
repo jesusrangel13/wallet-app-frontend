@@ -79,6 +79,7 @@
     "clear": "Limpiar",
     "close": "Cerrar",
     "confirm": "Confirmar",
-    "view": "Ver"
+    "view": "Ver",
+    "loading": "Cargando..."
   }
 }

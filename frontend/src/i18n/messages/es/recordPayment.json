@@ -1,0 +1,18 @@
+{
+  "title": "Registrar Pago",
+  "borrower": "Deudor",
+  "originalAmount": "Monto original",
+  "paidAmount": "Ya pagado",
+  "pendingAmount": "Pendiente",
+  "accountTo": "Cuenta donde recibes el pago",
+  "paymentAmount": "Monto del pago",
+  "payAll": "Pagar todo ({amount})",
+  "paymentExceedsError": "El monto no puede exceder el pendiente de {amount}",
+  "paymentDate": "Fecha del pago",
+  "infoTitle": "💡 ¿Qué sucede al registrar el pago?",
+  "infoPoint1": "Se creará una transacción de INGRESO en tu cuenta",
+  "infoPoint2": "El dinero entrará a tu cuenta (afectará tu balance)",
+  "infoPoint3": "El estado del préstamo se actualizará automáticamente",
+  "recording": "Registrando...",
+  "recordButton": "Registrar Pago"
+}

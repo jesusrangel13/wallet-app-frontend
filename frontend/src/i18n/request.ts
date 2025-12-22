@@ -30,7 +30,13 @@ export default getRequestConfig(async ({ locale }) => {
     errors,
     notifications,
     settings,
-    loading
+    loading,
+    sharedExpense,
+    createLoan,
+    deleteAccount,
+    recordPayment,
+    filters,
+    pagination
   ] = await Promise.all([
     import(`./messages/${validLocale}/common.json`),
     import(`./messages/${validLocale}/auth.json`),
@@ -48,7 +54,13 @@ export default getRequestConfig(async ({ locale }) => {
     import(`./messages/${validLocale}/errors.json`),
     import(`./messages/${validLocale}/notifications.json`),
     import(`./messages/${validLocale}/settings.json`),
-    import(`./messages/${validLocale}/loading.json`)
+    import(`./messages/${validLocale}/loading.json`),
+    import(`./messages/${validLocale}/sharedExpense.json`),
+    import(`./messages/${validLocale}/createLoan.json`),
+    import(`./messages/${validLocale}/deleteAccount.json`),
+    import(`./messages/${validLocale}/recordPayment.json`),
+    import(`./messages/${validLocale}/filters.json`),
+    import(`./messages/${validLocale}/pagination.json`)
   ]);
 
   return {
@@ -70,7 +82,13 @@ export default getRequestConfig(async ({ locale }) => {
       errors: errors.default,
       notifications: notifications.default,
       settings: settings.default,
-      loading: loading.default
+      loading: loading.default,
+      sharedExpense: sharedExpense.default,
+      createLoan: createLoan.default,
+      deleteAccount: deleteAccount.default,
+      recordPayment: recordPayment.default,
+      filters: filters.default,
+      pagination: pagination.default
     }
   };
 });

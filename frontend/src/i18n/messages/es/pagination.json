@@ -1,0 +1,10 @@
+{
+  "show": "Mostrar:",
+  "perPage": "por página",
+  "showing": "Mostrando {start}-{end} de {total} transacciones",
+  "firstPage": "Primera página",
+  "previousPage": "Página anterior",
+  "nextPage": "Página siguiente",
+  "lastPage": "Última página",
+  "pageOf": "Página {current} de {total}"
+}

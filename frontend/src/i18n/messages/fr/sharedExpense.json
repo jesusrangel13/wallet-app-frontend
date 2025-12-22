@@ -1,0 +1,30 @@
+{
+  "addButton": "Add as Shared Expense",
+  "title": "Shared Expense",
+  "remove": "Remove",
+  "hint": "For best experience, select a group first to load split defaults, then enter the amount to calculate automatically.",
+  "groupLabel": "Group",
+  "selectGroup": "Select a group...",
+  "groupMembers": "{count} members",
+  "noAmountYet": "Now enter the amount above to see splits calculated automatically based on group defaults.",
+  "calculationComplete": "✓ Split calculated for {amount} based on group defaults",
+  "paidBy": "Paid By",
+  "selectWhoPaid": "Select who paid...",
+  "splitType": "Split Type",
+  "usingGroupDefaults": "Using group defaults",
+  "splitTypes": {
+    "equal": "Equal Split",
+    "equalDescription": "Split equally between all participants",
+    "percentage": "Percentage",
+    "percentageDescription": "Each person pays a percentage",
+    "exact": "Exact Amounts",
+    "exactDescription": "Specify exact amount for each person",
+    "shares": "By Shares",
+    "sharesDescription": "Divide by shares (e.g., 1 share, 2 shares)"
+  },
+  "splitBetween": "Split Between ({count} people)",
+  "shares": "shares",
+  "totalPercentage": "Total Percentage:",
+  "totalSplit": "Total Split:",
+  "splitMismatch": "Split total doesn't match transaction amount!"
+}
