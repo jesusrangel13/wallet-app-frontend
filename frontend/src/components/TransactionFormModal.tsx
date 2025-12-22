@@ -95,6 +95,27 @@ export default function TransactionFormModal({
   const selectedAmount = watch('amount') || 0
   const selectedAccount = accounts.find((a) => a.id === selectedAccountId)
 
+  const formatAmountDisplay = (value: string | number, currency: string): string => {
+    if (!value) return ''
+    const numValue = typeof value === 'string' ? parseFloat(value.replace(/,/g, '')) : value
+    if (isNaN(numValue)) return ''
+
+    // Format based on currency
+    if (currency === 'CLP') {
+      // CLP doesn't use decimals typically
+      return new Intl.NumberFormat('es-CL', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(numValue)
+    } else {
+      // USD and EUR use decimals
+      return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(numValue)
+    }
+  }
+
   useEffect(() => {
     if (initialData) {
       Object.entries(initialData).forEach(([key, value]) => {
@@ -119,7 +140,7 @@ export default function TransactionFormModal({
       setValue('payee', editingTransaction.payee || '')
       setValue('payer', editingTransaction.payer || '')
       setValue('toAccountId', editingTransaction.toAccountId || undefined)
-      setValue('tags', editingTransaction.tags?.map((t) => t.tagId) || [])
+      setValue('tags', editingTransaction.tags?.map((t: any) => t.tagId) || [])
 
       if (amount) {
         const currency = accounts.find(a => a.id === editingTransaction.accountId)?.currency || 'CLP'
@@ -137,27 +158,6 @@ export default function TransactionFormModal({
     return accounts.filter(
       (a) => a.id !== selectedAccountId && a.currency === selectedAcc.currency
     )
-  }
-
-  const formatAmountDisplay = (value: string | number, currency: string): string => {
-    if (!value) return ''
-    const numValue = typeof value === 'string' ? parseFloat(value.replace(/,/g, '')) : value
-    if (isNaN(numValue)) return ''
-
-    // Format based on currency
-    if (currency === 'CLP') {
-      // CLP doesn't use decimals typically
-      return new Intl.NumberFormat('es-CL', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(numValue)
-    } else {
-      // USD and EUR use decimals
-      return new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(numValue)
-    }
   }
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
