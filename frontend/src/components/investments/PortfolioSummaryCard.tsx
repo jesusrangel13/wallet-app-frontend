@@ -9,7 +9,7 @@
 import { useTranslations } from 'next-intl'
 import { TrendingUp, TrendingDown, DollarSign, Target, PieChart } from 'lucide-react'
 import type { PortfolioSummary } from '@/types/investment'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { cn } from '@/lib/utils'
 
 interface PortfolioSummaryCardProps {

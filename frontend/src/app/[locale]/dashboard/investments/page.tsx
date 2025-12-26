@@ -11,8 +11,8 @@ import { useTranslations } from 'next-intl'
 import { Plus, TrendingUp } from 'lucide-react'
 import { useAccounts } from '@/hooks/useAccounts'
 import { InvestmentTransactionModal } from '@/components/investments/InvestmentTransactionModal'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/Button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import Link from 'next/link'
 
 export default function InvestmentsPage() {
@@ -21,8 +21,8 @@ export default function InvestmentsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: accountsData, isLoading } = useAccounts({ limit: 100 })
-  const investmentAccounts =
-    accountsData?.data.data.filter((acc) => acc.type === 'INVESTMENT') || []
+  const allAccounts: any = (accountsData as any)?.data?.data?.data || []
+  const investmentAccounts = allAccounts.filter((acc: any) => acc.type === 'INVESTMENT')
 
   const formatCurrency = (amount: number, currency: string) => {
     return amount.toLocaleString('en-US', {
@@ -77,7 +77,7 @@ export default function InvestmentsPage() {
         </Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {investmentAccounts.map((account) => (
+          {investmentAccounts.map((account: any) => (
             <Link
               key={account.id}
               href={`/dashboard/investments/${account.id}`}
@@ -114,8 +114,8 @@ export default function InvestmentsPage() {
                         )}
                       </p>
                     </div>
-                    <Button variant="outline" className="w-full mt-4" asChild>
-                      <span>{t('viewPortfolio')}</span>
+                    <Button variant="outline" className="w-full mt-4">
+                      {t('viewPortfolio')}
                     </Button>
                   </div>
                 </CardContent>

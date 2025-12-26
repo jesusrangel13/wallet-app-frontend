@@ -20,34 +20,9 @@ import {
 import { HoldingsTable } from '@/components/investments/HoldingsTable'
 import { PortfolioSummaryCard } from '@/components/investments/PortfolioSummaryCard'
 import { InvestmentTransactionModal } from '@/components/investments/InvestmentTransactionModal'
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/Button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { Modal } from '@/components/ui/Modal'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
@@ -65,6 +40,7 @@ export default function InvestmentAccountDetailPage() {
   const [transactionToDelete, setTransactionToDelete] = useState<string | null>(
     null
   )
+  const [activeTab, setActiveTab] = useState<'portfolio' | 'transactions'>('portfolio')
 
   // Queries
   const { data: account, isLoading: accountLoading } = useAccount(accountId)
@@ -106,18 +82,20 @@ export default function InvestmentAccountDetailPage() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">{tCommon('loading')}</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
+          <p className="text-gray-500">{tCommon('loading')}</p>
         </div>
       </div>
     )
   }
 
-  if (!account || account.data.type !== 'INVESTMENT') {
+  const accountData = account?.data?.data
+
+  if (!accountData || accountData.type !== 'INVESTMENT') {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <h2 className="text-2xl font-bold mb-2">{t('accountNotFound')}</h2>
-        <p className="text-muted-foreground mb-6">
+        <p className="text-gray-500 mb-6">
           {t('accountNotFoundDescription')}
         </p>
         <Link href="/dashboard/investments">
@@ -136,17 +114,17 @@ export default function InvestmentAccountDetailPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link href="/dashboard/investments">
-            <Button variant="ghost" size="icon">
+            <Button variant="outline" size="sm">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              {account.data.name}
+              {accountData.name}
             </h1>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-gray-500 mt-1">
               {t('cashBalance')}:{' '}
-              {formatCurrency(Number(account.data.balance), account.data.currency)}
+              {formatCurrency(Number(accountData.balance), accountData.currency)}
             </p>
           </div>
         </div>
@@ -159,141 +137,168 @@ export default function InvestmentAccountDetailPage() {
       {/* Portfolio Summary */}
       {summaryLoading ? (
         <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
         </div>
       ) : summary ? (
         <PortfolioSummaryCard summary={summary} />
       ) : null}
 
       {/* Tabs */}
-      <Tabs defaultValue="portfolio" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="portfolio">{t('portfolio')}</TabsTrigger>
-          <TabsTrigger value="transactions">{t('transactions')}</TabsTrigger>
-        </TabsList>
+      <div className="border-b border-gray-200">
+        <nav className="-mb-px flex space-x-8">
+          <button
+            onClick={() => setActiveTab('portfolio')}
+            className={`
+              py-4 px-1 border-b-2 font-medium text-sm
+              ${
+                activeTab === 'portfolio'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }
+            `}
+          >
+            {t('portfolio')}
+          </button>
+          <button
+            onClick={() => setActiveTab('transactions')}
+            className={`
+              py-4 px-1 border-b-2 font-medium text-sm
+              ${
+                activeTab === 'transactions'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }
+            `}
+          >
+            {t('transactions')}
+          </button>
+        </nav>
+      </div>
 
-        {/* Portfolio Tab */}
-        <TabsContent value="portfolio" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('holdings')}</CardTitle>
-              <CardDescription>{t('holdingsDescription')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {holdingsLoading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4" />
-                </div>
-              ) : holdings && holdings.length > 0 ? (
-                <HoldingsTable holdings={holdings} />
-              ) : (
-                <div className="text-center py-12 text-muted-foreground">
-                  {t('noHoldings')}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+      {/* Portfolio Tab */}
+      {activeTab === 'portfolio' && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('holdings')}</CardTitle>
+            <p className="text-sm text-gray-500">{t('holdingsDescription')}</p>
+          </CardHeader>
+          <CardContent>
+            {holdingsLoading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
+              </div>
+            ) : holdings && holdings.length > 0 ? (
+              <HoldingsTable holdings={holdings} />
+            ) : (
+              <div className="text-center py-12 text-gray-500">
+                {t('noHoldings')}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
-        {/* Transactions Tab */}
-        <TabsContent value="transactions" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('transactionHistory')}</CardTitle>
-              <CardDescription>
-                {t('transactionHistoryDescription')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {transactionsLoading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4" />
-                </div>
-              ) : transactionsData?.data && transactionsData.data.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>{t('date')}</TableHead>
-                      <TableHead>{t('asset')}</TableHead>
-                      <TableHead>{t('type')}</TableHead>
-                      <TableHead className="text-right">{t('quantity')}</TableHead>
-                      <TableHead className="text-right">{t('price')}</TableHead>
-                      <TableHead className="text-right">{t('total')}</TableHead>
-                      <TableHead className="text-right">{t('actions')}</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
+      {/* Transactions Tab */}
+      {activeTab === 'transactions' && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('transactionHistory')}</CardTitle>
+            <p className="text-sm text-gray-500">
+              {t('transactionHistoryDescription')}
+            </p>
+          </CardHeader>
+          <CardContent>
+            {transactionsLoading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
+              </div>
+            ) : transactionsData?.data && transactionsData.data.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">{t('date')}</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">{t('asset')}</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">{t('type')}</th>
+                      <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">{t('quantity')}</th>
+                      <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">{t('price')}</th>
+                      <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">{t('total')}</th>
+                      <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">{t('actions')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
                     {transactionsData.data.map((transaction) => (
-                      <TableRow key={transaction.id}>
-                        <TableCell>
+                      <tr key={transaction.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                            <Calendar className="h-4 w-4 text-gray-400" />
                             {format(
                               new Date(transaction.transactionDate),
                               'MMM dd, yyyy'
                             )}
                           </div>
-                        </TableCell>
-                        <TableCell>
+                        </td>
+                        <td className="px-4 py-3">
                           <div>
-                            <p className="font-medium">{transaction.assetSymbol}</p>
-                            <Badge variant="outline" className="mt-1">
+                            <p className="font-medium text-gray-900">{transaction.assetSymbol}</p>
+                            <span className="inline-block mt-1 px-2 py-1 text-xs rounded border border-gray-300 text-gray-700">
                               {t(transaction.assetType.toLowerCase())}
-                            </Badge>
+                            </span>
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              transaction.type === 'BUY' ? 'default' : 'secondary'
-                            }
+                        </td>
+                        <td className="px-4 py-3">
+                          <span
+                            className={`inline-block px-2 py-1 text-xs rounded ${
+                              transaction.type === 'BUY'
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'bg-gray-100 text-gray-800'
+                            }`}
                           >
                             {t(transaction.type.toLowerCase())}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-right text-gray-900">
                           {transaction.quantity.toLocaleString('en-US', {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 8,
                           })}
-                        </TableCell>
-                        <TableCell className="text-right">
+                        </td>
+                        <td className="px-4 py-3 text-right text-gray-900">
                           {formatCurrency(
                             Number(transaction.pricePerUnit),
                             transaction.currency
                           )}
-                        </TableCell>
-                        <TableCell className="text-right font-semibold">
+                        </td>
+                        <td className="px-4 py-3 text-right font-semibold text-gray-900">
                           {formatCurrency(
                             Number(transaction.totalAmount),
                             transaction.currency
                           )}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="icon"
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <button
                             onClick={() => {
                               setTransactionToDelete(transaction.id)
                               setDeleteDialogOpen(true)
                             }}
+                            className="text-red-600 hover:text-red-800"
                           >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </td>
+                      </tr>
                     ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <div className="text-center py-12 text-muted-foreground">
-                  {t('noTransactions')}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="text-center py-12 text-gray-500">
+                {t('noTransactions')}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Transaction Modal */}
       <InvestmentTransactionModal
@@ -303,25 +308,31 @@ export default function InvestmentAccountDetailPage() {
       />
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('deleteTransaction')}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('deleteTransactionConfirm')}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
-            <AlertDialogAction
+      <Modal
+        isOpen={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        title={t('deleteTransaction')}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-gray-500">
+            {t('deleteTransactionConfirm')}
+          </p>
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteDialogOpen(false)}
+            >
+              {tCommon('cancel')}
+            </Button>
+            <Button
               onClick={handleDeleteTransaction}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-red-600 hover:bg-red-700 text-white"
             >
               {tCommon('delete')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

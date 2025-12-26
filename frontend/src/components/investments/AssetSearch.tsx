@@ -11,16 +11,8 @@ import { Search, TrendingUp, DollarSign, Globe, Bitcoin } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useAssetSearch } from '@/hooks/useInvestments'
 import { InvestmentAssetType, type AssetSearchResult } from '@/types/investment'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/Input'
+import { Card } from '@/components/ui/Card'
 import { Loader2 } from 'lucide-react'
 
 interface AssetSearchProps {
@@ -72,9 +64,11 @@ export function AssetSearch({
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {/* Search Input */}
         <div className="md:col-span-2">
-          <Label htmlFor="asset-search">{t('searchAsset')}</Label>
+          <label htmlFor="asset-search" className="block text-sm font-medium mb-1">
+            {t('searchAsset')}
+          </label>
           <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
               id="asset-search"
               type="text"
@@ -92,32 +86,24 @@ export function AssetSearch({
 
         {/* Asset Type Filter */}
         <div>
-          <Label htmlFor="asset-type">{t('assetType')}</Label>
-          <Select
-            value={assetType}
-            onValueChange={(value) =>
-              setAssetType(value as InvestmentAssetType)
-            }
+          <label htmlFor="asset-type" className="block text-sm font-medium mb-1">
+            {t('assetType')}
+          </label>
+          <select
+            id="asset-type"
+            value={assetType || 'ALL'}
+            onChange={(e) => {
+              const value = e.target.value
+              setAssetType(value === 'ALL' ? undefined : value as InvestmentAssetType)
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <SelectTrigger id="asset-type">
-              <SelectValue placeholder={t('allTypes')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">{t('allTypes')}</SelectItem>
-              <SelectItem value={InvestmentAssetType.CRYPTO}>
-                {t('crypto')}
-              </SelectItem>
-              <SelectItem value={InvestmentAssetType.STOCK}>
-                {t('stock')}
-              </SelectItem>
-              <SelectItem value={InvestmentAssetType.ETF}>
-                {t('etf')}
-              </SelectItem>
-              <SelectItem value={InvestmentAssetType.FOREX}>
-                {t('forex')}
-              </SelectItem>
-            </SelectContent>
-          </Select>
+            <option value="ALL">{t('allTypes')}</option>
+            <option value={InvestmentAssetType.CRYPTO}>{t('crypto')}</option>
+            <option value={InvestmentAssetType.STOCK}>{t('stock')}</option>
+            <option value={InvestmentAssetType.ETF}>{t('etf')}</option>
+            <option value={InvestmentAssetType.FOREX}>{t('forex')}</option>
+          </select>
         </div>
       </div>
 

@@ -10,15 +10,6 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { ArrowUpDown, TrendingUp, TrendingDown } from 'lucide-react'
 import type { HoldingWithMetrics } from '@/types/investment'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
 interface HoldingsTableProps {
@@ -85,14 +76,14 @@ export function HoldingsTable({
         : bValue.localeCompare(aValue)
     }
 
-    return sortOrder === 'asc' ? aValue - bValue : bValue - aValue
+    return sortOrder === 'asc' ? (aValue as number) - (bValue as number) : (bValue as number) - (aValue as number)
   })
 
   const SortIcon = ({ field }: { field: SortField }) => (
     <ArrowUpDown
       className={cn(
         'ml-2 h-4 w-4 inline',
-        sortField === field && 'text-primary'
+        sortField === field && 'text-blue-600'
       )}
     />
   )
@@ -113,102 +104,103 @@ export function HoldingsTable({
 
   if (holdings.length === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
+      <div className="text-center py-12 text-gray-500">
         {t('noHoldings')}
       </div>
     )
   }
 
   return (
-    <div className={cn('rounded-md border', className)}>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead
-              className="cursor-pointer select-none"
+    <div className={cn('rounded-md border overflow-x-auto', className)}>
+      <table className="w-full">
+        <thead className="bg-gray-50">
+          <tr>
+            <th
+              className="px-4 py-3 text-left text-sm font-medium text-gray-700 cursor-pointer select-none hover:bg-gray-100"
               onClick={() => handleSort('asset')}
             >
               {t('asset')}
               <SortIcon field="asset" />
-            </TableHead>
-            <TableHead
-              className="cursor-pointer select-none text-right"
+            </th>
+            <th
+              className="px-4 py-3 text-right text-sm font-medium text-gray-700 cursor-pointer select-none hover:bg-gray-100"
               onClick={() => handleSort('quantity')}
             >
               {t('quantity')}
               <SortIcon field="quantity" />
-            </TableHead>
-            <TableHead
-              className="cursor-pointer select-none text-right"
+            </th>
+            <th
+              className="px-4 py-3 text-right text-sm font-medium text-gray-700 cursor-pointer select-none hover:bg-gray-100"
               onClick={() => handleSort('avgCost')}
             >
               {t('avgCost')}
               <SortIcon field="avgCost" />
-            </TableHead>
-            <TableHead className="text-right">{t('currentPrice')}</TableHead>
-            <TableHead
-              className="cursor-pointer select-none text-right"
+            </th>
+            <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">
+              {t('currentPrice')}
+            </th>
+            <th
+              className="px-4 py-3 text-right text-sm font-medium text-gray-700 cursor-pointer select-none hover:bg-gray-100"
               onClick={() => handleSort('currentValue')}
             >
               {t('currentValue')}
               <SortIcon field="currentValue" />
-            </TableHead>
-            <TableHead
-              className="cursor-pointer select-none text-right"
+            </th>
+            <th
+              className="px-4 py-3 text-right text-sm font-medium text-gray-700 cursor-pointer select-none hover:bg-gray-100"
               onClick={() => handleSort('unrealizedPL')}
             >
               {t('unrealizedPL')}
               <SortIcon field="unrealizedPL" />
-            </TableHead>
-            <TableHead
-              className="cursor-pointer select-none text-right"
+            </th>
+            <th
+              className="px-4 py-3 text-right text-sm font-medium text-gray-700 cursor-pointer select-none hover:bg-gray-100"
               onClick={() => handleSort('roi')}
             >
               {t('roi')}
               <SortIcon field="roi" />
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-200">
           {sortedHoldings.map((holding) => {
             const isProfitable = holding.unrealizedGainLoss >= 0
             const roiColor = isProfitable ? 'text-green-600' : 'text-red-600'
 
             return (
-              <TableRow
+              <tr
                 key={holding.id}
                 className={cn(
-                  onRowClick && 'cursor-pointer hover:bg-muted/50'
+                  'hover:bg-gray-50',
+                  onRowClick && 'cursor-pointer'
                 )}
                 onClick={() => onRowClick?.(holding)}
               >
-                <TableCell>
+                <td className="px-4 py-3">
                   <div>
-                    <p className="font-medium">{holding.assetSymbol}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {holding.assetName}
-                    </p>
-                    <Badge variant="outline" className="mt-1">
+                    <p className="font-medium text-gray-900">{holding.assetSymbol}</p>
+                    <p className="text-sm text-gray-500">{holding.assetName}</p>
+                    <span className="inline-block mt-1 px-2 py-1 text-xs rounded border border-gray-300 text-gray-700">
                       {t(holding.assetType.toLowerCase())}
-                    </Badge>
+                    </span>
                   </div>
-                </TableCell>
-                <TableCell className="text-right">
+                </td>
+                <td className="px-4 py-3 text-right text-gray-900">
                   {holding.totalQuantity.toLocaleString('en-US', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 8,
                   })}
-                </TableCell>
-                <TableCell className="text-right">
+                </td>
+                <td className="px-4 py-3 text-right text-gray-900">
                   {formatCurrency(holding.averageCostPerUnit, holding.currency)}
-                </TableCell>
-                <TableCell className="text-right">
+                </td>
+                <td className="px-4 py-3 text-right text-gray-900">
                   {formatCurrency(holding.currentPrice, holding.currency)}
-                </TableCell>
-                <TableCell className="text-right font-semibold">
+                </td>
+                <td className="px-4 py-3 text-right font-semibold text-gray-900">
                   {formatCurrency(holding.currentValue, holding.currency)}
-                </TableCell>
-                <TableCell className="text-right">
+                </td>
+                <td className="px-4 py-3 text-right">
                   <div className={roiColor}>
                     <div className="flex items-center justify-end gap-1">
                       {isProfitable ? (
@@ -227,15 +219,15 @@ export function HoldingsTable({
                       {formatPercentage(holding.unrealizedGainLossPercentage)}
                     </div>
                   </div>
-                </TableCell>
-                <TableCell className={cn('text-right font-semibold', roiColor)}>
+                </td>
+                <td className={cn('px-4 py-3 text-right font-semibold', roiColor)}>
                   {formatPercentage(holding.roi)}
-                </TableCell>
-              </TableRow>
+                </td>
+              </tr>
             )
           })}
-        </TableBody>
-      </Table>
+        </tbody>
+      </table>
     </div>
   )
 }

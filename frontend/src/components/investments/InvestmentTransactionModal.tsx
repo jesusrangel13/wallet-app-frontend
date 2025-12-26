@@ -16,34 +16,10 @@ import {
   type AssetSearchResult,
   type CreateInvestmentTransactionRequest,
 } from '@/types/investment'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Calendar } from '@/components/ui/calendar'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { CalendarIcon, Loader2 } from 'lucide-react'
-import { format } from 'date-fns'
-import { cn } from '@/lib/utils'
+import { Modal } from '@/components/ui/Modal'
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
+import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface InvestmentTransactionModalProps {
@@ -63,7 +39,7 @@ export function InvestmentTransactionModal({
   // Get investment accounts
   const { data: accountsData } = useAccounts({ limit: 100 })
   const investmentAccounts =
-    accountsData?.data.data.filter((acc) => acc.type === 'INVESTMENT') || []
+    ((accountsData as any)?.data?.data?.data || []).filter((acc: any) => acc.type === 'INVESTMENT') || []
 
   // Mutation
   const createTransaction = useCreateInvestmentTransaction()
@@ -79,7 +55,7 @@ export function InvestmentTransactionModal({
     pricePerUnit: '',
     fees: '0',
     currency: 'USD',
-    transactionDate: new Date(),
+    transactionDate: new Date().toISOString().split('T')[0],
     notes: '',
   })
 
@@ -112,7 +88,7 @@ export function InvestmentTransactionModal({
       pricePerUnit: parseFloat(formData.pricePerUnit),
       fees: parseFloat(formData.fees),
       currency: formData.currency,
-      transactionDate: formData.transactionDate.toISOString(),
+      transactionDate: new Date(formData.transactionDate).toISOString(),
       notes: formData.notes || undefined,
     }
 
@@ -138,250 +114,232 @@ export function InvestmentTransactionModal({
       pricePerUnit: '',
       fees: '0',
       currency: 'USD',
-      transactionDate: new Date(),
+      transactionDate: new Date().toISOString().split('T')[0],
       notes: '',
     })
     onClose()
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{t('newTransaction')}</DialogTitle>
-          <DialogDescription>
-            {t('newTransactionDescription')}
-          </DialogDescription>
-        </DialogHeader>
+    <Modal isOpen={isOpen} onClose={handleClose} title={t('newTransaction')}>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Asset Search */}
+        <AssetSearch
+          onSelect={setSelectedAsset}
+          selectedAsset={selectedAsset}
+        />
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Asset Search */}
-          <AssetSearch
-            onSelect={setSelectedAsset}
-            selectedAsset={selectedAsset}
-          />
+        {/* Account Selection */}
+        <div>
+          <label htmlFor="account" className="block text-sm font-medium mb-1">
+            {t('account')}
+          </label>
+          <select
+            id="account"
+            value={formData.accountId}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, accountId: e.target.value }))
+            }
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          >
+            <option value="">{t('selectAccount')}</option>
+            {investmentAccounts.map((account: any) => (
+              <option key={account.id} value={account.id}>
+                {account.name} ({account.currency})
+              </option>
+            ))}
+          </select>
+        </div>
 
-          {/* Account Selection */}
+        {/* Transaction Type */}
+        <div>
+          <label htmlFor="type" className="block text-sm font-medium mb-1">
+            {t('transactionType')}
+          </label>
+          <select
+            id="type"
+            value={formData.type}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, type: e.target.value as 'BUY' | 'SELL' }))
+            }
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="BUY">{t('buy')}</option>
+            <option value="SELL">{t('sell')}</option>
+          </select>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          {/* Quantity */}
           <div>
-            <Label htmlFor="account">{t('account')}</Label>
-            <Select
-              value={formData.accountId}
-              onValueChange={(value) =>
-                setFormData((prev) => ({ ...prev, accountId: value }))
-              }
-            >
-              <SelectTrigger id="account">
-                <SelectValue placeholder={t('selectAccount')} />
-              </SelectTrigger>
-              <SelectContent>
-                {investmentAccounts.map((account) => (
-                  <SelectItem key={account.id} value={account.id}>
-                    {account.name} ({account.currency})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Transaction Type */}
-          <div>
-            <Label htmlFor="type">{t('transactionType')}</Label>
-            <Select
-              value={formData.type}
-              onValueChange={(value: 'BUY' | 'SELL') =>
-                setFormData((prev) => ({ ...prev, type: value }))
-              }
-            >
-              <SelectTrigger id="type">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="BUY">{t('buy')}</SelectItem>
-                <SelectItem value="SELL">{t('sell')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            {/* Quantity */}
-            <div>
-              <Label htmlFor="quantity">{t('quantity')}</Label>
-              <Input
-                id="quantity"
-                type="number"
-                step="0.00000001"
-                min="0"
-                placeholder="0.00"
-                value={formData.quantity}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, quantity: e.target.value }))
-                }
-                required
-              />
-            </div>
-
-            {/* Price Per Unit */}
-            <div>
-              <Label htmlFor="pricePerUnit">{t('pricePerUnit')}</Label>
-              <Input
-                id="pricePerUnit"
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="0.00"
-                value={formData.pricePerUnit}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    pricePerUnit: e.target.value,
-                  }))
-                }
-                required
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            {/* Fees */}
-            <div>
-              <Label htmlFor="fees">{t('fees')}</Label>
-              <Input
-                id="fees"
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="0.00"
-                value={formData.fees}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, fees: e.target.value }))
-                }
-              />
-            </div>
-
-            {/* Currency */}
-            <div>
-              <Label htmlFor="currency">{t('currency')}</Label>
-              <Select
-                value={formData.currency}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({ ...prev, currency: value }))
-                }
-              >
-                <SelectTrigger id="currency">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="USD">USD</SelectItem>
-                  <SelectItem value="EUR">EUR</SelectItem>
-                  <SelectItem value="CLP">CLP</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Transaction Date */}
-          <div>
-            <Label>{t('transactionDate')}</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    'w-full justify-start text-left font-normal',
-                    !formData.transactionDate && 'text-muted-foreground'
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {formData.transactionDate ? (
-                    format(formData.transactionDate, 'PPP')
-                  ) : (
-                    <span>{tCommon('selectDate')}</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={formData.transactionDate}
-                  onSelect={(date) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      transactionDate: date || new Date(),
-                    }))
-                  }
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          {/* Notes */}
-          <div>
-            <Label htmlFor="notes">{t('notes')}</Label>
-            <Textarea
-              id="notes"
-              placeholder={t('notesPlaceholder')}
-              value={formData.notes}
+            <label htmlFor="quantity" className="block text-sm font-medium mb-1">
+              {t('quantity')}
+            </label>
+            <Input
+              id="quantity"
+              type="number"
+              step="0.00000001"
+              min="0"
+              placeholder="0.00"
+              value={formData.quantity}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, notes: e.target.value }))
+                setFormData((prev) => ({ ...prev, quantity: e.target.value }))
               }
-              rows={3}
+              required
             />
           </div>
 
-          {/* Total Display */}
-          {quantity > 0 && price > 0 && (
-            <div className="rounded-lg bg-muted p-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">
-                  {t('total')}:
-                </span>
-                <span className="text-xl font-bold">
-                  {total.toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: formData.currency,
-                  })}
-                </span>
-              </div>
-              <div className="mt-2 text-xs text-muted-foreground">
-                {quantity} × {price} + {fees} {t('fees').toLowerCase()}
-              </div>
-            </div>
-          )}
-
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={createTransaction.isPending}
-            >
-              {tCommon('cancel')}
-            </Button>
-            <Button
-              type="submit"
-              disabled={
-                !selectedAsset ||
-                !formData.accountId ||
-                !formData.quantity ||
-                !formData.pricePerUnit ||
-                createTransaction.isPending
+          {/* Price Per Unit */}
+          <div>
+            <label htmlFor="pricePerUnit" className="block text-sm font-medium mb-1">
+              {t('pricePerUnit')}
+            </label>
+            <Input
+              id="pricePerUnit"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="0.00"
+              value={formData.pricePerUnit}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  pricePerUnit: e.target.value,
+                }))
               }
+              required
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          {/* Fees */}
+          <div>
+            <label htmlFor="fees" className="block text-sm font-medium mb-1">
+              {t('fees')}
+            </label>
+            <Input
+              id="fees"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="0.00"
+              value={formData.fees}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, fees: e.target.value }))
+              }
+            />
+          </div>
+
+          {/* Currency */}
+          <div>
+            <label htmlFor="currency" className="block text-sm font-medium mb-1">
+              {t('currency')}
+            </label>
+            <select
+              id="currency"
+              value={formData.currency}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, currency: e.target.value }))
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              {createTransaction.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('processing')}
-                </>
-              ) : formData.type === 'BUY' ? (
-                t('buy')
-              ) : (
-                t('sell')
-              )}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="CLP">CLP</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Transaction Date */}
+        <div>
+          <label htmlFor="transactionDate" className="block text-sm font-medium mb-1">
+            {t('transactionDate')}
+          </label>
+          <Input
+            id="transactionDate"
+            type="date"
+            value={formData.transactionDate}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                transactionDate: e.target.value,
+              }))
+            }
+            required
+          />
+        </div>
+
+        {/* Notes */}
+        <div>
+          <label htmlFor="notes" className="block text-sm font-medium mb-1">
+            {t('notes')}
+          </label>
+          <textarea
+            id="notes"
+            placeholder={t('notesPlaceholder')}
+            value={formData.notes}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, notes: e.target.value }))
+            }
+            rows={3}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        {/* Total Display */}
+        {quantity > 0 && price > 0 && (
+          <div className="rounded-lg bg-gray-100 p-4">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">
+                {t('total')}:
+              </span>
+              <span className="text-xl font-bold">
+                {total.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: formData.currency,
+                })}
+              </span>
+            </div>
+            <div className="mt-2 text-xs text-gray-500">
+              {quantity} × {price} + {fees} {t('fees').toLowerCase()}
+            </div>
+          </div>
+        )}
+
+        <div className="flex justify-end gap-2 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleClose}
+            disabled={createTransaction.isPending}
+          >
+            {tCommon('cancel')}
+          </Button>
+          <Button
+            type="submit"
+            disabled={
+              !selectedAsset ||
+              !formData.accountId ||
+              !formData.quantity ||
+              !formData.pricePerUnit ||
+              createTransaction.isPending
+            }
+          >
+            {createTransaction.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {t('processing')}
+              </>
+            ) : formData.type === 'BUY' ? (
+              t('buy')
+            ) : (
+              t('sell')
+            )}
+          </Button>
+        </div>
+      </form>
+    </Modal>
   )
 }

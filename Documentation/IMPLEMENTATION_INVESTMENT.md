@@ -53,6 +53,32 @@ Implementar un sistema completo de tracking de inversiones que permita a los usu
 
 ---
 
+## Flujos Principales y Conceptos
+
+### Flujo de Fondeo (Funding) vs. Compra (Buying)
+Es importante distinguir entre mover dinero a la cuenta de Inversión y comprar activos.
+
+1. **Fondeo (Transferencia):**
+   - El usuario mueve dinero desde una cuenta bancaria (ej: Checking) a la cuenta de Inversión (efectivo disponible o "Buying Power").
+   - Esto es una `Transferencia` normal entre cuentas.
+   - Incrementa `Account.balance` de la cuenta de inversión.
+
+2. **Compra (Trade):**
+   - El usuario usa el efectivo de la cuenta de inversión para comprar activos.
+   - Se crea una `InvestmentTransaction` (BUY).
+   - Se reduce `Account.balance` (Cash) por el monto total (precio * cantidad + fees).
+   - Se crea/actualiza un `InvestmentHolding`.
+
+### Integración con Balance Total
+El "Patrimonio Neto" del usuario debe sumar:
+- Saldo en cuentas (Cash)
+- Valor actual de activos de inversión (`Holdings.currentValue`)
+
+> [!IMPORTANT]
+> El endpoint de `TotalBalance` y los servicios de cálculo de patrimonio deben actualizarse para incluir `InvestmentHoldings` convertidos a la moneda base del usuario.
+
+---
+
 ## Configuración Inicial
 
 ### 1. API Keys Requeridas
@@ -97,7 +123,8 @@ EXCHANGERATE_API_KEY=YOUR_KEY_HERE
 **Backend:**
 ```bash
 cd backend
-npm install axios
+npm install axios node-cron
+npm install -D @types/node-cron
 # Prisma ya está instalado
 ```
 
@@ -217,6 +244,8 @@ Una vez completadas todas las fases:
    enum InvestmentTransactionType {
      BUY
      SELL
+     DIVIDEND
+     INTEREST
    }
    ```
 
@@ -263,6 +292,7 @@ model InvestmentTransaction {
   pricePerUnit      Decimal                   @map("price_per_unit") @db.Decimal(15, 2)
   totalAmount       Decimal                   @map("total_amount") @db.Decimal(15, 2)
   fees              Decimal                   @default(0) @db.Decimal(15, 2)
+  exchangeRate      Decimal?                  @map("exchange_rate") @db.Decimal(15, 6)
   currency          String                    @default("USD")
   transactionDate   DateTime                  @default(now()) @map("transaction_date")
   notes             String?
@@ -751,6 +781,33 @@ git commit -m "feat(investments): add price and search endpoints"
 git checkout feature/invesment-accounts
 git merge feature/investment-price-provider
 git push origin feature/invesment-accounts
+```
+
+---
+
+#### 1.8 Configuración de Cron Jobs
+**Objetivo:** Mantener la base de datos limpia y los precios actualizados.
+
+**Instalación:**
+`npm install node-cron @types/node-cron`
+
+**Archivo:** `backend/src/cron/investment-cron.ts`
+
+```typescript
+import cron from 'node-cron';
+
+export const startInvestmentCronJobs = () => {
+  // Limpiar caché de precios antiguo todos los días a las 00:00
+  cron.schedule('0 0 * * *', async () => {
+    console.log('Running daily price cache cleanup...');
+    await priceProviderService.cleanOldCache();
+  });
+};
+```
+
+**Registro en `server.ts`:**
+```typescript
+startInvestmentCronJobs();
 ```
 
 ---
