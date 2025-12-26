@@ -21,7 +21,7 @@ export default function InvestmentsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: accountsData, isLoading } = useAccounts({ limit: 100 })
-  const allAccounts: any = (accountsData as any)?.data?.data?.data || []
+  const allAccounts: any = (accountsData as any)?.data?.data || []
   const investmentAccounts = allAccounts.filter((acc: any) => acc.type === 'INVESTMENT')
 
   const formatCurrency = (amount: number, currency: string) => {

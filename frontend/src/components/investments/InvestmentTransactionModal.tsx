@@ -39,7 +39,7 @@ export function InvestmentTransactionModal({
   // Get investment accounts
   const { data: accountsData } = useAccounts({ limit: 100 })
   const investmentAccounts =
-    ((accountsData as any)?.data?.data?.data || []).filter((acc: any) => acc.type === 'INVESTMENT') || []
+    ((accountsData as any)?.data?.data || []).filter((acc: any) => acc.type === 'INVESTMENT') || []
 
   // Mutation
   const createTransaction = useCreateInvestmentTransaction()
