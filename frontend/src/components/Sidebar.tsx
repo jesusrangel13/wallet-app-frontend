@@ -4,7 +4,7 @@ import { useSidebarStore } from '@/store/sidebarStore'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { useRouter, usePathname, useParams } from 'next/navigation'
 import Link from 'next/link'
-import { Menu, X, Home, CreditCard, TrendingUp, Users, Upload, Settings, HandCoins } from 'lucide-react'
+import { Menu, X, Home, CreditCard, TrendingUp, Users, Upload, Settings, HandCoins, LineChart } from 'lucide-react'
 import { useEffect, useState, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 
@@ -19,6 +19,7 @@ const baseNavItems: NavItem[] = [
   { labelKey: 'dashboard', icon: <Home className="w-6 h-6" />, path: 'dashboard', descriptionKey: 'dashboardDescription' },
   { labelKey: 'accounts', icon: <CreditCard className="w-6 h-6" />, path: 'dashboard/accounts', descriptionKey: 'accountsDescription' },
   { labelKey: 'transactions', icon: <TrendingUp className="w-6 h-6" />, path: 'dashboard/transactions', descriptionKey: 'transactionsDescription' },
+  { labelKey: 'investments', icon: <LineChart className="w-6 h-6" />, path: 'dashboard/investments', descriptionKey: 'investmentsDescription' },
   { labelKey: 'loans', icon: <HandCoins className="w-6 h-6" />, path: 'dashboard/loans', descriptionKey: 'loansDescription' },
   { labelKey: 'groups', icon: <Users className="w-6 h-6" />, path: 'dashboard/groups', descriptionKey: 'groupsDescription' },
   { labelKey: 'import', icon: <Upload className="w-6 h-6" />, path: 'dashboard/import', descriptionKey: 'importDescription' },
