@@ -738,37 +738,37 @@ export const loanAPI = {
 export const investmentAPI = {
   // Transactions
   createTransaction: (data: CreateInvestmentTransactionRequest) =>
-    api.post<ApiResponse<InvestmentTransaction>>('/v1/investments/transactions', data),
+    api.post<ApiResponse<InvestmentTransaction>>('/investments/transactions', data),
 
   getTransactions: (filters?: GetTransactionsFilters) =>
-    api.get<TransactionsPaginatedResponse>('/v1/investments/transactions', { params: filters }),
+    api.get<TransactionsPaginatedResponse>('/investments/transactions', { params: filters }),
 
   getTransactionById: (id: string) =>
-    api.get<ApiResponse<InvestmentTransaction>>(`/v1/investments/transactions/${id}`),
+    api.get<ApiResponse<InvestmentTransaction>>(`/investments/transactions/${id}`),
 
   deleteTransaction: (id: string) =>
-    api.delete<ApiResponse<{ message: string }>>(`/v1/investments/transactions/${id}`),
+    api.delete<ApiResponse<{ message: string }>>(`/investments/transactions/${id}`),
 
   // Holdings
   getHoldings: (accountId: string) =>
-    api.get<ApiResponse<HoldingWithMetrics[]>>(`/v1/investments/accounts/${accountId}/holdings`),
+    api.get<ApiResponse<HoldingWithMetrics[]>>(`/investments/accounts/${accountId}/holdings`),
 
   getHoldingBySymbol: (accountId: string, symbol: string) =>
-    api.get<ApiResponse<HoldingWithMetrics>>(`/v1/investments/accounts/${accountId}/holdings/${symbol}`),
+    api.get<ApiResponse<HoldingWithMetrics>>(`/investments/accounts/${accountId}/holdings/${symbol}`),
 
   getPortfolioSummary: (accountId: string) =>
-    api.get<ApiResponse<PortfolioSummary>>(`/v1/investments/accounts/${accountId}/summary`),
+    api.get<ApiResponse<PortfolioSummary>>(`/investments/accounts/${accountId}/summary`),
 
   // Prices
   getCurrentPrice: (symbol: string, assetType: string) =>
-    api.get<ApiResponse<PriceData>>(`/v1/investments/prices/current/${symbol}/${assetType}`),
+    api.get<ApiResponse<PriceData>>(`/investments/prices/current/${symbol}/${assetType}`),
 
   getBatchPrices: (data: GetBatchPricesRequest) =>
-    api.post<ApiResponse<Record<string, PriceData>>>('/v1/investments/prices/batch', data),
+    api.post<ApiResponse<Record<string, PriceData>>>('/investments/prices/batch', data),
 
   // Search
   searchAssets: (data: SearchAssetsRequest) =>
-    api.get<ApiResponse<AssetSearchResult[]>>('/v1/investments/search', { params: data }),
+    api.get<ApiResponse<AssetSearchResult[]>>('/investments/search', { params: data }),
 }
 
 export default api
