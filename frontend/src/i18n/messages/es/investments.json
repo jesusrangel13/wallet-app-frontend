@@ -76,6 +76,8 @@
   "performance": "Rendimiento",
   "performanceChart": "Rendimiento del Portafolio",
   "allocationChart": "Distribución de Activos",
+  "holdingsAllocationChart": "Distribución por Holdings",
+  "holdingsAllocationDescription": "Distribución del portafolio por activos individuales",
   "noClosedPositions": "No tienes posiciones cerradas",
   "totalCostInvested": "Costo Total",
   "dateSold": "Fecha de Venta",

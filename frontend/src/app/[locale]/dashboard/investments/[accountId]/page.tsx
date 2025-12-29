@@ -24,6 +24,7 @@ import { PortfolioSummaryCard } from '@/components/investments/PortfolioSummaryC
 import { InvestmentTransactionModal } from '@/components/investments/InvestmentTransactionModal'
 import { AssetAllocationChart } from '@/components/investments/AssetAllocationChart'
 import { PortfolioPerformanceChart } from '@/components/investments/PortfolioPerformanceChart'
+import { HoldingsAllocationChart } from '@/components/investments/HoldingsAllocationChart'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Modal } from '@/components/ui/Modal'
@@ -289,6 +290,28 @@ export default function InvestmentAccountDetailPage() {
               )}
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('holdingsAllocationChart')}</CardTitle>
+              <p className="text-sm text-gray-500">
+                {t('holdingsAllocationDescription')}
+              </p>
+            </CardHeader>
+            <CardContent>
+              {summaryLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
+                </div>
+              ) : summary ? (
+                <HoldingsAllocationChart summary={summary} />
+              ) : (
+                <div className="text-center py-12 text-gray-500">
+                  No holdings data available
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       )}
 
@@ -344,11 +367,11 @@ export default function InvestmentAccountDetailPage() {
                           <span
                             className={`inline-block px-2 py-1 text-xs rounded ${
                               transaction.type === 'BUY'
-                                ? 'bg-blue-100 text-blue-800'
-                                : transaction.type === 'SELL'
-                                ? 'bg-gray-100 text-gray-800'
-                                : transaction.type === 'DIVIDEND'
                                 ? 'bg-green-100 text-green-800'
+                                : transaction.type === 'SELL'
+                                ? 'bg-red-100 text-red-800'
+                                : transaction.type === 'DIVIDEND'
+                                ? 'bg-blue-100 text-blue-800'
                                 : 'bg-purple-100 text-purple-800'
                             }`}
                           >

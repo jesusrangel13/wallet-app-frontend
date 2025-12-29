@@ -76,6 +76,8 @@
   "performance": "Performance",
   "performanceChart": "Portfolio Performance",
   "allocationChart": "Asset Allocation",
+  "holdingsAllocationChart": "Holdings Distribution",
+  "holdingsAllocationDescription": "Portfolio distribution by individual assets",
   "noClosedPositions": "You have no closed positions",
   "totalCostInvested": "Total Cost",
   "dateSold": "Date Sold",
