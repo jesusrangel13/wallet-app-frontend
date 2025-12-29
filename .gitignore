@@ -1,0 +1,5 @@
+# Claude AI assistant configuration
+.claude/
+
+# CSV files with private financial data
+*.csv
