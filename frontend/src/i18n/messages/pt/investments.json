@@ -77,5 +77,8 @@
   "allocationChart": "Alocação de Ativos",
   "noClosedPositions": "Você não tem posições fechadas",
   "totalCostInvested": "Custo Total",
-  "dateSold": "Data de Venda"
+  "dateSold": "Data de Venda",
+  "transactions": "Transações",
+  "closedPositions": "Posições Fechadas",
+  "closedPositionsDescription": "Posições totalmente vendidas com ganhos ou perdas realizados"
 }

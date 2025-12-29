@@ -78,5 +78,8 @@
   "allocationChart": "Asset Allocation",
   "noClosedPositions": "You have no closed positions",
   "totalCostInvested": "Total Cost",
-  "dateSold": "Date Sold"
+  "dateSold": "Date Sold",
+  "transactions": "Transactions",
+  "closedPositions": "Closed Positions",
+  "closedPositionsDescription": "Positions you've fully sold with realized gains or losses"
 }

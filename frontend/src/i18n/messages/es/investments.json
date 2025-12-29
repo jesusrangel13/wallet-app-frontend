@@ -78,5 +78,8 @@
   "allocationChart": "Distribución de Activos",
   "noClosedPositions": "No tienes posiciones cerradas",
   "totalCostInvested": "Costo Total",
-  "dateSold": "Fecha de Venta"
+  "dateSold": "Fecha de Venta",
+  "transactions": "Transacciones",
+  "closedPositions": "Posiciones Cerradas",
+  "closedPositionsDescription": "Posiciones que has vendido completamente con ganancias o pérdidas realizadas"
 }

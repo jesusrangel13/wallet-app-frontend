@@ -77,5 +77,8 @@
   "allocationChart": "Vermögensaufteilung",
   "noClosedPositions": "Sie haben keine geschlossenen Positionen",
   "totalCostInvested": "Gesamtkosten",
-  "dateSold": "Verkaufsdatum"
+  "dateSold": "Verkaufsdatum",
+  "transactions": "Transaktionen",
+  "closedPositions": "Geschlossene Positionen",
+  "closedPositionsDescription": "Vollständig verkaufte Positionen mit realisierten Gewinnen oder Verlusten"
 }
