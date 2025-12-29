@@ -32,7 +32,10 @@ export function PortfolioSummaryCard({
     })
   }
 
-  const formatPercentage = (value: number) => {
+  const formatPercentage = (value: number | undefined) => {
+    if (value === undefined || value === null || isNaN(value)) {
+      return '0.00%'
+    }
     const sign = value >= 0 ? '+' : ''
     return `${sign}${value.toFixed(2)}%`
   }
@@ -79,7 +82,9 @@ export function PortfolioSummaryCard({
           </div>
           <p className="text-xs text-muted-foreground mt-1">
             {formatPercentage(
-              (summary.totalUnrealizedGainLoss / summary.totalCostBasis) * 100
+              summary.totalCostBasis > 0
+                ? (summary.totalUnrealizedGainLoss / summary.totalCostBasis) * 100
+                : 0
             )}
           </p>
         </CardContent>
@@ -152,7 +157,7 @@ export function PortfolioSummaryCard({
                       {formatCurrency(data.value, summary.currency)}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {data.percentage.toFixed(1)}%
+                      {data.percentage?.toFixed(1) || '0.0'}%
                     </p>
                   </div>
                 </div>

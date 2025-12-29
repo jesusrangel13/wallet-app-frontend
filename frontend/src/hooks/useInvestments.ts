@@ -27,6 +27,10 @@ export const investmentKeys = {
     ['investments', 'holding', accountId, symbol] as const,
   portfolioSummary: (accountId: string) =>
     ['investments', 'portfolio-summary', accountId] as const,
+  portfolioPerformance: (accountId: string, period: string) =>
+    ['investments', 'portfolio-performance', accountId, period] as const,
+  globalSummary: () =>
+    ['investments', 'global-summary'] as const,
   price: (symbol: string, assetType: string) =>
     ['investments', 'price', symbol, assetType] as const,
   search: (query: string, assetType?: InvestmentAssetType) =>
@@ -36,19 +40,36 @@ export const investmentKeys = {
 // ==================== HOLDINGS ====================
 
 /**
- * Get all holdings for an investment account
+ * Get active holdings for an investment account (quantity > 0)
  * Auto-refreshes every 5 minutes to keep prices updated
  */
 export const useInvestmentHoldings = (accountId: string, enabled = true) => {
   return useQuery({
     queryKey: investmentKeys.holdings(accountId),
     queryFn: async () => {
-      const response = await investmentAPI.getHoldings(accountId)
+      const response = await investmentAPI.getHoldings(accountId, 'active')
       return response.data.data
     },
     enabled: !!accountId && enabled,
     refetchInterval: 5 * 60 * 1000, // 5 minutes
     staleTime: 3 * 60 * 1000, // 3 minutes
+  })
+}
+
+/**
+ * Get closed positions for an investment account (quantity = 0)
+ * Historical data, doesn't auto-refresh
+ */
+export const useClosedPositions = (accountId: string, enabled = true) => {
+  return useQuery({
+    queryKey: ['investments', 'closed-positions', accountId],
+    queryFn: async () => {
+      const response = await investmentAPI.getClosedPositions(accountId)
+      return response.data.data
+    },
+    enabled: !!accountId && enabled,
+    staleTime: 10 * 60 * 1000, // 10 minutes (less frequent than holdings)
+    refetchInterval: false, // No auto-refresh (historical data)
   })
 }
 
@@ -85,6 +106,43 @@ export const usePortfolioSummary = (accountId: string, enabled = true) => {
     enabled: !!accountId && enabled,
     refetchInterval: 5 * 60 * 1000, // 5 minutes
     staleTime: 3 * 60 * 1000, // 3 minutes
+  })
+}
+
+/**
+ * Get portfolio performance history over time
+ * Returns historical data points for charting
+ */
+export const usePortfolioPerformance = (
+  accountId: string,
+  period: '1M' | '3M' | '6M' | '1Y' | 'ALL' = '1Y',
+  enabled = true
+) => {
+  return useQuery({
+    queryKey: investmentKeys.portfolioPerformance(accountId, period),
+    queryFn: async () => {
+      const response = await investmentAPI.getPortfolioPerformance(accountId, period)
+      return response.data.data
+    },
+    enabled: !!accountId && enabled,
+    staleTime: 15 * 60 * 1000, // 15 minutes (historical data doesn't change often)
+  })
+}
+
+/**
+ * Get global portfolio summary across all investment accounts
+ * Auto-refreshes every 5 minutes
+ */
+export const useGlobalPortfolioSummary = (enabled = true) => {
+  return useQuery({
+    queryKey: investmentKeys.globalSummary(),
+    queryFn: async () => {
+      const response = await investmentAPI.getGlobalPortfolioSummary()
+      return response.data.data
+    },
+    enabled,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 5 * 60 * 1000, // Auto-refresh every 5 minutes
   })
 }
 
@@ -134,6 +192,9 @@ export const useCreateInvestmentTransaction = () => {
       // Invalidate all related queries
       queryClient.invalidateQueries({
         queryKey: investmentKeys.holdings(variables.accountId),
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['investments', 'closed-positions', variables.accountId],
       })
       queryClient.invalidateQueries({
         queryKey: investmentKeys.portfolioSummary(variables.accountId),

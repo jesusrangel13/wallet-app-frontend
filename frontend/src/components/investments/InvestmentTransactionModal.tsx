@@ -3,7 +3,7 @@
 /**
  * InvestmentTransactionModal Component
  *
- * Modal for creating BUY/SELL investment transactions
+ * Modal for creating BUY/SELL/DIVIDEND/INTEREST investment transactions
  */
 
 import { useState } from 'react'
@@ -50,9 +50,10 @@ export function InvestmentTransactionModal({
   )
   const [formData, setFormData] = useState({
     accountId: defaultAccountId || '',
-    type: 'BUY' as 'BUY' | 'SELL',
+    type: 'BUY' as 'BUY' | 'SELL' | 'DIVIDEND' | 'INTEREST',
     quantity: '',
     pricePerUnit: '',
+    amount: '',
     fees: '0',
     currency: 'USD',
     transactionDate: new Date().toISOString().split('T')[0],
@@ -60,10 +61,14 @@ export function InvestmentTransactionModal({
   })
 
   // Calculate total
+  const isDividendOrInterest = formData.type === 'DIVIDEND' || formData.type === 'INTEREST'
   const quantity = parseFloat(formData.quantity) || 0
   const price = parseFloat(formData.pricePerUnit) || 0
+  const amount = parseFloat(formData.amount) || 0
   const fees = parseFloat(formData.fees) || 0
-  const total = quantity * price + fees
+  const total = isDividendOrInterest
+    ? amount + fees
+    : quantity * price + fees
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -78,25 +83,46 @@ export function InvestmentTransactionModal({
       return
     }
 
-    const data: CreateInvestmentTransactionRequest = {
-      accountId: formData.accountId,
-      assetSymbol: selectedAsset.symbol,
-      assetName: selectedAsset.name,
-      assetType: selectedAsset.assetType,
-      type: formData.type,
-      quantity: parseFloat(formData.quantity),
-      pricePerUnit: parseFloat(formData.pricePerUnit),
-      fees: parseFloat(formData.fees),
-      currency: formData.currency,
-      transactionDate: new Date(formData.transactionDate).toISOString(),
-      notes: formData.notes || undefined,
-    }
+    const isDividendOrInterest = formData.type === 'DIVIDEND' || formData.type === 'INTEREST'
+
+    const data: CreateInvestmentTransactionRequest = isDividendOrInterest
+      ? {
+          accountId: formData.accountId,
+          assetSymbol: selectedAsset.symbol,
+          assetName: selectedAsset.name,
+          assetType: selectedAsset.assetType,
+          type: formData.type as 'DIVIDEND' | 'INTEREST',
+          amount: parseFloat(formData.amount),
+          fees: parseFloat(formData.fees),
+          currency: formData.currency,
+          transactionDate: new Date(formData.transactionDate).toISOString(),
+          notes: formData.notes || undefined,
+        }
+      : {
+          accountId: formData.accountId,
+          assetSymbol: selectedAsset.symbol,
+          assetName: selectedAsset.name,
+          assetType: selectedAsset.assetType,
+          type: formData.type as 'BUY' | 'SELL',
+          quantity: parseFloat(formData.quantity),
+          pricePerUnit: parseFloat(formData.pricePerUnit),
+          fees: parseFloat(formData.fees),
+          currency: formData.currency,
+          transactionDate: new Date(formData.transactionDate).toISOString(),
+          notes: formData.notes || undefined,
+        }
 
     try {
       await createTransaction.mutateAsync(data)
-      toast.success(
-        t(formData.type === 'BUY' ? 'buySuccess' : 'sellSuccess')
-      )
+      const successKey =
+        formData.type === 'BUY'
+          ? 'buySuccess'
+          : formData.type === 'SELL'
+          ? 'sellSuccess'
+          : formData.type === 'DIVIDEND'
+          ? 'dividendSuccess'
+          : 'interestSuccess'
+      toast.success(t(successKey))
       handleClose()
     } catch (error: any) {
       toast.error(
@@ -112,6 +138,7 @@ export function InvestmentTransactionModal({
       type: 'BUY',
       quantity: '',
       pricePerUnit: '',
+      amount: '',
       fees: '0',
       currency: 'USD',
       transactionDate: new Date().toISOString().split('T')[0],
@@ -161,57 +188,83 @@ export function InvestmentTransactionModal({
             id="type"
             value={formData.type}
             onChange={(e) =>
-              setFormData((prev) => ({ ...prev, type: e.target.value as 'BUY' | 'SELL' }))
+              setFormData((prev) => ({ ...prev, type: e.target.value as 'BUY' | 'SELL' | 'DIVIDEND' | 'INTEREST' }))
             }
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="BUY">{t('buy')}</option>
             <option value="SELL">{t('sell')}</option>
+            <option value="DIVIDEND">{t('dividend')}</option>
+            <option value="INTEREST">{t('interest')}</option>
           </select>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          {/* Quantity */}
-          <div>
-            <label htmlFor="quantity" className="block text-sm font-medium mb-1">
-              {t('quantity')}
-            </label>
-            <Input
-              id="quantity"
-              type="number"
-              step="0.00000001"
-              min="0"
-              placeholder="0.00"
-              value={formData.quantity}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, quantity: e.target.value }))
-              }
-              required
-            />
-          </div>
+        {/* Conditional Fields: Quantity/Price for BUY/SELL */}
+        {!isDividendOrInterest && (
+          <div className="grid grid-cols-2 gap-4">
+            {/* Quantity */}
+            <div>
+              <label htmlFor="quantity" className="block text-sm font-medium mb-1">
+                {t('quantity')}
+              </label>
+              <Input
+                id="quantity"
+                type="number"
+                step="0.00000001"
+                min="0"
+                placeholder="0.00"
+                value={formData.quantity}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, quantity: e.target.value }))
+                }
+                required
+              />
+            </div>
 
-          {/* Price Per Unit */}
+            {/* Price Per Unit */}
+            <div>
+              <label htmlFor="pricePerUnit" className="block text-sm font-medium mb-1">
+                {t('pricePerUnit')}
+              </label>
+              <Input
+                id="pricePerUnit"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="0.00"
+                value={formData.pricePerUnit}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    pricePerUnit: e.target.value,
+                  }))
+                }
+                required
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Conditional Field: Amount for DIVIDEND/INTEREST */}
+        {isDividendOrInterest && (
           <div>
-            <label htmlFor="pricePerUnit" className="block text-sm font-medium mb-1">
-              {t('pricePerUnit')}
+            <label htmlFor="amount" className="block text-sm font-medium mb-1">
+              {t('amount')}
             </label>
             <Input
-              id="pricePerUnit"
+              id="amount"
               type="number"
               step="0.01"
               min="0"
               placeholder="0.00"
-              value={formData.pricePerUnit}
+              value={formData.amount}
               onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  pricePerUnit: e.target.value,
-                }))
+                setFormData((prev) => ({ ...prev, amount: e.target.value }))
               }
               required
             />
           </div>
-        </div>
+        )}
 
         <div className="grid grid-cols-2 gap-4">
           {/* Fees */}

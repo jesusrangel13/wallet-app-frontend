@@ -87,6 +87,7 @@ export interface HoldingWithMetrics extends InvestmentHolding {
   unrealizedGainLossPercentage: number;
   roi: number;
   allocationPercentage?: number;
+  dateSold?: string; // Solo presente en closed positions (ISO date string)
 }
 
 export interface PortfolioSummary {
@@ -119,7 +120,8 @@ export interface AssetSearchResult {
 
 // ==================== API REQUEST/RESPONSE ====================
 
-export interface CreateInvestmentTransactionRequest {
+// Tipo para transacciones BUY/SELL
+export interface CreateBuyOrSellRequest {
   accountId: string;
   assetSymbol: string;
   assetName: string;
@@ -133,6 +135,25 @@ export interface CreateInvestmentTransactionRequest {
   notes?: string;
   exchangeRate?: number;
 }
+
+// Tipo para transacciones DIVIDEND/INTEREST
+export interface CreateDividendOrInterestRequest {
+  accountId: string;
+  assetSymbol: string;
+  assetName: string;
+  assetType: InvestmentAssetType;
+  type: 'DIVIDEND' | 'INTEREST';
+  amount: number;
+  fees?: number;
+  currency?: string;
+  transactionDate?: string;
+  notes?: string;
+}
+
+// Union type que puede ser cualquiera de los dos
+export type CreateInvestmentTransactionRequest =
+  | CreateBuyOrSellRequest
+  | CreateDividendOrInterestRequest;
 
 export interface GetTransactionsFilters {
   accountId?: string;

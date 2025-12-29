@@ -13,7 +13,29 @@ export function formatCurrency(amount: number, currency: string = 'USD'): string
   }).format(amount)
 }
 
+/**
+ * Parse a date string as local date (ignores timezone)
+ * Useful for dates stored as midnight UTC that should be displayed as-is
+ */
+export function parseLocalDate(dateString: string | Date): Date {
+  // If it's already a Date object, return it
+  if (dateString instanceof Date) return dateString
+
+  // Extract year, month, day from ISO string (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss)
+  const parts = dateString.split('T')[0].split('-')
+  const year = parseInt(parts[0], 10)
+  const month = parseInt(parts[1], 10) - 1 // Months are 0-indexed
+  const day = parseInt(parts[2], 10)
+
+  // Create date in local timezone
+  return new Date(year, month, day)
+}
+
 export function formatDate(date: string | Date, formatStr: string = 'MMM dd, yyyy'): string {
+  // For date-only strings (transactions, etc), parse as local date
+  if (typeof date === 'string' && date.includes('T00:00:00')) {
+    return format(parseLocalDate(date), formatStr)
+  }
   return format(new Date(date), formatStr)
 }
 

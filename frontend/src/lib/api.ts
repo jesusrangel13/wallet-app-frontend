@@ -750,14 +750,51 @@ export const investmentAPI = {
     api.delete<ApiResponse<{ message: string }>>(`/investments/transactions/${id}`),
 
   // Holdings
-  getHoldings: (accountId: string) =>
-    api.get<ApiResponse<HoldingWithMetrics[]>>(`/investments/accounts/${accountId}/holdings`),
+  getHoldings: (accountId: string, status?: 'active' | 'closed' | 'all') =>
+    api.get<ApiResponse<HoldingWithMetrics[]>>(`/investments/accounts/${accountId}/holdings`, {
+      params: status ? { status } : undefined,
+    }),
+
+  getClosedPositions: (accountId: string) =>
+    api.get<ApiResponse<HoldingWithMetrics[]>>(`/investments/accounts/${accountId}/holdings`, {
+      params: { status: 'closed' },
+    }),
 
   getHoldingBySymbol: (accountId: string, symbol: string) =>
     api.get<ApiResponse<HoldingWithMetrics>>(`/investments/accounts/${accountId}/holdings/${symbol}`),
 
   getPortfolioSummary: (accountId: string) =>
     api.get<ApiResponse<PortfolioSummary>>(`/investments/accounts/${accountId}/summary`),
+
+  getPortfolioPerformance: (accountId: string, period: '1M' | '3M' | '6M' | '1Y' | 'ALL' = '1Y') =>
+    api.get<ApiResponse<Array<{ date: string; value: number; costBasis: number }>>>(
+      `/investments/accounts/${accountId}/performance`,
+      { params: { period } }
+    ),
+
+  getGlobalPortfolioSummary: () =>
+    api.get<ApiResponse<{
+      totalValue: number;
+      totalCostBasis: number;
+      totalUnrealizedPL: number;
+      totalUnrealizedPLPercent: number;
+      totalRealizedPL: number;
+      totalCash: number;
+      totalAccounts: number;
+      topPerformer: {
+        symbol: string;
+        assetType: string;
+        roi: number;
+        unrealizedPL: number;
+      } | null;
+      accountBreakdown: Array<{
+        accountId: string;
+        accountName: string;
+        value: number;
+        unrealizedPL: number;
+        cashBalance: number;
+      }>;
+    }>>('/investments/summary'),
 
   // Prices
   getCurrentPrice: (symbol: string, assetType: string) =>
@@ -769,6 +806,33 @@ export const investmentAPI = {
   // Search
   searchAssets: (data: SearchAssetsRequest) =>
     api.get<ApiResponse<AssetSearchResult[]>>('/investments/search', { params: data }),
+
+  // Import
+  importTransactions: (data: {
+    accountId: string;
+    fileName: string;
+    fileType: 'CSV' | 'EXCEL';
+    csvRows: any[];
+  }) =>
+    api.post<ApiResponse<{
+      importHistoryId: string;
+      successCount: number;
+      failedCount: number;
+      duplicateCount: number;
+      finalBalance: number;
+      transactions: Array<{
+        row: number;
+        status: 'SUCCESS' | 'FAILED' | 'DUPLICATE';
+        transactionId?: string;
+        errorMessage?: string;
+      }>;
+    }>>('/investments/import', data),
+
+  getImportHistory: (params?: { page?: number; limit?: number }) =>
+    api.get<ApiResponse<any>>('/investments/import/history', { params }),
+
+  getImportHistoryById: (id: string) =>
+    api.get<ApiResponse<any>>(`/investments/import/history/${id}`),
 }
 
 export default api
