@@ -254,11 +254,12 @@ export default function InvestmentAccountDetailPage() {
       {/* Performance Tab */}
       {activeTab === 'performance' && (
         <div className="space-y-6">
+          {/* Portfolio Performance Chart - Full Width */}
           <Card>
             <CardHeader>
               <CardTitle>{t('performanceChart')}</CardTitle>
               <p className="text-sm text-gray-500">
-                Track your portfolio value over time
+                {t('performanceChartDescription')}
               </p>
             </CardHeader>
             <CardContent>
@@ -269,49 +270,54 @@ export default function InvestmentAccountDetailPage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('allocationChart')}</CardTitle>
-              <p className="text-sm text-gray-500">
-                Distribution of assets by type
-              </p>
-            </CardHeader>
-            <CardContent>
-              {summaryLoading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
-                </div>
-              ) : summary ? (
-                <AssetAllocationChart summary={summary} />
-              ) : (
-                <div className="text-center py-12 text-gray-500">
-                  No allocation data available
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          {/* Allocation Charts - 2 Columns */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Asset Type Allocation */}
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle>{t('allocationChart')}</CardTitle>
+                <p className="text-sm text-gray-500">
+                  {t('allocationChartDescription')}
+                </p>
+              </CardHeader>
+              <CardContent>
+                {summaryLoading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
+                  </div>
+                ) : summary ? (
+                  <AssetAllocationChart summary={summary} />
+                ) : (
+                  <div className="text-center py-12 text-gray-500">
+                    {t('noAllocationData')}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('holdingsAllocationChart')}</CardTitle>
-              <p className="text-sm text-gray-500">
-                {t('holdingsAllocationDescription')}
-              </p>
-            </CardHeader>
-            <CardContent>
-              {summaryLoading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
-                </div>
-              ) : summary ? (
-                <HoldingsAllocationChart summary={summary} />
-              ) : (
-                <div className="text-center py-12 text-gray-500">
-                  No holdings data available
-                </div>
-              )}
-            </CardContent>
-          </Card>
+            {/* Holdings Distribution */}
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle>{t('holdingsAllocationChart')}</CardTitle>
+                <p className="text-sm text-gray-500">
+                  {t('holdingsAllocationDescription')}
+                </p>
+              </CardHeader>
+              <CardContent>
+                {summaryLoading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
+                  </div>
+                ) : summary ? (
+                  <HoldingsAllocationChart summary={summary} />
+                ) : (
+                  <div className="text-center py-12 text-gray-500">
+                    {t('noHoldingsData')}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       )}
 
