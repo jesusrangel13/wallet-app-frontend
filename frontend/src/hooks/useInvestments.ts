@@ -112,6 +112,7 @@ export const usePortfolioSummary = (accountId: string, enabled = true) => {
 /**
  * Get portfolio performance history over time
  * Returns historical data points for charting
+ * Optimized with extended cache for better performance when switching periods
  */
 export const usePortfolioPerformance = (
   accountId: string,
@@ -125,7 +126,8 @@ export const usePortfolioPerformance = (
       return response.data.data
     },
     enabled: !!accountId && enabled,
-    staleTime: 15 * 60 * 1000, // 15 minutes (historical data doesn't change often)
+    staleTime: 30 * 60 * 1000, // 30 minutes (historical data changes infrequently)
+    gcTime: 60 * 60 * 1000, // 60 minutes (keep in memory for fast period switching)
   })
 }
 
@@ -201,6 +203,10 @@ export const useCreateInvestmentTransaction = () => {
       })
       queryClient.invalidateQueries({
         queryKey: investmentKeys.transactions(),
+      })
+      // Invalidate performance data (all periods for this account)
+      queryClient.invalidateQueries({
+        queryKey: ['investments', 'portfolio-performance', variables.accountId],
       })
       // Invalidate accounts because balance changed
       queryClient.invalidateQueries({ queryKey: ['accounts'] })

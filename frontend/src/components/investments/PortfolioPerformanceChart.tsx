@@ -5,9 +5,13 @@
  *
  * Displays a line chart showing the portfolio value over time
  * with period selectors and cost basis reference line
+ *
+ * Optimizations:
+ * - Pre-fetches all periods on mount for instant switching
+ * - Extended cache (60min) keeps data in memory
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   LineChart,
   Line,
@@ -20,7 +24,9 @@ import {
   Area,
   ComposedChart,
 } from 'recharts'
-import { usePortfolioPerformance } from '@/hooks/useInvestments'
+import { useQueryClient } from '@tanstack/react-query'
+import { usePortfolioPerformance, investmentKeys } from '@/hooks/useInvestments'
+import { investmentAPI } from '@/lib/api'
 import { format, parseISO } from 'date-fns'
 
 interface PortfolioPerformanceChartProps {
@@ -43,11 +49,31 @@ export function PortfolioPerformanceChart({
   currency = 'USD',
 }: PortfolioPerformanceChartProps) {
   const [period, setPeriod] = useState<Period>('1Y')
+  const queryClient = useQueryClient()
 
   const { data: performanceData, isLoading, error } = usePortfolioPerformance(
     accountId,
     period
   )
+
+  // Pre-fetch all periods when component mounts for instant switching
+  useEffect(() => {
+    const periods: Period[] = ['1M', '3M', '6M', '1Y', 'ALL']
+
+    // Pre-fetch all periods in background (skip current period, already loading)
+    periods.forEach(p => {
+      if (p !== period) {
+        queryClient.prefetchQuery({
+          queryKey: investmentKeys.portfolioPerformance(accountId, p),
+          queryFn: async () => {
+            const response = await investmentAPI.getPortfolioPerformance(accountId, p)
+            return response.data.data
+          },
+          staleTime: 30 * 60 * 1000, // Match hook config
+        })
+      }
+    })
+  }, [accountId, queryClient, period])
 
   const formatCurrency = (value: number) => {
     return value.toLocaleString('en-US', {
