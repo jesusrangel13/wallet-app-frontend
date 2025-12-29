@@ -36,6 +36,7 @@ import { FixedAccountBalancesWidget } from '@/components/FixedAccountBalancesWid
 import { ExpensesByTagWidget } from '@/components/widgets/ExpensesByTagWidget'
 import { TopTagsWidget } from '@/components/widgets/TopTagsWidget'
 import { TagTrendWidget } from '@/components/widgets/TagTrendWidget'
+import { InvestmentPortfolioWidget } from '@/components/widgets/InvestmentPortfolioWidget'
 
 // Widget component map
 const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -60,6 +61,7 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
   'expenses-by-tag': ExpensesByTagWidget,
   'top-tags': TopTagsWidget,
   'tag-trend': TagTrendWidget,
+  'investment-portfolio': InvestmentPortfolioWidget,
 }
 
 export default function DashboardPage() {

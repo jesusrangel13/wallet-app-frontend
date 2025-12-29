@@ -9,22 +9,27 @@
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { ArrowLeft, Plus, Trash2, Calendar } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Calendar, Upload } from 'lucide-react'
 import { useAccount } from '@/hooks/useAccounts'
 import {
   useInvestmentHoldings,
+  useClosedPositions,
   usePortfolioSummary,
   useInvestmentTransactions,
   useDeleteInvestmentTransaction,
 } from '@/hooks/useInvestments'
 import { HoldingsTable } from '@/components/investments/HoldingsTable'
+import { ClosedPositionsTable } from '@/components/investments/ClosedPositionsTable'
 import { PortfolioSummaryCard } from '@/components/investments/PortfolioSummaryCard'
 import { InvestmentTransactionModal } from '@/components/investments/InvestmentTransactionModal'
+import { AssetAllocationChart } from '@/components/investments/AssetAllocationChart'
+import { PortfolioPerformanceChart } from '@/components/investments/PortfolioPerformanceChart'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Modal } from '@/components/ui/Modal'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { parseLocalDate } from '@/lib/utils'
 import { format } from 'date-fns'
 
 export default function InvestmentAccountDetailPage() {
@@ -40,12 +45,14 @@ export default function InvestmentAccountDetailPage() {
   const [transactionToDelete, setTransactionToDelete] = useState<string | null>(
     null
   )
-  const [activeTab, setActiveTab] = useState<'portfolio' | 'transactions'>('portfolio')
+  const [activeTab, setActiveTab] = useState<'portfolio' | 'performance' | 'transactions'>('portfolio')
 
   // Queries
   const { data: account, isLoading: accountLoading } = useAccount(accountId)
   const { data: holdings, isLoading: holdingsLoading } =
     useInvestmentHoldings(accountId)
+  const { data: closedPositions, isLoading: closedLoading } =
+    useClosedPositions(accountId)
   const { data: summary, isLoading: summaryLoading } =
     usePortfolioSummary(accountId)
   const { data: transactionsData, isLoading: transactionsLoading } =
@@ -128,10 +135,18 @@ export default function InvestmentAccountDetailPage() {
             </p>
           </div>
         </div>
-        <Button onClick={() => setIsModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          {t('newTransaction')}
-        </Button>
+        <div className="flex gap-2">
+          <Link href="/dashboard/investments/import">
+            <Button variant="outline">
+              <Upload className="mr-2 h-4 w-4" />
+              {t('importTransactions')}
+            </Button>
+          </Link>
+          <Button onClick={() => setIsModalOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            {t('newTransaction')}
+          </Button>
+        </div>
       </div>
 
       {/* Portfolio Summary */}
@@ -160,6 +175,19 @@ export default function InvestmentAccountDetailPage() {
             {t('portfolio')}
           </button>
           <button
+            onClick={() => setActiveTab('performance')}
+            className={`
+              py-4 px-1 border-b-2 font-medium text-sm
+              ${
+                activeTab === 'performance'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }
+            `}
+          >
+            {t('performance')}
+          </button>
+          <button
             onClick={() => setActiveTab('transactions')}
             className={`
               py-4 px-1 border-b-2 font-medium text-sm
@@ -177,25 +205,91 @@ export default function InvestmentAccountDetailPage() {
 
       {/* Portfolio Tab */}
       {activeTab === 'portfolio' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('holdings')}</CardTitle>
-            <p className="text-sm text-gray-500">{t('holdingsDescription')}</p>
-          </CardHeader>
-          <CardContent>
-            {holdingsLoading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
-              </div>
-            ) : holdings && holdings.length > 0 ? (
-              <HoldingsTable holdings={holdings} />
-            ) : (
-              <div className="text-center py-12 text-gray-500">
-                {t('noHoldings')}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <div className="space-y-6">
+          {/* Active Holdings */}
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('holdings')}</CardTitle>
+              <p className="text-sm text-gray-500">{t('holdingsDescription')}</p>
+            </CardHeader>
+            <CardContent>
+              {holdingsLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
+                </div>
+              ) : holdings && holdings.length > 0 ? (
+                <HoldingsTable holdings={holdings} />
+              ) : (
+                <div className="text-center py-12 text-gray-500">
+                  {t('noHoldings')}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Closed Positions */}
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('closedPositions')}</CardTitle>
+              <p className="text-sm text-gray-500">{t('closedPositionsDescription')}</p>
+            </CardHeader>
+            <CardContent>
+              {closedLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
+                </div>
+              ) : closedPositions && closedPositions.length > 0 ? (
+                <ClosedPositionsTable holdings={closedPositions} />
+              ) : (
+                <div className="text-center py-12 text-gray-500">
+                  {t('noClosedPositions')}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Performance Tab */}
+      {activeTab === 'performance' && (
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('performanceChart')}</CardTitle>
+              <p className="text-sm text-gray-500">
+                Track your portfolio value over time
+              </p>
+            </CardHeader>
+            <CardContent>
+              <PortfolioPerformanceChart
+                accountId={accountId}
+                currency={accountData.currency}
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('allocationChart')}</CardTitle>
+              <p className="text-sm text-gray-500">
+                Distribution of assets by type
+              </p>
+            </CardHeader>
+            <CardContent>
+              {summaryLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4" />
+                </div>
+              ) : summary ? (
+                <AssetAllocationChart summary={summary} />
+              ) : (
+                <div className="text-center py-12 text-gray-500">
+                  No allocation data available
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {/* Transactions Tab */}
@@ -233,7 +327,7 @@ export default function InvestmentAccountDetailPage() {
                           <div className="flex items-center gap-2">
                             <Calendar className="h-4 w-4 text-gray-400" />
                             {format(
-                              new Date(transaction.transactionDate),
+                              parseLocalDate(transaction.transactionDate),
                               'MMM dd, yyyy'
                             )}
                           </div>
@@ -251,23 +345,31 @@ export default function InvestmentAccountDetailPage() {
                             className={`inline-block px-2 py-1 text-xs rounded ${
                               transaction.type === 'BUY'
                                 ? 'bg-blue-100 text-blue-800'
-                                : 'bg-gray-100 text-gray-800'
+                                : transaction.type === 'SELL'
+                                ? 'bg-gray-100 text-gray-800'
+                                : transaction.type === 'DIVIDEND'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-purple-100 text-purple-800'
                             }`}
                           >
                             {t(transaction.type.toLowerCase())}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-right text-gray-900">
-                          {transaction.quantity.toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 8,
-                          })}
+                          {transaction.type === 'DIVIDEND' || transaction.type === 'INTEREST'
+                            ? '-'
+                            : transaction.quantity.toLocaleString('en-US', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 8,
+                              })}
                         </td>
                         <td className="px-4 py-3 text-right text-gray-900">
-                          {formatCurrency(
-                            Number(transaction.pricePerUnit),
-                            transaction.currency
-                          )}
+                          {transaction.type === 'DIVIDEND' || transaction.type === 'INTEREST'
+                            ? '-'
+                            : formatCurrency(
+                                Number(transaction.pricePerUnit),
+                                transaction.currency
+                              )}
                         </td>
                         <td className="px-4 py-3 text-right font-semibold text-gray-900">
                           {formatCurrency(
