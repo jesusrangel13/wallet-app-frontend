@@ -88,6 +88,7 @@ export interface HoldingWithMetrics extends InvestmentHolding {
   roi: number;
   allocationPercentage?: number;
   dateSold?: string; // Solo presente en closed positions (ISO date string)
+  dividendsEarned: number; // Total de dividendos ganados de este activo
 }
 
 export interface PortfolioSummary {
@@ -96,6 +97,7 @@ export interface PortfolioSummary {
   totalUnrealizedGainLoss: number;
   totalRealizedGainLoss: number;
   totalGainLoss: number;
+  totalDividends: number; // Total de dividendos acumulados en el portafolio
   roi: number;
   currency: string;
   holdings: HoldingWithMetrics[];

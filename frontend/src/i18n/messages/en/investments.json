@@ -81,5 +81,8 @@
   "dateSold": "Date Sold",
   "transactions": "Transactions",
   "closedPositions": "Closed Positions",
-  "closedPositionsDescription": "Positions you've fully sold with realized gains or losses"
+  "closedPositionsDescription": "Positions you've fully sold with realized gains or losses",
+  "totalDividends": "Total Dividends",
+  "dividends": "Dividends",
+  "dividendsReceived": "From dividends & interest"
 }

@@ -45,7 +45,7 @@ export function PortfolioSummaryCard({
   const plBgColor = isProfitable ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'
 
   return (
-    <div className={cn('grid gap-4 md:grid-cols-2 lg:grid-cols-4', className)}>
+    <div className={cn('grid gap-4 md:grid-cols-2 lg:grid-cols-5', className)}>
       {/* Total Value */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -131,9 +131,27 @@ export function PortfolioSummaryCard({
         </CardContent>
       </Card>
 
+      {/* Total Dividends */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">
+            {t('totalDividends')}
+          </CardTitle>
+          <DollarSign className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-green-600">
+            {formatCurrency(summary.totalDividends, summary.currency)}
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            {t('dividendsReceived')}
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Asset Allocation */}
       {Object.keys(summary.assetAllocation).length > 0 && (
-        <Card className="md:col-span-2 lg:col-span-4">
+        <Card className="md:col-span-2 lg:col-span-5">
           <CardHeader>
             <CardTitle className="text-sm font-medium">
               {t('assetAllocation')}

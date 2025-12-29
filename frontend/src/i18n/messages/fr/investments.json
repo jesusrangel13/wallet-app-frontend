@@ -80,5 +80,8 @@
   "dateSold": "Date de Vente",
   "transactions": "Transactions",
   "closedPositions": "Positions Fermées",
-  "closedPositionsDescription": "Positions entièrement vendues avec gains ou pertes réalisés"
+  "closedPositionsDescription": "Positions entièrement vendues avec gains ou pertes réalisés",
+  "totalDividends": "Dividendes Totaux",
+  "dividends": "Dividendes",
+  "dividendsReceived": "Des dividendes et intérêts"
 }

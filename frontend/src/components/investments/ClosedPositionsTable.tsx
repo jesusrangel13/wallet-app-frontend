@@ -18,7 +18,7 @@ interface ClosedPositionsTableProps {
   className?: string
 }
 
-type SortField = 'asset' | 'realizedPL' | 'roi' | 'dateSold'
+type SortField = 'asset' | 'realizedPL' | 'roi' | 'dividends' | 'dateSold'
 type SortOrder = 'asc' | 'desc'
 
 export function ClosedPositionsTable({
@@ -55,6 +55,10 @@ export function ClosedPositionsTable({
       case 'roi':
         aValue = a.roi
         bValue = b.roi
+        break
+      case 'dividends':
+        aValue = a.dividendsEarned
+        bValue = b.dividendsEarned
         break
       case 'dateSold':
         aValue = a.dateSold ? new Date(a.dateSold).getTime() : 0
@@ -143,6 +147,13 @@ export function ClosedPositionsTable({
             </th>
             <th
               className="px-4 py-3 text-right text-sm font-medium text-gray-700 cursor-pointer select-none hover:bg-gray-100"
+              onClick={() => handleSort('dividends')}
+            >
+              {t('dividends')}
+              <SortIcon field="dividends" />
+            </th>
+            <th
+              className="px-4 py-3 text-right text-sm font-medium text-gray-700 cursor-pointer select-none hover:bg-gray-100"
               onClick={() => handleSort('dateSold')}
             >
               {t('dateSold')}
@@ -192,6 +203,9 @@ export function ClosedPositionsTable({
                 </td>
                 <td className={cn('px-4 py-3 text-right font-semibold', roiColor)}>
                   {formatPercentage(holding.roi)}
+                </td>
+                <td className="px-4 py-3 text-right font-semibold text-green-600">
+                  {formatCurrency(holding.dividendsEarned, holding.currency)}
                 </td>
                 <td className="px-4 py-3 text-right text-gray-900">
                   {formatDate(holding.dateSold)}

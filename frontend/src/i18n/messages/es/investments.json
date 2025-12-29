@@ -81,5 +81,8 @@
   "dateSold": "Fecha de Venta",
   "transactions": "Transacciones",
   "closedPositions": "Posiciones Cerradas",
-  "closedPositionsDescription": "Posiciones que has vendido completamente con ganancias o pérdidas realizadas"
+  "closedPositionsDescription": "Posiciones que has vendido completamente con ganancias o pérdidas realizadas",
+  "totalDividends": "Dividendos Totales",
+  "dividends": "Dividendos",
+  "dividendsReceived": "De dividendos e intereses"
 }

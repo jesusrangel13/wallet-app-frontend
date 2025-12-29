@@ -18,7 +18,7 @@ interface HoldingsTableProps {
   className?: string
 }
 
-type SortField = 'asset' | 'quantity' | 'avgCost' | 'currentValue' | 'unrealizedPL' | 'roi'
+type SortField = 'asset' | 'quantity' | 'avgCost' | 'currentValue' | 'unrealizedPL' | 'roi' | 'dividends'
 type SortOrder = 'asc' | 'desc'
 
 export function HoldingsTable({
@@ -67,6 +67,10 @@ export function HoldingsTable({
       case 'roi':
         aValue = a.roi
         bValue = b.roi
+        break
+      case 'dividends':
+        aValue = a.dividendsEarned
+        bValue = b.dividendsEarned
         break
     }
 
@@ -163,6 +167,13 @@ export function HoldingsTable({
               {t('roi')}
               <SortIcon field="roi" />
             </th>
+            <th
+              className="px-4 py-3 text-right text-sm font-medium text-gray-700 cursor-pointer select-none hover:bg-gray-100"
+              onClick={() => handleSort('dividends')}
+            >
+              {t('dividends')}
+              <SortIcon field="dividends" />
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
@@ -225,6 +236,9 @@ export function HoldingsTable({
                 </td>
                 <td className={cn('px-4 py-3 text-right font-semibold', roiColor)}>
                   {formatPercentage(holding.roi)}
+                </td>
+                <td className="px-4 py-3 text-right font-semibold text-green-600">
+                  {formatCurrency(holding.dividendsEarned, holding.currency)}
                 </td>
               </tr>
             )
