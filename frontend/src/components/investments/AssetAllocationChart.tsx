@@ -120,14 +120,12 @@ export function AssetAllocationChart({ summary }: AssetAllocationChartProps) {
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: entry.color }}
             />
-            <div className="text-sm">
-              <span className="font-medium text-gray-900 dark:text-white">
-                {entry.value}
-              </span>
-              <span className="text-gray-500 dark:text-gray-400 ml-2">
-                {formatCurrency(chartData[index].value)}
-              </span>
-            </div>
+            <span className="text-sm font-medium text-gray-900">
+              {entry.value}
+            </span>
+            <span className="text-sm text-gray-700 ml-1">
+              {formatCurrency(chartData[index].value)}
+            </span>
           </div>
         ))}
       </div>
