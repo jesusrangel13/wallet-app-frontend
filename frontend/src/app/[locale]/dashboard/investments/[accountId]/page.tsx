@@ -274,11 +274,17 @@ export default function InvestmentAccountDetailPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Asset Type Allocation */}
             <Card className="h-full">
-              <CardHeader>
-                <CardTitle>{t('allocationChart')}</CardTitle>
-                <p className="text-sm text-gray-500">
-                  {t('allocationChartDescription')}
-                </p>
+              <CardHeader className="pb-4">
+                <div className="flex items-start gap-4 min-h-[80px]">
+                  <div className="w-[40%]">
+                    <CardTitle className="text-lg">{t('allocationChart')}</CardTitle>
+                  </div>
+                  <div className="w-[60%]">
+                    <p className="text-sm text-gray-500 leading-relaxed">
+                      {t('allocationChartDescription')}
+                    </p>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 {summaryLoading ? (
@@ -297,11 +303,17 @@ export default function InvestmentAccountDetailPage() {
 
             {/* Holdings Distribution */}
             <Card className="h-full">
-              <CardHeader>
-                <CardTitle>{t('holdingsAllocationChart')}</CardTitle>
-                <p className="text-sm text-gray-500">
-                  {t('holdingsAllocationDescription')}
-                </p>
+              <CardHeader className="pb-4">
+                <div className="flex items-start gap-4 min-h-[80px]">
+                  <div className="w-[40%]">
+                    <CardTitle className="text-lg">{t('holdingsAllocationChart')}</CardTitle>
+                  </div>
+                  <div className="w-[60%]">
+                    <p className="text-sm text-gray-500 leading-relaxed">
+                      {t('holdingsAllocationDescription')}
+                    </p>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 {summaryLoading ? (
