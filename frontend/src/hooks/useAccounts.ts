@@ -16,8 +16,7 @@ export function useAccounts(params?: { page?: number; limit?: number }) {
       if (!params?.page && !params?.limit) {
         // Sin paginación, devolver directamente el array de data
         return {
-          ...response,
-          data: response.data.data.data, // Extraer el array de cuentas
+          data: response.data.data, // Extraer el array de cuentas
         }
       }
       // Con paginación, devolver la estructura completa
