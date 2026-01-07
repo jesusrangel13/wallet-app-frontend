@@ -68,7 +68,8 @@ export const VoiceButton = () => {
     try {
       await transactionAPI.create({
         amount: data.amount,
-        description: data.merchant || 'Voice Transaction',
+        description: data.description || 'Voice Transaction',
+        payee: data.merchant || undefined,
         categoryId: data.resolvedCategoryId || undefined,
         // For MVP, if no categoryId, maybe we fail or default?
         // Assuming backend allows null category OR we force user to select in modal if missing.
@@ -76,7 +77,7 @@ export const VoiceButton = () => {
         type: 'EXPENSE', // Defaulting to expense for MVP
         accountId: data.resolvedAccountId || defaultAccountId, // Use resolved account from Voice/Modal or default
         currency: data.currency,
-        tagIds: (data as any).tagIds // Pass tags from modal
+        tags: (data as any).tagIds // Map tagIds to tags property in backend
       } as any);
       toast.success("Transaction saved!", {
         action: {
