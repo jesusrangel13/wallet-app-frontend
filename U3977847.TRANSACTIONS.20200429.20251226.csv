@@ -1,0 +1,211 @@
+Statement,Header,Nombre del campo,Valor del campo
+Statement,Data,Title,Transaction History
+Statement,Data,Period,"Abril 29, 2020 - Diciembre 26, 2025"
+Statement,Data,WhenGenerated,"2025-12-28, 15:21:07 EST"
+Summary,Header,Nombre del campo,Valor del campo
+Summary,Data,Divisa base,USD
+Summary,Data,Efectivo inicial,0.0
+Summary,Data,Cambio,320.438476139
+Summary,Data,Efectivo final,320.438476139
+Transaction History,Header,Date,Account,Description,Transaction Type,Symbol,Quantity,Price,Gross Amount ,Commission,Net Amount
+Transaction History,Data,2025-12-18,U***7847,NU HOLDINGS LTD/CAYMAN ISL-A,Buy,NU,12.0,16.2993,-195.5916,-1.0,-196.5916
+Transaction History,Data,2025-12-17,U***7847,ROCKET LAB CORP,Sell,RKLB,-4.0,53.72,214.88,-1.000664,213.879336
+Transaction History,Data,2025-12-09,U***7847,ROCKET LAB CORP,Buy,RKLB,4.0,53.5,-214.0,-1.0,-215.0
+Transaction History,Data,2025-11-18,U***7847,DATADOG INC - CLASS A,Sell,DDOG,-1.0,176.835,176.835,-1.000188,175.834812
+Transaction History,Data,2025-11-18,U***7847,DATADOG INC - CLASS A,Sell,DDOG,-0.2,177.0,35.4,-3.76E-5,35.3999624
+Transaction History,Data,2025-11-13,U***7847,TTM TECHNOLOGIES,Sell,TTMI,-0.1,62.21,6.221,-0.0622288,6.1587712
+Transaction History,Data,2025-11-13,U***7847,TTM TECHNOLOGIES,Sell,TTMI,-3.0,62.22,186.66,-0.938354,185.721646
+Transaction History,Data,2025-11-03,U***7847,DATADOG INC - CLASS A,Buy,DDOG,1.0,165.0,-165.0,-1.000022,-166.000022
+Transaction History,Data,2025-11-03,U***7847,DATADOG INC - CLASS A,Buy,DDOG,0.2,164.89,-32.978,-4.4E-6,-32.9780044
+Transaction History,Data,2025-11-03,U***7847,UBER TECHNOLOGIES INC,Buy,UBER,2.0,98.4091,-196.8182,-1.000044,-197.818244
+Transaction History,Data,2025-10-31,U***7847,TTM TECHNOLOGIES,Buy,TTMI,3.0,64.425,-193.275,-1.000066,-194.275066
+Transaction History,Data,2025-10-31,U***7847,TTM TECHNOLOGIES,Buy,TTMI,0.1,64.59,-6.459,-2.2E-6,-6.4590022
+Transaction History,Data,2025-10-30,U***7847,TTM TECHNOLOGIES,Sell,TTMI,-3.0,59.368,178.104,-1.000564,177.10343600000002
+Transaction History,Data,2025-10-30,U***7847,TTM TECHNOLOGIES,Sell,TTMI,-0.2,59.3,11.86,-3.76E-5,11.859962399999999
+Transaction History,Data,2025-10-29,U***7847,TTM TECHNOLOGIES,Buy,TTMI,0.15,62.81,-9.4215,-0.0942183,-9.5157183
+Transaction History,Data,2025-10-29,U***7847,TTM TECHNOLOGIES,Buy,TTMI,3.0,62.79,-188.37,-0.905851,-189.27585100000002
+Transaction History,Data,2025-10-29,U***7847,TTM TECHNOLOGIES,Sell,TTMI,-3.0,62.61,187.83,-1.000564,186.82943600000002
+Transaction History,Data,2025-10-29,U***7847,TTM TECHNOLOGIES,Sell,TTMI,-0.15,62.52,9.378,-2.82E-5,9.377971800000001
+Transaction History,Data,2025-10-29,U***7847,TTM TECHNOLOGIES,Buy,TTMI,0.2,62.62,-12.524,-0.1252444,-12.649244399999999
+Transaction History,Data,2025-10-29,U***7847,TTM TECHNOLOGIES,Buy,TTMI,3.0,62.61,-187.83,-0.874826,-188.70482600000003
+Transaction History,Data,2025-10-01,U***7847,SPORTRADAR GROUP AG-A,Sell,SRAD,-25.0,26.46,661.5,-1.0047,660.4953
+Transaction History,Data,2025-06-18,U***7847,BIGBEAR.AI HOLDINGS INC,Sell,BBAI,-100.0,4.03,403.0,-1.0201,401.9799
+Transaction History,Data,2025-06-18,U***7847,BIGBEAR.AI HOLDINGS INC,Sell,BBAI,-60.0,4.03,241.8,-0.01206,241.78794000000002
+Transaction History,Data,2025-06-18,U***7847,SPORTRADAR GROUP AG-A,Buy,SRAD,25.0,25.41,-635.25,-1.00115,-636.25115
+Transaction History,Data,2025-06-17,U***7847,BIGBEAR.AI HOLDINGS INC,Buy,BBAI,160.0,4.225,-676.0,-1.00736,-677.00736
+Transaction History,Data,2025-06-03,U***7847,BIGBEAR.AI HOLDINGS INC,Sell,BBAI,-180.0,3.9,702.0,-1.03618,700.96382
+Transaction History,Data,2025-03-24,U***7847,BIGBEAR.AI HOLDINGS INC,Buy,BBAI,180.0,3.398,-611.64,-1.00828,-612.64828
+Transaction History,Data,2025-02-20,U***7847,PALANTIR TECHNOLOGIES INC-A,Sell,PLTR,-6.0,104.645,627.87,-1.018726786,626.851273214
+Transaction History,Data,2024-07-19,U***7847,TESLA INC,Sell,TSLA,-0.7,241.61,169.127,-1.004817931,168.12218206900002
+Transaction History,Data,2024-07-19,U***7847,PALANTIR TECHNOLOGIES INC-A,Buy,PLTR,6.0,29.45,-176.7,-1.0,-177.7
+Transaction History,Data,2022-10-03,U***7847,TESLA INC,Buy,TSLA,0.7,245.67,-171.969,-1.0,-172.969
+Transaction History,Data,2022-09-29,U***7847,TESLA INC,Buy,TSLA,0.7,268.58,-188.006,-1.0,-189.006
+Transaction History,Data,2022-09-29,U***7847,TESLA INC,Sell,TSLA,-0.7,268.5,187.95,-1.004395055,186.94560494499999
+Transaction History,Data,2022-09-27,U***7847,TESLA INC,Buy,TSLA,0.65,287.9,-187.135,-1.0,-188.135
+Transaction History,Data,2022-09-27,U***7847,TESLA INC,Sell,TSLA,-0.65,282.87,183.8655,-1.00429502,182.86120498
+Transaction History,Data,2022-09-20,U***7847,TESLA INC,Sell,TSLA,-0.6,306.04,183.624,-1.00428299,182.61971701
+Transaction History,Data,2022-09-06,U***7847,TESLA INC,Sell,TSLA,-0.5,266.11,133.055,-1.003111959,132.051888041
+Transaction History,Data,2022-09-06,U***7847,TESLA INC,Buy,TSLA,0.6,266.62,-159.972,-1.0,-160.972
+Transaction History,Data,2022-09-01,U***7847,TESLA INC,Buy,TSLA,0.5,274.84,-137.42,-1.0,-138.42
+Transaction History,Data,2022-06-23,U***7847,GITLAB INC-CL A,Sell,GTLB,-3.0,53.6,160.8,-1.00407232,159.79592768
+Transaction History,Data,2022-04-28,U***7847,GITLAB INC-CL A,Buy,GTLB,3.0,47.48,-142.44,-1.0,-143.44
+Transaction History,Data,2021-12-02,U***7847,J*****04:US Consolidated Snapshot for Nov 2021,Other Fee,-,-,-,-0.01,-,-0.01
+Transaction History,Data,2021-12-02,U***7847,J*****04:US Consolidated Snapshot for Nov 2021,Other Fee,-,-,-,0.01,-,0.01
+Transaction History,Data,2021-11-22,U***7847,GITLAB INC-CL A,Sell,GTLB,-1.0,105.45,105.45,-1.000656795,104.449343205
+Transaction History,Data,2021-11-17,U***7847,SOFI TECHNOLOGIES INC,Sell,SOFI,-3.0,21.19,63.57,-0.645381207,62.924618793
+Transaction History,Data,2021-11-16,U***7847,JUPITER WELLNESS INC,Sell,JUPW,-6.0,1.462,8.772,-0.088478737,8.683521263
+Transaction History,Data,2021-11-02,U***7847,J*****04:US Consolidated Snapshot for Oct 2021,Other Fee,-,-,-,-0.01,-,-0.01
+Transaction History,Data,2021-11-02,U***7847,J*****04:US Consolidated Snapshot for Oct 2021,Other Fee,-,-,-,0.01,-,0.01
+Transaction History,Data,2021-10-21,U***7847,JUPITER WELLNESS INC,Buy,JUPW,6.0,1.848,-11.088,-0.11088,-11.198879999999999
+Transaction History,Data,2021-10-14,U***7847,GITLAB INC,Buy,GTLB,1.0,94.775,-94.775,-0.94865,-95.72365
+Transaction History,Data,2021-10-13,U***7847,SOFI TECHNOLOGIES INC,Buy,SOFI,3.0,19.24,-57.72,-0.5772,-58.2972
+Transaction History,Data,2021-10-04,U***7847,J*****04:US Consolidated Snapshot for Sep 2021,Other Fee,-,-,-,-0.03,-,-0.03
+Transaction History,Data,2021-10-04,U***7847,J*****04:US Consolidated Snapshot for Sep 2021,Other Fee,-,-,-,0.03,-,0.03
+Transaction History,Data,2021-09-09,U***7847,COUCHBASE INC,Sell,BASE,-3.0,40.0,120.0,-1.000969,118.999031
+Transaction History,Data,2021-09-07,U***7847,COUCHBASE INC,Buy,BASE,3.0,47.68,-143.04,-1.0,-144.04
+Transaction History,Data,2021-07-05,U***7847,Balance tarifa mensual mínima para Jun 2021,Other Fee,-,-,-,-20.0,-,-20.0
+Transaction History,Data,2021-06-03,U***7847,J*****04:US Consolidated Snapshot for May 2021,Other Fee,-,-,-,-0.04,-,-0.04
+Transaction History,Data,2021-06-03,U***7847,J*****04:US Consolidated Snapshot for May 2021,Other Fee,-,-,-,0.04,-,0.04
+Transaction History,Data,2021-06-03,U***7847,Balance tarifa mensual mínima para May 2021,Other Fee,-,-,-,-20.0,-,-20.0
+Transaction History,Data,2021-05-05,U***7847,J*****04:US Consolidated Snapshot for Abr 2021,Other Fee,-,-,-,-0.09,-,-0.09
+Transaction History,Data,2021-05-05,U***7847,J*****04:US Consolidated Snapshot for Abr 2021,Other Fee,-,-,-,0.09,-,0.09
+Transaction History,Data,2021-05-05,U***7847,Balance tarifa mensual mínima para Abr 2021,Other Fee,-,-,-,-13.76,-,-13.76
+Transaction History,Data,2021-04-20,U***7847,COUPANG INC,Sell,CPNG,-2.0,43.2938,86.5876,-0.866555597,85.721044403
+Transaction History,Data,2021-04-19,U***7847,AMERICAN OUTDOOR BRANDS INC,Sell,AOUT,-2.0,25.3038,50.6076,-0.506572099,50.101027900999995
+Transaction History,Data,2021-04-16,U***7847,PINTEREST INC- CLASS A,Sell,PINS,-1.0,76.49,76.49,-0.765409099,75.724590901
+Transaction History,Data,2021-04-12,U***7847,ATOSSA THERAPEUTICS INC,Sell,ATOS,-20.0,1.925,38.5,-0.38757635,38.11242365
+Transaction History,Data,2021-04-12,U***7847,PINTEREST INC- CLASS A,Buy,PINS,1.0,82.24,-82.24,-0.8224,-83.0624
+Transaction History,Data,2021-04-08,U***7847,AMERICAN OUTDOOR BRANDS INC,Buy,AOUT,2.0,27.2,-54.4,-0.544,-54.943999999999996
+Transaction History,Data,2021-04-07,U***7847,ARMSTRONG FLOORING INC,Sell,AFI,-20.0,5.1,102.0,-1.0029002,100.9970998
+Transaction History,Data,2021-04-06,U***7847,COUPANG INC,Buy,CPNG,2.0,46.55,-93.1,-0.931,-94.03099999999999
+Transaction History,Data,2021-04-06,U***7847,ATOSSA THERAPEUTICS INC,Buy,ATOS,20.0,2.06,-41.2,-0.412,-41.612
+Transaction History,Data,2021-04-05,U***7847,J*****04:US Consolidated Snapshot for Mar 2021,Other Fee,-,-,-,-0.15,-,-0.15
+Transaction History,Data,2021-04-05,U***7847,J*****04:US Consolidated Snapshot for Mar 2021,Other Fee,-,-,-,0.15,-,0.15
+Transaction History,Data,2021-04-05,U***7847,J*****04:Global Snapshot PNP for Mar 2021,Other Fee,-,-,-,-0.03,-,-0.03
+Transaction History,Data,2021-04-05,U***7847,J*****04:Global Snapshot PNP for Mar 2021,Other Fee,-,-,-,0.03,-,0.03
+Transaction History,Data,2021-04-02,U***7847,Balance tarifa mensual mínima para Mar 2021,Other Fee,-,-,-,-14.15,-,-14.15
+Transaction History,Data,2021-03-25,U***7847,FOLEY TRASIMENE ACQUISITI-A,Sell,BFT,-4.0,14.16,56.64,-0.567164864,56.072835136
+Transaction History,Data,2021-03-23,U***7847,TILRAY INC-CLASS 2 COMMON,Sell,TLRY,-2.0,22.82,45.64,-0.456870764,45.183129236
+Transaction History,Data,2021-03-19,U***7847,SKILLZ INC,Sell,SKLZ,-2.0,24.0,48.0,-0.4864828,47.5135172
+Transaction History,Data,2021-03-16,U***7847,FOLEY TRASIMENE ACQUISITI-A,Buy,BFT,4.0,16.37,-65.48,-0.6548,-66.1348
+Transaction History,Data,2021-03-15,U***7847,SKILLZ INC,Buy,SKLZ,2.0,31.14,-62.28,-0.6228,-62.9028
+Transaction History,Data,2021-03-15,U***7847,TILRAY INC-CLASS 2 COMMON,Buy,TLRY,2.0,30.6,-61.2,-0.612,-61.812000000000005
+Transaction History,Data,2021-03-04,U***7847,AYRO INC,Sell,AYRO,-20.0,5.86,117.2,-1.00297772,116.19702228
+Transaction History,Data,2021-03-04,U***7847,DESKTOP METAL INC-A,Sell,DM,-4.0,17.22,68.88,-0.689627288,68.190372712
+Transaction History,Data,2021-03-03,U***7847,DESKTOP METAL INC-A,Buy,DM,4.0,19.0,-76.0,-0.76,-76.76
+Transaction History,Data,2021-03-03,U***7847,J*****04:US Consolidated Snapshot for Feb 2021,Other Fee,-,-,-,-0.2,-,-0.2
+Transaction History,Data,2021-03-03,U***7847,J*****04:US Consolidated Snapshot for Feb 2021,Other Fee,-,-,-,0.2,-,0.2
+Transaction History,Data,2021-03-02,U***7847,Balance tarifa mensual mínima para Feb 2021,Other Fee,-,-,-,-11.69,-,-11.69
+Transaction History,Data,2021-02-26,U***7847,YATSEN HOLDING LTD-ADR,Sell,YSG,-5.0,17.0,85.0,-0.8660285,84.1339715
+Transaction History,Data,2021-02-24,U***7847,AYRO INC,Buy,AYRO,20.0,7.39,-147.8,-1.0,-148.8
+Transaction History,Data,2021-02-24,U***7847,YATSEN HOLDING LTD-ADR,Buy,YSG,5.0,19.0,-95.0,-0.965,-95.965
+Transaction History,Data,2021-02-23,U***7847,TENCENT MUSIC ENTERTAINM-ADR,Sell,TME,-5.0,22.905,114.525,-1.001179078,113.523820922
+Transaction History,Data,2021-02-19,U***7847,AYRO INC,Sell,AYRO,-10.0,7.88,78.8,-0.82093148,77.97906852
+Transaction History,Data,2021-02-18,U***7847,AGEAGLE AERIAL SYSTEMS INC,Sell,UAVS,-5.0,12.32,61.6,-0.63295636,60.96704364
+Transaction History,Data,2021-02-10,U***7847,AGEAGLE AERIAL SYSTEMS INC,Buy,UAVS,5.0,15.28,-76.4,-0.7775,-77.17750000000001
+Transaction History,Data,2021-02-10,U***7847,AYRO INC,Buy,AYRO,10.0,7.86,-78.6,-0.816,-79.416
+Transaction History,Data,2021-02-05,U***7847,GOPRO INC-CLASS A,Sell,GPRO,-10.0,9.34,93.4,-0.96425414,92.43574586000001
+Transaction History,Data,2021-02-03,U***7847,J*****04:US Consolidated Snapshot for Ene 2021,Other Fee,-,-,-,-0.03,-,-0.03
+Transaction History,Data,2021-02-03,U***7847,J*****04:US Consolidated Snapshot for Ene 2021,Other Fee,-,-,-,0.03,-,0.03
+Transaction History,Data,2021-02-02,U***7847,Balance tarifa mensual mínima para Ene 2021,Other Fee,-,-,-,-19.5,-,-19.5
+Transaction History,Data,2021-02-01,U***7847,TATTOOED CHEF INC,Sell,TTCF,-2.0,23.2,46.4,-0.46526344,45.93473656
+Transaction History,Data,2021-01-12,U***7847,TATTOOED CHEF INC,Buy,TTCF,2.0,25.2,-50.4,-0.504,-50.903999999999996
+Transaction History,Data,2021-01-06,U***7847,J*****04:US Consolidated Snapshot for Dic 2020,Other Fee,-,-,-,-0.18,-,-0.18
+Transaction History,Data,2021-01-06,U***7847,J*****04:US Consolidated Snapshot for Dic 2020,Other Fee,-,-,-,0.18,-,0.18
+Transaction History,Data,2021-01-05,U***7847,Balance tarifa mensual mínima para Dic 2020,Other Fee,-,-,-,-16.16,-,-16.16
+Transaction History,Data,2020-12-30,U***7847,TENCENT MUSIC ENTERTAINM-ADR,Buy,TME,5.0,19.8,-99.0,-0.99,-99.99
+Transaction History,Data,2020-12-24,U***7847,MOHAWK GROUP HOLDINGS INC,Sell,MWK,-10.0,15.8,158.0,-1.0046818,156.9953182
+Transaction History,Data,2020-12-18,U***7847,GOPRO INC-CLASS A,Buy,GPRO,10.0,9.0,-90.0,-0.9,-90.9
+Transaction History,Data,2020-12-04,U***7847,MOHAWK GROUP HOLDINGS INC,Buy,MWK,10.0,9.49,-94.9,-0.949,-95.849
+Transaction History,Data,2020-12-03,U***7847,Balance tarifa mensual mínima para Nov 2020,Other Fee,-,-,-,-18.99,-,-18.99
+Transaction History,Data,2020-11-25,U***7847,NAUTILUS INC,Sell,NLS,-10.0,17.88,178.8,-1.00514148,177.79485852000002
+Transaction History,Data,2020-11-04,U***7847,Balance tarifa mensual mínima para Oct 2020,Other Fee,-,-,-,-16.84,-,-16.84
+Transaction History,Data,2020-11-04,U***7847,J*****04:US Consolidated Snapshot for Oct 2020,Other Fee,-,-,-,0.08,-,0.08
+Transaction History,Data,2020-11-04,U***7847,J*****04:US Consolidated Snapshot for Oct 2020,Other Fee,-,-,-,-0.08,-,-0.08
+Transaction History,Data,2020-10-20,U***7847,SCIPLAY CORP-CLASS A,Sell,SCPL,-6.0,13.8,82.8,-0.83054388,81.96945612
+Transaction History,Data,2020-10-16,U***7847,ARMSTRONG FLOORING INC,Buy,AFI,20.0,5.33,-106.6,-1.0,-107.6
+Transaction History,Data,2020-10-16,U***7847,QUMU CORP,Sell,QUMU,-20.0,4.39,87.8,-0.88232038,86.91767962
+Transaction History,Data,2020-10-05,U***7847,J*****04:US Consolidated Snapshot for Sep 2020,Other Fee,-,-,-,0.06,-,0.06
+Transaction History,Data,2020-10-05,U***7847,Balance tarifa mensual mínima para Sep 2020,Other Fee,-,-,-,-6.83,-,-6.83
+Transaction History,Data,2020-10-05,U***7847,J*****04:US Consolidated Snapshot for Sep 2020,Other Fee,-,-,-,-0.06,-,-0.06
+Transaction History,Data,2020-10-01,U***7847,ARMSTRONG FLOORING INC,Sell,AFI,-12.0,3.37,40.44,-0.442721724,39.997278275999996
+Transaction History,Data,2020-09-28,U***7847,SCIPLAY CORP-CLASS A,Buy,SCPL,6.0,16.45,-98.7,-0.987,-99.687
+Transaction History,Data,2020-09-23,U***7847,ROCKET COS INC-CLASS A,Sell,RKT,-5.0,21.232,106.16,-1.002941136,105.15705886399999
+Transaction History,Data,2020-09-23,U***7847,ROCKET COS INC-CLASS A,Buy,RKT,5.0,21.82,-109.1,-1.0,-110.1
+Transaction History,Data,2020-09-23,U***7847,WORKHORSE GROUP INC,Sell,WKHS,-5.0,25.8719,129.3595,-1.003453845,128.356046155
+Transaction History,Data,2020-09-18,U***7847,ARMSTRONG FLOORING INC,Buy,AFI,5.0,4.49,-22.45,-0.2245,-22.6745
+Transaction History,Data,2020-09-18,U***7847,ARMSTRONG FLOORING INC,Buy,AFI,7.0,4.49,-31.43,-0.3143,-31.7443
+Transaction History,Data,2020-09-14,U***7847,CASSAVA SCIENCES INC,Buy,SAVA,8.0,7.43,-59.44,-0.5944,-60.0344
+Transaction History,Data,2020-09-14,U***7847,CASSAVA SCIENCES INC,Sell,SAVA,-8.0,7.82,62.56,-0.651934576,61.908065424
+Transaction History,Data,2020-09-14,U***7847,WORKHORSE GROUP INC,Buy,WKHS,5.0,23.51,-117.55,-1.0,-118.55
+Transaction History,Data,2020-09-08,U***7847,MEDALLIA INC,Sell,MDLA,-3.0,29.8,89.4,-0.89633274,88.50366726
+Transaction History,Data,2020-09-03,U***7847,Balance tarifa mensual mínima para Ago 2020,Other Fee,-,-,-,-5.59,-,-5.59
+Transaction History,Data,2020-09-03,U***7847,J*****04:Global Snapshot PNP for Ago 2020,Other Fee,-,-,-,0.03,-,0.03
+Transaction History,Data,2020-09-03,U***7847,J*****04:Global Snapshot PNP for Ago 2020,Other Fee,-,-,-,-0.03,-,-0.03
+Transaction History,Data,2020-09-03,U***7847,J*****04:US Consolidated Snapshot for Ago 2020,Other Fee,-,-,-,-0.09,-,-0.09
+Transaction History,Data,2020-09-03,U***7847,J*****04:US Consolidated Snapshot for Ago 2020,Other Fee,-,-,-,0.09,-,0.09
+Transaction History,Data,2020-09-03,U***7847,KENSINGTON CAPITAL ACQUIS-A,Sell,KCAC,-5.0,16.0,80.0,-0.817363,79.182637
+Transaction History,Data,2020-09-03,U***7847,KENSINGTON CAPITAL ACQUIS-A,Buy,KCAC,5.0,16.2,-81.0,-0.825,-81.825
+Transaction History,Data,2020-09-02,U***7847,NANOVIRICIDES INC,Sell,NNVC,-20.0,4.94,98.8,-0.99256348,97.80743652
+Transaction History,Data,2020-09-02,U***7847,NANOVIRICIDES INC,Buy,NNVC,20.0,5.1773,-103.546,-1.0,-104.546
+Transaction History,Data,2020-09-01,U***7847,EASTMAN KODAK CO,Sell,KODK,-10.0,8.76,87.6,-0.87912596,86.72087404
+Transaction History,Data,2020-09-01,U***7847,EASTMAN KODAK CO,Buy,KODK,10.0,9.77,-97.7,-0.977,-98.677
+Transaction History,Data,2020-08-21,U***7847,QUMU CORP,Buy,QUMU,20.0,5.63,-112.6,-1.0,-113.6
+Transaction History,Data,2020-08-20,U***7847,OPGEN INC,Sell,OPGN,-40.0,2.96,118.4,-1.00737664,117.39262336
+Transaction History,Data,2020-08-20,U***7847,OPGEN INC,Buy,OPGN,40.0,3.6,-144.0,-1.0,-145.0
+Transaction History,Data,2020-08-14,U***7847,MIDATECH PHARMA PLC-ADR,Sell,MTP,-30.0,3.44,103.2,-1.00585072,102.19414928
+Transaction History,Data,2020-08-14,U***7847,MIDATECH PHARMA PLC-ADR,Buy,MTP,30.0,3.85,-115.5,-1.0,-116.5
+Transaction History,Data,2020-08-14,U***7847,CHINA RECYCLING ENERGY CORP,Buy,CREG,20.0,4.5,-90.0,-0.9,-90.9
+Transaction History,Data,2020-08-14,U***7847,CHINA RECYCLING ENERGY CORP,Sell,CREG,-20.0,4.0,80.0,-0.858148,79.141852
+Transaction History,Data,2020-08-13,U***7847,NTN BUZZTIME INC,Sell,NTN,-30.0,2.96,88.8,-0.89353248,87.90646751999999
+Transaction History,Data,2020-08-13,U***7847,NTN BUZZTIME INC,Buy,NTN,30.0,3.55,-106.5,-1.0,-107.5
+Transaction History,Data,2020-08-11,U***7847,DOYU(25985W105) Tarifa ADR USD 0.02 por acción,Other Fee,DOYU,-,-,-0.16,-,-0.16
+Transaction History,Data,2020-08-06,U***7847,AMERICAN VIRTUAL CLOUD TECHN,Sell,AVCT,-10.0,12.321,123.21,-1.003912941,122.206087059
+Transaction History,Data,2020-08-06,U***7847,AMERICAN VIRTUAL CLOUD TECHN,Buy,AVCT,10.0,13.5,-135.0,-1.0,-136.0
+Transaction History,Data,2020-08-05,U***7847,J*****04:US Consolidated Snapshot for Jul 2020,Other Fee,-,-,-,0.27,-,0.27
+Transaction History,Data,2020-08-05,U***7847,J*****04:US Consolidated Snapshot for Jul 2020,Other Fee,-,-,-,-0.27,-,-0.27
+Transaction History,Data,2020-08-05,U***7847,DADA NEXUS LTD-ADR,Sell,DADA,-4.0,26.16,104.64,-1.002788544,103.637211456
+Transaction History,Data,2020-08-04,U***7847,ALTERITY THERAPEUTICS-ADR,Sell,ATHE,-30.0,4.05,121.5,-1.00625515,120.49374485
+Transaction History,Data,2020-08-04,U***7847,ALTERITY THERAPEUTICS-ADR,Buy,ATHE,20.0,4.4,-88.0,-0.94,-88.94
+Transaction History,Data,2020-08-04,U***7847,ALTERITY THERAPEUTICS-ADR,Buy,ATHE,10.0,4.4,-44.0,-0.06,-44.06
+Transaction History,Data,2020-08-03,U***7847,MACERICH CO/THE,Sell,MAC,-10.0,7.3415,73.415,-0.736962472,72.678037528
+Transaction History,Data,2020-07-31,U***7847,SONNET BIOTHERAPEUTICS HOLDI,Sell,SONN,-10.0,6.0,60.0,-0.602516,59.397484
+Transaction History,Data,2020-07-31,U***7847,SONNET BIOTHERAPEUTICS HOLDI,Buy,SONN,10.0,6.5,-65.0,-0.65,-65.65
+Transaction History,Data,2020-07-30,U***7847,EDESA BIOTECH INC,Buy,EDSA,8.0,12.75,-102.0,-1.0,-103.0
+Transaction History,Data,2020-07-30,U***7847,EDESA BIOTECH INC,Sell,EDSA,-8.0,15.1,120.8,-1.00362168,119.79637832
+Transaction History,Data,2020-07-28,U***7847,MEDALLIA INC,Buy,MDLA,3.0,30.7,-92.1,-0.921,-93.021
+Transaction History,Data,2020-07-28,U***7847,SPECTRUM PHARMACEUTICALS INC,Buy,SPPI,20.0,4.859,-97.18,-0.9718,-98.15180000000001
+Transaction History,Data,2020-07-28,U***7847,SPECTRUM PHARMACEUTICALS INC,Sell,SPPI,-20.0,4.5,90.0,-0.958369,89.041631
+Transaction History,Data,2020-07-27,U***7847,ICLICK INTERACTIVE ASIA-ADR,Sell,ICLK,-20.0,6.0038,120.076,-1.00503368,119.07096632
+Transaction History,Data,2020-07-24,U***7847,DADA NEXUS LTD-ADR,Buy,DADA,4.0,23.08,-92.32,-0.9232,-93.24319999999999
+Transaction History,Data,2020-07-23,U***7847,LIQUID MEDIA GROUP LTD,Sell,YVR,-50.0,2.35,117.5,-1.00854675,116.49145325
+Transaction History,Data,2020-07-23,U***7847,LIQUID MEDIA GROUP LTD,Buy,YVR,50.0,2.4,-120.0,-1.0,-121.0
+Transaction History,Data,2020-07-22,U***7847,NIU TECHNOLOGIES-SPONS ADR,Sell,NIU,-6.0,19.77,118.62,-1.003335502,117.616664498
+Transaction History,Data,2020-07-17,U***7847,VERONA PHARMA PLC - ADR,Sell,VRNA,-5.0,14.3,71.5,-0.71717515,70.78282485
+Transaction History,Data,2020-07-17,U***7847,VERONA PHARMA PLC - ADR,Buy,VRNA,5.0,15.5,-77.5,-0.775,-78.275
+Transaction History,Data,2020-07-16,U***7847,NIU TECHNOLOGIES-SPONS ADR,Buy,NIU,6.0,18.3,-109.8,-1.0,-110.8
+Transaction History,Data,2020-07-16,U***7847,NABRIVA THERAPEUTICS PLC,Sell,NBRV,-100.0,1.02,102.0,-1.0141542,100.9858458
+Transaction History,Data,2020-07-16,U***7847,NABRIVA THERAPEUTICS PLC,Buy,NBRV,100.0,1.06,-106.0,-1.0,-107.0
+Transaction History,Data,2020-07-15,U***7847,IMMUTEP LTD-SP ADR,Sell,IMMP,-100.0,1.65,165.0,-1.0155465,163.9844535
+Transaction History,Data,2020-07-15,U***7847,IMMUTEP LTD-SP ADR,Buy,IMMP,100.0,1.62,-162.0,-1.0,-163.0
+Transaction History,Data,2020-07-14,U***7847,DOUYU INTERNATIONAL HOLD-ADR,Sell,DOYU,-8.0,12.01,96.08,-0.963875368,95.116124632
+Transaction History,Data,2020-07-14,U***7847,LAKELAND INDUSTRIES INC,Sell,LAKE,-4.0,21.6,86.4,-0.86638544,85.53361456
+Transaction History,Data,2020-07-13,U***7847,REPAY HOLDINGS CORP,Sell,RPAY,-2.0,25.4838,50.9676,-0.511040384,50.456559616
+Transaction History,Data,2020-07-09,U***7847,LAKELAND INDUSTRIES INC,Buy,LAKE,4.0,24.84,-99.36,-0.9936,-100.3536
+Transaction History,Data,2020-07-08,U***7847,NIU TECHNOLOGIES-SPONS ADR,Sell,NIU,-4.0,21.91,87.64,-0.878812844,86.761187156
+Transaction History,Data,2020-07-08,U***7847,NIU TECHNOLOGIES-SPONS ADR,Buy,NIU,4.0,23.41,-93.64,-0.9364,-94.5764
+Transaction History,Data,2020-07-08,U***7847,NIU TECHNOLOGIES-SPONS ADR,Sell,NIU,-4.0,23.655,94.62,-0.948767102,93.671232898
+Transaction History,Data,2020-07-08,U***7847,NIU TECHNOLOGIES-SPONS ADR,Buy,NIU,4.0,25.43,-101.72,-1.0,-102.72
+Transaction History,Data,2020-07-07,U***7847,MACERICH CO/THE,Buy,MAC,10.0,8.27,-82.7,-0.827,-83.527
+Transaction History,Data,2020-07-07,U***7847,ICLICK INTERACTIVE ASIA-ADR,Buy,ICLK,20.0,5.42,-108.4,-1.0,-109.4
+Transaction History,Data,2020-07-06,U***7847,J*****04:US Consolidated Snapshot for Jun 2020,Other Fee,-,-,-,0.02,-,0.02
+Transaction History,Data,2020-07-06,U***7847,J*****04:US Consolidated Snapshot for Jun 2020,Other Fee,-,-,-,-0.02,-,-0.02
+Transaction History,Data,2020-07-02,U***7847,NIU TECHNOLOGIES-SPONS ADR,Sell,NIU,-7.0,17.571,122.997,-1.003551234,121.993448766
+Transaction History,Data,2020-07-01,U***7847,NAUTILUS INC,Buy,NLS,10.0,8.99,-89.9,-0.899,-90.799
+Transaction History,Data,2020-06-26,U***7847,DOUYU INTERNATIONAL HOLD-ADR,Buy,DOYU,8.0,11.375,-91.0,-0.91,-91.91
+Transaction History,Data,2020-06-25,U***7847,REPAY HOLDINGS CORP,Buy,RPAY,2.0,26.21,-52.42,-0.5242,-52.9442
+Transaction History,Data,2020-06-24,U***7847,Transferencia de Fondos Electrónica,Deposit,-,-,-,530.0,-,530.0
+Transaction History,Data,2020-06-24,U***7847,NIU TECHNOLOGIES-SPONS ADR,Buy,NIU,7.0,14.77,-103.39,-1.0,-104.39
+Transaction History,Data,2020-05-05,U***7847,J*****04:US Consolidated Snapshot for Abr 2020,Other Fee,-,-,-,0.01,-,0.01
+Transaction History,Data,2020-05-05,U***7847,J*****04:US Consolidated Snapshot for Abr 2020,Other Fee,-,-,-,-0.01,-,-0.01
+Transaction History,Data,2020-04-29,U***7847,Transferencia de Fondos Electrónica,Deposit,-,-,-,3.0,-,3.0

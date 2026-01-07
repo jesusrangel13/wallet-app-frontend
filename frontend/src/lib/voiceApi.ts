@@ -5,6 +5,7 @@ export interface ParsedVoiceTransaction {
     amount: number;
     currency: string;
     merchant: string | null;
+    description?: string | null; // Added description
     category: string | null;
     date: string; // ISO string
     confidence: number;

@@ -139,12 +139,23 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                     </div>
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium mb-1">Merchant / Description</label>
-                    <Input
-                        value={formData.merchant || ''}
-                        onChange={(e) => handleChange('merchant', e.target.value)}
-                    />
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Merchant (Payee)</label>
+                        <Input
+                            placeholder="Where/Who?"
+                            value={formData.merchant || ''}
+                            onChange={(e) => handleChange('merchant', e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Description (Item)</label>
+                        <Input
+                            placeholder="What?"
+                            value={formData.description || ''}
+                            onChange={(e) => handleChange('description', e.target.value)}
+                        />
+                    </div>
                 </div>
 
                 <div>
@@ -183,8 +194,8 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                                 type="button"
                                 onClick={() => toggleTag(tag.id)}
                                 className={`px-3 py-1 rounded-full text-xs font-medium transition-colors border ${selectedTags.includes(tag.id)
-                                        ? 'bg-zinc-900 text-white border-zinc-900'
-                                        : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-100'
+                                    ? 'bg-zinc-900 text-white border-zinc-900'
+                                    : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-100'
                                     }`}
                             >
                                 {tag.name}
