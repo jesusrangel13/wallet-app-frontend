@@ -17,12 +17,20 @@ export function useGroups(params?: { page?: number; limit?: number }) {
 
       // Si no hay params de paginación, el backend devuelve array directo
       if (!params?.page && !params?.limit) {
+        console.log("🐛 [useGroups] Raw Response:", JSON.stringify(response?.data, null, 2));
+
         // Verificar si ya es un array o tiene estructura paginada
-        if (Array.isArray(response.data)) {
+        if (Array.isArray(response?.data)) {
+          console.log("🐛 [useGroups] Is Array directly");
           return response.data as Group[]
         }
-        // Si tiene estructura paginada, extraer el array
-        return (response.data as any).data.data as Group[]
+        // Si tiene estructura paginada o envuelta en { data: ... }, extraer el array
+        // La respuesta de axios esta en response.data, y nuestra API envuelve en { data: ... }
+        const extracted = (response?.data as any)?.data as Group[];
+        console.log("🐛 [useGroups] Extracted Data type:", Array.isArray(extracted) ? "Array" : typeof extracted);
+        console.log("🐛 [useGroups] Extracted Count:", Array.isArray(extracted) ? extracted.length : "N/A");
+
+        return extracted || []
       }
 
       // Con paginación, devolver toda la respuesta incluyendo metadata

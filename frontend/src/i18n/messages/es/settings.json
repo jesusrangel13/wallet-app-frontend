@@ -1,10 +1,18 @@
 {
   "title": "Configuración",
   "description": "Administra tu cuenta",
-  "tabs":{
+  "tabs": {
     "general": "General",
     "categories": "Categorías",
     "tags": "Tags"
+  },
+  "categories": {
+    "title": "Categorías",
+    "description": "Administra tus categorías de transacciones"
+  },
+  "tags": {
+    "title": "Etiquetas",
+    "description": "Administra tus etiquetas personalizadas"
   },
   "general": {
     "title": "General",
@@ -30,7 +38,7 @@
     "editButton": "Editar",
     "deleteButton": "Eliminar",
     "delete": "Delete",
-    "hideSubcategory" : "Ocultar",
+    "hideSubcategory": "Ocultar",
     "hide": "Ocultar",
     "types": {
       "expense": "Gastos",

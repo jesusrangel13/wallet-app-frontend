@@ -8,6 +8,7 @@ import { Sidebar } from '@/components/Sidebar'
 import { DashboardLayoutContent } from '@/components/DashboardLayoutContent'
 
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
+import { VoiceButton } from '@/components/voice/VoiceButton'
 
 export default function DashboardLayout({
   children,
@@ -57,6 +58,7 @@ export default function DashboardLayout({
       {/* Layout Content with navbar and main content */}
       <ErrorBoundary>
         <DashboardLayoutContent isCollapsed={isCollapsed}>{children}</DashboardLayoutContent>
+        <VoiceButton />
       </ErrorBoundary>
     </div>
   )

@@ -380,6 +380,12 @@ Permite a usuarios personalizar o crear categorías:
 - categoryId: String?
 - splitType: SplitType
 ```
+**Lógica de División por Defecto (Backend):**
+- Al crear un gasto compartido sin especificar participantes (ej. vía voz), el backend:
+  1. Consulta la configuración de default split del grupo (`defaultSplitType`).
+  2. Si es `PERCENTAGE` o `SHARES`, recupera los valores configurados en `GroupMemberSplitDefault`.
+  3. Aplica automáticamente la división a todos los miembros del grupo.
+
 
 #### 9. **ExpenseParticipant** (Participantes en Gastos)
 ```prisma
@@ -604,6 +610,17 @@ Permite a usuarios personalizar o crear categorías:
 | DELETE | `/:id` | Eliminar préstamo |
 | GET | `/summary` | Resumen de préstamos |
 | GET | `/by-borrower` | Agrupar por prestatario |
+
+### 🎤 Transacciones por Voz (`/api/voice`)
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| POST | `/parse` | Procesar input de voz natural |
+
+**Características de Procesamiento de Voz**:
+- **Detección de Intención de Grupo**:
+  - Reconoce frases como "gasto compartido", "para la casa", "en la familia".
+  - Utiliza prompts de IA optimizados para extraer `group_name` del contexto natural.
+  - **Smart Matcher Service**: Resuelve el `group_name` detectado contra los grupos del usuario usando algoritmos de fuzzy matching (Levenshtein) para encontrar el ID correcto incluso con nombres parciales o aproximados.
 
 ### 📥 Importación (`/api/import`)
 | Método | Endpoint | Descripción |
