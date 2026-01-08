@@ -62,7 +62,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
     const { data: groupsData } = useGroups(); // Fetch available groups
     // The hook already normalizes the response to Group[], so just cast it.
     // Fallback to empty array if something goes wrong.
-    const groups = Array.isArray(groupsData) ? groupsData : [];
+    const groups = React.useMemo(() => Array.isArray(groupsData) ? groupsData : [], [groupsData]);
 
     const accounts = (accountsData as any)?.data?.data || (accountsData as any)?.data || [];
 
