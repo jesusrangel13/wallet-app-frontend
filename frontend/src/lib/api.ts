@@ -700,7 +700,7 @@ export const loanAPI = {
   create: (data: CreateLoanForm) =>
     api.post<ApiResponse<Loan>>('/loans', data),
 
-  getAll: (params?: { status?: LoanStatus; borrowerName?: string }) =>
+  getAll: (params?: { status?: LoanStatus; borrowerName?: string; page?: number; limit?: number }) =>
     api.get<ApiResponse<Loan[]>>('/loans', { params }),
 
   getById: (id: string) =>

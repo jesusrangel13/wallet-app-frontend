@@ -110,11 +110,11 @@ export default function LoansPage() {
     active: loans.filter((l) => l.status === 'ACTIVE').length,
     paid: loans.filter((l) => l.status === 'PAID').length,
     cancelled: loans.filter((l) => l.status === 'CANCELLED').length,
-    totalLent: loans.reduce((sum, l) => sum + l.originalAmount, 0),
+    totalLent: loans.reduce((sum, l) => sum + Number(l.originalAmount), 0),
     totalPending: loans
       .filter((l) => l.status === 'ACTIVE')
-      .reduce((sum, l) => sum + (l.originalAmount - l.paidAmount), 0),
-    totalRecovered: loans.reduce((sum, l) => sum + l.paidAmount, 0),
+      .reduce((sum, l) => sum + (Number(l.originalAmount) - Number(l.paidAmount)), 0),
+    totalRecovered: loans.reduce((sum, l) => sum + Number(l.paidAmount), 0),
   }
 
   if (isLoading) {
@@ -288,8 +288,8 @@ export default function LoansPage() {
       ) : (
         <div className="space-y-4">
           {filteredLoans.map((loan) => {
-            const pendingAmount = loan.originalAmount - loan.paidAmount
-            const progress = (loan.paidAmount / loan.originalAmount) * 100
+            const pendingAmount = Number(loan.originalAmount) - Number(loan.paidAmount)
+            const progress = (Number(loan.paidAmount) / Number(loan.originalAmount)) * 100
 
             return (
               <Card
