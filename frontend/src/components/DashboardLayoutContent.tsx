@@ -29,7 +29,8 @@ export function DashboardLayoutContent({ children, isCollapsed }: DashboardLayou
   }, [])
 
   // Check if we're on the main dashboard page
-  const isMainDashboard = pathname === '/dashboard'
+  // Support both root /dashboard and localized /en/dashboard, /es/dashboard etc.
+  const isMainDashboard = pathname === '/dashboard' || /^\/[a-z]{2}\/dashboard$/.test(pathname || '')
 
   const handleLogout = () => {
     clearAuth()
