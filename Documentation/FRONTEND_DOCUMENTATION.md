@@ -64,6 +64,11 @@ El frontend está construido con **Next.js 15 (App Router)**, utilizando **Tailw
 
 #### Forms & Modales
 - `TransactionFormModal.tsx`: Formulario completo de transacciones con soporte para gastos compartidos
+- `VoiceCorrectionModal.tsx`: Modal de confirmación para transacciones por voz. Incluye:
+  - Edición de datos detectados (Monto, Merchant, Categoría).
+  - **Detección Inteligente de Grupo**: Sugiere grupos basados en el texto usando Fuzzy Matching (Levenshtein) en el frontend si el backend no resuelve el ID.
+  - **Toggle Manual de Gasto Compartido**: Permite forzar la asignación a un grupo si la IA no lo detecta.
+- `VoiceButton.tsx`: Botón flotante para iniciar grabación. Maneja el estado de escucha, procesamiento y guardado (vinculando correctamente Shared Expenses).
 - `CreateLoanModal.tsx`: Modal para crear préstamos
 - `RecordLoanPaymentModal.tsx`: Registrar pagos de préstamos
 - `DeleteAccountModal.tsx`: Eliminar cuenta con opciones de migración
@@ -685,6 +690,7 @@ const transactionSchema = z.object({
 
 **Data Fetching:**
 - Custom hooks (useTransactions, useAccounts, useGroups, useCategories, useTags, usePayees)
+  - `useGroups`: Manejo robusto de la respuesta del API (extracción segura de array vs paginación) y caching optimizado.
 - API centralized en `lib/api.ts` con instancia Axios
 - Optimistic updates con React Query
 - Error handling con traducción automática
