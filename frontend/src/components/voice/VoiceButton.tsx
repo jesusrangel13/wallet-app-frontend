@@ -66,6 +66,35 @@ export const VoiceButton = () => {
 
   const saveTransaction = async (data: ParsedVoiceTransaction) => {
     try {
+      let sharedExpenseId = undefined;
+
+      // If Shared Expense detected, create it first
+      if (data.resolvedGroupId) {
+        try {
+          const { sharedExpenseAPI } = require('@/lib/api'); // Dynamic import to avoid cycles if any
+          const expenseResponse = await sharedExpenseAPI.create({
+            groupId: data.resolvedGroupId,
+            amount: data.amount,
+            description: data.description || data.merchant || 'Voice Expense',
+            categoryId: data.resolvedCategoryId,
+            splitType: 'EQUAL', // Default for voice
+            // participants omitted to trigger backend default (ALL members)
+          });
+          // Fix: response.data is the axios body, which contains { success: true, data: SharedExpense }
+          // So we need response.data.data.id
+          const responseData = expenseResponse.data as any; // Cast to avoid TS issues if types aren't perfect
+          if (responseData && responseData.data && responseData.data.id) {
+            sharedExpenseId = responseData.data.id;
+          } else if (responseData && responseData.id) {
+            // Fallback in case response structure is flat (unlikely but safe)
+            sharedExpenseId = responseData.id;
+          }
+        } catch (err) {
+          console.error("Failed to create shared expense", err);
+          toast.error("Failed to create shared expense, saving as personal only.");
+        }
+      }
+
       await transactionAPI.create({
         amount: data.amount,
         description: data.description || 'Voice Transaction',
@@ -77,9 +106,10 @@ export const VoiceButton = () => {
         type: 'EXPENSE', // Defaulting to expense for MVP
         accountId: data.resolvedAccountId || defaultAccountId, // Use resolved account from Voice/Modal or default
         currency: data.currency,
-        tags: (data as any).tagIds // Map tagIds to tags property in backend
+        tags: (data as any).tagIds, // Map tagIds to tags property in backend
+        sharedExpenseId: sharedExpenseId
       } as any);
-      toast.success("Transaction saved!", {
+      toast.success(sharedExpenseId ? "Shared expense saved!" : "Transaction saved!", {
         action: {
           label: "Edit",
           onClick: () => {

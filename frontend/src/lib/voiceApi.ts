@@ -13,8 +13,10 @@ export interface ParsedVoiceTransaction {
     resolvedCategoryId?: string;
     resolvedAccountId?: string;
     accountName?: string;
-    resolvedTagIds?: string[];
     tags?: string[];
+    resolvedTagIds?: string[];
+    groupName?: string | null;
+    resolvedGroupId?: string;
 }
 
 export const voiceAPI = {

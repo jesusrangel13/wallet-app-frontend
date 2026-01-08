@@ -9,6 +9,40 @@ import { toast } from 'sonner';
 import { useAccounts } from '@/hooks/useAccounts';
 import { useMergedCategories } from '@/hooks/useCategories';
 import { useTags } from '@/hooks/useTags';
+import { useGroups } from '@/hooks/useGroups';
+
+// Simple Levenshtein distance for frontend matching
+const levenshtein = (a: string, b: string): number => {
+    const matrix = [];
+
+    let i;
+    for (i = 0; i <= b.length; i++) {
+        matrix[i] = [i];
+    }
+
+    let j;
+    for (j = 0; j <= a.length; j++) {
+        matrix[0][j] = j;
+    }
+
+    for (i = 1; i <= b.length; i++) {
+        for (j = 1; j <= a.length; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j - 1] + 1, // substitution
+                    Math.min(
+                        matrix[i][j - 1] + 1, // insertion
+                        matrix[i - 1][j] + 1 // deletion
+                    )
+                );
+            }
+        }
+    }
+
+    return matrix[b.length][a.length];
+};
 
 interface VoiceCorrectionModalProps {
     isOpen: boolean;
@@ -25,6 +59,10 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
     const { data: accountsData } = useAccounts();
     const { categories: rawCategories } = useMergedCategories();
     const { data: tagsData } = useTags();
+    const { data: groupsData } = useGroups(); // Fetch available groups
+    // The hook already normalizes the response to Group[], so just cast it.
+    // Fallback to empty array if something goes wrong.
+    const groups = Array.isArray(groupsData) ? groupsData : [];
 
     const accounts = (accountsData as any)?.data?.data || (accountsData as any)?.data || [];
 
@@ -49,13 +87,43 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
 
     useEffect(() => {
         if (data) {
+            let matchedGroupId = data.resolvedGroupId;
+            let matchedGroupName = data.groupName;
+
+            // If backend didn't resolve group but we have a name, try frontend matching
+            if (!matchedGroupId && data.groupName && groups.length > 0) {
+                const normalizedInput = data.groupName.toLowerCase().trim();
+                let bestMatch = null;
+                let minDistance = Infinity;
+
+                for (const group of groups) {
+                    const dist = levenshtein(normalizedInput, group.name.toLowerCase());
+                    if (dist < minDistance) {
+                        minDistance = dist;
+                        bestMatch = group;
+                    }
+                }
+
+                // Threshold logic (similar to backend)
+                if (bestMatch) {
+                    const maxLength = Math.max(normalizedInput.length, bestMatch.name.length);
+                    const confidence = 1 - (minDistance / maxLength);
+                    if (confidence > 0.4) {
+                        matchedGroupId = bestMatch.id;
+                        matchedGroupName = bestMatch.name; // Use official name
+                    }
+                }
+            }
+
             setFormData({
                 ...data,
-                date: data.date ? new Date(data.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+                date: data.date ? new Date(data.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                resolvedGroupId: matchedGroupId,
+                groupName: matchedGroupName
             });
             setSelectedTags(data.resolvedTagIds || []);
         }
-    }, [data]);
+    }, [data, groups]);
 
     const handleChange = (field: keyof ParsedVoiceTransaction, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }));
@@ -99,7 +167,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                         <label className="block text-sm font-medium mb-1">Date</label>
                         <Input
                             type="date"
-                            value={formData.date as string}
+                            value={(formData.date as string) || ''}
                             onChange={(e) => handleChange('date', e.target.value)}
                         />
                     </div>
@@ -177,6 +245,64 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                         ))}
                     </select>
                 </div>
+
+                {/* Group Selection Toggle */}
+                <div className="mb-4">
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            className="rounded border-zinc-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                            checked={!!(formData.resolvedGroupId || formData.groupName)}
+                            onChange={(e) => {
+                                if (e.target.checked) {
+                                    // Default to first group if available, or just show empty selector
+                                    if (groups.length > 0) {
+                                        const first = groups[0];
+                                        handleChange('resolvedGroupId', first.id);
+                                        handleChange('groupName', first.name);
+                                    } else {
+                                        handleChange('groupName', 'Manual Selection');
+                                    }
+                                } else {
+                                    handleChange('resolvedGroupId', null);
+                                    handleChange('groupName', null);
+                                }
+                            }}
+                        />
+                        <span className="text-sm font-medium text-zinc-900">Mark as Shared Expense</span>
+                    </label>
+                </div>
+
+                {/* Group Selection (Visible if toggled or detected) */}
+                {(formData.resolvedGroupId || formData.groupName) && (
+                    <div className="bg-blue-50 p-4 rounded-md mb-4 border border-blue-100 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <label className="block text-sm font-medium mb-1 text-blue-900">
+                            Select Group
+                            {data.groupName && !data.resolvedGroupId && <span className='ml-2 text-xs font-light text-blue-700'>(AI Suggested: {data.groupName})</span>}
+                        </label>
+                        <select
+                            className="flex h-10 w-full rounded-md border border-blue-200 bg-white px-3 py-2 text-sm text-blue-900 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                            value={formData.resolvedGroupId || ''}
+                            onChange={(e) => {
+                                const newVal = e.target.value;
+                                handleChange('resolvedGroupId', newVal);
+                                if (!newVal) {
+                                    handleChange('groupName', null); // Clear text if deselected
+                                } else {
+                                    const grp = groups?.find((g: any) => g.id === newVal);
+                                    if (grp) handleChange('groupName', grp.name);
+                                }
+                            }}
+                        >
+                            <option value="">Personal Expense (No Group)</option>
+                            {groups?.map((g: any) => (
+                                <option key={g.id} value={g.id}>
+                                    {g.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                )}
 
                 {/* Tags with Search */}
                 <div>
