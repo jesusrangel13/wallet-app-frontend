@@ -6,7 +6,7 @@ import { formatCurrency, type Currency } from '@/types/currency'
 import { useState, useEffect, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 import { dashboardAPI } from '@/lib/api'
-import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
+
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 
 interface TopTagData {
@@ -28,16 +28,12 @@ const DEFAULT_TAG_COLOR = '#6b7280'
 
 export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetProps) => {
   const t = useTranslations('widgets.topTags')
-  const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const { month, year } = useSelectedMonth()
   const [tags, setTags] = useState<TopTagData[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Calculate how many items can fit based on widget height
-  // Each tag item is approximately 88px tall
-  const maxItems = useMemo(() => calculateMaxListItems(dimensions.contentHeight, 88), [dimensions.contentHeight])
-  // Fetch up to 10 tags maximum
-  const fetchCount = useMemo(() => Math.min(Math.max(maxItems, 3), 10), [maxItems])
+  // Always fetch top 10
+  const fetchCount = 10
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,7 +50,7 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
     }
 
     fetchData()
-  }, [month, year, fetchCount])
+  }, [month, year])
 
   if (loading) {
     return (
@@ -77,16 +73,21 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
           <TrendingUp className="h-4 w-4" />
-          Top Tags
+          {t('label')}
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
+      <CardContent className="h-full min-h-0">
+        <div
+          className="space-y-3 overflow-y-auto pr-2 h-full"
+        >
           {tags.length > 0 ? (
-            tags.slice(0, maxItems).map((tag, index) => (
+            tags.map((tag, index) => (
               <div
                 key={tag.tagId}
                 className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                style={{
+                  /* Ensure minimum height/structure doesn't break */
+                }}
               >
                 {/* Rank badge */}
                 <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">

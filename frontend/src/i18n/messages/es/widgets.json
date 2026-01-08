@@ -58,6 +58,8 @@
     "activeLoans": "Préstamos activos",
     "totalLent": "Total prestado",
     "recovered": "Recuperado",
+    "totalRecovered": "Recuperado",
+    "totalLoans": "Préstamos Totales",
     "viewAllLink": "Ver todos"
   },
   "quickActions": {
