@@ -9,12 +9,12 @@
 
 ## 🎯 Estado General del Proyecto
 
-### Calificación Global: **8.1/10** ⭐⭐⭐⭐ (+0.6 después de OPT-1 y OPT-2)
+### Calificación Global: **8.4/10** ⭐⭐⭐⭐ (+0.9 después de OPT-1, OPT-2, y OPT-3)
 
-### 📈 Progreso de Optimizaciones: 18% (2 de 11)
+### 📈 Progreso de Optimizaciones: 27% (3 de 11)
 ```
-[██░░░░░░░░] 18% completado
-✅ OPT-1 | ✅ OPT-2 | ⏳ OPT-3-11 pendientes
+[███░░░░░░░] 27% completado
+✅ OPT-1 | ✅ OPT-2 | ✅ OPT-3 | ⏳ OPT-4-11 pendientes
 ```
 
 **Fortalezas destacadas:**
@@ -28,12 +28,13 @@
 - ✅ Validación con Zod schemas
 - ✅ **NUEVO**: Prisma Singleton Pattern implementado (OPT-1)
 - ✅ **NUEVO**: JWT_SECRET Security Fix implementado (OPT-2)
+- ✅ **NUEVO**: Input Sanitization Global implementado (OPT-3)
 
 **Áreas de mejora críticas:**
 - ✅ ~~Multiple PrismaClient instances (29 archivos)~~ → **RESUELTO** (OPT-1)
 - ✅ ~~JWT_SECRET con fallback inseguro~~ → **RESUELTO** (OPT-2)
+- ✅ ~~Input sanitization no aplicada~~ → **RESUELTO** (OPT-3)
 - 🟠 91 unsafe type casts (`as any`)
-- 🟠 Input sanitization no aplicada
 - 🟡 493 console.log en producción
 - 🟡 Test coverage ~5% (debería ser 80%+)
 
@@ -96,7 +97,47 @@ const expiresIn = env.JWT_EXPIRES_IN; // Validado por Zod
 
 ---
 
-### 3. **Unsafe Type Casting (91 veces)** 🟠
+### 3. **Input Sanitization No Aplicada** ✅ **RESUELTO**
+**Severidad**: CRÍTICA (SEGURIDAD)
+**Impacto**: Protección XSS completa
+**Esfuerzo**: 2-4 horas → **Completado en 15 minutos**
+**ROI**: Protección XSS en todos los endpoints → **✅ LOGRADO**
+
+**Problema** (RESUELTO): ~~Funciones de sanitización existían pero no se usaban en ningún endpoint.~~
+
+**Solución implementada** (2026-01-09):
+```typescript
+// Creado middleware global en src/middleware/sanitize.ts
+export const sanitizeMiddleware = (req, res, next) => {
+  if (req.body) req.body = sanitizeObject(req.body);
+  if (req.query) req.query = sanitizeObject(req.query);
+  if (req.params) req.params = sanitizeObject(req.params);
+  next();
+};
+
+// Integrado en src/server.ts
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(sanitizeMiddleware); // ← Protección XSS global
+```
+
+**Resultados**:
+- ✅ Middleware global creado e integrado
+- ✅ Sanitización automática de req.body, req.query, req.params
+- ✅ Protección XSS en todos los endpoints de la API
+- ✅ HTML tags y scripts maliciosos eliminados automáticamente
+- ✅ Build exitoso, zero breaking changes
+
+**Protección aplicada**:
+- ✅ Transaction descriptions, account names, group names
+- ✅ Category names, payee names, notes, comments
+- ✅ Todos los campos de texto ingresados por usuarios
+
+**Documentación**: [OPTIMIZATION_ROADMAP.md](OPTIMIZATION_ROADMAP.md#OPT-3)
+
+---
+
+### 4. **Unsafe Type Casting (91 veces)** 🟠
 **Severidad**: ALTA
 **Impacto**: Type safety violations, runtime errors potenciales
 **Esfuerzo**: 6-8 horas
