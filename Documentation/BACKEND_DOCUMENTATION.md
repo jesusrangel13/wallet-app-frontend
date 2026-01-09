@@ -3046,3 +3046,306 @@ ALLOWED_ORIGINS=https://yourapp.com
 ```
 
 ---
+
+## 🔍 Análisis de Código y Issues Conocidos
+
+Para un análisis completo de issues críticos, vulnerabilidades de seguridad, cuellos de botella de rendimiento y optimizaciones recomendadas, consultar:
+
+**📄 [BACKEND_ANALYSIS_AND_OPTIMIZATIONS.md](BACKEND_ANALYSIS_AND_OPTIMIZATIONS.md)**
+
+Este documento incluye:
+- 🚨 Issues críticos que requieren acción inmediata
+- 🔒 Vulnerabilidades de seguridad identificadas
+- ⚡ Cuellos de botella de rendimiento
+- 🚀 Optimizaciones priorizadas con ROI estimado
+- 📊 Métricas de código y complejidad
+- 📋 Checklist de implementación por semana
+
+### Issues Críticos Destacados
+
+#### 1. Multiple PrismaClient Instances 🔴
+- **Severidad**: Alta
+- **Impacto**: Memory leaks, connection pool exhaustion
+- **Archivos afectados**: 29 servicios
+- **Solución**: Migrar a singleton pattern en `src/utils/prisma.ts`
+
+#### 2. JWT_SECRET Fallback Inseguro 🔴
+- **Severidad**: Crítica (seguridad)
+- **Archivo**: `src/utils/jwt.ts:3`
+- **Riesgo**: Tokens pueden ser firmados con clave hardcodeada
+- **Solución**: Eliminar fallback, usar validación de `env.ts`
+
+#### 3. Unsafe Type Casting (91 instancias) 🟠
+- **Severidad**: Alta
+- **Impacto**: Type safety violations
+- **Ubicación**: Todos los controllers (`req as any`)
+- **Solución**: Actualizar `@types/express/index.d.ts` con tipos correctos
+
+#### 4. Input Sanitization No Aplicada 🟠
+- **Severidad**: Alta (seguridad)
+- **Riesgo**: Vulnerabilidad XSS
+- **Archivo**: `src/utils/sanitizer.ts` (definido pero no usado)
+- **Solución**: Aplicar middleware de sanitización globalmente
+
+#### 5. Debug Logging en Producción 🟡
+- **Impacto**: Information disclosure, memory overhead
+- **Ubicación**: 493 `console.log()` statements en toda la codebase
+- **Solución**: Migrar a Winston logger estructurado
+
+### Performance Bottlenecks
+
+#### 1. Sequential Category Resolution
+- **Archivo**: `src/services/categoryResolver.service.ts:26-147`
+- **Problema**: 3 queries secuenciales en hot path
+- **Mejora potencial**: 66% reducción en latencia
+
+#### 2. Import Service N+1 Queries
+- **Archivo**: `src/services/import.service.ts:84-113`
+- **Problema**: Tags creados/buscados uno por uno en loop
+- **Mejora potencial**: 95% reducción en queries
+
+### Test Coverage
+
+**Estado actual**: ~5% estimado
+
+**Archivos críticos sin tests**:
+- ❌ `transaction.service.ts` (1,090 líneas)
+- ❌ `auth.service.ts` (autenticación crítica)
+- ❌ `sharedExpense.service.ts` (lógica compleja)
+- ❌ `loan.service.ts`
+- ❌ `payment.service.ts`
+
+**Meta recomendada**: 80%+ coverage en servicios críticos
+
+---
+
+## 📚 Glosario de Términos
+
+### Términos de Dominio
+
+**Account (Cuenta)**
+- Representa una cuenta bancaria o fuente de fondos
+- Tipos: CASH (efectivo), DEBIT (débito), CREDIT (crédito), SAVINGS (ahorros), INVESTMENT (inversión)
+- Cada cuenta tiene un balance que se actualiza con transacciones
+
+**Transaction (Transacción)**
+- Registro de movimiento de dinero
+- Tipos: EXPENSE (gasto), INCOME (ingreso), TRANSFER (transferencia)
+- Puede estar vinculada a gastos compartidos, préstamos o cuentas
+
+**Category (Categoría)**
+- Clasificación de transacciones (ej: Alimentación, Transporte)
+- Sistema híbrido: CategoryTemplate (global) + UserCategoryOverride (personalizada)
+- Soporta jerarquías con categorías padre e hijas
+
+**Shared Expense (Gasto Compartido)**
+- Gasto dividido entre múltiples personas en un grupo
+- Tipos de división: EQUAL (equitativa), PERCENTAGE (porcentajes), SHARES (partes), EXACT (montos exactos)
+- Genera deudas entre participantes
+
+**Group (Grupo)**
+- Conjunto de usuarios que comparten gastos
+- Cada grupo tiene configuración de división por defecto
+- Calcula balances netos entre miembros
+
+**Loan (Préstamo)**
+- Dinero prestado a un tercero
+- Estados: ACTIVE (activo), PAID (pagado), CANCELLED (cancelado)
+- Soporta pagos parciales
+
+**Budget (Presupuesto)**
+- Límite de gasto mensual definido por el usuario
+- Se compara con gasto real para calcular porcentaje usado
+
+**Tag (Etiqueta)**
+- Clasificación adicional para transacciones
+- Permite categorización múltiple (una transacción puede tener varios tags)
+
+**Widget**
+- Componente visual en el dashboard personalizable
+- Tipos: cashflow, expenses-by-category, balance-history, group-balances, etc.
+
+### Términos Técnicos
+
+**Prisma ORM**
+- Object-Relational Mapping para interactuar con PostgreSQL
+- Proporciona type-safe queries y migraciones
+
+**JWT (JSON Web Token)**
+- Token de autenticación stateless
+- Contiene payload con `userId` y firma criptográfica
+
+**Middleware**
+- Funciones que se ejecutan entre request y response
+- Ejemplos: authenticate, validate, errorHandler, rateLimiter
+
+**Singleton Pattern**
+- Patrón de diseño que garantiza una única instancia de clase
+- Usado para PrismaClient para evitar múltiples connection pools
+
+**N+1 Query Problem**
+- Anti-pattern donde se ejecutan N queries en loop
+- Ejemplo: Cargar transacciones (1 query) + categoría de cada una (N queries)
+- Solución: Batch operations
+
+**Soft Delete**
+- Eliminación lógica sin borrar físicamente de BD
+- Ejemplo: Campo `isArchived` en Account
+
+**Rate Limiting**
+- Limitación de requests por periodo de tiempo
+- Previene abuso de API y ataques de fuerza bruta
+
+**Sanitization**
+- Limpieza de inputs para prevenir XSS y injection
+- Usa DOMPurify para remover código malicioso
+
+**Zod Schema**
+- Validación de datos con inferencia de tipos TypeScript
+- Usado en `src/utils/validation.ts`
+
+---
+
+## 🔗 Enlaces Útiles
+
+### Repositorio y Código
+- **GitHub**: [finance-app](https://github.com/your-org/finance-app)
+- **Backend**: `/backend` directory
+- **Documentación**: `/Documentation` directory
+
+### Servicios Externos
+- **Base de Datos**: [Supabase Dashboard](https://app.supabase.com)
+- **Hosting**: [Render Dashboard](https://dashboard.render.com)
+- **API Docs (Local)**: http://localhost:5000/api-docs
+- **API Docs (Prod)**: https://your-api.onrender.com/api-docs
+
+### Herramientas de Desarrollo
+- **Prisma Studio**: `npm run prisma:studio`
+- **Health Check**: `GET /health`
+- **Winston Logs**: `/backend/logs/`
+
+### Recursos de Aprendizaje
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [Express.js Guide](https://expressjs.com/en/guide/routing.html)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+- [Jest Testing](https://jestjs.io/docs/getting-started)
+- [Winston Logging](https://github.com/winstonjs/winston)
+
+---
+
+## 📞 Soporte y Contribuciones
+
+### Reportar Issues
+Para reportar bugs o sugerir mejoras:
+1. Crear issue en GitHub con template apropiado
+2. Incluir steps to reproduce para bugs
+3. Agregar logs relevantes
+4. Especificar versión de Node.js y dependencias
+
+### Contribuir
+1. Fork del repositorio
+2. Crear branch descriptiva: `feature/nueva-funcionalidad`
+3. Seguir guías de estilo del proyecto
+4. Agregar tests para código nuevo
+5. Actualizar documentación si es necesario
+6. Crear Pull Request con descripción detallada
+
+### Code Review Checklist
+- [ ] Código sigue patrones existentes
+- [ ] Tests agregados y pasando
+- [ ] No hay `console.log()` en código nuevo
+- [ ] Type safety: no usar `any` types
+- [ ] Documentación actualizada
+- [ ] Sin vulnerabilidades de seguridad
+- [ ] Performance considerado (evitar N+1 queries)
+- [ ] Error handling apropiado
+
+---
+
+## 📝 Notas de Versión
+
+### Próximas Mejoras Planificadas
+
+**v2.0 - Q1 2026**
+- ✅ Refactor de PrismaClient a singleton
+- ✅ Aumentar test coverage a 80%+
+- ✅ Eliminar todos los `console.log()`
+- ✅ Aplicar input sanitization
+- 🔄 Implementar Redis caching
+- 🔄 WebSocket support para notificaciones en tiempo real
+
+**v2.1 - Q2 2026**
+- 📋 GraphQL API alternativa
+- 📋 Mobile app optimization
+- 📋 Advanced analytics dashboard
+- 📋 Automated backup system
+
+### Changelog Reciente
+
+**2025-12-03**
+- ✅ Agregados índices de base de datos (10 índices compuestos)
+- ✅ Implementada paginación en 9 endpoints
+- ✅ Dashboard summary endpoint optimizado
+- ✅ Batch operations para categorías
+- ✅ Rate limiting implementado
+
+**2025-11-15**
+- ✅ Validación de env variables con Zod
+- ✅ Sistema de logging con Winston
+- ✅ Request logger middleware
+- ✅ Input sanitizer utilities
+
+**2025-11-01**
+- ✅ Sistema de categorías híbrido
+- ✅ Smart matcher para grupos (fuzzy matching)
+- ✅ Deudas simplificadas algorithm
+- ✅ Swagger/OpenAPI documentation
+
+---
+
+## 🎓 Guía de Onboarding para Nuevos Desarrolladores
+
+### Día 1: Setup
+1. Clonar repositorio
+2. Instalar dependencias: `npm install`
+3. Configurar `.env` (copiar de `.env.example`)
+4. Ejecutar migraciones: `npm run prisma:migrate`
+5. Inicializar templates: `npm run init:templates`
+6. Iniciar dev server: `npm run dev`
+7. Verificar health check: `curl http://localhost:5000/health`
+
+### Día 2: Exploración
+1. Leer esta documentación completa
+2. Revisar [BACKEND_ANALYSIS_AND_OPTIMIZATIONS.md](BACKEND_ANALYSIS_AND_OPTIMIZATIONS.md)
+3. Explorar código en orden:
+   - `src/server.ts` (entry point)
+   - `src/routes/` (endpoints)
+   - `src/controllers/` (request handlers)
+   - `src/services/` (business logic)
+4. Abrir Prisma Studio: `npm run prisma:studio`
+5. Explorar schema: `prisma/schema.prisma`
+
+### Día 3-5: Primera Contribución
+1. Elegir issue etiquetado como "good first issue"
+2. Crear branch: `git checkout -b feature/issue-123`
+3. Implementar cambios siguiendo patrones existentes
+4. Agregar tests
+5. Ejecutar tests: `npm test`
+6. Crear PR para code review
+
+### Recursos Recomendados
+- **Documentación API**: http://localhost:5000/api-docs
+- **Prisma Studio**: Interfaz visual de BD
+- **Postman Collection**: Importar endpoints para testing manual
+- **Slack/Discord**: Canal de desarrollo para preguntas
+
+---
+
+**Fin de la documentación del backend**
+
+_Última actualización: 2026-01-09_
+_Mantenido por: Finance App Development Team_
+
+Para cualquier pregunta o corrección, contactar al equipo de desarrollo o crear un issue en GitHub.
+
+---
