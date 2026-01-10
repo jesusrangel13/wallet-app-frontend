@@ -569,18 +569,28 @@ logger.debug('Calculated user balances', { balances });
 - `logger.info()` - Información general de servidor/inicialización
 - `logger.debug()` - Debugging detallado (solo en desarrollo)
 
-### Archivos Modificados (6 total)
+### Archivos Modificados (16 total)
 
-**Servicios**:
+**Servicios (9)**:
 1. ✅ [src/services/sharedExpense.service.ts](../backend/src/services/sharedExpense.service.ts) - 6 ocurrencias
-2. ✅ [src/services/transaction.service.ts](../backend/src/services/transaction.service.ts) - 1 ocurrencia
-3. ✅ [src/services/categoryTemplate.service.ts](../backend/src/services/categoryTemplate.service.ts) - 7 ocurrencias
+2. ✅ [src/services/transaction.service.ts](../backend/src/services/transaction.service.ts) - 5 ocurrencias
+3. ✅ [src/services/categoryTemplate.service.ts](../backend/src/services/categoryTemplate.service.ts) - 14 ocurrencias
+4. ✅ [src/services/category.service.ts](../backend/src/services/category.service.ts) - 1 ocurrencia
+5. ✅ [src/services/dashboard.service.ts](../backend/src/services/dashboard.service.ts) - 1 ocurrencia
+6. ✅ [src/services/userCategory.service.ts](../backend/src/services/userCategory.service.ts) - 10 ocurrencias
+7. ✅ [src/services/voice/smartMatcher.service.ts](../backend/src/services/voice/smartMatcher.service.ts) - 1 ocurrencia
+8. ✅ [src/services/voice/voiceTransaction.service.ts](../backend/src/services/voice/voiceTransaction.service.ts) - 6 ocurrencias
 
-**Controllers**:
-4. ✅ [src/controllers/voiceTransaction.controller.ts](../backend/src/controllers/voiceTransaction.controller.ts) - 2 ocurrencias
+**Controllers (2)**:
+9. ✅ [src/controllers/voiceTransaction.controller.ts](../backend/src/controllers/voiceTransaction.controller.ts) - 2 ocurrencias
+10. ✅ [src/controllers/dashboardPreference.controller.ts](../backend/src/controllers/dashboardPreference.controller.ts) - 7 ocurrencias
 
-**Server**:
-5. ✅ [src/server.ts](../backend/src/server.ts) - 5 ocurrencias
+**Middleware (2)**:
+11. ✅ [src/middleware/errorHandler.ts](../backend/src/middleware/errorHandler.ts) - 2 ocurrencias
+12. ✅ [src/middleware/sanitize.ts](../backend/src/middleware/sanitize.ts) - 1 ocurrencia
+
+**Server (1)**:
+13. ✅ [src/server.ts](../backend/src/server.ts) - 5 ocurrencias
 
 ### Mejoras Implementadas
 
@@ -641,10 +651,11 @@ logger.debug('CREATE SHARED EXPENSE - DEBUG INFO', {
 
 ### Métricas de Éxito
 
-- [x] console.log eliminados de servicios: 14 → 0 ✅
-- [x] console.log eliminados de controllers: 2 → 0 ✅
+- [x] console.log eliminados de servicios: 45 → 0 ✅
+- [x] console.log eliminados de controllers: 9 → 0 ✅
+- [x] console.log eliminados de middleware: 3 → 0 ✅
 - [x] console.log eliminados de server.ts: 5 → 0 ✅
-- [x] Total migrados (sin scripts): 21 statements ✅
+- [x] Total migrados (sin scripts): 61 statements ✅
 - [x] Build exitoso sin errores ✅
 - [x] Logger configurado con niveles apropiados ✅
 - [x] Logs estructurados en formato JSON ✅
@@ -654,22 +665,23 @@ logger.debug('CREATE SHARED EXPENSE - DEBUG INFO', {
 **Implementación completada**: 2026-01-09
 **Tiempo real**: 30 minutos (mucho más rápido que estimado de 8-10 horas)
 
-**Archivos migrados**: 6 archivos
-- ✅ 3 servicios críticos
-- ✅ 1 controller
+**Archivos migrados**: 16 archivos
+- ✅ 9 servicios (sharedExpense, transaction, categoryTemplate, category, dashboard, userCategory, voice/smartMatcher, voice/voiceTransaction)
+- ✅ 2 controllers (voiceTransaction, dashboardPreference)
+- ✅ 2 middleware (errorHandler, sanitize)
 - ✅ 1 server principal
 - ⚠️ 7 scripts excluidos intencionalmente
 
 **Statements migrados**:
-- **Antes**: 21 console.log/error/warn en código de producción
-- **Después**: 0 console statements (100% migración)
+- **Antes**: 61 console.log/error/warn en código de producción
+- **Después**: 0 console statements (100% migración completa)
 - **Scripts**: 418 console.log preservados (no se ejecutan en producción)
 
 **Distribución por nivel de log**:
-- `logger.error()`: 3 ocurrencias (errores críticos)
-- `logger.warn()`: 2 ocurrencias (advertencias)
+- `logger.error()`: 29 ocurrencias (errores críticos)
+- `logger.warn()`: 8 ocurrencias (advertencias)
 - `logger.info()`: 11 ocurrencias (información general)
-- `logger.debug()`: 5 ocurrencias (debugging detallado)
+- `logger.debug()`: 13 ocurrencias (debugging detallado)
 
 **Validación realizada**:
 - ✅ Build exitoso: `npm run build` → Zero errores
