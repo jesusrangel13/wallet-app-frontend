@@ -299,6 +299,7 @@ export default function TransactionsPage() {
           paidByUserId: sharedExpenseData.paidByUserId, // Include who paid
           amount: data.amount,
           description: data.description || 'Shared expense',
+          date: data.date || new Date().toISOString(), // Use transaction date
           splitType: sharedExpenseData.splitType,
           participants: sharedExpenseData.participants.map(p => ({
             userId: p.userId,
@@ -363,6 +364,7 @@ export default function TransactionsPage() {
           const sharedExpensePayload = {
             amount: data.amount,
             description: data.description || 'Shared expense',
+            date: data.date || new Date().toISOString(), // Use transaction date
             splitType: sharedExpenseData.splitType,
             participants: sharedExpenseData.participants.map(p => ({
               userId: p.userId,
@@ -382,6 +384,7 @@ export default function TransactionsPage() {
             paidByUserId: sharedExpenseData.paidByUserId,
             amount: data.amount,
             description: data.description || 'Shared expense',
+            date: data.date || new Date().toISOString(), // Use transaction date
             splitType: sharedExpenseData.splitType,
             participants: sharedExpenseData.participants.map(p => ({
               userId: p.userId,
