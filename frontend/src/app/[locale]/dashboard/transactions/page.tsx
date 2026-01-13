@@ -481,24 +481,33 @@ export default function TransactionsPage() {
           payload.sharedExpenseId = sharedExpenseResponse.data.data.id
         }
 
-        await transactionAPI.update(editingTransaction.id, payload)
+        const editedId = editingTransaction.id
+        await transactionAPI.update(editedId, payload)
         toast.success('Transaction updated successfully')
 
+        // Close modal immediately after successful update
+        setIsModalOpen(false)
+        reset()
+        setEditingTransaction(null)
+        setIsSharedExpense(false)
+        setSharedExpenseData(null)
+
         // Reload all current pages and scroll to edited transaction
-        await reloadCurrentPages(editingTransaction.id)
+        await reloadCurrentPages(editedId)
       } else {
         await transactionAPI.create(payload)
         toast.success('Transaction created successfully')
 
+        // Close modal and reset state
+        setIsModalOpen(false)
+        reset()
+        setEditingTransaction(null)
+        setIsSharedExpense(false)
+        setSharedExpenseData(null)
+
         // Reset to page 1 for new transactions
         loadTransactions(1)
       }
-
-      setIsModalOpen(false)
-      reset()
-      setEditingTransaction(null)
-      setIsSharedExpense(false)
-      setSharedExpenseData(null)
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to save transaction')
     } finally {
