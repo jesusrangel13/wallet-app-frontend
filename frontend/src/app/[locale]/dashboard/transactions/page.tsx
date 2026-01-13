@@ -110,7 +110,10 @@ export default function TransactionsPage() {
   const [totalRecords, setTotalRecords] = useState(0)
   const [hasMore, setHasMore] = useState(false)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [scrollToTransactionId, setScrollToTransactionId] = useState<string | null>(null)
 
+  // Ref for Virtuoso to control scrolling
+  const virtuosoRef = useRef<any>(null)
 
   // Month/Year selector
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
@@ -215,6 +218,61 @@ export default function TransactionsPage() {
     }
   }, []) // No dependencies - stable function
 
+  // Reload all pages up to currentPage to refresh data while maintaining scroll position
+  const reloadCurrentPages = useCallback(async (scrollToId?: string) => {
+    try {
+      setIsRefreshingList(true)
+
+      const currentFilters = filtersRef.current
+      const currentItemsPerPage = itemsPerPageRef.current
+      const pagesToLoad = currentPage
+
+      // Load all pages from 1 to currentPage
+      const allTransactions: any[] = []
+      let lastHasMore = false
+      let lastTotalPages = 0
+      let lastTotalRecords = 0
+
+      for (let page = 1; page <= pagesToLoad; page++) {
+        const response = await transactionAPI.getAll({
+          page,
+          limit: currentItemsPerPage,
+          search: currentFilters.search || undefined,
+          type: currentFilters.type !== 'ALL' ? currentFilters.type : undefined,
+          accountId: currentFilters.accountId || undefined,
+          categoryId: currentFilters.categoryId || undefined,
+          startDate: currentFilters.startDate || undefined,
+          endDate: currentFilters.endDate || undefined,
+          minAmount: currentFilters.minAmount ? Number(currentFilters.minAmount) : undefined,
+          maxAmount: currentFilters.maxAmount ? Number(currentFilters.maxAmount) : undefined,
+          sortBy: (currentFilters.sortBy as any) || undefined,
+          sortOrder: (currentFilters.sortOrder as any) || undefined,
+        })
+
+        const pageTransactions = response.data.data.data || []
+        allTransactions.push(...pageTransactions)
+
+        lastHasMore = response.data.data.hasMore || false
+        lastTotalPages = response.data.data.totalPages || 0
+        lastTotalRecords = response.data.data.total || 0
+      }
+
+      setTransactions(allTransactions)
+      setTotalPages(lastTotalPages)
+      setTotalRecords(lastTotalRecords)
+      setHasMore(lastHasMore)
+
+      // Set scroll target if provided
+      if (scrollToId) {
+        setScrollToTransactionId(scrollToId)
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to reload transactions')
+    } finally {
+      setIsRefreshingList(false)
+    }
+  }, [currentPage])
+
   useEffect(() => {
     const loadInitialData = async () => {
       try {
@@ -262,6 +320,31 @@ export default function TransactionsPage() {
     const flat = groups.flatMap(g => g.transactions)
     return { groupedTransactions: groups, groupCounts: counts, flatTransactions: flat }
   }, [transactions])
+
+  // Effect to scroll to a specific transaction after data is loaded
+  useEffect(() => {
+    if (scrollToTransactionId && transactions.length > 0 && virtuosoRef.current) {
+      // Find the index of the transaction in the flat list
+      const transactionIndex = flatTransactions.findIndex(t => t.id === scrollToTransactionId)
+
+      if (transactionIndex !== -1) {
+        // Use setTimeout to ensure DOM is updated
+        setTimeout(() => {
+          virtuosoRef.current?.scrollToIndex({
+            index: transactionIndex,
+            align: 'center',
+            behavior: 'smooth'
+          })
+
+          // Clear the scroll target after scrolling
+          setTimeout(() => setScrollToTransactionId(null), 1000)
+        }, 100)
+      } else {
+        // Transaction not found, clear the scroll target
+        setScrollToTransactionId(null)
+      }
+    }
+  }, [scrollToTransactionId, transactions, flatTransactions])
 
   const loadAccounts = useCallback(async () => {
     try {
@@ -400,12 +483,17 @@ export default function TransactionsPage() {
 
         await transactionAPI.update(editingTransaction.id, payload)
         toast.success('Transaction updated successfully')
+
+        // Reload all current pages and scroll to edited transaction
+        await reloadCurrentPages(editingTransaction.id)
       } else {
         await transactionAPI.create(payload)
         toast.success('Transaction created successfully')
+
+        // Reset to page 1 for new transactions
+        loadTransactions(1)
       }
 
-      loadTransactions(1) // Reset to page 1 to properly reset pagination state
       setIsModalOpen(false)
       reset()
       setEditingTransaction(null)
@@ -921,6 +1009,7 @@ export default function TransactionsPage() {
           </Card>
         ) : (
           <GroupedVirtuoso
+            ref={virtuosoRef}
             useWindowScroll
             groupCounts={groupCounts}
             groupContent={(index) => {
