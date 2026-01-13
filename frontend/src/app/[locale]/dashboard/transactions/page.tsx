@@ -329,7 +329,7 @@ export default function TransactionsPage() {
           toast.success('Shared expense created successfully. Mark as paid when you settle your portion.')
         }
 
-        loadTransactions()
+        loadTransactions(1) // Reset to page 1 to properly reset pagination state
         setIsModalOpen(false)
         reset()
         setEditingTransaction(null)
@@ -402,7 +402,7 @@ export default function TransactionsPage() {
         toast.success('Transaction created successfully')
       }
 
-      loadTransactions()
+      loadTransactions(1) // Reset to page 1 to properly reset pagination state
       setIsModalOpen(false)
       reset()
       setEditingTransaction(null)
@@ -421,7 +421,7 @@ export default function TransactionsPage() {
     try {
       await transactionAPI.delete(id)
       toast.success('Transaction deleted successfully')
-      loadTransactions()
+      loadTransactions(1) // Reset to page 1 to properly reset pagination state
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to delete transaction')
     }
@@ -457,7 +457,7 @@ export default function TransactionsPage() {
       const transactionIds = Array.from(selectedTransactionIds)
       const result = await transactionAPI.bulkDelete(transactionIds)
       toast.success(result.data.data.message)
-      loadTransactions()
+      loadTransactions(1) // Reset to page 1 to properly reset pagination state
       setSelectedTransactionIds(new Set())
       setSelectAll(false)
       setShowBulkDeleteConfirm(false)
