@@ -77,6 +77,8 @@ export function useCreateAccount() {
           userId: '',
           id: `temp-${Date.now()}`,
           balance: 0,
+          currency: newAccount.currency || 'CLP',
+          isDefault: newAccount.isDefault || false,
           isArchived: false,
           includeInTotalBalance: true,
           color: newAccount.color || '#000000',
