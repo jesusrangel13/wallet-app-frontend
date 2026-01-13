@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { accountAPI } from '@/lib/api'
 import type { Account, CreateAccountForm } from '@/types'
+import type { QueryCacheData } from '@/types/api'
 
 /**
  * Hook para obtener todas las cuentas con caching automático
@@ -67,14 +68,20 @@ export function useCreateAccount() {
       const previousAccounts = queryClient.getQueryData(['accounts'])
 
       // Optimistically update to the new value
-      queryClient.setQueryData(['accounts'], (old: any) => {
+      queryClient.setQueryData(['accounts'], (old: QueryCacheData<Account[]> | undefined) => {
         if (!old) return old
 
         // Create optimistic account with temporary ID
-        const optimisticAccount = {
+        const optimisticAccount: Account = {
           ...newAccount,
+          userId: '',
           id: `temp-${Date.now()}`,
           balance: 0,
+          currency: newAccount.currency || 'CLP',
+          isDefault: newAccount.isDefault || false,
+          isArchived: false,
+          includeInTotalBalance: true,
+          color: newAccount.color || '#000000',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         }
@@ -130,7 +137,7 @@ export function useUpdateAccount() {
       const previousAccount = queryClient.getQueryData(['account', id])
 
       // Optimistically update the account in the list
-      queryClient.setQueryData(['accounts'], (old: any) => {
+      queryClient.setQueryData(['accounts'], (old: QueryCacheData<Account[]> | undefined) => {
         if (!old?.data?.data) return old
         return {
           ...old,
@@ -144,7 +151,7 @@ export function useUpdateAccount() {
       })
 
       // Optimistically update the single account cache
-      queryClient.setQueryData(['account', id], (old: any) => {
+      queryClient.setQueryData(['account', id], (old: Account | undefined) => {
         if (!old) return old
         return { ...old, ...data }
       })
@@ -190,7 +197,7 @@ export function useDeleteAccount() {
       const previousAccounts = queryClient.getQueryData(['accounts'])
 
       // Optimistically remove the account
-      queryClient.setQueryData(['accounts'], (old: any) => {
+      queryClient.setQueryData(['accounts'], (old: QueryCacheData<Account[]> | undefined) => {
         if (!old?.data?.data) return old
         return {
           ...old,
