@@ -2,9 +2,9 @@
 
 **Versión**: 2.0
 **Fecha de creación**: 2026-01-09
-**Última actualización**: 2026-01-12
+**Última actualización**: 2026-01-13
 **Duración total estimada**: 4 semanas (60-80 horas)
-**Progreso**: 82% completado (9 de 11 optimizaciones - OPT-10 completado)
+**Progreso**: 91% completado (10 de 11 optimizaciones - OPT-11 completado)
 
 ---
 
@@ -16,7 +16,7 @@ Semana 1: CRÍTICO 🔴        Semana 2-3: ALTO 🟠           Semana 4+: MEDIO 
 │                           │                              │
 ├─✅ OPT-1: Prisma         ├─✅ OPT-4: Type Safety          ├─⏳ OPT-8: Tests (20%)
 ├─✅ OPT-2: JWT_SECRET     ├─✅ OPT-5: Logger Migration ✓   ├─✅ OPT-10: Error Format ✓
-├─✅ OPT-3: Sanitization   ├─✅ OPT-7: Batch Tags ✓         ├─ OPT-11: Refactor
+├─✅ OPT-3: Sanitization   ├─✅ OPT-7: Batch Tags ✓         ├─✅ OPT-11: Refactor ✓
 └─✅ OPT-6: Batch Category └─✅ OPT-9: Route Conflicts ✓   └─ Security Audit
 ```
 
@@ -1908,10 +1908,10 @@ All files                  |   82.5  |   78.3   |   85.1  |   82.8  |
 └─ OPT-9: Route Conflicts       [✅] 100% - Completado 2026-01-12
 
 🟡 MEDIO (Semana 4+)
-[█████░░░░░] 50% completado
+[███████░░░] 67% completado
 ├─ OPT-8: Test Coverage         [⏳] 20% - En Progreso (Infraestructura + 52 tests)
 ├─ OPT-10: Error Format         [✅] 100% - Completado 2026-01-12
-└─ OPT-11: Refactor Services    [ ] 0% - Pendiente
+└─ OPT-11: Refactor Services    [✅] 100% - Completado 2026-01-13
 ```
 
 ### KPIs Semanales
@@ -2060,6 +2060,21 @@ git commit -m "fix: migrate transaction.service to Prisma singleton"
   - ✅ Build exitoso sin errores
   - ✅ Documentación actualizada con métricas verificadas
 
+### 2026-01-13
+- **OPT-11 Refactor Services**: ✅ Completado (100%)
+  - ✅ 3 nuevos servicios creados (transactionBalance, expenseSplitCalculator, sharedExpenseSettlement)
+  - ✅ transaction.service.ts refactorizado (1,089 → ~900 líneas, 17% reducción)
+  - ✅ sharedExpense.service.ts refactorizado (1,578 → ~1,400 líneas, 11% reducción)
+  - ✅ Balance calculation logic extraído y centralizado
+  - ✅ Split calculation logic extraído (EQUAL, PERCENTAGE, EXACT, SHARES)
+  - ✅ Settlement helper functions extraídas
+  - ✅ Código duplicado eliminado
+  - ✅ Mejor separación de responsabilidades
+  - ✅ Servicios más fáciles de testear
+  - ✅ Build exitoso sin errores
+  - ✅ Zero breaking changes
+  - ✅ **Progreso general: 91% (10 de 11 optimizaciones)**
+
 ### 2026-01-09
 - **OPT-1**: Prisma Singleton completado (20 archivos migrados)
 - **OPT-2**: JWT_SECRET fix completado (seguridad crítica)
@@ -2069,7 +2084,7 @@ git commit -m "fix: migrate transaction.service to Prisma singleton"
 
 ---
 
-**Última actualización**: 2026-01-12 (OPT-10 completado - 82% progreso general)
-**Próxima revisión**: Semana 4+ (OPT-8: Test Coverage, OPT-11: Refactor Services)
+**Última actualización**: 2026-01-13 (OPT-11 completado - 91% progreso general)
+**Próxima revisión**: Semana 4+ (OPT-8: Test Coverage continúa)
 
 _Let's build world-class fintech software! 🚀_
