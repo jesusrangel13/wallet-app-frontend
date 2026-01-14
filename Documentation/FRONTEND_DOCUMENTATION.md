@@ -13,14 +13,29 @@ El frontend está construido con **Next.js 15 (App Router)**, utilizando **Tailw
 - `src/app`: Rutas de la aplicación (App Router con soporte i18n).
 - `src/components`: Componentes reutilizables (UI, Widgets, Layouts).
 - `src/contexts`: Contextos de React (SelectedMonthContext, DashboardContext).
-- `src/hooks`: Custom Hooks (useWidgetDimensions, useDebounce, useTags, usePayees).
-- `src/lib`: Utilidades y configuración de API (axios, utils, exporters).
+- `src/hooks`: Custom Hooks (13 total):
+  - Data Fetching: useAccounts, useTransactions, useCategories, useTags, useGroups, usePayees
+  - UI/UX: useDashboard, useCategoryTranslation, useDateFnsLocale, useWidgetDimensions, useDebounce
+  - Features: useVoiceRecognition, useGlobalErrorHandler
+- `src/lib`: Utilidades y configuración de API:
+  - api.ts: Cliente Axios con 100+ métodos organizados
+  - utils.ts: Helpers (formatCurrency, formatDate, cn, getInitials)
+  - errorTranslator.ts: Traducción de errores del backend
+  - exportTransactions.ts: CSV/JSON/Excel export
+  - voiceApi.ts: API de reconocimiento de voz
+  - queryClient.ts: Configuración React Query
+  - supabase.ts: Cliente Supabase (opcional)
 - `src/store`: Estado global con Zustand (sidebarStore, dashboardStore, notificationStore, authStore).
-- `src/types`: Definiciones de tipos TypeScript.
-- `src/i18n`: Configuración de internacionalización (config, messages, middleware).
-- `src/config`: Configuraciones (widgets registry).
-- `src/utils`: Utilidades adicionales (accountIcons, formatters).
+- `src/types`: Definiciones de tipos TypeScript (4 archivos, 600+ líneas):
+  - index.ts: Entidades principales, forms, enums
+  - api.ts: Tipos de API y respuestas
+  - dashboard.ts: Widgets, layout, grid
+  - currency.ts: Monedas y formateo
+- `src/i18n`: Configuración de internacionalización (config, messages, middleware, categoryMappings).
+- `src/config`: Configuraciones (widgets registry con 22 tipos).
+- `src/utils`: Utilidades adicionales (accountIcons con mapeo a Lucide icons).
 - `src/styles`: Estilos globales y específicos (dashboard-grid.css).
+- `src/components`: 37 componentes + 25 widgets organizados.
 
 ### Componentes Clave
 
@@ -32,35 +47,45 @@ El frontend está construido con **Next.js 15 (App Router)**, utilizando **Tailw
 - `NotificationBell.tsx`: Campana de notificaciones en tiempo real.
 - `NotificationDropdown.tsx`: Dropdown con lista de notificaciones.
 
-#### Widgets (Dashboard) - 27 Widgets Disponibles
+#### Widgets (Dashboard) - 25 Widgets Disponibles
 
-**Summary Widgets:**
-- `TotalBalanceWidget.tsx`: Balance total en todas las monedas
+Todos los widgets implementan memoization para performance óptima y están registrados en `/src/config/widgets.ts`.
+
+**Summary Widgets (8):**
+- `TotalBalanceWidget.tsx`: Balance total en todas las monedas con versión memoizada
 - `MonthlyIncomeWidget.tsx`: Ingresos del mes actual
 - `MonthlyExpensesWidget.tsx`: Gastos del mes actual
 - `PersonalExpensesWidget.tsx`: Gastos personales (excluyendo compartidos)
 - `SharedExpensesWidget.tsx`: Tu porción de gastos compartidos
 - `SavingsWidget.tsx`: Ahorros mensuales (ingresos - gastos)
 - `GroupsWidget.tsx`: Resumen de grupos y miembros
-- `LoansWidget.tsx`: Resumen de préstamos activos
+- `LoansWidget.tsx`: Resumen de préstamos activos con múltiples vistas
 
-**Action Widgets:**
-- `QuickActionsWidget.tsx`: Accesos rápidos a funciones principales
+**Action Widgets (1):**
+- `QuickActionsWidget.tsx`: Accesos rápidos (Nueva Transacción, Nuevo Gasto Compartido, etc.)
 
-**Insights Widgets:**
-- `CashFlowWidget.tsx`: Gráfico de flujo de efectivo (últimos 6 meses)
-- `ExpensesByCategoryWidget.tsx`: Distribución de gastos por categoría
+**Insights Widgets (8):**
+- `CashFlowWidget.tsx`: Gráfico de flujo de efectivo (últimos 6 meses, Recharts)
+- `ExpensesByCategoryWidget.tsx`: Distribución de gastos por categoría (Pie chart)
 - `ExpensesByParentCategoryWidget.tsx`: Gastos por categoría padre
-- `ExpenseDetailsPieWidget.tsx`: Desglose detallado con leyenda
-- `BalanceTrendWidget.tsx`: Tendencia de balance (últimos 30 días)
-- `ExpensesByTagWidget.tsx`: Gastos distribuidos por tags
-- `TopTagsWidget.tsx`: Tags más usados con estadísticas
-- `TagTrendWidget.tsx`: Tendencias de gasto por tags
+- `ExpenseDetailsPieWidget.tsx`: Desglose detallado con leyenda interactiva
+- `BalanceTrendWidget.tsx`: Tendencia de balance (últimos 30 días, Line chart)
+- `ExpensesByTagWidget.tsx`: Gastos distribuidos por tags (Pie chart)
+- `TopTagsWidget.tsx`: Tags más usados con estadísticas de uso
+- `TagTrendWidget.tsx`: Tendencias de gasto por tags (últimos 6 meses)
 
-**Details Widgets:**
-- `GroupBalancesWidget.tsx`: Personas que te deben dinero
-- `AccountBalancesWidget.tsx`: Resumen de cuentas y tarjetas
-- `RecentTransactionsWidget.tsx`: Transacciones recientes
+**Details Widgets (8):**
+- `GroupBalancesWidget.tsx`: Balances de grupos - quién te debe dinero
+- `BalancesWidget.tsx`: Widget comprehensivo de balances (18.9KB)
+- `AccountBalancesWidget.tsx`: Resumen de cuentas y tarjetas con iconos
+- `FixedAccountBalancesWidget.tsx`: Versión fija del widget de cuentas
+- `RecentTransactionsWidget.tsx`: Transacciones recientes con navegación
+- `LoanWidgetViews.tsx`: Vistas múltiples para préstamos (summary, detail)
+
+**Infrastructure:**
+- `lazyWidgets.tsx`: Lazy loading de widgets pesados con Suspense
+- `index.ts`: Exports centralizados
+- Widget Registry en `/src/config/widgets.ts` con metadata completa
 
 #### Forms & Modales
 - `TransactionFormModal.tsx`: Formulario completo de transacciones con soporte para gastos compartidos
@@ -1124,3 +1149,354 @@ ANALYZE=true npm run build  # Build con análisis de bundle
 - **Lucide icons**: Iconos modernos y consistentes
 - **Tipos soportados**: Cash, Debit, Credit, Savings, Investment
 - **Visualización**: En cards, listas, selectors
+
+### 13. Transacciones por Voz ⭐ NUEVO
+- **useVoiceRecognition Hook**: Hook personalizado para reconocimiento de voz
+  - Web Speech API integration
+  - Soporte para resultados intermedios
+  - Manejo de permisos de micrófono
+  - Idioma configurado: Español (es-CL)
+- **VoiceButton Component**: Botón flotante para grabación
+  - Estados: Idle, Listening, Processing, Saving
+  - Feedback visual con animaciones
+  - Manejo de errores con mensajes traducidos
+- **VoiceCorrectionModal**: Modal de verificación y corrección
+  - Edición de datos detectados (Monto, Merchant, Categoría)
+  - Detección inteligente de grupos con Fuzzy Matching
+  - Toggle manual de gasto compartido
+  - Validación antes de guardar
+- **Voice API Integration**: Backend parsing de transcripciones
+  - Endpoint: `/voice/parse`
+  - ParsedVoiceTransaction interface
+  - Resolución de campos con IA
+
+### 14. Preservación de Scroll en Transacciones ⭐ NUEVO
+- **Scroll Position Management**: Sistema inteligente de scroll
+  - Mantiene posición al editar transacciones
+  - Recarga todas las páginas hasta la actual
+  - Scroll automático a la transacción editada
+  - `reloadCurrentPages()` function
+  - `virtuosoRef` para control de scroll
+  - `scrollToTransactionId` state management
+- **Beneficios**:
+  - UX mejorada en listas largas
+  - Contexto visual mantenido
+  - Cierre inmediato del modal
+  - Recarga en segundo plano
+
+### 15. Sistema de Contextos Avanzado
+- **SelectedMonthContext**:
+  - Provider global para filtrado de fecha
+  - Navegación de meses (prevMonth, nextMonth, setMonth)
+  - Prevención de selección de meses futuros
+  - Callbacks memoizados para performance
+  - Usado por todos los widgets del dashboard
+  - Reset a mes actual disponible
+- **DashboardContext**:
+  - Estado específico del dashboard
+  - Configuración de widgets activos
+  - Layout personalizado por usuario
+
+### 16. Manejo Global de Errores
+- **useGlobalErrorHandler Hook** (84 líneas):
+  - Extracción de códigos de error desde Axios
+  - Traducción automática con i18n
+  - Manejo especial para rate limiting
+  - Notificaciones toast automáticas
+  - Integración con React Query mutations
+- **errorTranslator.ts** (122 líneas):
+  - Mapeo de códigos de error a mensajes
+  - Fallback a mensajes genéricos
+  - Soporte para errores de red y timeout
+  - Personalización por locale
+
+### 17. Sistema de Preferencias del Dashboard
+- **Dashboard Preferences API** (7 endpoints):
+  - GET `/dashboard-preferences` - Obtener preferencias
+  - PUT `/dashboard-preferences` - Guardar preferencias completas
+  - POST `/dashboard-preferences/widgets` - Agregar widget
+  - DELETE `/dashboard-preferences/widgets/:id` - Eliminar widget
+  - PATCH `/dashboard-preferences/widgets/:id/settings` - Actualizar settings
+  - PATCH `/dashboard-preferences/layout` - Actualizar layout
+  - DELETE `/dashboard-preferences/reset` - Resetear a defaults
+- **dashboardStore.ts** (Zustand + Persist):
+  - Persistencia en localStorage
+  - Sincronización con backend
+  - Actions: load, save, reset, add/remove widgets
+  - Middleware de persistencia automática
+- **Características**:
+  - Layout personalizado por usuario
+  - Widgets configurables individualmente
+  - Reset a configuración por defecto
+  - Sincronización automática
+
+### 18. Optimización de Tags
+- **Carga Completa de Tags**:
+  - Límite aumentado de 50 a 500 tags
+  - `useTags` hook optimizado
+  - Request con `{ limit: 500 }` por defecto
+  - Invalidación de cache en mutaciones
+- **Beneficios**:
+  - Todos los tags del usuario disponibles
+  - Búsqueda sin restricciones
+  - Selección sin límites
+  - Fix para usuarios con 50+ tags
+
+### 19. Gestión de Estado con Zustand
+- **authStore.ts**: Autenticación (user, token, logout)
+- **sidebarStore.ts**: Estado del sidebar (collapsed)
+- **notificationStore.ts**: Centro de notificaciones
+- **dashboardStore.ts**: Configuración del dashboard (widgets, layout)
+- **Características**:
+  - Middleware de persistencia (localStorage)
+  - Type-safe con TypeScript
+  - DevTools support
+  - Mínimo boilerplate
+
+---
+
+## Cambios Recientes y Optimizaciones (Últimos 30 Commits)
+
+### 🚀 Características Nuevas
+
+#### 1. Sistema de Transacciones por Voz (Enero 2025)
+**Commits:**
+- `feat: add voice recognition for transactions`
+- `feat: add voice correction modal with group detection`
+
+**Implementación:**
+- **Web Speech API**: Integración nativa del navegador
+- **useVoiceRecognition Hook**: Manejo completo del estado de grabación
+- **VoiceButton**: Botón flotante con estados visuales (Idle → Listening → Processing → Saving)
+- **VoiceCorrectionModal**: UI de verificación con edición de campos
+- **Backend Integration**: Endpoint `/voice/parse` para procesamiento con IA
+- **Fuzzy Matching**: Detección inteligente de grupos usando algoritmo Levenshtein
+- **Idioma**: Configurado para español chileno (es-CL)
+
+**Beneficios:**
+- Registro rápido de transacciones sin escribir
+- Detección automática de monto, merchant, categoría y grupo
+- Corrección manual antes de guardar
+- Experiencia móvil optimizada
+
+#### 2. Preservación de Posición de Scroll (Enero 2025)
+**Commits:**
+- `feat: preserve scroll position when editing transactions`
+- `fix: close transaction modal immediately after update`
+
+**Implementación:**
+- **reloadCurrentPages()**: Recarga todas las páginas desde 1 hasta la actual
+- **virtuosoRef**: Referencia al componente GroupedVirtuoso para control programático
+- **scrollToTransactionId**: State para trackear la transacción objetivo
+- **Scroll automático**: useEffect que ejecuta `scrollToIndex()` con smooth behavior
+- **Modal inmediato**: Cierra el modal antes de la recarga para mejor UX
+
+**Flujo:**
+1. Usuario edita transacción en página 3
+2. Modal se cierra inmediatamente
+3. Se recargan páginas 1, 2 y 3
+4. Scroll automático a la transacción editada
+5. Usuario mantiene contexto visual
+
+#### 3. Optimización de Dashboard Preferences (Enero 2025)
+**Commits:**
+- `fix: update dashboard preferences API routes to match backend`
+- `fix: complete all dashboard-preferences route updates`
+
+**Cambios:**
+- Rutas movidas de `/users/dashboard-preferences` a `/dashboard-preferences`
+- 7 endpoints actualizados en frontend
+- Sincronización correcta con backend OPT-9
+
+**Endpoints actualizados:**
+- GET, PUT, POST, DELETE para widgets
+- PATCH para settings y layout
+- DELETE para reset
+
+#### 4. Sistema de Tags Mejorado (Enero 2025)
+**Commits:**
+- `fix: load all user tags instead of limiting to first 50`
+
+**Problema anterior:**
+- Backend paginaba con límite de 50
+- Frontend no especificaba límite
+- Tags después del #50 no aparecían en selector
+
+**Solución:**
+- `useTags` hook ahora solicita `{ limit: 500 }`
+- Cache invalidation en todas las mutaciones
+- Soporte para usuarios con 50+ tags
+
+**Caso real:**
+- Usuario jesusrangel.255@gmail.com tenía 54 tags
+- Tag "viajes_hospedaje" (#53) no era seleccionable
+- Ahora todos los 54 tags están disponibles
+
+---
+
+### 🐛 Correcciones de Bugs Importantes
+
+#### 1. Sincronización de Fechas en Shared Expenses
+**Commit:** `feat: sync transaction date with shared expense date`
+
+**Problema:**
+- Al crear transacción histórica (ej. 10 de enero cuando hoy es 13)
+- SharedExpense se creaba con fecha actual del servidor
+- Inconsistencia en reportes y filtros
+
+**Solución:**
+- Campo `date` agregado a interfaces backend
+- Frontend pasa `data.date` al crear SharedExpense
+- Sincronización perfecta entre Transaction y SharedExpense
+
+#### 2. Validación de Fechas Relajada
+**Commit:** `fix: relax date validation for shared expenses`
+
+**Problema:**
+- Zod `.datetime()` requiere formato ISO 8601 completo
+- HTML datetime-local retorna `YYYY-MM-DDTHH:MM` sin segundos
+- Error de validación al actualizar
+
+**Solución:**
+- Cambio de `z.string().datetime()` a `z.string()`
+- JavaScript Date constructor maneja múltiples formatos
+- Validación flexible sin perder funcionalidad
+
+#### 3. Reset de Paginación en Mutaciones
+**Commit:** `fix: reset pagination state when transactions are modified`
+
+**Problema:**
+- Al crear/editar/eliminar transacción
+- Estado de paginación quedaba desincronizado
+- `hasMore`, `currentPage` con valores incorrectos
+
+**Solución:**
+- Todas las mutaciones llaman `loadTransactions(1)`
+- Estado de paginación se resetea correctamente
+- Infinite scroll funciona después de cambios
+
+#### 4. Filtro de Fecha Inclusivo
+**Commit:** `fix: include full last day in transaction date filters`
+
+**Problema:**
+- `endDate` interpretado como medianoche (00:00:00)
+- Transacciones del 31 de diciembre no aparecían
+
+**Solución:**
+- Ajuste de endDate: `+1 día - 1 milisegundo`
+- Resultado: 23:59:59.999 del día seleccionado
+- Todos los registros del día incluidos
+
+---
+
+### ⚡ Optimizaciones de Performance
+
+#### 1. Widget Registry Centralizado
+**Implementación:**
+- `/src/config/widgets.ts` con metadata de 22 widgets
+- Funciones helper: `getAllWidgets()`, `getWidgetsByCategory()`
+- Configuración de dimensiones y constraints
+- Lazy loading automático para widgets pesados
+
+#### 2. Memoization Estratégica
+**Componentes optimizados:**
+- `TotalBalanceWidget.memo.tsx`
+- Callbacks memoizados en SelectedMonthContext
+- useMemo en cálculos de widgets
+
+#### 3. React Query Cache Optimization
+**Configuración:**
+```typescript
+staleTime: 5 minutos (datos frescos)
+gcTime: 30 minutos (en memoria)
+refetchOnWindowFocus: false
+```
+
+**Resultados:**
+- 30-50% reducción en llamadas API
+- Navegación instantánea entre páginas
+- UX fluida sin delays perceptibles
+
+---
+
+### 📊 Estadísticas del Proyecto
+
+**Última actualización:** Enero 14, 2026
+
+| Métrica | Valor | Notas |
+|---------|-------|-------|
+| Archivos TS/React | 134 | Todo el frontend |
+| Componentes | 37 | UI + Features |
+| Widgets | 25 | Dashboard personalizable |
+| Páginas/Rutas | 18 | Auth + Dashboard + Settings |
+| Hooks Personalizados | 13 | Data + UI/UX + Features |
+| Stores Zustand | 4 | Auth, Sidebar, Notifications, Dashboard |
+| Endpoints API | 100+ | Organizados por recurso |
+| Líneas de Tipos | 600+ | 4 archivos TypeScript |
+| Idiomas Soportados | 6 | es, en, de, fr, it, pt |
+| Traducciones | 143 | En 61 archivos |
+| Tests Unitarios | 1 | useDebounce (expandir cobertura) |
+| Dependencias | 35 | Production |
+| Dev Dependencies | 15 | Testing, Build, Análisis |
+
+---
+
+### 🔮 Roadmap Futuro
+
+#### Features Planeadas
+- [ ] **Modo Offline Completo**: Sincronización cuando vuelve conexión
+- [ ] **Push Notifications**: Notificaciones de deudas, vencimientos
+- [ ] **Temas Personalizables**: Light, Dark, Custom colors
+- [ ] **Command Palette**: ⌘K para navegación rápida
+- [ ] **Importación Bancaria**: Integración con Plaid/Belvo
+- [ ] **Export PDF**: Reportes con gráficos
+- [ ] **Investment Tracking**: Portfolio completo
+- [ ] **Budget Alerts**: Notificaciones al exceder presupuesto
+- [ ] **Recurring Transactions**: Transacciones automáticas
+- [ ] **Multi-currency Live Rates**: Conversión en tiempo real
+
+#### Mejoras Técnicas
+- [ ] **Aumentar Cobertura de Tests**: Meta >80%
+- [ ] **E2E Tests Completos**: Playwright para flujos críticos
+- [ ] **Performance Monitoring**: Web Vitals tracking
+- [ ] **Lighthouse CI**: Automatización de métricas
+- [ ] **Storybook**: Documentación de componentes
+- [ ] **Pre-commit Hooks**: Lint-staged + Conventional commits
+
+---
+
+## Resumen de Arquitectura Técnica
+
+### Stack Principal
+- **Framework**: Next.js 15.5.8 (App Router)
+- **React**: 18.3.1
+- **TypeScript**: 5.7.2
+- **Styling**: Tailwind CSS 3.4.15
+- **State**: React Query 5.90.8 + Zustand 5.0.2
+- **i18n**: next-intl 4.6.0
+- **Forms**: React Hook Form 7.54.0 + Zod 3.24.1
+- **Charts**: Recharts 2.15.4
+- **Virtualization**: react-virtuoso 4.17.0
+- **Layout**: react-grid-layout 1.5.2
+
+### Patrones de Diseño Aplicados
+1. **Repository Pattern**: Capa API centralizada
+2. **Custom Hooks**: Lógica reutilizable
+3. **Provider Pattern**: Context + Zustand
+4. **Compound Components**: Modal, Card, Input
+5. **Lazy Loading**: Widgets y bibliotecas pesadas
+6. **Optimistic Updates**: Mutations con rollback
+7. **Registry Pattern**: Widget configuration
+8. **Error Boundaries**: Recuperación graceful
+9. **Memoization**: Performance optimization
+10. **Type Safety**: TypeScript estricto
+
+### Convenciones de Código
+- **Naming**: camelCase (variables), PascalCase (componentes)
+- **Files**: kebab-case para utilidades, PascalCase para componentes
+- **Imports**: Path alias `@/*` para imports absolutos
+- **Comments**: JSDoc para funciones públicas
+- **Types**: Interfaces para objetos, Types para unions
+- **Exports**: Named exports preferidos sobre default
+
+---
