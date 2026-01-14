@@ -3,11 +3,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { PiggyBank, TrendingUp, TrendingDown } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
-import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI } from '@/lib/api'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
+import { useMonthlySavings } from '@/hooks/useDashboard'
 
 interface SavingsWidgetProps {
   gridWidth?: number
@@ -19,26 +18,10 @@ export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetPr
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
   const { month, year } = useSelectedMonth()
-  const [savings, setSavings] = useState(0)
-  const [savingsRate, setSavingsRate] = useState(0)
-  const [loading, setLoading] = useState(true)
+  const { data, isLoading } = useMonthlySavings({ month, year })
 
-  useEffect(() => {
-    const fetchSavings = async () => {
-      try {
-        setLoading(true)
-        const res = await dashboardAPI.getMonthlySavings({ month, year })
-        setSavings(res.data.data.savings)
-        setSavingsRate(res.data.data.savingsRate)
-      } catch (error) {
-        console.error('Error fetching savings:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchSavings()
-  }, [month, year])
+  const savings = data?.savings ?? 0
+  const savingsRate = data?.savingsRate ?? 0
 
   const isPositive = savings >= 0
   const colorClass = isPositive ? 'text-green-600' : 'text-red-600'
@@ -46,7 +29,7 @@ export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetPr
   const borderClass = isPositive ? 'border-green-100' : 'border-red-100'
   const TrendIcon = isPositive ? TrendingUp : TrendingDown
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader className="pb-3">

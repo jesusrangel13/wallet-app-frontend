@@ -1,9 +1,10 @@
 'use client'
 
 import { formatCurrency, type Currency, CURRENCIES } from '@/types/currency'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI, accountAPI } from '@/lib/api'
+import { useAccountBalances } from '@/hooks/useDashboard'
+import { useCreateAccount } from '@/hooks/useAccounts'
 import { Plus } from 'lucide-react'
 import { getAccountIcon } from '@/utils/accountIcons'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -69,11 +70,14 @@ interface AccountBalancesWidgetProps {
 export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: AccountBalancesWidgetProps) => {
   const t = useTranslations('widgets.accountBalances')
   const router = useRouter()
-  const [accounts, setAccounts] = useState<AccountBalance[]>([])
-  const [loading, setLoading] = useState(true)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Use React Query hooks for data fetching and mutations
+  const { data: response, isLoading } = useAccountBalances()
+  const createAccountMutation = useCreateAccount()
+
+  const accounts = response || []
 
   const {
     register,
@@ -93,35 +97,15 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
 
   const selectedType = watch('type')
 
-  const fetchData = async () => {
-    try {
-      setLoading(true)
-      const res = await dashboardAPI.getAccountBalances()
-      setAccounts(res.data.data)
-    } catch (error) {
-      console.error('Error fetching account balances:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchData()
-  }, [])
-
   const onSubmit = async (data: AccountFormData) => {
     try {
-      setIsSubmitting(true)
-      await accountAPI.create(data as CreateAccountForm)
+      await createAccountMutation.mutateAsync(data as CreateAccountForm)
       toast.success('Account created successfully')
       setIsModalOpen(false)
       reset()
-      await fetchData()
     } catch (error: any) {
       console.error('Error saving account:', error)
       toast.error(error.response?.data?.message || 'Failed to save account')
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
@@ -139,7 +123,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
     setIsModalOpen(true)
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Card className="h-[140px]">
         <CardContent className="h-full flex items-center justify-center !p-0">
@@ -163,7 +147,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                 msOverflowStyle: 'none',
               }}
             >
-              {accounts.map((account) => {
+              {accounts.map((account: AccountBalance) => {
                 // Calculate spent and percentage for credit cards
                 const isCreditCard = account.type === 'CREDIT' && account.creditLimit
                 const spent = isCreditCard ? account.creditLimit! - account.balance : 0
@@ -418,7 +402,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
             >
               Cancel
             </Button>
-            <Button type="submit" isLoading={isSubmitting} className="flex-1">
+            <Button type="submit" isLoading={createAccountMutation.isPending} className="flex-1">
               Create Account
             </Button>
           </div>

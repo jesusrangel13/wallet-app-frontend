@@ -3,12 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Wallet, TrendingUp, TrendingDown } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
-import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI } from '@/lib/api'
 import { AreaChart, Area, ResponsiveContainer, Tooltip } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
+import { useBalanceHistory } from '@/hooks/useDashboard'
 
 interface BalanceData {
   date: string
@@ -24,28 +23,11 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
   const t = useTranslations('widgets.balanceTrend')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const { month, year } = useSelectedMonth()
-  const [data, setData] = useState<BalanceData[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const res = await dashboardAPI.getBalanceHistory(30, { month, year })
-        setData(res.data.data)
-      } catch (error) {
-        console.error('Error fetching balance history:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [month, year])
+  const { data, isLoading } = useBalanceHistory(30)
 
   // Calculate stats
-  const currentBalance = data.length > 0 ? data[data.length - 1].balance : 0
-  const initialBalance = data.length > 0 ? data[0].balance : 0
+  const currentBalance = data && data.length > 0 ? data[data.length - 1].balance : 0
+  const initialBalance = data && data.length > 0 ? data[0].balance : 0
   const change = currentBalance - initialBalance
   const changePercentage = initialBalance !== 0 ? (change / Math.abs(initialBalance)) * 100 : 0
   const isPositive = change >= 0
@@ -86,7 +68,7 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
     return null
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader className="pb-3">
@@ -124,7 +106,7 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {data.length > 0 ? (
+        {data && data.length > 0 ? (
           <div className={`flex flex-col items-center justify-center ${spacingClass}`}>
             <div className="text-center w-full">
               <p className={`${labelFontSize} text-gray-500 ${dimensions.isSmall ? 'mb-0.5' : 'mb-1.5'}`}>{t('currentBalance')}</p>

@@ -1,13 +1,13 @@
 'use client'
 
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { TrendingUp } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI } from '@/lib/api'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
+import { useTagTrend } from '@/hooks/useDashboard'
 
 interface TagTrendData {
   tagId: string
@@ -50,56 +50,42 @@ export const TagTrendWidget = ({
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const [data, setData] = useState<any[]>([])
   const [tags, setTags] = useState<TagTrendData[]>([])
-  const [loading, setLoading] = useState(true)
 
   const months = settings.months || 6
   const tagIds = useMemo(() => settings.tagIds || [], [settings.tagIds])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const res = await dashboardAPI.getTagTrend(months, tagIds.length > 0 ? tagIds : undefined)
-        const tagsData = res.data.data
+  const { data: rawData, isLoading } = useTagTrend(months, tagIds.length > 0 ? tagIds : undefined)
 
-        setTags(tagsData)
+  // Transform data for the chart
+  useMemo(() => {
+    if (rawData && rawData.length > 0) {
+      const tagsData = rawData
+      setTags(tagsData)
 
-        // Transform data for the chart
-        // Group by month-year and create a data point for each period
-        if (tagsData.length > 0) {
-          const monthlyPoints: Record<string, any> = {}
+      const monthlyPoints: Record<string, any> = {}
 
-          // Get all unique months from the first tag (they all have the same months)
-          const allMonths = tagsData[0].monthlyData
+      // Get all unique months from the first tag (they all have the same months)
+      const allMonths = tagsData[0].monthlyData
 
-          allMonths.forEach((monthData: any) => {
-            const key = `${MONTH_NAMES[monthData.month - 1]} ${monthData.year}`
-            monthlyPoints[key] = { month: key }
+      allMonths.forEach((monthData: any) => {
+        const key = `${MONTH_NAMES[monthData.month - 1]} ${monthData.year}`
+        monthlyPoints[key] = { month: key }
 
-            // Add data for each tag
-            tagsData.forEach((tag: TagTrendData) => {
-              const tagMonthData = tag.monthlyData.find(
-                (m: any) => m.month === monthData.month && m.year === monthData.year
-              )
-              monthlyPoints[key][tag.tagName] = tagMonthData ? tagMonthData.amount : 0
-            })
-          })
+        // Add data for each tag
+        tagsData.forEach((tag: TagTrendData) => {
+          const tagMonthData = tag.monthlyData.find(
+            (m: any) => m.month === monthData.month && m.year === monthData.year
+          )
+          monthlyPoints[key][tag.tagName] = tagMonthData ? tagMonthData.amount : 0
+        })
+      })
 
-          setData(Object.values(monthlyPoints))
-        } else {
-          setData([])
-        }
-      } catch (error) {
-        console.error('Error fetching tag trend:', error)
-        setData([])
-        setTags([])
-      } finally {
-        setLoading(false)
-      }
+      setData(Object.values(monthlyPoints))
+    } else {
+      setData([])
+      setTags([])
     }
-
-    fetchData()
-  }, [months, tagIds])
+  }, [rawData])
 
   // Memoize chart configuration
   const chartConfig = useMemo(() => {
@@ -110,7 +96,7 @@ export const TagTrendWidget = ({
     return { chartHeight, fontSize, strokeWidth }
   }, [dimensions])
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader className="pb-3">

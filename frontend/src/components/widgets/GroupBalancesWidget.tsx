@@ -3,11 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { DollarSign, ChevronDown, ChevronRight } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI } from '@/lib/api'
 import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
+import { useGroupBalances } from '@/hooks/useDashboard'
 
 interface GroupBalance {
   groupId: string
@@ -32,25 +32,8 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
   const t = useTranslations('widgets.groupBalances')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const { month, year } = useSelectedMonth()
-  const [balances, setBalances] = useState<GroupBalance[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: balances, isLoading } = useGroupBalances({ month, year })
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const res = await dashboardAPI.getGroupBalances({ month, year })
-        setBalances(res.data.data)
-      } catch (error) {
-        console.error('Error fetching group balances:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [month, year])
 
   const toggleGroup = (groupId: string) => {
     const newExpanded = new Set(expandedGroups)
@@ -62,7 +45,7 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
     setExpandedGroups(newExpanded)
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader className="pb-3">
@@ -83,10 +66,10 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
   const maxItems = calculateMaxListItems(dimensions.contentHeight, 60)
 
   // Group and aggregate data - filter groups with non-zero user balance
-  const groupedData = balances
-    .map((group) => {
+  const groupedData = (balances || [])
+    .map((group: GroupBalance) => {
       const membersOwing = group.members.filter((member) => member.balance < 0)
-      const totalOwed = membersOwing.reduce((sum, member) => sum + Math.abs(member.balance), 0)
+      const totalOwed = membersOwing.reduce((sum: number, member) => sum + Math.abs(member.balance), 0)
       return {
         ...group,
         membersOwing,
@@ -94,7 +77,7 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
         memberCount: membersOwing.length,
       }
     })
-    .filter((group) => group.userBalance !== 0) // Only show groups where user has a balance
+    .filter((group: any) => group.userBalance !== 0) // Only show groups where user has a balance
 
   return (
     <Card>
@@ -107,7 +90,7 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
       <CardContent className="p-0">
         <div className="space-y-2 p-4">
           {groupedData.length > 0 ? (
-            groupedData.slice(0, maxItems).map((group) => {
+            groupedData.slice(0, maxItems).map((group: any) => {
               const isExpanded = expandedGroups.has(group.groupId)
               const isPositive = (group.userBalance ?? 0) > 0 // Positive = others owe you
               const balanceColor = isPositive ? 'text-green-600' : 'text-red-600'
@@ -152,7 +135,7 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
                   {/* Expandable Member List */}
                   {isExpanded && (
                     <div className="border-t border-gray-200 bg-gray-50">
-                      {group.membersOwing.map((member, index) => (
+                      {group.membersOwing.map((member: any, index: number) => (
                         <div
                           key={`${group.groupId}-${member.userId}-${index}`}
                           className="flex items-center justify-between px-4 py-2 border-b border-gray-100 last:border-b-0"
@@ -161,7 +144,7 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
                           <div className="flex items-center gap-3 flex-1">
                             {/* Small Avatar */}
                             <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
-                              {member.name.split(' ').map((n) => n[0]).join('')}
+                              {member.name.split(' ').map((n: string) => n[0]).join('')}
                             </div>
 
                             {/* Name */}

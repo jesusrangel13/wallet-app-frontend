@@ -3,12 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { BarChart3 } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
-import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI } from '@/lib/api'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
+import { useExpensesByParentCategory } from '@/hooks/useDashboard'
 
 interface ParentCategoryData {
   category: string
@@ -27,26 +26,9 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
   const t = useTranslations('widgets.expensesByParentCategory')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const { month, year } = useSelectedMonth()
-  const [data, setData] = useState<ParentCategoryData[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data, isLoading } = useExpensesByParentCategory({ month, year })
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const res = await dashboardAPI.getExpensesByParentCategory({ month, year })
-        setData(res.data.data)
-      } catch (error) {
-        console.error('Error fetching expenses by parent category:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [month, year])
-
-  if (loading) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader className="pb-3">
@@ -65,7 +47,7 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
   // Custom tick component to show only icon
   const CustomXAxisTick = (props: any) => {
     const { x, y, payload } = props
-    const categoryData = data.find(d => d.category === payload.value)
+    const categoryData = data?.find((d: ParentCategoryData) => d.category === payload.value)
 
     // Get icon, fallback to default if null, undefined, or empty string
     const icon = categoryData?.icon && categoryData.icon.trim() !== ''
@@ -111,7 +93,7 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {data.length > 0 ? (
+        {data && data.length > 0 ? (
           <ResponsiveContainer width="100%" height={chartHeight}>
             <BarChart data={data} margin={chartMargins}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -141,7 +123,7 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
                 labelFormatter={(label) => `${t('category')}: ${label}`}
               />
               <Bar dataKey="amount" radius={[8, 8, 0, 0]}>
-                {data.map((entry, index) => (
+                {data && data.map((entry: ParentCategoryData, index: number) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={entry.color || '#3b82f6'}

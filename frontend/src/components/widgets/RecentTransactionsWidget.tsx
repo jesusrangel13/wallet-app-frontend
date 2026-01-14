@@ -3,9 +3,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { TrendingUp } from 'lucide-react'
 import { formatCurrency, type Currency } from '@/types/currency'
-import { useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import { useTranslations } from 'next-intl'
-import { transactionAPI } from '@/lib/api'
+import { useRecentTransactions } from '@/hooks/useTransactions'
 import Link from 'next/link'
 import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
 
@@ -42,8 +42,6 @@ interface RecentTransactionsWidgetProps {
 export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: RecentTransactionsWidgetProps) => {
   const t = useTranslations('widgets.recentTransactions')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
-  const [transactions, setTransactions] = useState<RecentTransaction[]>([])
-  const [loading, setLoading] = useState(true)
 
   // Calculate how many items can fit based on widget height
   // Each transaction item is approximately 72px tall
@@ -51,24 +49,15 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
   // Fetch more transactions than we might need (up to 10)
   const fetchCount = Math.min(Math.max(maxItems, 3), 10)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const res = await transactionAPI.getRecent(fetchCount)
-        setTransactions(res.data.data || [])
-      } catch (error) {
-        console.error('Error fetching recent transactions:', error)
-        setTransactions([])
-      } finally {
-        setLoading(false)
-      }
-    }
+  // Use React Query hook for data fetching with automatic caching and revalidation
+  const { data: response, isLoading } = useRecentTransactions(fetchCount)
 
-    fetchData()
-  }, [fetchCount])
+  // Extract transactions from response
+  const transactions = useMemo(() => {
+    return response?.data?.data || []
+  }, [response])
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader className="pb-3">

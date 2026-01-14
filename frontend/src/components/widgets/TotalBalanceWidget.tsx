@@ -3,9 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Wallet } from 'lucide-react'
 import { formatCurrency, type Currency, CURRENCIES } from '@/types/currency'
-import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { accountAPI } from '@/lib/api'
+import { useTotalBalance } from '@/hooks/useAccounts'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 
 interface TotalBalanceWidgetProps {
@@ -17,26 +16,12 @@ export const TotalBalanceWidget = ({ gridWidth = 1, gridHeight = 1 }: TotalBalan
   const t = useTranslations('widgets.totalBalance')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
-  const [totalBalance, setTotalBalance] = useState<Record<string, number>>({})
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchBalance = async () => {
-      try {
-        setLoading(true)
-        const res = await accountAPI.getTotalBalance()
-        setTotalBalance(res.data.data)
-      } catch (error) {
-        console.error('Error fetching total balance:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
+  // Use React Query hook for automatic caching and revalidation
+  const { data: response, isLoading } = useTotalBalance()
+  const totalBalance = response?.data?.data || {}
 
-    fetchBalance()
-  }, [])
-
-  if (loading) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader className="pb-3">

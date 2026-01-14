@@ -3,11 +3,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Users } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
-import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI } from '@/lib/api'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
+import { useSharedExpensesTotal } from '@/hooks/useDashboard'
 
 interface SharedExpensesWidgetProps {
   gridWidth?: number
@@ -19,26 +18,11 @@ export const SharedExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: SharedEx
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
   const { month, year } = useSelectedMonth()
-  const [expense, setExpense] = useState(0)
-  const [loading, setLoading] = useState(true)
+  const { data, isLoading } = useSharedExpensesTotal({ month, year })
 
-  useEffect(() => {
-    const fetchExpense = async () => {
-      try {
-        setLoading(true)
-        const res = await dashboardAPI.getSharedExpensesTotal({ month, year })
-        setExpense(res.data.data.total)
-      } catch (error) {
-        console.error('Error fetching shared expenses:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
+  const expense = data?.total ?? 0
 
-    fetchExpense()
-  }, [month, year])
-
-  if (loading) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader className="pb-3">

@@ -3,11 +3,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { TrendingUp, Tag as TagIcon } from 'lucide-react'
 import { formatCurrency, type Currency } from '@/types/currency'
-import { useState, useEffect, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI } from '@/lib/api'
-
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
+import { useTopTags } from '@/hooks/useDashboard'
 
 interface TopTagData {
   tagId: string
@@ -29,30 +27,12 @@ const DEFAULT_TAG_COLOR = '#6b7280'
 export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetProps) => {
   const t = useTranslations('widgets.topTags')
   const { month, year } = useSelectedMonth()
-  const [tags, setTags] = useState<TopTagData[]>([])
-  const [loading, setLoading] = useState(true)
 
   // Always fetch top 10
   const fetchCount = 10
+  const { data: tags, isLoading } = useTopTags({ month, year, limit: fetchCount })
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const res = await dashboardAPI.getTopTags({ month, year, limit: fetchCount })
-        setTags(res.data.data || [])
-      } catch (error) {
-        console.error('Error fetching top tags:', error)
-        setTags([])
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [month, year])
-
-  if (loading) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader className="pb-3">
@@ -80,8 +60,8 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
         <div
           className="space-y-3 overflow-y-auto pr-2 h-full"
         >
-          {tags.length > 0 ? (
-            tags.map((tag, index) => (
+          {tags && tags.length > 0 ? (
+            tags.map((tag: TopTagData, index: number) => (
               <div
                 key={tag.tagId}
                 className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"

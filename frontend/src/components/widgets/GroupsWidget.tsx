@@ -2,9 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Users } from 'lucide-react'
-import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { userAPI } from '@/lib/api'
+import { useUserStats } from '@/hooks/useUser'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 
 interface GroupsWidgetProps {
@@ -16,28 +15,14 @@ export const GroupsWidget = ({ gridWidth = 1, gridHeight = 1 }: GroupsWidgetProp
   const t = useTranslations('widgets.groups')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
-  const [groups, setGroups] = useState(0)
-  const [accounts, setAccounts] = useState(0)
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true)
-        const res = await userAPI.getStats()
-        setGroups(res.data.data.groups)
-        setAccounts(res.data.data.accounts)
-      } catch (error) {
-        console.error('Error fetching stats:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
+  // Use React Query hook for automatic caching and revalidation
+  const { data: stats, isLoading } = useUserStats()
 
-    fetchStats()
-  }, [])
+  const groups = stats?.groups || 0
+  const accounts = stats?.accounts || 0
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader className="pb-3">
