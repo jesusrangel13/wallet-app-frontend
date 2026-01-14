@@ -665,34 +665,34 @@ export const dashboardPreferenceAPI = {
       }>
       createdAt: string
       updatedAt: string
-    }>>('/users/dashboard-preferences'),
+    }>>('/dashboard-preferences'),
 
   savePreferences: (widgets: any[], layout: any[]) =>
-    api.put<ApiResponse<any>>('/users/dashboard-preferences', {
+    api.put<ApiResponse<any>>('/dashboard-preferences', {
       widgets,
       layout,
     }),
 
   addWidget: (widget: any) =>
-    api.post<ApiResponse<any>>('/users/dashboard-preferences/widgets', {
+    api.post<ApiResponse<any>>('/dashboard-preferences/widgets', {
       widget,
     }),
 
   removeWidget: (widgetId: string) =>
-    api.delete<ApiResponse<any>>(`/users/dashboard-preferences/widgets/${widgetId}`),
+    api.delete<ApiResponse<any>>(`/dashboard-preferences/widgets/${widgetId}`),
 
   updateWidgetSettings: (widgetId: string, settings: Record<string, any>) =>
-    api.patch<ApiResponse<any>>(`/users/dashboard-preferences/widgets/${widgetId}/settings`, {
+    api.patch<ApiResponse<any>>(`/dashboard-preferences/widgets/${widgetId}/settings`, {
       settings,
     }),
 
   updateLayout: (layout: any[]) =>
-    api.patch<ApiResponse<any>>('/users/dashboard-preferences/layout', {
+    api.patch<ApiResponse<any>>('/dashboard-preferences/layout', {
       layout,
     }),
 
   resetToDefaults: () =>
-    api.delete<ApiResponse<any>>('/users/dashboard-preferences/reset'),
+    api.delete<ApiResponse<any>>('/dashboard-preferences/reset'),
 }
 
 // Loan API
