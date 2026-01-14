@@ -264,3 +264,28 @@ export function useBulkDeleteTransactions() {
     },
   })
 }
+
+/**
+ * Hook para obtener transacciones recientes
+ * @param limit - Número de transacciones a obtener
+ */
+export function useRecentTransactions(limit: number = 5) {
+  return useQuery({
+    queryKey: ['transactions', 'recent', limit],
+    queryFn: () => transactionAPI.getRecent(limit),
+    staleTime: 2 * 60 * 1000, // 2 minutes - recent transactions should be fresh
+  })
+}
+
+/**
+ * Hook para obtener estadísticas de transacciones por mes
+ * @param month - Mes (1-12)
+ * @param year - Año
+ */
+export function useTransactionStats(month: number, year: number) {
+  return useQuery({
+    queryKey: ['transaction-stats', month, year],
+    queryFn: () => transactionAPI.getStats(month, year),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  })
+}
