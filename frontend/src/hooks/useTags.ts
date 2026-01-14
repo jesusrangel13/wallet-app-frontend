@@ -10,7 +10,9 @@ export function useTags(params?: { page?: number; limit?: number }) {
   return useQuery<Tag[]>({
     queryKey: ['tags', params],
     queryFn: async () => {
-      const response = await tagAPI.getAll(params)
+      // If no params provided, request a large limit to get all tags
+      const requestParams = params || { limit: 500 }
+      const response = await tagAPI.getAll(requestParams)
       // Siempre devolver solo el array de tags con fallback
       return response.data.data || []
     },
@@ -30,10 +32,8 @@ export function useCreateTag() {
       return response.data.data as Tag
     },
     onSuccess: (newTag) => {
-      // Optimistically update the cache
-      queryClient.setQueryData<Tag[]>(['tags', undefined], (oldTags = []) => {
-        return [...oldTags, newTag]
-      })
+      // Invalidate all tags queries to refetch with new tag
+      queryClient.invalidateQueries({ queryKey: ['tags'] })
     },
     onError: () => {
       // On error, invalidate to refetch
@@ -53,11 +53,9 @@ export function useUpdateTag() {
       const response = await tagAPI.update(id, data)
       return response.data.data as Tag
     },
-    onSuccess: (updatedTag) => {
-      // Update the tag in the cache
-      queryClient.setQueryData<Tag[]>(['tags', undefined], (oldTags = []) => {
-        return oldTags.map((tag) => (tag.id === updatedTag.id ? updatedTag : tag))
-      })
+    onSuccess: () => {
+      // Invalidate all tags queries to refetch with updated tag
+      queryClient.invalidateQueries({ queryKey: ['tags'] })
     },
   })
 }
@@ -73,11 +71,9 @@ export function useDeleteTag() {
       await tagAPI.delete(id)
       return id
     },
-    onSuccess: (deletedId) => {
-      // Remove the tag from the cache
-      queryClient.setQueryData<Tag[]>(['tags', undefined], (oldTags = []) => {
-        return oldTags.filter((tag) => tag.id !== deletedId)
-      })
+    onSuccess: () => {
+      // Invalidate all tags queries to refetch after delete
+      queryClient.invalidateQueries({ queryKey: ['tags'] })
     },
   })
 }
