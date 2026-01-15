@@ -69,11 +69,11 @@ export class WidgetErrorBoundary extends Component<Props, State> {
 
             {/* Show error message in development */}
             {process.env.NODE_ENV === 'development' && this.state.error && (
-              <details className="mb-4 w-full">
+              <details className="mb-4 w-full max-w-full">
                 <summary className="text-xs text-gray-500 cursor-pointer hover:text-gray-700 mb-2">
                   Ver detalles técnicos
                 </summary>
-                <pre className="bg-red-50 p-3 rounded text-xs text-left text-red-600 overflow-auto max-h-32 border border-red-200">
+                <pre className="bg-red-50 p-3 rounded text-xs text-left text-red-600 overflow-x-auto max-h-32 border border-red-200 whitespace-pre-wrap break-words max-w-full">
                   {this.state.error.message}
                   {'\n\n'}
                   {this.state.error.stack}
