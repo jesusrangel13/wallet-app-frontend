@@ -62,6 +62,31 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
   'tag-trend': TagTrendWidget,
 }
 
+// Widget names map for Error Boundary display
+const WIDGET_NAMES: Record<string, string> = {
+  'total-balance': 'Saldo Total',
+  'monthly-income': 'Ingresos Mensuales',
+  'monthly-expenses': 'Gastos Mensuales',
+  'personal-expenses': 'Gastos Personales',
+  'shared-expenses': 'Gastos Compartidos',
+  'savings': 'Ahorros',
+  'groups': 'Grupos',
+  'loans': 'Préstamos',
+  'quick-actions': 'Acciones Rápidas',
+  'balances': 'Balances',
+  'cash-flow': 'Flujo de Caja',
+  'expenses-by-category': 'Gastos por Categoría',
+  'expenses-by-parent-category': 'Gastos por Categoría Padre',
+  'expense-details-pie': 'Detalle de Gastos',
+  'balance-trend': 'Tendencia de Balance',
+  'group-balances': 'Balances de Grupos',
+  'account-balances': 'Balances de Cuentas',
+  'recent-transactions': 'Transacciones Recientes',
+  'expenses-by-tag': 'Gastos por Etiqueta',
+  'top-tags': 'Etiquetas Principales',
+  'tag-trend': 'Tendencia de Etiquetas',
+}
+
 export default function DashboardPage() {
   const t = useTranslations('dashboard')
   const { preferences, setPreferences, isLoading, setIsLoading } = useDashboardStore()
@@ -164,7 +189,10 @@ export default function DashboardPage() {
                   maxH: layoutItem.maxH,
                 }}
               >
-                <WidgetWrapper widgetId={widget.id}>
+                <WidgetWrapper
+                  widgetId={widget.id}
+                  widgetName={WIDGET_NAMES[widget.type] || widget.type}
+                >
                   <WidgetComponent
                     settings={widget.settings}
                     gridWidth={layoutItem.w}

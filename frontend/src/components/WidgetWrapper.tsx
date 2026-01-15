@@ -4,13 +4,15 @@ import { Trash2, GripHorizontal } from 'lucide-react'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { dashboardPreferenceAPI } from '@/lib/api'
 import { toast } from 'sonner'
+import { WidgetErrorBoundary } from '@/components/ui/WidgetErrorBoundary'
 
 interface WidgetWrapperProps {
   widgetId: string
+  widgetName?: string
   children: React.ReactNode
 }
 
-export const WidgetWrapper = ({ widgetId, children }: WidgetWrapperProps) => {
+export const WidgetWrapper = ({ widgetId, widgetName, children }: WidgetWrapperProps) => {
   const { removeWidget, widgets, layout, setPreferences } = useDashboardStore()
 
   const handleRemoveWidget = async (e: React.MouseEvent) => {
@@ -64,9 +66,11 @@ export const WidgetWrapper = ({ widgetId, children }: WidgetWrapperProps) => {
         </div>
       </div>
 
-      {/* Widget content */}
+      {/* Widget content wrapped in Error Boundary */}
       <div className="flex-1 overflow-auto">
-        {children}
+        <WidgetErrorBoundary widgetName={widgetName}>
+          {children}
+        </WidgetErrorBoundary>
       </div>
     </div>
   )
