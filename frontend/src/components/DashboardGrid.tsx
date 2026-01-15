@@ -121,7 +121,7 @@ export const DashboardGrid = ({ children }: DashboardGridProps) => {
         isDraggable={true}
         onLayoutChange={handleLayoutChange}
         draggableHandle=".drag-handle"
-        containerPadding={[0, 0]}
+        containerPadding={[16, 16]}
         margin={[16, 16]}
         compactType="vertical"
         preventCollision={false}
