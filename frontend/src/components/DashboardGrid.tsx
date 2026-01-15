@@ -109,7 +109,7 @@ export const DashboardGrid = ({ children }: DashboardGridProps) => {
   return (
     <div
       ref={containerRef}
-      className="dashboard-grid-wrapper w-full max-w-full overflow-x-hidden"
+      className="dashboard-grid-wrapper w-full"
     >
       <GridLayout
         className="dashboard-grid"

@@ -38,7 +38,7 @@ export function DashboardLayoutContent({ children, isCollapsed }: DashboardLayou
   }
 
   return (
-    <div className={`flex flex-col flex-1 w-full max-w-full overflow-x-hidden transition-all duration-300 ${collapsed ? 'md:ml-16' : 'md:ml-64'}`}>{/* Content takes remaining width */}
+    <div className={`flex flex-col flex-1 w-full transition-all duration-300 ${collapsed ? 'md:ml-16' : 'md:ml-64'}`}>{/* Content takes remaining width */}
       {/* Top Navigation */}
       <nav className="bg-white shadow-sm border-b sticky top-0 z-30">
         <div className="px-4 sm:px-6 lg:px-8">
