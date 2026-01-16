@@ -1,12 +1,11 @@
 'use client'
 
-import { useMemo, useCallback, useEffect, useState, useRef, Children, cloneElement, isValidElement } from 'react'
+import { useMemo, useCallback, useEffect, useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import GridLayout, { Layout } from 'react-grid-layout'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { dashboardPreferenceAPI } from '@/lib/api'
 import { toast } from 'sonner'
-import { StaggeredItem } from '@/components/ui/animations'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 
@@ -107,19 +106,6 @@ export const DashboardGrid = ({ children }: DashboardGridProps) => {
     }
   }, [debounceTimer])
 
-  // Wrap each child with StaggeredItem for cascade animation
-  const animatedChildren = useMemo(() => {
-    return Children.map(children, (child) => {
-      if (!isValidElement(child)) return child
-
-      return (
-        <StaggeredItem key={child.key}>
-          {child}
-        </StaggeredItem>
-      )
-    })
-  }, [children])
-
   return (
     <div
       ref={containerRef}
@@ -141,7 +127,7 @@ export const DashboardGrid = ({ children }: DashboardGridProps) => {
         preventCollision={false}
         useCSSTransforms={true}
       >
-        {animatedChildren}
+        {children}
       </GridLayout>
 
       {/* Saving indicator */}
