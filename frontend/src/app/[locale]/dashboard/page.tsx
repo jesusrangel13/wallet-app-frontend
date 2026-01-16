@@ -12,6 +12,7 @@ import { LoadingPage } from '@/components/ui/Loading'
 import { SelectedMonthProvider } from '@/contexts/SelectedMonthContext'
 import { MonthSelector } from '@/components/MonthSelector'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { PageTransition } from '@/components/ui/animations'
 
 // Import all widgets - using direct imports to avoid Next.js barrel export bundler issue
 import { TotalBalanceWidget } from '@/components/widgets/TotalBalanceWidget'
@@ -143,21 +144,22 @@ export default function DashboardPage() {
 
   return (
     <SelectedMonthProvider>
-      <div className="space-y-6">
-        {/* Header with Month Selector */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
-            <p className="text-gray-600 mt-1">{t('subtitle')}</p>
+      <PageTransition>
+        <div className="space-y-6">
+          {/* Header with Month Selector */}
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
+              <p className="text-gray-600 mt-1">{t('subtitle')}</p>
+            </div>
+            <MonthSelector />
           </div>
-          <MonthSelector />
-        </div>
 
-        {/* Fixed Account Balances Widget - Always at top, full width */}
-        <FixedAccountBalancesWidget />
+          {/* Fixed Account Balances Widget - Always at top, full width */}
+          <FixedAccountBalancesWidget />
 
-        {/* Dashboard Grid with Widgets */}
-        <DashboardGrid>
+          {/* Dashboard Grid with Widgets */}
+          <DashboardGrid>
           {preferences.widgets.filter((widget) => widget.type !== 'account-balances').map((widget) => {
             const WidgetComponent = WIDGET_COMPONENTS[widget.type]
             const layoutItem = preferences.layout.find((l) => l.i === widget.id)
@@ -204,14 +206,15 @@ export default function DashboardPage() {
           })}
         </DashboardGrid>
 
-        {/* Empty state */}
-        {preferences.widgets.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 mb-4">{t('noWidgets')}</p>
-            <AddWidgetButton />
-          </div>
-        )}
-      </div>
+          {/* Empty state */}
+          {preferences.widgets.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500 mb-4">{t('noWidgets')}</p>
+              <AddWidgetButton />
+            </div>
+          )}
+        </div>
+      </PageTransition>
     </SelectedMonthProvider>
   )
 }

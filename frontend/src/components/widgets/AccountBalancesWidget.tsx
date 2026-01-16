@@ -1,6 +1,6 @@
 'use client'
 
-import { formatCurrency, type Currency, CURRENCIES } from '@/types/currency'
+import { type Currency, CURRENCIES } from '@/types/currency'
 import { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { useAccountBalances } from '@/hooks/useDashboard'
@@ -19,6 +19,7 @@ import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import type { CreateAccountForm, AccountType } from '@/types'
 import { AccountBalancesWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency } from '@/components/ui/animations'
 
 // Validation schema
 const accountSchema = z.object({
@@ -174,7 +175,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                         <div className="flex items-baseline justify-between">
                           <span className="text-[9px] text-gray-500 uppercase tracking-wide">{t('spent')}</span>
                           <p className="font-semibold text-sm text-gray-900 tabular-nums">
-                            {formatCurrency(spent, account.currency as Currency)}
+                            <AnimatedCurrency amount={spent} currency={account.currency as Currency} />
                           </p>
                         </div>
                         <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
@@ -184,7 +185,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                           />
                         </div>
                         <p className="text-[9px] text-gray-500 truncate">
-                          {t('available')}: <span className="font-medium text-gray-700">{formatCurrency(account.balance, account.currency as Currency)}</span>
+                          {t('available')}: <span className="font-medium text-gray-700"><AnimatedCurrency amount={account.balance} currency={account.currency as Currency} /></span>
                         </p>
                       </div>
                     ) : (
@@ -200,7 +201,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                         <div className="text-left mt-0.5">
                           <p className="text-[9px] text-gray-500 uppercase tracking-wide mb-0.5">{t('balance')}</p>
                           <p className="font-semibold text-base text-gray-900 tabular-nums">
-                            {formatCurrency(account.balance, account.currency as Currency)}
+                            <AnimatedCurrency amount={account.balance} currency={account.currency as Currency} />
                           </p>
                         </div>
                       </div>

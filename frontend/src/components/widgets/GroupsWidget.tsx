@@ -5,7 +5,8 @@ import { Users } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useUserStats } from '@/hooks/useUser'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
-import { GroupsWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
+import { GroupsWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCounter } from '@/components/ui/animations'
 
 interface GroupsWidgetProps {
   gridWidth?: number
@@ -36,8 +37,12 @@ export const GroupsWidget = ({ gridWidth = 1, gridHeight = 1 }: GroupsWidgetProp
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={`${fontSizes.value} font-bold text-gray-900`}>{groups}</div>
-        <p className={`${fontSizes.label} text-gray-500 mt-1`}>{groups} {t('groupsCount')}, {accounts} {t('membersCount')}</p>
+        <div className={`${fontSizes.value} font-bold text-gray-900`}>
+          <AnimatedCounter value={groups} decimals={0} />
+        </div>
+        <p className={`${fontSizes.label} text-gray-500 mt-1`}>
+          <AnimatedCounter value={groups} decimals={0} /> {t('groupsCount')}, <AnimatedCounter value={accounts} decimals={0} /> {t('membersCount')}
+        </p>
       </CardContent>
     </Card>
   )
