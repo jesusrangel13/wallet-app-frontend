@@ -20,7 +20,7 @@ import TransactionFiltersComponent, { TransactionFilters } from '@/components/Tr
 import { formatCurrency } from '@/lib/utils'
 import { exportToCSV, exportToJSON, exportToExcel } from '@/lib/exportTransactions'
 import { PaymentStatusBadge } from '@/components/PaymentStatusBadge'
-import { LoadingPage, LoadingOverlay, LoadingSpinner } from '@/components/ui/Loading'
+import { LoadingSpinner } from '@/components/ui/Loading'
 import { SharedExpenseIndicator } from '@/components/SharedExpenseIndicator'
 import { DateGroupHeader } from '@/components/DateGroupHeader'
 import { useAuthStore } from '@/store/authStore'
@@ -981,9 +981,6 @@ export default function TransactionsPage() {
 
       {/* Transactions List - Grouped by Date */}
       <div className={`space-y-6 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} h-[calc(100vh-200px)]`}>
-        {isRefreshingList && (
-          <LoadingOverlay message={tLoading('transactions')} />
-        )}
         {transactions.length === 0 ? (
           <Card>
             <CardContent>
