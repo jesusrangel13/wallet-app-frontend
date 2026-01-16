@@ -25,7 +25,7 @@ import { SharedExpenseIndicator } from '@/components/SharedExpenseIndicator'
 import { DateGroupHeader } from '@/components/DateGroupHeader'
 import { useAuthStore } from '@/store/authStore'
 import { GroupedVirtuoso } from 'react-virtuoso'
-import { Skeleton } from '@/components/ui/Skeleton'
+import { TransactionsPageSkeleton } from '@/components/ui/PageSkeletons'
 
 const transactionSchema = z.object({
   accountId: z.string().min(1, 'Account is required'),
@@ -758,32 +758,8 @@ export default function TransactionsPage() {
   ]
 
   if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <Skeleton className="h-8 w-48 mb-2" />
-            <Skeleton className="h-4 w-32" />
-          </div>
-          <div className="flex gap-3">
-            <Skeleton className="h-10 w-24" />
-            <Skeleton className="h-10 w-36" />
-          </div>
-        </div>
-
-        <div className="flex items-center justify-center gap-4 bg-white rounded-lg border border-gray-200 p-4">
-          <Skeleton className="h-10 w-full" />
-        </div>
-
-        <div className="space-y-4">
-          {[1, 2, 3, 4, 5].map(i => (
-            <Skeleton key={i} className="h-16 w-full rounded-lg" />
-          ))}
-        </div>
-      </div>
-    )
+    return <TransactionsPageSkeleton />
   }
-
   return (
     <div className="space-y-6">
       {/* Header */}

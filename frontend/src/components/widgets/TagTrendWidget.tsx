@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 import { useTagTrend } from '@/hooks/useDashboard'
+import { TagTrendWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
 
 interface TagTrendData {
   tagId: string
@@ -56,6 +57,11 @@ export const TagTrendWidget = ({
 
   const { data: rawData, isLoading } = useTagTrend(months, tagIds.length > 0 ? tagIds : undefined)
 
+  // Calculate responsive sizes
+  const chartHeight = calculateChartHeight(dimensions.contentHeight)
+  const fontSize = dimensions.isSmall ? 10 : 12
+  const strokeWidth = dimensions.isSmall ? 1.5 : 2
+
   // Transform data for the chart
   useMemo(() => {
     if (rawData && rawData.length > 0) {
@@ -97,22 +103,9 @@ export const TagTrendWidget = ({
   }, [dimensions])
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-64 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+    return <TagTrendWidgetSkeleton />
   }
 
-  const { chartHeight, fontSize, strokeWidth } = chartConfig
 
   return (
     <Card>

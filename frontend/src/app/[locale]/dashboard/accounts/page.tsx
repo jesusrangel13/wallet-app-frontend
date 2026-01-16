@@ -20,6 +20,7 @@ import { LoadingPage, LoadingOverlay } from '@/components/ui/Loading'
 import AccountsCardView from '@/components/accounts/AccountsCardView'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useGlobalErrorHandler } from '@/hooks/useGlobalErrorHandler'
+import { AccountsPageSkeleton } from '@/components/ui/PageSkeletons'
 
 const accountSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -213,25 +214,7 @@ export default function AccountsPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="space-y-6">
-        {/* Header con título y botón */}
-        <div className="flex justify-between items-center">
-          <div>
-            <Skeleton className="h-8 w-32 mb-2" />
-            <Skeleton className="h-4 w-48" />
-          </div>
-          <Skeleton className="h-10 w-40" />
-        </div>
-
-        {/* Grid de tarjetas de cuentas (3 columnas) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map(i => (
-            <Skeleton key={i} className="h-48 w-full rounded-xl" />
-          ))}
-        </div>
-      </div>
-    )
+    return <AccountsPageSkeleton />
   }
 
   return (

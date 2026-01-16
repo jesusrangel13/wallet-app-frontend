@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl'
 import { useTransactionStats } from '@/hooks/useTransactions'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
+import { MonthlyIncomeWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
 
 interface MonthlyIncomeWidgetProps {
   gridWidth?: number
@@ -24,19 +25,7 @@ export const MonthlyIncomeWidget = ({ gridWidth = 1, gridHeight = 1 }: MonthlyIn
   const income = statsResponse?.data?.data?.totalIncome || 0
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-green-600" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-8 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+    return <MonthlyIncomeWidgetSkeleton />
   }
 
   return (

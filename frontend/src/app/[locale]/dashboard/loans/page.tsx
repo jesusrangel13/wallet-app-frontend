@@ -5,22 +5,25 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
 import { Loan, LoanStatus, Account } from '@/types'
-import { loanAPI, accountAPI } from '@/lib/api'
+import { accountAPI } from '@/lib/api'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { LoadingPage } from '@/components/ui/Loading'
 import CreateLoanModal from '@/components/CreateLoanModal'
-import { Skeleton } from '@/components/ui/Skeleton'
+import { LoansPageSkeleton } from '@/components/ui/PageSkeletons'
 import { formatCurrency, type Currency } from '@/types/currency'
 import { HandCoins, Plus, Filter } from 'lucide-react'
+import { useLoans, useCreateLoan, useCancelLoan, useDeleteLoan } from '@/hooks/useLoans'
 
 export default function LoansPage() {
   const router = useRouter()
   const t = useTranslations('loans')
   const tCommon = useTranslations('common')
-  const [loans, setLoans] = useState<Loan[]>([])
+  const { data: loans = [], isLoading } = useLoans()
+  const createLoan = useCreateLoan()
+  const cancelLoan = useCancelLoan()
+  const deleteLoan = useDeleteLoan()
   const [accounts, setAccounts] = useState<Account[]>([])
-  const [isLoading, setIsLoading] = useState(true)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [statusFilter, setStatusFilter] = useState<'all' | LoanStatus>('all')
   const [searchInput, setSearchInput] = useState('')
@@ -36,67 +39,67 @@ export default function LoansPage() {
   }, [searchInput])
 
   useEffect(() => {
-    loadData()
+    loadAccounts()
   }, [])
 
-  const loadData = async () => {
+  const loadAccounts = async () => {
     try {
-      setIsLoading(true)
-      const [loansResponse, accountsResponse] = await Promise.all([
-        loanAPI.getAll(),
-        accountAPI.getAll(),
-      ])
-      setLoans(loansResponse.data.data)
+      const accountsResponse = await accountAPI.getAll()
       const accountsData = accountsResponse.data as any
       setAccounts(Array.isArray(accountsData) ? accountsData : accountsData.data)
     } catch (error: any) {
-      console.error('Error loading data:', error)
-      toast.error(error.response?.data?.message || 'Failed to load loans')
-    } finally {
-      setIsLoading(false)
+      console.error('Error loading accounts:', error)
+      toast.error(error.response?.data?.message || 'Failed to load accounts')
     }
   }
 
-  const handleCreateLoan = async (data: any) => {
-    try {
-      await loanAPI.create(data)
-      await loadData()
-      toast.success('Préstamo creado exitosamente')
-    } catch (error: any) {
-      console.error('Error creating loan:', error)
-      toast.error(error.response?.data?.message || 'Failed to create loan')
-      throw error
-    }
+  const handleCreateLoan = (data: any) => {
+    return new Promise<void>((resolve, reject) => {
+      createLoan.mutate(data, {
+        onSuccess: () => {
+          toast.success('Préstamo creado exitosamente')
+          setIsCreateModalOpen(false)
+          resolve()
+        },
+        onError: (error: any) => {
+          console.error('Error creating loan:', error)
+          toast.error(error.response?.data?.message || 'Failed to create loan')
+          reject(error)
+        },
+      })
+    })
   }
 
-  const handleCancelLoan = async (loanId: string) => {
+  const handleCancelLoan = (loanId: string) => {
     if (!confirm('¿Estás seguro de que deseas cancelar/perdonar este préstamo?')) {
       return
     }
 
-    try {
-      await loanAPI.cancel(loanId)
-      await loadData()
-      toast.success('Préstamo cancelado')
-    } catch (error: any) {
-      console.error('Error canceling loan:', error)
-      toast.error(error.response?.data?.message || 'Failed to cancel loan')
-    }
+    cancelLoan.mutate(loanId, {
+      onSuccess: () => {
+        toast.success('Préstamo cancelado')
+      },
+      onError: (error: any) => {
+        console.error('Error canceling loan:', error)
+        toast.error(error.response?.data?.message || 'Failed to cancel loan')
+      },
+    })
   }
 
-  const handleDeleteLoan = async (loanId: string) => {
+  const handleDeleteLoan = (loanId: string) => {
     if (!confirm('¿Estás seguro de que deseas eliminar este préstamo? Esta acción no se puede deshacer.')) {
       return
     }
 
-    try {
-      await loanAPI.delete(loanId)
-      await loadData()
-      toast.success('Préstamo eliminado')
-    } catch (error: any) {
-      console.error('Error deleting loan:', error)
-      toast.error(error.response?.data?.message || 'Failed to delete loan')
-    }
+    deleteLoan.mutate(loanId, {
+      onSuccess: () => {
+        toast.success('Préstamo eliminado')
+      },
+      onError: (error: any) => {
+        console.error('Error deleting loan:', error)
+        toast.error(error.response?.data?.message || 'Failed to delete loan')
+      },
+    })
   }
 
   const filteredLoans = loans.filter((loan) => {
@@ -118,34 +121,7 @@ export default function LoansPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="space-y-6">
-        {/* Header con título, filtros y botón */}
-        <div className="flex justify-between items-center">
-          <div>
-            <Skeleton className="h-8 w-40 mb-2" />
-            <Skeleton className="h-4 w-56" />
-          </div>
-          <div className="flex gap-3">
-            <Skeleton className="h-10 w-32" />
-            <Skeleton className="h-10 w-36" />
-          </div>
-        </div>
-
-        {/* Barra de búsqueda y filtros */}
-        <div className="flex items-center gap-4">
-          <Skeleton className="h-10 flex-1" />
-          <Skeleton className="h-10 w-32" />
-        </div>
-
-        {/* Lista de tarjetas de préstamos */}
-        <div className="space-y-4">
-          {[1, 2, 3, 4].map(i => (
-            <Skeleton key={i} className="h-40 w-full rounded-xl" />
-          ))}
-        </div>
-      </div>
-    )
+    return <LoansPageSkeleton />
   }
 
   return (

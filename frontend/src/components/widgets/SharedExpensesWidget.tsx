@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { useSharedExpensesTotal } from '@/hooks/useDashboard'
+import { SharedExpensesWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
 
 interface SharedExpensesWidgetProps {
   gridWidth?: number
@@ -23,19 +24,7 @@ export const SharedExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: SharedEx
   const expense = data?.total ?? 0
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <Users className="h-4 w-4 text-blue-600" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-8 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+    return <SharedExpensesWidgetSkeleton />
   }
 
   return (

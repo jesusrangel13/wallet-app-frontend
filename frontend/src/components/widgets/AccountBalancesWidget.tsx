@@ -18,6 +18,7 @@ import { z } from 'zod'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import type { CreateAccountForm, AccountType } from '@/types'
+import { AccountBalancesWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
 
 // Validation schema
 const accountSchema = z.object({
@@ -124,13 +125,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
   }
 
   if (isLoading) {
-    return (
-      <Card className="h-[140px]">
-        <CardContent className="h-full flex items-center justify-center !p-0">
-          <div className="animate-pulse h-20 w-full bg-gray-200 rounded mx-4"></div>
-        </CardContent>
-      </Card>
-    )
+    return <AccountBalancesWidgetSkeleton />
   }
 
   return (

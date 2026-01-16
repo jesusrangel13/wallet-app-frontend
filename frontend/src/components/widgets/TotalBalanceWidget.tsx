@@ -6,6 +6,7 @@ import { formatCurrency, type Currency, CURRENCIES } from '@/types/currency'
 import { useTranslations } from 'next-intl'
 import { useTotalBalance } from '@/hooks/useAccounts'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
+import { TotalBalanceWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
 
 interface TotalBalanceWidgetProps {
   gridWidth?: number
@@ -22,19 +23,7 @@ export const TotalBalanceWidget = ({ gridWidth = 1, gridHeight = 1 }: TotalBalan
   const totalBalance = response?.data?.data || {}
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <Wallet className="h-4 w-4" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-8 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+    return <TotalBalanceWidgetSkeleton />
   }
 
   return (

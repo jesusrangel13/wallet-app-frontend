@@ -8,6 +8,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { useExpensesByParentCategory } from '@/hooks/useDashboard'
+import { ExpensesByParentCategoryWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
 
 interface ParentCategoryData {
   category: string
@@ -29,19 +30,7 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
   const { data, isLoading } = useExpensesByParentCategory({ month, year })
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-64 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+    return <ExpensesByParentCategoryWidgetSkeleton />
   }
 
   // Custom tick component to show only icon

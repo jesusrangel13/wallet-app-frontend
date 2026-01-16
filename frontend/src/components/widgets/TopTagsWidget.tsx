@@ -6,6 +6,7 @@ import { formatCurrency, type Currency } from '@/types/currency'
 import { useTranslations } from 'next-intl'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { useTopTags } from '@/hooks/useDashboard'
+import { TopTagsWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
 
 interface TopTagData {
   tagId: string
@@ -33,19 +34,7 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
   const { data: tags, isLoading } = useTopTags({ month, year, limit: fetchCount })
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-48 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+    return <TopTagsWidgetSkeleton />
   }
 
   return (

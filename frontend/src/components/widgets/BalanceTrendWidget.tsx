@@ -8,6 +8,7 @@ import { AreaChart, Area, ResponsiveContainer, Tooltip } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { useBalanceHistory } from '@/hooks/useDashboard'
+import { BalanceTrendWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
 
 interface BalanceData {
   date: string
@@ -24,6 +25,13 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const { month, year } = useSelectedMonth()
   const { data, isLoading } = useBalanceHistory(30)
+
+  // Calculate responsive sizes
+  const chartHeight = calculateChartHeight(dimensions.contentHeight)
+  const spacingClass = dimensions.isSmall ? 'gap-1' : dimensions.isLarge ? 'gap-4' : 'gap-2'
+  const labelFontSize = dimensions.isSmall ? 'text-[10px]' : 'text-xs'
+  const valueFontSize = dimensions.isSmall ? 'text-lg' : dimensions.isLarge ? 'text-3xl' : 'text-2xl'
+  const badgeFontSize = dimensions.isSmall ? 'text-[9px]' : 'text-xs'
 
   // Calculate stats
   const currentBalance = data && data.length > 0 ? data[data.length - 1].balance : 0
@@ -69,33 +77,9 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
   }
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <Wallet className="h-4 w-4" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-48 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+    return <BalanceTrendWidgetSkeleton />
   }
 
-  // Calculate responsive sizes dynamically based on actual content
-  // Balance section height varies by widget size:
-  // - Small (h<=2): ~90px (text-xl + compact spacing + info line)
-  // - Medium (h=3-4): ~110px (text-3xl + normal spacing + info line)
-  // - Large (h>=5): ~130px (text-4xl + extra spacing + info line)
-  const balanceInfoHeight = dimensions.isSmall ? 90 : dimensions.isMedium ? 110 : 130
-  const chartHeight = Math.max(dimensions.contentHeight - balanceInfoHeight - 10, 80)
-
-  const valueFontSize = dimensions.isSmall ? 'text-xl' : dimensions.isLarge ? 'text-4xl' : 'text-3xl'
-  const labelFontSize = dimensions.isSmall ? 'text-xs' : dimensions.isLarge ? 'text-sm' : 'text-xs'
-  const badgeFontSize = dimensions.isSmall ? 'text-xs' : 'text-xs'
-  const spacingClass = dimensions.isSmall ? 'space-y-2' : 'space-y-3'
 
   return (
     <Card>

@@ -5,6 +5,7 @@ import { Users } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useUserStats } from '@/hooks/useUser'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
+import { GroupsWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
 
 interface GroupsWidgetProps {
   gridWidth?: number
@@ -23,19 +24,7 @@ export const GroupsWidget = ({ gridWidth = 1, gridHeight = 1 }: GroupsWidgetProp
   const accounts = stats?.accounts || 0
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-8 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+    return <GroupsWidgetSkeleton />
   }
 
   return (
