@@ -4,8 +4,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import { Modal } from './ui/Modal'
 import { Account } from '@/types'
-import { accountAPI, sharedExpenseAPI, userAPI } from '@/lib/api'
+import { accountAPI, userAPI } from '@/lib/api'
 import { toast } from 'sonner'
+import { useMarkParticipantAsPaid } from '@/hooks/useSharedExpenses'
 
 interface MarkExpensePaidModalProps {
   isOpen: boolean
@@ -27,10 +28,10 @@ export function MarkExpensePaidModal({
   onSuccess,
 }: MarkExpensePaidModalProps) {
   const t = useTranslations('groups')
+  const markAsPaid = useMarkParticipantAsPaid()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [selectedAccountId, setSelectedAccountId] = useState<string>('')
   const [defaultAccountId, setDefaultAccountId] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
   const [loadingAccounts, setLoadingAccounts] = useState(true)
 
   const loadAccountsAndDefault = useCallback(async () => {
@@ -75,36 +76,36 @@ export function MarkExpensePaidModal({
     }
   }, [isOpen, loadAccountsAndDefault])
 
-  const handleMarkAsPaid = async () => {
+  const handleMarkAsPaid = () => {
     if (!selectedAccountId) {
       toast.error(t('payment.toasts.selectAccountFirst'))
       return
     }
 
-    try {
-      setLoading(true)
-      const response = await sharedExpenseAPI.markParticipantAsPaid(
+    markAsPaid.mutate(
+      {
         expenseId,
         participantUserId,
-        selectedAccountId
-      )
-
-      if (response.data.data.transactionsCreated) {
-        toast.success(t('payment.toasts.expensePaidWithTransactions'))
-      } else {
-        toast.success(t('payment.toasts.expensePaidNoTransactions'))
+        accountId: selectedAccountId,
+      },
+      {
+        onSuccess: (response) => {
+          if (response.data.transactionsCreated) {
+            toast.success(t('payment.toasts.expensePaidWithTransactions'))
+          } else {
+            toast.success(t('payment.toasts.expensePaidNoTransactions'))
+          }
+          onSuccess?.()
+          onClose()
+        },
+        onError: (error: any) => {
+          console.error('Error marking expense as paid:', error)
+          toast.error(
+            error.response?.data?.message || t('payment.toasts.errorMarkingPaid')
+          )
+        },
       }
-
-      onSuccess?.()
-      onClose()
-    } catch (error: any) {
-      console.error('Error marking expense as paid:', error)
-      toast.error(
-        error.response?.data?.message || t('payment.toasts.errorMarkingPaid')
-      )
-    } finally {
-      setLoading(false)
-    }
+    )
   }
 
   return (
@@ -138,7 +139,7 @@ export function MarkExpensePaidModal({
               value={selectedAccountId}
               onChange={(e) => setSelectedAccountId(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              disabled={loading}
+              disabled={markAsPaid.isPending}
             >
               {accounts.map((account) => (
                 <option key={account.id} value={account.id}>
@@ -168,17 +169,17 @@ export function MarkExpensePaidModal({
         <div className="flex gap-3 justify-end pt-4">
           <button
             onClick={onClose}
-            disabled={loading}
+            disabled={markAsPaid.isPending}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
           >
             {t('payment.modal.cancel')}
           </button>
           <button
             onClick={handleMarkAsPaid}
-            disabled={loading || loadingAccounts || !selectedAccountId}
+            disabled={markAsPaid.isPending || loadingAccounts || !selectedAccountId}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? t('payment.modal.marking') : t('payment.modal.confirmPayment')}
+            {markAsPaid.isPending ? t('payment.modal.marking') : t('payment.modal.confirmPayment')}
           </button>
         </div>
       </div>
