@@ -160,9 +160,9 @@ export default function DashboardPage() {
 
           {/* Dashboard Grid with Widgets */}
           <DashboardGrid>
-          {preferences.widgets.filter((widget) => widget.type !== 'account-balances').map((widget) => {
+          {preferences.widgets.filter((widget) => widget.type !== 'account-balances').map((widget, index) => {
             const WidgetComponent = WIDGET_COMPONENTS[widget.type]
-            const layoutItem = preferences.layout.find((l) => l.i === widget.id)
+            let layoutItem = preferences.layout.find((l) => l.i === widget.id)
 
             // Skip unknown widgets
             if (!WidgetComponent) {
@@ -170,10 +170,18 @@ export default function DashboardPage() {
               return null
             }
 
-            // Skip widgets without layout info
+            // Create default layout if none exists
             if (!layoutItem) {
-              console.warn(`No layout found for widget: ${widget.id}`)
-              return null
+              console.warn(`No layout found for widget: ${widget.id}, using default`)
+              layoutItem = {
+                i: widget.id,
+                x: (index * 2) % 4,
+                y: Math.floor(index / 2) * 2,
+                w: 2,
+                h: 2,
+                minW: 1,
+                minH: 1,
+              }
             }
 
             return (
@@ -185,8 +193,8 @@ export default function DashboardPage() {
                   y: layoutItem.y,
                   w: layoutItem.w,
                   h: layoutItem.h,
-                  minW: layoutItem.minW,
-                  minH: layoutItem.minH,
+                  minW: layoutItem.minW || 1,
+                  minH: layoutItem.minH || 1,
                   maxW: layoutItem.maxW,
                   maxH: layoutItem.maxH,
                 }}
