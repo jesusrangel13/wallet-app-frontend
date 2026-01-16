@@ -9,6 +9,7 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recha
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { useExpensesByTag } from '@/hooks/useDashboard'
+import { ExpensesByTagWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
 
 interface TagData {
   tagName: string
@@ -63,19 +64,7 @@ export const ExpensesByTagWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesB
   )
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <TagIcon className="h-4 w-4" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-64 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+    return <ExpensesByTagWidgetSkeleton />
   }
 
   const { chartHeight, outerRadius, labelFontSize } = chartConfig

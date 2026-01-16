@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl'
 import { useRecentTransactions } from '@/hooks/useTransactions'
 import Link from 'next/link'
 import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
+import { RecentTransactionsWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
 
 interface RecentTransaction {
   id: string
@@ -58,19 +59,7 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
   }, [response])
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-48 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+    return <RecentTransactionsWidgetSkeleton />
   }
 
   return (

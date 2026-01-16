@@ -9,7 +9,9 @@ import {
   DollarSign,
   BarChart3,
   PieChart,
-  TrendingUpDown
+  TrendingUpDown,
+  ShoppingCart,
+  Tag
 } from 'lucide-react'
 
 /**
@@ -276,4 +278,28 @@ export const TopTagsWidgetSkeleton = () => (
 
 export const LoansWidgetSkeleton = () => (
   <ProgressListWidgetSkeleton icon={DollarSign} title="Loans" itemCount={2} />
+)
+
+export const CashFlowWidgetSkeleton = () => (
+  <ChartWidgetSkeleton icon={TrendingUp} title="Cash Flow" chartType="bar" height={264} />
+)
+
+export const ExpensesByCategoryWidgetSkeleton = () => (
+  <ChartWidgetSkeleton icon={PieChart} title="Expenses by Category" chartType="pie" height={240} />
+)
+
+export const ExpensesByTagWidgetSkeleton = () => (
+  <ChartWidgetSkeleton icon={Tag} title="Expenses by Tag" chartType="pie" height={240} />
+)
+
+export const GroupBalancesWidgetSkeleton = () => (
+  <ListWidgetSkeleton icon={DollarSign} title="Group Balances" itemCount={3} showAvatar={false} />
+)
+
+export const PersonalExpensesWidgetSkeleton = () => (
+  <MetricWidgetSkeleton icon={ShoppingCart} title="Personal Expenses" iconColor="text-amber-600" />
+)
+
+export const RecentTransactionsWidgetSkeleton = () => (
+  <ListWidgetSkeleton icon={TrendingUp} title="Recent Transactions" itemCount={5} showAvatar={false} />
 )

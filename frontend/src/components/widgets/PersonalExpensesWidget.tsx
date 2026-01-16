@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { usePersonalExpenses } from '@/hooks/useDashboard'
+import { PersonalExpensesWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
 
 interface PersonalExpensesWidgetProps {
   gridWidth?: number
@@ -23,19 +24,7 @@ export const PersonalExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: Person
   const expense = data?.total ?? 0
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <ShoppingCart className="h-4 w-4 text-amber-600" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-8 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+    return <PersonalExpensesWidgetSkeleton />
   }
 
   return (

@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl'
 import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { useGroupBalances } from '@/hooks/useDashboard'
+import { GroupBalancesWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
 
 interface GroupBalance {
   groupId: string
@@ -46,19 +47,7 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
   }
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <DollarSign className="h-4 w-4" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-48 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+    return <GroupBalancesWidgetSkeleton />
   }
 
   // Calculate how many groups can fit based on widget height
