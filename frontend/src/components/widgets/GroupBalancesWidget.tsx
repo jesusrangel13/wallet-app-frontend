@@ -9,6 +9,7 @@ import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDim
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { useGroupBalances } from '@/hooks/useDashboard'
 import { GroupBalancesWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency, AnimatedCounter } from '@/components/ui/animations'
 
 interface GroupBalance {
   groupId: string
@@ -111,13 +112,13 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
                         {group.groupName}
                       </span>
                       <span className="text-xs text-gray-500 flex-shrink-0">
-                        ({group.memberCount} {group.memberCount === 1 ? t('person') : t('people')})
+                        (<AnimatedCounter value={group.memberCount} decimals={0} /> {group.memberCount === 1 ? t('person') : t('people')})
                       </span>
                     </div>
 
                     {/* User's Balance in this Group */}
                     <span className={`font-semibold text-sm ${balanceColor} flex-shrink-0 ml-2`}>
-                      {formatCurrency(Math.abs(group.userBalance ?? 0), 'CLP')}
+                      <AnimatedCurrency amount={Math.abs(group.userBalance ?? 0)} currency="CLP" />
                     </span>
                   </button>
 
@@ -144,7 +145,7 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
 
                           {/* Amount */}
                           <span className="font-semibold text-green-600 text-xs ml-3">
-                            {formatCurrency(Math.abs(member.balance), 'CLP')}
+                            <AnimatedCurrency amount={Math.abs(member.balance)} currency="CLP" />
                           </span>
                         </div>
                       ))}

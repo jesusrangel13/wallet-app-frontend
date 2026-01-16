@@ -10,6 +10,7 @@ import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDime
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { useCashFlow } from '@/hooks/useDashboard'
 import { CashFlowWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency } from '@/components/ui/animations'
 
 interface CashFlowData {
   month: string
@@ -77,7 +78,7 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
                   <p className={`${cardFontSize} text-green-700 font-medium`}>{t('averageIncome')}</p>
                 </div>
                 <p className={`${valueFontSize} font-bold text-green-900`}>
-                  {formatCurrency(avgIncome, 'CLP')}
+                  <AnimatedCurrency amount={avgIncome} currency="CLP" />
                 </p>
               </div>
               <div className={`bg-red-50 rounded-lg ${cardPadding} border border-red-100`}>
@@ -86,7 +87,7 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
                   <p className={`${cardFontSize} text-red-700 font-medium`}>{t('averageExpense')}</p>
                 </div>
                 <p className={`${valueFontSize} font-bold text-red-900`}>
-                  {formatCurrency(avgExpense, 'CLP')}
+                  <AnimatedCurrency amount={avgExpense} currency="CLP" />
                 </p>
               </div>
               <div className={`${avgBalance >= 0 ? 'bg-blue-50 border-blue-100' : 'bg-red-50 border-red-100'} rounded-lg ${cardPadding} border`}>
@@ -95,7 +96,7 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
                   <p className={`${cardFontSize} font-medium ${avgBalance >= 0 ? 'text-blue-700' : 'text-red-700'}`}>{t('netBalance')}</p>
                 </div>
                 <p className={`${valueFontSize} font-bold ${avgBalance >= 0 ? 'text-blue-900' : 'text-red-900'}`}>
-                  {formatCurrency(avgBalance, 'CLP')}
+                  <AnimatedCurrency amount={avgBalance} currency="CLP" />
                 </p>
               </div>
             </div>

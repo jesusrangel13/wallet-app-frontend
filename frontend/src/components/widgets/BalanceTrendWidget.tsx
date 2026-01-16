@@ -8,7 +8,8 @@ import { AreaChart, Area, ResponsiveContainer, Tooltip } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { useBalanceHistory } from '@/hooks/useDashboard'
-import { BalanceTrendWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
+import { BalanceTrendWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency, AnimatedCounter } from '@/components/ui/animations'
 
 interface BalanceData {
   date: string
@@ -95,20 +96,20 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
             <div className="text-center w-full">
               <p className={`${labelFontSize} text-gray-500 ${dimensions.isSmall ? 'mb-0.5' : 'mb-1.5'}`}>{t('currentBalance')}</p>
               <p className={`${valueFontSize} font-bold text-gray-900 ${dimensions.isSmall ? 'mb-1' : 'mb-2'} leading-tight`}>
-                {formatCurrency(currentBalance, 'CLP')}
+                <AnimatedCurrency amount={currentBalance} currency="CLP" />
               </p>
               <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full ${isPositive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                 {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                 <span className={`${badgeFontSize} font-semibold`}>
-                  {changePercentage.toFixed(1)}% {t('sinceStart')}
+                  <AnimatedCounter value={changePercentage} decimals={1} />% {t('sinceStart')}
                 </span>
               </div>
               {/* Compact info line */}
               <div className="flex items-center justify-center gap-3 mt-2 text-xs text-gray-600">
-                <span>{t('initial')}: <span className="font-semibold">{formatCurrency(initialBalance, 'CLP')}</span></span>
+                <span>{t('initial')}: <span className="font-semibold"><AnimatedCurrency amount={initialBalance} currency="CLP" /></span></span>
                 <span className="text-gray-300">|</span>
                 <span className={isPositive ? 'text-green-600' : 'text-red-600'}>
-                  {t('change')}: <span className="font-semibold">{isPositive ? '+' : ''}{formatCurrency(change, 'CLP')}</span>
+                  {t('change')}: <span className="font-semibold">{isPositive ? '+' : ''}<AnimatedCurrency amount={change} currency="CLP" /></span>
                 </span>
               </div>
             </div>

@@ -6,7 +6,8 @@ import { formatCurrency, type Currency } from '@/types/currency'
 import { useTranslations } from 'next-intl'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { useTopTags } from '@/hooks/useDashboard'
-import { TopTagsWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
+import { TopTagsWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency, AnimatedCounter } from '@/components/ui/animations'
 
 interface TopTagData {
   tagId: string
@@ -76,11 +77,11 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
                   <p className="font-semibold text-gray-900 truncate">{tag.tagName}</p>
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-xs text-gray-600">
-                      {tag.transactionCount} {tag.transactionCount === 1 ? t('transaction') : t('transactions')}
+                      <AnimatedCounter value={tag.transactionCount} decimals={0} /> {tag.transactionCount === 1 ? t('transaction') : t('transactions')}
                     </span>
                     <span className="text-xs text-gray-400">•</span>
                     <span className="text-xs text-gray-600">
-                      {t('avg')}: {formatCurrency(tag.averageAmount, 'CLP' as Currency)}
+                      {t('avg')}: <AnimatedCurrency amount={tag.averageAmount} currency="CLP" />
                     </span>
                   </div>
                 </div>
@@ -88,7 +89,7 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
                 {/* Total amount */}
                 <div className="flex-shrink-0 text-right">
                   <p className="font-bold text-gray-900">
-                    {formatCurrency(tag.totalAmount, 'CLP' as Currency)}
+                    <AnimatedCurrency amount={tag.totalAmount} currency="CLP" />
                   </p>
                   <p className="text-xs text-gray-500">{t('total')}</p>
                 </div>

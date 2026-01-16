@@ -9,6 +9,7 @@ import { useRecentTransactions } from '@/hooks/useTransactions'
 import Link from 'next/link'
 import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
 import { RecentTransactionsWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency } from '@/components/ui/animations'
 
 interface RecentTransaction {
   id: string
@@ -116,10 +117,10 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
                       : transaction.type === 'INCOME'
                         ? '+'
                         : ''}
-                    {formatCurrency(
-                      transaction.amount,
-                      (transaction.account?.currency as Currency) || 'CLP'
-                    )}
+                    <AnimatedCurrency
+                      amount={transaction.amount}
+                      currency={(transaction.account?.currency as Currency) || 'CLP'}
+                    />
                   </p>
                   <p className="text-xs text-gray-500">
                     {new Date(transaction.date).toLocaleDateString('en-US', {

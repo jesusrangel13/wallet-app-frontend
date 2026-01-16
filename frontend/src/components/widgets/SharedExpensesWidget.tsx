@@ -7,7 +7,8 @@ import { useTranslations } from 'next-intl'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { useSharedExpensesTotal } from '@/hooks/useDashboard'
-import { SharedExpensesWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
+import { SharedExpensesWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency } from '@/components/ui/animations'
 
 interface SharedExpensesWidgetProps {
   gridWidth?: number
@@ -37,7 +38,7 @@ export const SharedExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: SharedEx
       </CardHeader>
       <CardContent>
         <div className={`${fontSizes.value} font-bold text-blue-600`}>
-          {formatCurrency(expense, 'CLP')}
+          <AnimatedCurrency amount={expense} currency="CLP" />
         </div>
         <p className={`${fontSizes.label} text-gray-500 mt-1`}>{t('thisMonth')}</p>
       </CardContent>

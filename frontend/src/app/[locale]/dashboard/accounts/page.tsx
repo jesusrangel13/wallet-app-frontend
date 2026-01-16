@@ -21,6 +21,7 @@ import AccountsCardView from '@/components/accounts/AccountsCardView'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useGlobalErrorHandler } from '@/hooks/useGlobalErrorHandler'
 import { AccountsPageSkeleton } from '@/components/ui/PageSkeletons'
+import { PageTransition } from '@/components/ui/animations'
 
 const accountSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -218,6 +219,7 @@ export default function AccountsPage() {
   }
 
   return (
+    <PageTransition>
     <div className="space-y-6">
       {/* Header - Always visible */}
       <div className="flex items-center justify-between">
@@ -407,5 +409,6 @@ export default function AccountsPage() {
         transactionCount={transactionCount}
       />
     </div>
+    </PageTransition>
   )
 }

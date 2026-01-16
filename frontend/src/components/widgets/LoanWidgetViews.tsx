@@ -4,6 +4,7 @@ import { HandCoins, TrendingUp, AlertCircle, Plus, ChevronRight } from 'lucide-r
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { Progress } from '@/components/ui/Progress'
+import { AnimatedCurrency, AnimatedCounter } from '@/components/ui/animations'
 
 // View 1: Resumen Ejecutivo (Enhanced Summary)
 export const SummaryView = ({ summary, fontSizes, t }: { summary: LoansSummary, fontSizes: any, t: any }) => (
@@ -11,7 +12,7 @@ export const SummaryView = ({ summary, fontSizes, t }: { summary: LoansSummary, 
         <div className="flex items-center justify-between">
             <div>
                 <div className={`${fontSizes.value} font-bold text-orange-600`}>
-                    {formatCurrency(summary.totalPending, summary.currency as Currency)}
+                    <AnimatedCurrency amount={summary.totalPending} currency={summary.currency as Currency} />
                 </div>
                 <p className={`${fontSizes.label} text-gray-500`}>{t('pendingToCollect')}</p>
             </div>
@@ -23,23 +24,27 @@ export const SummaryView = ({ summary, fontSizes, t }: { summary: LoansSummary, 
         <div className="grid grid-cols-2 gap-4">
             <div className="bg-gray-50 p-3 rounded-lg">
                 <p className="text-xs text-gray-500 mb-1">{t('activeLoans')}</p>
-                <p className="font-semibold text-gray-900">{summary.activeLoans}</p>
+                <p className="font-semibold text-gray-900">
+                    <AnimatedCounter value={summary.activeLoans} decimals={0} />
+                </p>
             </div>
             <div className="bg-gray-50 p-3 rounded-lg">
                 <p className="text-xs text-gray-500 mb-1">{t('totalRecovered')}</p>
                 <p className="font-semibold text-green-600">
-                    {formatCurrency(summary.totalRecovered, summary.currency as Currency)}
+                    <AnimatedCurrency amount={summary.totalRecovered} currency={summary.currency as Currency} />
                 </p>
             </div>
             <div className="bg-gray-50 p-3 rounded-lg">
                 <p className="text-xs text-gray-500 mb-1">{t('totalLent')}</p>
                 <p className="font-semibold text-gray-900">
-                    {formatCurrency(summary.totalLent, summary.currency as Currency)}
+                    <AnimatedCurrency amount={summary.totalLent} currency={summary.currency as Currency} />
                 </p>
             </div>
             <div className="bg-gray-50 p-3 rounded-lg">
                 <p className="text-xs text-gray-500 mb-1">{t('totalLoans')}</p>
-                <p className="font-semibold text-gray-900">{summary.totalLoans}</p>
+                <p className="font-semibold text-gray-900">
+                    <AnimatedCounter value={summary.totalLoans} decimals={0} />
+                </p>
             </div>
         </div>
     </div>
@@ -69,7 +74,7 @@ export const ActiveListView = ({ loans, currency, t }: { loans: Loan[], currency
                         </div>
                         <div className="text-right">
                             <p className="font-bold text-orange-600 text-sm">
-                                {formatCurrency(pending, currency as Currency)}
+                                <AnimatedCurrency amount={pending} currency={currency as Currency} />
                             </p>
                             <div className="flex items-center text-xs text-gray-400 group-hover:text-blue-600">
                                 Ver <ChevronRight className="h-3 w-3 ml-1" />
@@ -101,7 +106,9 @@ export const ProgressView = ({ summary, t }: { summary: LoansSummary, t: any }) 
             <div>
                 <div className="flex justify-between items-end mb-2">
                     <p className="text-sm font-medium text-gray-700">{t('recoveryProgress')}</p>
-                    <span className="text-2xl font-bold text-green-600">{percentage.toFixed(0)}%</span>
+                    <span className="text-2xl font-bold text-green-600">
+                        <AnimatedCounter value={percentage} decimals={0} suffix="%" />
+                    </span>
                 </div>
                 <Progress value={percentage} className="h-3" indicatorClassName="bg-green-500" />
             </div>
@@ -109,11 +116,15 @@ export const ProgressView = ({ summary, t }: { summary: LoansSummary, t: any }) 
             <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                     <p className="text-xs text-gray-500">{t('totalLent')}</p>
-                    <p className="font-medium">{formatCurrency(summary.totalLent, summary.currency as Currency)}</p>
+                    <p className="font-medium">
+                        <AnimatedCurrency amount={summary.totalLent} currency={summary.currency as Currency} />
+                    </p>
                 </div>
                 <div className="text-right">
                     <p className="text-xs text-gray-500">{t('totalRecovered')}</p>
-                    <p className="font-medium text-green-600">{formatCurrency(summary.totalRecovered, summary.currency as Currency)}</p>
+                    <p className="font-medium text-green-600">
+                        <AnimatedCurrency amount={summary.totalRecovered} currency={summary.currency as Currency} />
+                    </p>
                 </div>
             </div>
         </div>
