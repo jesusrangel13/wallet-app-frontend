@@ -2,11 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Wallet } from 'lucide-react'
-import { formatCurrency, type Currency, CURRENCIES } from '@/types/currency'
+import { type Currency, CURRENCIES } from '@/types/currency'
 import { useTranslations } from 'next-intl'
 import { useTotalBalance } from '@/hooks/useAccounts'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { TotalBalanceWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency } from '@/components/ui/animations'
 
 interface TotalBalanceWidgetProps {
   gridWidth?: number
@@ -41,14 +42,16 @@ export const TotalBalanceWidget = ({ gridWidth = 1, gridHeight = 1 }: TotalBalan
             return (
               <div key={currency}>
                 <div className={`${fontSizes.value} font-bold text-gray-900`}>
-                  {formatCurrency(amount, currencyCode)}
+                  <AnimatedCurrency amount={amount} currency={currencyCode} />
                 </div>
                 <p className={`${fontSizes.label} text-gray-500`}>{CURRENCIES[currencyCode]?.name || currency}</p>
               </div>
             )
           })}
           {Object.keys(totalBalance).length === 0 && (
-            <div className={`${fontSizes.value} font-bold text-gray-900`}>{formatCurrency(0, 'CLP')}</div>
+            <div className={`${fontSizes.value} font-bold text-gray-900`}>
+              <AnimatedCurrency amount={0} currency="CLP" />
+            </div>
           )}
         </div>
       </CardContent>

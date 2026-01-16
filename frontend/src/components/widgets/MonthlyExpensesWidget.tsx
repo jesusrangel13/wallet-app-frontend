@@ -2,12 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { TrendingDown } from 'lucide-react'
-import { formatCurrency } from '@/types/currency'
 import { useTranslations } from 'next-intl'
 import { useTransactionStats } from '@/hooks/useTransactions'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
-import { MonthlyExpensesWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
+import { MonthlyExpensesWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency } from '@/components/ui/animations'
 
 interface MonthlyExpensesWidgetProps {
   gridWidth?: number
@@ -38,7 +38,7 @@ export const MonthlyExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: Monthly
       </CardHeader>
       <CardContent>
         <div className={`${fontSizes.value} font-bold text-red-600`}>
-          {formatCurrency(expense, 'CLP')}
+          <AnimatedCurrency amount={expense} currency="CLP" />
         </div>
         <p className={`${fontSizes.label} text-gray-500 mt-1`}>{t('thisMonth')}</p>
       </CardContent>

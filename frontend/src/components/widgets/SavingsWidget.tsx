@@ -2,12 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { PiggyBank, TrendingUp, TrendingDown } from 'lucide-react'
-import { formatCurrency } from '@/types/currency'
 import { useTranslations } from 'next-intl'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { useMonthlySavings } from '@/hooks/useDashboard'
-import { SavingsWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
+import { SavingsWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency, AnimatedCounter } from '@/components/ui/animations'
 
 interface SavingsWidgetProps {
   gridWidth?: number
@@ -44,12 +44,12 @@ export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetPr
       </CardHeader>
       <CardContent>
         <div className={`${fontSizes.value} font-bold ${colorClass}`}>
-          {formatCurrency(savings, 'CLP')}
+          <AnimatedCurrency amount={savings} currency="CLP" />
         </div>
         <div className="flex items-center gap-1 mt-1">
           <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${bgClass} ${colorClass} border ${borderClass}`}>
             <TrendIcon className="h-3 w-3" />
-            {savingsRate.toFixed(1)}%
+            <AnimatedCounter value={savingsRate} decimals={1} suffix="%" />
           </div>
           <p className={`${fontSizes.label} text-gray-500`}>{t('savingsRate')}</p>
         </div>

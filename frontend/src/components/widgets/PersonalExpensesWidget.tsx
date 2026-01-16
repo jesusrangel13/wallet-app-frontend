@@ -2,12 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { ShoppingCart } from 'lucide-react'
-import { formatCurrency } from '@/types/currency'
 import { useTranslations } from 'next-intl'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { usePersonalExpenses } from '@/hooks/useDashboard'
 import { PersonalExpensesWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency } from '@/components/ui/animations'
 
 interface PersonalExpensesWidgetProps {
   gridWidth?: number
@@ -37,7 +37,7 @@ export const PersonalExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: Person
       </CardHeader>
       <CardContent>
         <div className={`${fontSizes.value} font-bold text-amber-600`}>
-          {formatCurrency(expense, 'CLP')}
+          <AnimatedCurrency amount={expense} currency="CLP" />
         </div>
         <p className={`${fontSizes.label} text-gray-500 mt-1`}>{t('thisMonth')}</p>
       </CardContent>
