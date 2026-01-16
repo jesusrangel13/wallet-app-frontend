@@ -1167,11 +1167,8 @@ export default function TransactionsPage() {
             components={{
               Footer: () => (
                 isLoadingMore ? (
-                  <div className="flex justify-center py-8">
-                    <div className="flex items-center gap-2 text-gray-500">
-                      <LoadingSpinner size="sm" />
-                      <span className="text-sm">Cargando más transacciones...</span>
-                    </div>
+                  <div className="pt-2">
+                    <TransactionListSkeleton itemCount={3} />
                   </div>
                 ) : null
               )
