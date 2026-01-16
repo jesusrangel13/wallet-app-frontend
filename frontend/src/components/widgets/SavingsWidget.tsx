@@ -2,12 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { PiggyBank, TrendingUp, TrendingDown } from 'lucide-react'
-import { formatCurrency } from '@/types/currency'
-import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI } from '@/lib/api'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
+import { useMonthlySavings } from '@/hooks/useDashboard'
+import { SavingsWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency, AnimatedCounter } from '@/components/ui/animations'
 
 interface SavingsWidgetProps {
   gridWidth?: number
@@ -19,26 +19,10 @@ export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetPr
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
   const { month, year } = useSelectedMonth()
-  const [savings, setSavings] = useState(0)
-  const [savingsRate, setSavingsRate] = useState(0)
-  const [loading, setLoading] = useState(true)
+  const { data, isLoading } = useMonthlySavings({ month, year })
 
-  useEffect(() => {
-    const fetchSavings = async () => {
-      try {
-        setLoading(true)
-        const res = await dashboardAPI.getMonthlySavings({ month, year })
-        setSavings(res.data.data.savings)
-        setSavingsRate(res.data.data.savingsRate)
-      } catch (error) {
-        console.error('Error fetching savings:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchSavings()
-  }, [month, year])
+  const savings = data?.savings ?? 0
+  const savingsRate = data?.savingsRate ?? 0
 
   const isPositive = savings >= 0
   const colorClass = isPositive ? 'text-green-600' : 'text-red-600'
@@ -46,20 +30,8 @@ export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetPr
   const borderClass = isPositive ? 'border-green-100' : 'border-red-100'
   const TrendIcon = isPositive ? TrendingUp : TrendingDown
 
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <PiggyBank className="h-4 w-4" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-8 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+  if (isLoading) {
+    return <SavingsWidgetSkeleton />
   }
 
   return (
@@ -72,12 +44,12 @@ export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetPr
       </CardHeader>
       <CardContent>
         <div className={`${fontSizes.value} font-bold ${colorClass}`}>
-          {formatCurrency(savings, 'CLP')}
+          <AnimatedCurrency amount={savings} currency="CLP" />
         </div>
         <div className="flex items-center gap-1 mt-1">
           <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${bgClass} ${colorClass} border ${borderClass}`}>
             <TrendIcon className="h-3 w-3" />
-            {savingsRate.toFixed(1)}%
+            <AnimatedCounter value={savingsRate} decimals={1} suffix="%" />
           </div>
           <p className={`${fontSizes.label} text-gray-500`}>{t('savingsRate')}</p>
         </div>

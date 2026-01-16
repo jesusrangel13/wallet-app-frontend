@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
 import { Group, CreateGroupForm, SplitType, GroupMemberSplitDefault } from '@/types'
-import { groupAPI, sharedExpenseAPI } from '@/lib/api'
+import { sharedExpenseAPI } from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -16,7 +16,9 @@ import { MarkAsPaidButtonStyled } from '@/components/MarkAsPaidButtonStyled'
 import { formatCurrency } from '@/types/currency'
 import { LoadingPage, LoadingSpinner } from '@/components/ui/Loading'
 import { Tooltip } from '@/components/ui/Tooltip'
-import { Skeleton } from '@/components/ui/Skeleton'
+import { GroupsPageSkeleton } from '@/components/ui/PageSkeletons'
+import { useGroups, useCreateGroup, useUpdateGroup, useDeleteGroup, useLeaveGroup, useAddMember, useRemoveMember, useUpdateDefaultSplit } from '@/hooks/useGroups'
+import { PageTransition } from '@/components/ui/animations'
 
 const GROUP_COVER_IMAGES = [
   '🏠', '👨‍👩‍👧‍👦', '🎉', '✈️', '🏖️', '🎓', '💼', '🎮', '🍕', '🎬',
@@ -46,15 +48,24 @@ export default function GroupsPage() {
   const t = useTranslations('groups')
   const tCommon = useTranslations('common')
   const tLoading = useTranslations('loading')
-  const [groups, setGroups] = useState<Group[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+
+  // Hooks
+  const { data: groupsData, isLoading } = useGroups()
+  const groups = (Array.isArray(groupsData) ? groupsData : []) as Group[]
+  const createGroup = useCreateGroup()
+  const updateGroup = useUpdateGroup()
+  const deleteGroup = useDeleteGroup()
+  const leaveGroup = useLeaveGroup()
+  const addMember = useAddMember()
+  const removeMember = useRemoveMember()
+  const updateDefaultSplit = useUpdateDefaultSplit()
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingGroup, setEditingGroup] = useState<Group | null>(null)
   const [showImagePicker, setShowImagePicker] = useState(false)
   const [viewingGroup, setViewingGroup] = useState<Group | null>(null)
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false)
   const [newMemberEmail, setNewMemberEmail] = useState('')
-  const [isAddingMember, setIsAddingMember] = useState(false)
   const [activeTab, setActiveTab] = useState<'members' | 'split' | 'balances'>('members')
   const [groupExpenses, setGroupExpenses] = useState<any[]>([])
   const [loadingExpenses, setLoadingExpenses] = useState(false)
@@ -80,27 +91,10 @@ export default function GroupsPage() {
   })
   const [newEmailInput, setNewEmailInput] = useState('')
   const [emailError, setEmailError] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
   // Split configuration for new group creation
   const [splitConfig, setSplitConfig] = useState<Record<string, { percentage?: number; shares?: number; exactAmount?: number }>>({})
 
-  useEffect(() => {
-    loadGroups()
-  }, [])
-
-  const loadGroups = async () => {
-    try {
-      setIsLoading(true)
-      const response = await groupAPI.getAll()
-      // El backend devuelve array directo sin paginación params
-      const groupsData = Array.isArray(response.data) ? response.data : (response.data as any).data
-      setGroups(groupsData)
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to load groups')
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  // No need for loadGroups() - useGroups() handles it automatically
 
   const handleAddNew = () => {
     setEditingGroup(null)
@@ -212,81 +206,101 @@ export default function GroupsPage() {
       }
     }
 
-    setIsSubmitting(true)
+    // Build member split settings array
+    const memberSplitSettings =
+      formData.defaultSplitType !== 'EQUAL' && Object.keys(splitConfig).length > 0
+        ? Object.entries(splitConfig).map(([email, config]) => ({
+          email,
+          percentage: formData.defaultSplitType === 'PERCENTAGE' ? config.percentage : undefined,
+          shares: formData.defaultSplitType === 'SHARES' ? config.shares : undefined,
+          exactAmount: formData.defaultSplitType === 'EXACT' ? config.exactAmount : undefined,
+        }))
+        : undefined
 
-    try {
-      // Build member split settings array
-      const memberSplitSettings =
-        formData.defaultSplitType !== 'EQUAL' && Object.keys(splitConfig).length > 0
-          ? Object.entries(splitConfig).map(([email, config]) => ({
-            email,
-            percentage: formData.defaultSplitType === 'PERCENTAGE' ? config.percentage : undefined,
-            shares: formData.defaultSplitType === 'SHARES' ? config.shares : undefined,
-            exactAmount: formData.defaultSplitType === 'EXACT' ? config.exactAmount : undefined,
-          }))
-          : undefined
+    const payload: CreateGroupForm = {
+      name: formData.name.trim(),
+      description: formData.description.trim() || undefined,
+      coverImageUrl: formData.coverImageUrl,
+      memberEmails: formData.memberEmails.length > 0 ? formData.memberEmails : undefined,
+      defaultSplitType: formData.defaultSplitType,
+      memberSplitSettings,
+    }
 
-      const payload: CreateGroupForm = {
-        name: formData.name.trim(),
-        description: formData.description.trim() || undefined,
-        coverImageUrl: formData.coverImageUrl,
-        memberEmails: formData.memberEmails.length > 0 ? formData.memberEmails : undefined,
-        defaultSplitType: formData.defaultSplitType,
-        memberSplitSettings,
-      }
+    if (editingGroup) {
+      updateGroup.mutate(
+        {
+          id: editingGroup.id,
+          data: {
+            name: payload.name,
+            description: payload.description,
+            coverImageUrl: payload.coverImageUrl,
+          },
+        },
+        {
+          onSuccess: () => {
+            toast.success('Group updated successfully')
+            setIsModalOpen(false)
+            setFormData({
+              name: '',
+              description: '',
+              coverImageUrl: '👨‍👩‍👧‍👦',
+              memberEmails: [],
+              defaultSplitType: 'EQUAL',
+            })
+            setNewEmailInput('')
+            setEmailError('')
+            setSplitConfig({})
+          },
+          onError: (error: any) => {
+            toast.error(error.response?.data?.message || 'Failed to save group')
+          },
+        }
+      )
+    } else {
+      createGroup.mutate(payload, {
+        onSuccess: (response: any) => {
+          const data = response.data as any
 
-      if (editingGroup) {
-        await groupAPI.update(editingGroup.id, {
-          name: payload.name,
-          description: payload.description,
-          coverImageUrl: payload.coverImageUrl,
-        })
-        toast.success('Group updated successfully')
-      } else {
-        const response = await groupAPI.create(payload)
-        const data = response.data.data as any
+          // Check for member add results
+          if (data.memberAddResults) {
+            const failed = data.memberAddResults.filter((r: any) => !r.success)
+            const succeeded = data.memberAddResults.filter((r: any) => r.success)
 
-        // Check for member add results
-        if (data.memberAddResults) {
-          const failed = data.memberAddResults.filter((r: any) => !r.success)
-          const succeeded = data.memberAddResults.filter((r: any) => r.success)
+            if (succeeded.length > 0) {
+              toast.success(`Group created! ${succeeded.length} member(s) added successfully`)
+            } else {
+              toast.success('Group created successfully')
+            }
 
-          if (succeeded.length > 0) {
-            toast.success(`Group created! ${succeeded.length} member(s) added successfully`)
+            if (failed.length > 0) {
+              failed.forEach((f: any) => {
+                toast.error(`Could not add ${f.email}: ${f.error}`)
+              })
+            }
           } else {
             toast.success('Group created successfully')
           }
 
-          if (failed.length > 0) {
-            failed.forEach((f: any) => {
-              toast.error(`Could not add ${f.email}: ${f.error}`)
-            })
-          }
-        } else {
-          toast.success('Group created successfully')
-        }
-      }
-
-      loadGroups()
-      setIsModalOpen(false)
-      setFormData({
-        name: '',
-        description: '',
-        coverImageUrl: '👨‍👩‍👧‍👦',
-        memberEmails: [],
-        defaultSplitType: 'EQUAL',
+          setIsModalOpen(false)
+          setFormData({
+            name: '',
+            description: '',
+            coverImageUrl: '👨‍👩‍👧‍👦',
+            memberEmails: [],
+            defaultSplitType: 'EQUAL',
+          })
+          setNewEmailInput('')
+          setEmailError('')
+          setSplitConfig({})
+        },
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || 'Failed to save group')
+        },
       })
-      setNewEmailInput('')
-      setEmailError('')
-      setSplitConfig({})
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to save group')
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
-  const handleDelete = async (id: string, name: string) => {
+  const handleDelete = (id: string, name: string) => {
     if (
       !confirm(
         `Are you sure you want to delete "${name}"? All shared expenses in this group will also be deleted. This action cannot be undone.`
@@ -295,27 +309,29 @@ export default function GroupsPage() {
       return
     }
 
-    try {
-      await groupAPI.delete(id)
-      toast.success('Group deleted successfully')
-      loadGroups()
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to delete group')
-    }
+    deleteGroup.mutate(id, {
+      onSuccess: () => {
+        toast.success('Group deleted successfully')
+      },
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || 'Failed to delete group')
+      },
+    })
   }
 
-  const handleLeaveGroup = async (id: string, name: string) => {
+  const handleLeaveGroup = (id: string, name: string) => {
     if (!confirm(`Are you sure you want to leave "${name}"?`)) {
       return
     }
 
-    try {
-      await groupAPI.leave(id)
-      toast.success('Left group successfully')
-      loadGroups()
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to leave group')
-    }
+    leaveGroup.mutate(id, {
+      onSuccess: () => {
+        toast.success('Left group successfully')
+      },
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || 'Failed to leave group')
+      },
+    })
   }
 
   const handleViewGroup = (group: Group) => {
@@ -336,91 +352,100 @@ export default function GroupsPage() {
     setIsEditingSplit(false)
   }
 
-  const handleAddMember = async () => {
+  const handleAddMember = () => {
     if (!newMemberEmail.trim() || !viewingGroup) {
       toast.error('Email is required')
       return
     }
 
-    try {
-      setIsAddingMember(true)
-      await groupAPI.addMember(viewingGroup.id, newMemberEmail.trim())
-      toast.success('Member added successfully')
-      setNewMemberEmail('')
-      setIsAddMemberModalOpen(false)
-      // Reload groups to get updated member list
-      await loadGroups()
-      // Update viewing group with fresh data
-      const updatedGroup = groups.find(g => g.id === viewingGroup.id)
-      if (updatedGroup) {
-        setViewingGroup(updatedGroup)
+    addMember.mutate(
+      { groupId: viewingGroup.id, email: newMemberEmail.trim() },
+      {
+        onSuccess: () => {
+          toast.success('Member added successfully')
+          setNewMemberEmail('')
+          setIsAddMemberModalOpen(false)
+          // Update viewing group with fresh data
+          const updatedGroup = groups.find(g => g.id === viewingGroup.id)
+          if (updatedGroup) {
+            setViewingGroup(updatedGroup)
+          }
+        },
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || 'Failed to add member')
+        },
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to add member')
-    } finally {
-      setIsAddingMember(false)
-    }
+    )
   }
 
-  const handleRemoveMember = async (memberId: string, memberName: string) => {
+  const handleRemoveMember = (memberId: string, memberName: string) => {
     if (!viewingGroup) return
 
     if (!confirm(`Remove ${memberName} from the group?`)) {
       return
     }
 
-    try {
-      await groupAPI.removeMember(viewingGroup.id, memberId)
-      toast.success('Member removed successfully')
-      // Reload groups to get updated member list
-      await loadGroups()
-      // Update viewing group with fresh data
-      const updatedGroup = groups.find(g => g.id === viewingGroup.id)
-      if (updatedGroup) {
-        setViewingGroup(updatedGroup)
+    removeMember.mutate(
+      { groupId: viewingGroup.id, memberId },
+      {
+        onSuccess: () => {
+          toast.success('Member removed successfully')
+          // Update viewing group with fresh data
+          const updatedGroup = groups.find(g => g.id === viewingGroup.id)
+          if (updatedGroup) {
+            setViewingGroup(updatedGroup)
+          }
+        },
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || 'Failed to remove member')
+        },
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to remove member')
-    }
+    )
   }
 
-  const handleSaveSplitConfig = async () => {
+  const handleSaveSplitConfig = () => {
     if (!viewingGroup) return
 
-    try {
-      // Validate percentages add up to 100 if using PERCENTAGE
-      if (splitType === 'PERCENTAGE') {
-        const total = Object.values(memberSplits).reduce((sum, split) => sum + (split.percentage || 0), 0)
-        if (total !== 100) {
-          toast.error('Percentages must add up to 100%')
-          return
-        }
+    // Validate percentages add up to 100 if using PERCENTAGE
+    if (splitType === 'PERCENTAGE') {
+      const total = Object.values(memberSplits).reduce((sum, split) => sum + (split.percentage || 0), 0)
+      if (total !== 100) {
+        toast.error('Percentages must add up to 100%')
+        return
       }
-
-      // Build member splits array
-      const memberSplitsArray = Object.entries(memberSplits).map(([userId, split]) => ({
-        userId,
-        percentage: splitType === 'PERCENTAGE' ? split.percentage : undefined,
-        shares: splitType === 'SHARES' ? split.shares : undefined,
-        exactAmount: splitType === 'EXACT' ? split.exactAmount : undefined,
-      }))
-
-      await groupAPI.updateDefaultSplit(viewingGroup.id, {
-        defaultSplitType: splitType,
-        memberSplits: memberSplitsArray,
-      })
-
-      toast.success('Default split configuration saved')
-      setIsEditingSplit(false)
-      // Reload groups to get updated data
-      await loadGroups()
-      const updatedGroup = groups.find(g => g.id === viewingGroup.id)
-      if (updatedGroup) {
-        setViewingGroup(updatedGroup)
-      }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to save split configuration')
     }
+
+    // Build member splits array
+    const memberSplitsArray = Object.entries(memberSplits).map(([userId, split]) => ({
+      userId,
+      percentage: splitType === 'PERCENTAGE' ? split.percentage : undefined,
+      shares: splitType === 'SHARES' ? split.shares : undefined,
+      exactAmount: splitType === 'EXACT' ? split.exactAmount : undefined,
+    }))
+
+    updateDefaultSplit.mutate(
+      {
+        groupId: viewingGroup.id,
+        defaultSplit: {
+          defaultSplitType: splitType,
+          memberSplits: memberSplitsArray,
+        },
+      },
+      {
+        onSuccess: () => {
+          toast.success('Default split configuration saved')
+          setIsEditingSplit(false)
+          // Update viewing group with fresh data
+          const updatedGroup = groups.find(g => g.id === viewingGroup.id)
+          if (updatedGroup) {
+            setViewingGroup(updatedGroup)
+          }
+        },
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || 'Failed to save split configuration')
+        },
+      }
+    )
   }
 
   const loadGroupExpenses = async (groupId: string) => {
@@ -454,28 +479,14 @@ export default function GroupsPage() {
   }, [activeTab, viewingGroup])
 
   if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <Skeleton className="h-8 w-32 mb-1" />
-            <Skeleton className="h-4 w-64" />
-          </div>
-          <Skeleton className="h-10 w-32" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-            <Skeleton key={i} className="h-56 w-full rounded-xl" />
-          ))}
-        </div>
-      </div>
-    )
+    return <GroupsPageSkeleton />
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
+    <PageTransition>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
           <p className="text-gray-600 mt-1">{t('subtitle')}</p>
@@ -710,7 +721,7 @@ export default function GroupsPage() {
                           handleAddEmail()
                         }
                       }}
-                      placeholder="member@email.com"
+                      placeholder={t('placeholders.memberEmail') || 'member@email.com'}
                       className={emailError ? 'border-red-500' : ''}
                     />
                   </div>
@@ -861,8 +872,8 @@ export default function GroupsPage() {
 
           {/* Buttons */}
           <div className="flex gap-3 pt-4 border-t">
-            <Button type="submit" className="flex-1" disabled={isSubmitting}>
-              {isSubmitting
+            <Button type="submit" className="flex-1" disabled={createGroup.isPending || updateGroup.isPending}>
+              {createGroup.isPending || updateGroup.isPending
                 ? tLoading('creating')
                 : editingGroup
                   ? tCommon('actions.update')
@@ -880,7 +891,7 @@ export default function GroupsPage() {
                 setNewEmailInput('')
                 setEmailError('')
               }}
-              disabled={isSubmitting}
+              disabled={createGroup.isPending || updateGroup.isPending}
             >
               {tCommon('actions.cancel')}
             </Button>
@@ -983,10 +994,10 @@ export default function GroupsPage() {
                       />
                       <Button
                         onClick={handleAddMember}
-                        disabled={isAddingMember || !newMemberEmail.trim()}
+                        disabled={addMember.isPending || !newMemberEmail.trim()}
                         size="sm"
                       >
-                        {isAddingMember ? 'Adding...' : 'Add'}
+                        {addMember.isPending ? 'Adding...' : 'Add'}
                       </Button>
                       <Button
                         variant="outline"
@@ -1343,6 +1354,7 @@ export default function GroupsPage() {
           </div>
         </Modal>
       )}
-    </div>
+      </div>
+    </PageTransition>
   )
 }

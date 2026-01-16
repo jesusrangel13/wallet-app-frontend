@@ -4,12 +4,12 @@ import { useMemo, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { PieChart as PieChartIcon } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
-import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI } from '@/lib/api'
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
+import { useExpensesByCategory } from '@/hooks/useDashboard'
+import { ExpensesByCategoryWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
 
 interface CategoryData {
   category: string
@@ -27,29 +27,13 @@ export const ExpensesByCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }: Expe
   const t = useTranslations('widgets.expensesByCategory')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const { month, year } = useSelectedMonth()
-  const [data, setData] = useState<CategoryData[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: rawData, isLoading } = useExpensesByCategory({ month, year })
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const res = await dashboardAPI.getExpensesByCategory({ month, year })
-        const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#6b7280', '#ef4444', '#14b8a6']
-        const withColors = res.data.data.map((cat: any, idx: number) => ({
-          ...cat,
-          color: colors[idx % colors.length]
-        }))
-        setData(withColors)
-      } catch (error) {
-        console.error('Error fetching expenses by category:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [month, year])
+  const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#6b7280', '#ef4444', '#14b8a6']
+  const data = rawData ? rawData.map((cat: any, idx: number) => ({
+    ...cat,
+    color: colors[idx % colors.length]
+  })) : []
 
   // Memoize chart configuration
   const chartConfig = useMemo(() => {
@@ -66,20 +50,8 @@ export const ExpensesByCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }: Expe
     []
   )
 
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <PieChartIcon className="h-4 w-4" />
-            {t('name')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-64 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+  if (isLoading) {
+    return <ExpensesByCategoryWidgetSkeleton />
   }
 
   const { chartHeight, outerRadius, labelFontSize } = chartConfig
@@ -107,7 +79,7 @@ export const ExpensesByCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }: Expe
                 dataKey="amount"
                 style={{ fontSize: labelFontSize }}
               >
-                {data.map((entry, index) => (
+                {data.map((entry: CategoryData, index: number) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>

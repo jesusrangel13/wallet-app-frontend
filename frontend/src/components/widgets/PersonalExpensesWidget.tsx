@@ -2,12 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { ShoppingCart } from 'lucide-react'
-import { formatCurrency } from '@/types/currency'
-import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI } from '@/lib/api'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
+import { usePersonalExpenses } from '@/hooks/useDashboard'
+import { PersonalExpensesWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency } from '@/components/ui/animations'
 
 interface PersonalExpensesWidgetProps {
   gridWidth?: number
@@ -19,39 +19,12 @@ export const PersonalExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: Person
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
   const { month, year } = useSelectedMonth()
-  const [expense, setExpense] = useState(0)
-  const [loading, setLoading] = useState(true)
+  const { data, isLoading } = usePersonalExpenses({ month, year })
 
-  useEffect(() => {
-    const fetchExpense = async () => {
-      try {
-        setLoading(true)
-        const res = await dashboardAPI.getPersonalExpenses({ month, year })
-        setExpense(res.data.data.total)
-      } catch (error) {
-        console.error('Error fetching personal expenses:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
+  const expense = data?.total ?? 0
 
-    fetchExpense()
-  }, [month, year])
-
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <ShoppingCart className="h-4 w-4 text-amber-600" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-8 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+  if (isLoading) {
+    return <PersonalExpensesWidgetSkeleton />
   }
 
   return (
@@ -64,7 +37,7 @@ export const PersonalExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: Person
       </CardHeader>
       <CardContent>
         <div className={`${fontSizes.value} font-bold text-amber-600`}>
-          {formatCurrency(expense, 'CLP')}
+          <AnimatedCurrency amount={expense} currency="CLP" />
         </div>
         <p className={`${fontSizes.label} text-gray-500 mt-1`}>{t('thisMonth')}</p>
       </CardContent>

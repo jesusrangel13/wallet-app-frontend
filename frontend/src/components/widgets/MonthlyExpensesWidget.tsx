@@ -2,12 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { TrendingDown } from 'lucide-react'
-import { formatCurrency } from '@/types/currency'
-import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { transactionAPI } from '@/lib/api'
+import { useTransactionStats } from '@/hooks/useTransactions'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
+import { MonthlyExpensesWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency } from '@/components/ui/animations'
 
 interface MonthlyExpensesWidgetProps {
   gridWidth?: number
@@ -19,39 +19,13 @@ export const MonthlyExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: Monthly
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
   const { month, year } = useSelectedMonth()
-  const [expense, setExpense] = useState(0)
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchExpense = async () => {
-      try {
-        setLoading(true)
-        const res = await transactionAPI.getStats(month + 1, year)
-        setExpense(res.data.data.totalExpense)
-      } catch (error) {
-        console.error('Error fetching expenses:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
+  // Use React Query hook for automatic caching and revalidation
+  const { data: statsResponse, isLoading } = useTransactionStats(month + 1, year)
+  const expense = statsResponse?.data?.data?.totalExpense || 0
 
-    fetchExpense()
-  }, [month, year])
-
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <TrendingDown className="h-4 w-4 text-red-600" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-8 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+  if (isLoading) {
+    return <MonthlyExpensesWidgetSkeleton />
   }
 
   return (
@@ -64,7 +38,7 @@ export const MonthlyExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: Monthly
       </CardHeader>
       <CardContent>
         <div className={`${fontSizes.value} font-bold text-red-600`}>
-          {formatCurrency(expense, 'CLP')}
+          <AnimatedCurrency amount={expense} currency="CLP" />
         </div>
         <p className={`${fontSizes.label} text-gray-500 mt-1`}>{t('thisMonth')}</p>
       </CardContent>

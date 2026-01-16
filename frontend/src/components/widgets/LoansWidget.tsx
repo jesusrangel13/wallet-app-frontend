@@ -9,6 +9,7 @@ import { loanAPI } from '@/lib/api'
 import { LoansSummary } from '@/types'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { SummaryView } from './LoanWidgetViews'
+import { LoansWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
 
 interface LoansWidgetProps {
   gridWidth?: number
@@ -49,23 +50,7 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
 
 
   if (loading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <HandCoins className="h-4 w-4 text-orange-600" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse space-y-3">
-            <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-            <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-          </div>
-        </CardContent>
-      </Card>
-    )
+    return <LoansWidgetSkeleton />
   }
 
   if (error || !summary) {

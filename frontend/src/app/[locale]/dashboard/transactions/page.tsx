@@ -20,12 +20,15 @@ import TransactionFiltersComponent, { TransactionFilters } from '@/components/Tr
 import { formatCurrency } from '@/lib/utils'
 import { exportToCSV, exportToJSON, exportToExcel } from '@/lib/exportTransactions'
 import { PaymentStatusBadge } from '@/components/PaymentStatusBadge'
-import { LoadingPage, LoadingOverlay, LoadingSpinner } from '@/components/ui/Loading'
+import { LoadingSpinner } from '@/components/ui/Loading'
 import { SharedExpenseIndicator } from '@/components/SharedExpenseIndicator'
 import { DateGroupHeader } from '@/components/DateGroupHeader'
 import { useAuthStore } from '@/store/authStore'
 import { GroupedVirtuoso } from 'react-virtuoso'
-import { Skeleton } from '@/components/ui/Skeleton'
+import { TransactionsPageSkeleton } from '@/components/ui/PageSkeletons'
+import { LoadingBar } from '@/components/ui/LoadingBar'
+import { TransactionListSkeleton } from '@/components/ui/TransactionListSkeleton'
+import { PageTransition } from '@/components/ui/animations'
 
 const transactionSchema = z.object({
   accountId: z.string().min(1, 'Account is required'),
@@ -757,35 +760,18 @@ export default function TransactionsPage() {
     'July', 'August', 'September', 'October', 'November', 'December'
   ]
 
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <Skeleton className="h-8 w-48 mb-2" />
-            <Skeleton className="h-4 w-32" />
-          </div>
-          <div className="flex gap-3">
-            <Skeleton className="h-10 w-24" />
-            <Skeleton className="h-10 w-36" />
-          </div>
-        </div>
-
-        <div className="flex items-center justify-center gap-4 bg-white rounded-lg border border-gray-200 p-4">
-          <Skeleton className="h-10 w-full" />
-        </div>
-
-        <div className="space-y-4">
-          {[1, 2, 3, 4, 5].map(i => (
-            <Skeleton key={i} className="h-16 w-full rounded-lg" />
-          ))}
-        </div>
-      </div>
-    )
+  // Show full page skeleton only on initial load with no data
+  if (isLoading || (isRefreshingList && transactions.length === 0)) {
+    return <TransactionsPageSkeleton />
   }
 
   return (
-    <div className="space-y-6">
+    <>
+      {/* Top loading bar - Fintech style progress indicator */}
+      <LoadingBar isLoading={isRefreshingList} />
+
+      <PageTransition>
+        <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -1005,10 +991,10 @@ export default function TransactionsPage() {
 
       {/* Transactions List - Grouped by Date */}
       <div className={`space-y-6 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} h-[calc(100vh-200px)]`}>
-        {isRefreshingList && (
-          <LoadingOverlay message={tLoading('transactions')} />
-        )}
-        {transactions.length === 0 ? (
+        {/* Show partial skeleton when refreshing with existing data */}
+        {isRefreshingList && transactions.length > 0 ? (
+          <TransactionListSkeleton itemCount={5} />
+        ) : transactions.length === 0 ? (
           <Card>
             <CardContent>
               <p className="text-center text-gray-500 py-8">
@@ -1183,11 +1169,8 @@ export default function TransactionsPage() {
             components={{
               Footer: () => (
                 isLoadingMore ? (
-                  <div className="flex justify-center py-8">
-                    <div className="flex items-center gap-2 text-gray-500">
-                      <LoadingSpinner size="sm" />
-                      <span className="text-sm">Cargando más transacciones...</span>
-                    </div>
+                  <div className="pt-2">
+                    <TransactionListSkeleton itemCount={3} />
                   </div>
                 ) : null
               )
@@ -1470,6 +1453,8 @@ export default function TransactionsPage() {
           </div>
         </div>
       </Modal>
-    </div>
+        </div>
+      </PageTransition>
+    </>
   )
 }

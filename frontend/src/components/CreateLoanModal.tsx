@@ -23,7 +23,7 @@ export type CreateLoanFormData = z.infer<typeof loanSchema>
 interface CreateLoanModalProps {
   isOpen: boolean
   onClose: () => void
-  onSubmit: (data: CreateLoanFormData) => Promise<void>
+  onSubmit: (data: CreateLoanFormData) => void | Promise<void>
   accounts: Account[]
 }
 
@@ -108,6 +108,8 @@ export default function CreateLoanModal({
     try {
       await onSubmit(data)
       handleClose()
+    } catch (error) {
+      // Error is handled by the parent component
     } finally {
       setIsSaving(false)
     }

@@ -3,11 +3,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { TrendingUp } from 'lucide-react'
 import { formatCurrency, type Currency } from '@/types/currency'
-import { useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import { useTranslations } from 'next-intl'
-import { transactionAPI } from '@/lib/api'
+import { useRecentTransactions } from '@/hooks/useTransactions'
 import Link from 'next/link'
 import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
+import { RecentTransactionsWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency } from '@/components/ui/animations'
 
 interface RecentTransaction {
   id: string
@@ -42,8 +44,6 @@ interface RecentTransactionsWidgetProps {
 export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: RecentTransactionsWidgetProps) => {
   const t = useTranslations('widgets.recentTransactions')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
-  const [transactions, setTransactions] = useState<RecentTransaction[]>([])
-  const [loading, setLoading] = useState(true)
 
   // Calculate how many items can fit based on widget height
   // Each transaction item is approximately 72px tall
@@ -51,37 +51,16 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
   // Fetch more transactions than we might need (up to 10)
   const fetchCount = Math.min(Math.max(maxItems, 3), 10)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const res = await transactionAPI.getRecent(fetchCount)
-        setTransactions(res.data.data || [])
-      } catch (error) {
-        console.error('Error fetching recent transactions:', error)
-        setTransactions([])
-      } finally {
-        setLoading(false)
-      }
-    }
+  // Use React Query hook for data fetching with automatic caching and revalidation
+  const { data: response, isLoading } = useRecentTransactions(fetchCount)
 
-    fetchData()
-  }, [fetchCount])
+  // Extract transactions from response
+  const transactions = useMemo(() => {
+    return response?.data?.data || []
+  }, [response])
 
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-48 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+  if (isLoading) {
+    return <RecentTransactionsWidgetSkeleton />
   }
 
   return (
@@ -138,10 +117,10 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
                       : transaction.type === 'INCOME'
                         ? '+'
                         : ''}
-                    {formatCurrency(
-                      transaction.amount,
-                      (transaction.account?.currency as Currency) || 'CLP'
-                    )}
+                    <AnimatedCurrency
+                      amount={transaction.amount}
+                      currency={(transaction.account?.currency as Currency) || 'CLP'}
+                    />
                   </p>
                   <p className="text-xs text-gray-500">
                     {new Date(transaction.date).toLocaleDateString('en-US', {

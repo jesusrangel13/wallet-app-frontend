@@ -1,9 +1,10 @@
 'use client'
 
-import { formatCurrency, type Currency, CURRENCIES } from '@/types/currency'
-import { useState, useEffect, useRef } from 'react'
+import { type Currency, CURRENCIES } from '@/types/currency'
+import { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI, accountAPI } from '@/lib/api'
+import { useAccountBalances } from '@/hooks/useDashboard'
+import { useCreateAccount } from '@/hooks/useAccounts'
 import { Plus } from 'lucide-react'
 import { getAccountIcon } from '@/utils/accountIcons'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -17,6 +18,8 @@ import { z } from 'zod'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import type { CreateAccountForm, AccountType } from '@/types'
+import { AccountBalancesWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency } from '@/components/ui/animations'
 
 // Validation schema
 const accountSchema = z.object({
@@ -69,11 +72,14 @@ interface AccountBalancesWidgetProps {
 export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: AccountBalancesWidgetProps) => {
   const t = useTranslations('widgets.accountBalances')
   const router = useRouter()
-  const [accounts, setAccounts] = useState<AccountBalance[]>([])
-  const [loading, setLoading] = useState(true)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Use React Query hooks for data fetching and mutations
+  const { data: response, isLoading } = useAccountBalances()
+  const createAccountMutation = useCreateAccount()
+
+  const accounts = response || []
 
   const {
     register,
@@ -93,35 +99,15 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
 
   const selectedType = watch('type')
 
-  const fetchData = async () => {
-    try {
-      setLoading(true)
-      const res = await dashboardAPI.getAccountBalances()
-      setAccounts(res.data.data)
-    } catch (error) {
-      console.error('Error fetching account balances:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchData()
-  }, [])
-
   const onSubmit = async (data: AccountFormData) => {
     try {
-      setIsSubmitting(true)
-      await accountAPI.create(data as CreateAccountForm)
+      await createAccountMutation.mutateAsync(data as CreateAccountForm)
       toast.success('Account created successfully')
       setIsModalOpen(false)
       reset()
-      await fetchData()
     } catch (error: any) {
       console.error('Error saving account:', error)
       toast.error(error.response?.data?.message || 'Failed to save account')
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
@@ -139,14 +125,8 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
     setIsModalOpen(true)
   }
 
-  if (loading) {
-    return (
-      <Card className="h-[140px]">
-        <CardContent className="h-full flex items-center justify-center !p-0">
-          <div className="animate-pulse h-20 w-full bg-gray-200 rounded mx-4"></div>
-        </CardContent>
-      </Card>
-    )
+  if (isLoading) {
+    return <AccountBalancesWidgetSkeleton />
   }
 
   return (
@@ -163,7 +143,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                 msOverflowStyle: 'none',
               }}
             >
-              {accounts.map((account) => {
+              {accounts.map((account: AccountBalance) => {
                 // Calculate spent and percentage for credit cards
                 const isCreditCard = account.type === 'CREDIT' && account.creditLimit
                 const spent = isCreditCard ? account.creditLimit! - account.balance : 0
@@ -195,7 +175,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                         <div className="flex items-baseline justify-between">
                           <span className="text-[9px] text-gray-500 uppercase tracking-wide">{t('spent')}</span>
                           <p className="font-semibold text-sm text-gray-900 tabular-nums">
-                            {formatCurrency(spent, account.currency as Currency)}
+                            <AnimatedCurrency amount={spent} currency={account.currency as Currency} />
                           </p>
                         </div>
                         <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
@@ -205,7 +185,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                           />
                         </div>
                         <p className="text-[9px] text-gray-500 truncate">
-                          {t('available')}: <span className="font-medium text-gray-700">{formatCurrency(account.balance, account.currency as Currency)}</span>
+                          {t('available')}: <span className="font-medium text-gray-700"><AnimatedCurrency amount={account.balance} currency={account.currency as Currency} /></span>
                         </p>
                       </div>
                     ) : (
@@ -221,7 +201,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                         <div className="text-left mt-0.5">
                           <p className="text-[9px] text-gray-500 uppercase tracking-wide mb-0.5">{t('balance')}</p>
                           <p className="font-semibold text-base text-gray-900 tabular-nums">
-                            {formatCurrency(account.balance, account.currency as Currency)}
+                            <AnimatedCurrency amount={account.balance} currency={account.currency as Currency} />
                           </p>
                         </div>
                       </div>
@@ -418,7 +398,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
             >
               Cancel
             </Button>
-            <Button type="submit" isLoading={isSubmitting} className="flex-1">
+            <Button type="submit" isLoading={createAccountMutation.isPending} className="flex-1">
               Create Account
             </Button>
           </div>

@@ -216,7 +216,7 @@ export function useDeleteGroup() {
 }
 
 /**
- * Hook para liquidar un balance
+ * Hook para liquidar un balance con optimistic update
  */
 export function useSettleBalance() {
   const queryClient = useQueryClient()
@@ -226,19 +226,39 @@ export function useSettleBalance() {
       const response = await groupAPI.settleAllBalance(groupId, otherUserId, accountId)
       return response.data
     },
-    onMutate: async ({ groupId }) => {
+    onMutate: async ({ groupId, otherUserId }) => {
       // Cancel any outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['groups'] })
       await queryClient.cancelQueries({ queryKey: ['group-balances'] })
+      await queryClient.cancelQueries({ queryKey: ['shared-expenses'] })
 
       // Snapshot the previous values
       const previousGroups = queryClient.getQueryData(['groups'])
       const previousBalances = queryClient.getQueryData(['group-balances'])
+      const previousSharedExpenses = queryClient.getQueryData(['shared-expenses'])
 
-      // Note: We don't optimistically update balances here because the calculation
-      // is complex and done on the server. We just show a loading state.
+      // Optimistically update: mark expenses as paid for this user
+      // This provides instant visual feedback while server processes the settlement
+      queryClient.setQueryData(['shared-expenses'], (old: any) => {
+        if (!old || !Array.isArray(old)) return old
 
-      return { previousGroups, previousBalances }
+        return old.map((expense: any) => {
+          // Only update expenses for this group where the other user is involved
+          if (expense.groupId === groupId) {
+            const updatedParticipants = expense.participants?.map((p: any) => {
+              // Mark as paid if this is the participant we're settling with
+              if (p.userId === otherUserId && !p.isPaid) {
+                return { ...p, isPaid: true, paidDate: new Date().toISOString() }
+              }
+              return p
+            })
+            return { ...expense, participants: updatedParticipants }
+          }
+          return expense
+        })
+      })
+
+      return { previousGroups, previousBalances, previousSharedExpenses }
     },
     onError: (err, variables, context) => {
       // Rollback on error
@@ -248,14 +268,216 @@ export function useSettleBalance() {
       if (context?.previousBalances) {
         queryClient.setQueryData(['group-balances'], context.previousBalances)
       }
+      if (context?.previousSharedExpenses) {
+        queryClient.setQueryData(['shared-expenses'], context.previousSharedExpenses)
+      }
     },
     onSuccess: () => {
-      // Invalidate all related queries
+      // Invalidate all related queries to get fresh server data
       queryClient.invalidateQueries({ queryKey: ['groups'] })
       queryClient.invalidateQueries({ queryKey: ['group-balances'] })
+      queryClient.invalidateQueries({ queryKey: ['shared-expenses'] })
       queryClient.invalidateQueries({ queryKey: ['transactions'] })
       queryClient.invalidateQueries({ queryKey: ['accounts'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] })
+    },
+  })
+}
+
+/**
+ * Hook para agregar un miembro a un grupo con optimistic update
+ */
+export function useAddMember() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ groupId, email }: { groupId: string; email: string }) => {
+      const response = await groupAPI.addMember(groupId, email)
+      return response.data
+    },
+    onMutate: async ({ groupId, email }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['group', groupId] })
+      await queryClient.cancelQueries({ queryKey: ['groups'] })
+
+      // Snapshot the previous values
+      const previousGroup = queryClient.getQueryData(['group', groupId])
+      const previousGroups = queryClient.getQueryData(['groups'])
+
+      // Optimistically add the member (we'll get real data after success)
+      // Note: We don't know the new member's full details yet, so just invalidate
+
+      return { previousGroup, previousGroups }
+    },
+    onError: (err, { groupId }, context) => {
+      // Rollback on error
+      if (context?.previousGroup) {
+        queryClient.setQueryData(['group', groupId], context.previousGroup)
+      }
+      if (context?.previousGroups) {
+        queryClient.setQueryData(['groups'], context.previousGroups)
+      }
+    },
+    onSuccess: (response, { groupId }) => {
+      // Invalidate to get fresh data with the new member
+      queryClient.invalidateQueries({ queryKey: ['group', groupId] })
+      queryClient.invalidateQueries({ queryKey: ['groups'] })
+    },
+  })
+}
+
+/**
+ * Hook para remover un miembro de un grupo con optimistic update
+ */
+export function useRemoveMember() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ groupId, memberId }: { groupId: string; memberId: string }) => {
+      const response = await groupAPI.removeMember(groupId, memberId)
+      return response.data
+    },
+    onMutate: async ({ groupId, memberId }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['group', groupId] })
+      await queryClient.cancelQueries({ queryKey: ['groups'] })
+
+      // Snapshot the previous values
+      const previousGroup = queryClient.getQueryData(['group', groupId])
+      const previousGroups = queryClient.getQueryData(['groups'])
+
+      // Optimistically remove the member from the group
+      queryClient.setQueryData(['group', groupId], (old: any) => {
+        if (!old) return old
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            members: old.data.members?.filter((m: any) => m.id !== memberId),
+          },
+        }
+      })
+
+      return { previousGroup, previousGroups }
+    },
+    onError: (err, { groupId }, context) => {
+      // Rollback on error
+      if (context?.previousGroup) {
+        queryClient.setQueryData(['group', groupId], context.previousGroup)
+      }
+      if (context?.previousGroups) {
+        queryClient.setQueryData(['groups'], context.previousGroups)
+      }
+    },
+    onSuccess: (response, { groupId }) => {
+      // Invalidate to get fresh data
+      queryClient.invalidateQueries({ queryKey: ['group', groupId] })
+      queryClient.invalidateQueries({ queryKey: ['groups'] })
+      queryClient.invalidateQueries({ queryKey: ['group-balances'] })
+    },
+  })
+}
+
+/**
+ * Hook para salir de un grupo con optimistic update
+ */
+export function useLeaveGroup() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (groupId: string) => {
+      const response = await groupAPI.leave(groupId)
+      return response.data
+    },
+    onMutate: async (groupId) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['groups'] })
+
+      // Snapshot the previous value
+      const previousGroups = queryClient.getQueryData(['groups'])
+
+      // Optimistically remove the group from the list
+      queryClient.setQueryData(['groups'], (old: any) => {
+        if (!old) return old
+        if (Array.isArray(old)) {
+          return old.filter((group: any) => group.id !== groupId)
+        }
+        if (old.data?.data) {
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              data: old.data.data.filter((group: any) => group.id !== groupId),
+            },
+          }
+        }
+        return old
+      })
+
+      return { previousGroups }
+    },
+    onError: (err, groupId, context) => {
+      // Rollback on error
+      if (context?.previousGroups) {
+        queryClient.setQueryData(['groups'], context.previousGroups)
+      }
+    },
+    onSuccess: () => {
+      // Invalidate to get fresh data
+      queryClient.invalidateQueries({ queryKey: ['groups'] })
+      queryClient.invalidateQueries({ queryKey: ['group-balances'] })
+      queryClient.invalidateQueries({ queryKey: ['shared-expenses'] })
+    },
+  })
+}
+
+/**
+ * Hook para actualizar el split por defecto de un grupo con optimistic update
+ */
+export function useUpdateDefaultSplit() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ groupId, defaultSplit }: { groupId: string; defaultSplit: any }) => {
+      const response = await groupAPI.updateDefaultSplit(groupId, defaultSplit)
+      return response.data
+    },
+    onMutate: async ({ groupId, defaultSplit }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['group', groupId] })
+      await queryClient.cancelQueries({ queryKey: ['groups'] })
+
+      // Snapshot the previous values
+      const previousGroup = queryClient.getQueryData(['group', groupId])
+      const previousGroups = queryClient.getQueryData(['groups'])
+
+      // Optimistically update the default split
+      queryClient.setQueryData(['group', groupId], (old: any) => {
+        if (!old) return old
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            defaultSplit,
+          },
+        }
+      })
+
+      return { previousGroup, previousGroups }
+    },
+    onError: (err, { groupId }, context) => {
+      // Rollback on error
+      if (context?.previousGroup) {
+        queryClient.setQueryData(['group', groupId], context.previousGroup)
+      }
+      if (context?.previousGroups) {
+        queryClient.setQueryData(['groups'], context.previousGroups)
+      }
+    },
+    onSuccess: (response, { groupId }) => {
+      // Invalidate to get fresh data
+      queryClient.invalidateQueries({ queryKey: ['group', groupId] })
+      queryClient.invalidateQueries({ queryKey: ['groups'] })
     },
   })
 }

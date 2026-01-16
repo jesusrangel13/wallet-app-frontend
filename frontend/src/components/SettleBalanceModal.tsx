@@ -4,9 +4,10 @@ import { useState, useEffect, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import { Modal } from './ui/Modal'
 import { Account } from '@/types'
-import { accountAPI, groupAPI, userAPI } from '@/lib/api'
+import { accountAPI, userAPI } from '@/lib/api'
 import { toast } from 'sonner'
 import { useGlobalErrorHandler } from '@/hooks/useGlobalErrorHandler'
+import { useSettleBalance } from '@/hooks/useGroups'
 
 interface SettleBalanceModalProps {
   isOpen: boolean
@@ -29,10 +30,10 @@ export function SettleBalanceModal({
 }: SettleBalanceModalProps) {
   const t = useTranslations('groups')
   const { handleError } = useGlobalErrorHandler()
+  const settleBalance = useSettleBalance()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [selectedAccountId, setSelectedAccountId] = useState<string>('')
   const [defaultAccountId, setDefaultAccountId] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
   const [loadingAccounts, setLoadingAccounts] = useState(true)
 
   const loadAccountsAndDefault = useCallback(async () => {
@@ -76,33 +77,33 @@ export function SettleBalanceModal({
     }
   }, [isOpen, loadAccountsAndDefault])
 
-  const handleSettle = async () => {
+  const handleSettle = () => {
     if (!selectedAccountId) {
       toast.error(t('payment.toasts.selectAccountFirst'))
       return
     }
 
-    try {
-      setLoading(true)
-      const response = await groupAPI.settleAllBalance(
+    settleBalance.mutate(
+      {
         groupId,
         otherUserId,
-        selectedAccountId
-      )
-
-      if (response.data.data.transactionsCreated) {
-        toast.success(t('payment.toasts.balanceSettledWithTransactions'))
-      } else {
-        toast.success(t('payment.toasts.balanceSettledNoTransactions'))
+        accountId: selectedAccountId,
+      },
+      {
+        onSuccess: (response) => {
+          if (response.data.transactionsCreated) {
+            toast.success(t('payment.toasts.balanceSettledWithTransactions'))
+          } else {
+            toast.success(t('payment.toasts.balanceSettledNoTransactions'))
+          }
+          onSuccess?.()
+          onClose()
+        },
+        onError: (error) => {
+          handleError(error)
+        },
       }
-
-      onSuccess?.()
-      onClose()
-    } catch (error) {
-      handleError(error)
-    } finally {
-      setLoading(false)
-    }
+    )
   }
 
   return (
@@ -136,7 +137,7 @@ export function SettleBalanceModal({
               value={selectedAccountId}
               onChange={(e) => setSelectedAccountId(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              disabled={loading}
+              disabled={settleBalance.isPending}
             >
               {accounts.map((account) => (
                 <option key={account.id} value={account.id}>
@@ -166,17 +167,17 @@ export function SettleBalanceModal({
         <div className="flex gap-3 justify-end pt-4">
           <button
             onClick={onClose}
-            disabled={loading}
+            disabled={settleBalance.isPending}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
           >
             {t('payment.modal.cancel')}
           </button>
           <button
             onClick={handleSettle}
-            disabled={loading || loadingAccounts || !selectedAccountId}
+            disabled={settleBalance.isPending || loadingAccounts || !selectedAccountId}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? t('payment.modal.settling') : t('payment.modal.confirmPayment')}
+            {settleBalance.isPending ? t('payment.modal.settling') : t('payment.modal.confirmPayment')}
           </button>
         </div>
       </div>

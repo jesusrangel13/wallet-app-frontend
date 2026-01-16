@@ -7,6 +7,15 @@
   "members": "Miembros",
   "expenses": "Gastos",
   "balance": "Balance",
+  "fields": {
+    "name": "Nombre",
+    "description": "Descripción"
+  },
+  "placeholders": {
+    "name": "Nombre del grupo",
+    "description": "Descripción del grupo...",
+    "memberEmail": "miembro@email.com"
+  },
   "splitTypes": {
     "EQUAL": "Igualmente",
     "PERCENTAGE": "Por porcentaje",

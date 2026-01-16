@@ -1,95 +1,98 @@
 'use client'
 
-import { use, useEffect, useState, useCallback } from 'react'
+import { use, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
-import { Loan, Account } from '@/types'
-import { loanAPI, accountAPI } from '@/lib/api'
+import { Account } from '@/types'
+import { accountAPI } from '@/lib/api'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { LoadingPage } from '@/components/ui/Loading'
 import RecordLoanPaymentModal from '@/components/RecordLoanPaymentModal'
 import { formatCurrency, type Currency } from '@/types/currency'
 import { ArrowLeft, HandCoins, Calendar, DollarSign, User, FileText } from 'lucide-react'
+import { useLoan, useRecordLoanPayment, useCancelLoan, useDeleteLoan } from '@/hooks/useLoans'
+import { PageTransition, AnimatedCurrency, AnimatedCounter } from '@/components/ui/animations'
 
 export default function LoanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
   const t = useTranslations('loans')
   const tCommon = useTranslations('common')
-  const [loan, setLoan] = useState<Loan | null>(null)
+  const { data: loan, isLoading } = useLoan(id)
+  const recordPayment = useRecordLoanPayment()
+  const cancelLoan = useCancelLoan()
+  const deleteLoan = useDeleteLoan()
   const [accounts, setAccounts] = useState<Account[]>([])
-  const [isLoading, setIsLoading] = useState(true)
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
 
-  const loadData = useCallback(async () => {
-    try {
-      setIsLoading(true)
-      const [loanResponse, accountsResponse] = await Promise.all([
-        loanAPI.getById(id),
-        accountAPI.getAll(),
-      ])
-      setLoan(loanResponse.data.data)
-      const accountsData = accountsResponse.data as any
-      setAccounts(Array.isArray(accountsData) ? accountsData : accountsData.data)
-    } catch (error: any) {
-      console.error('Error loading loan:', error)
-      toast.error(error.response?.data?.message || 'Failed to load loan')
-      router.push('/dashboard/loans')
-    } finally {
-      setIsLoading(false)
-    }
-  }, [id, router])
-
   useEffect(() => {
-    loadData()
-  }, [loadData])
+    const loadAccounts = async () => {
+      try {
+        const accountsResponse = await accountAPI.getAll()
+        const accountsData = accountsResponse.data as any
+        setAccounts(Array.isArray(accountsData) ? accountsData : accountsData.data)
+      } catch (error: any) {
+        console.error('Error loading accounts:', error)
+        toast.error(error.response?.data?.message || 'Failed to load accounts')
+      }
+    }
+    loadAccounts()
+  }, [])
 
-  const handleRecordPayment = async (data: any) => {
+  const handleRecordPayment = (data: any) => {
     if (!loan) return
 
-    try {
-      await loanAPI.recordPayment(loan.id, data)
-      await loadData()
-      toast.success('Pago registrado exitosamente')
-    } catch (error: any) {
-      console.error('Error recording payment:', error)
-      toast.error(error.response?.data?.message || 'Failed to record payment')
-      throw error
-    }
+    recordPayment.mutate(
+      { id: loan.id, data },
+      {
+        onSuccess: () => {
+          toast.success('Pago registrado exitosamente')
+          setIsPaymentModalOpen(false)
+        },
+        onError: (error: any) => {
+          console.error('Error recording payment:', error)
+          toast.error(error.response?.data?.message || 'Failed to record payment')
+          throw error
+        },
+      }
+    )
   }
 
-  const handleCancelLoan = async () => {
+  const handleCancelLoan = () => {
     if (!loan) return
     if (!confirm('¿Estás seguro de que deseas cancelar/perdonar este préstamo?')) {
       return
     }
 
-    try {
-      await loanAPI.cancel(loan.id)
-      await loadData()
-      toast.success('Préstamo cancelado')
-    } catch (error: any) {
-      console.error('Error canceling loan:', error)
-      toast.error(error.response?.data?.message || 'Failed to cancel loan')
-    }
+    cancelLoan.mutate(loan.id, {
+      onSuccess: () => {
+        toast.success('Préstamo cancelado')
+      },
+      onError: (error: any) => {
+        console.error('Error canceling loan:', error)
+        toast.error(error.response?.data?.message || 'Failed to cancel loan')
+      },
+    })
   }
 
-  const handleDeleteLoan = async () => {
+  const handleDeleteLoan = () => {
     if (!loan) return
     if (!confirm('¿Estás seguro de que deseas eliminar este préstamo? Esta acción no se puede deshacer.')) {
       return
     }
 
-    try {
-      await loanAPI.delete(loan.id)
-      toast.success('Préstamo eliminado')
-      router.push('/dashboard/loans')
-    } catch (error: any) {
-      console.error('Error deleting loan:', error)
-      toast.error(error.response?.data?.message || 'Failed to delete loan')
-    }
+    deleteLoan.mutate(loan.id, {
+      onSuccess: () => {
+        toast.success('Préstamo eliminado')
+        router.push('/dashboard/loans')
+      },
+      onError: (error: any) => {
+        console.error('Error deleting loan:', error)
+        toast.error(error.response?.data?.message || 'Failed to delete loan')
+      },
+    })
   }
 
   if (isLoading) {
@@ -104,9 +107,10 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
   const progress = (loan.paidAmount / loan.originalAmount) * 100
 
   return (
-    <div className="space-y-6">
-      {/* Back Button */}
-      <button
+    <PageTransition>
+      <div className="space-y-6">
+        {/* Back Button */}
+        <button
         onClick={() => router.push('/dashboard/loans')}
         className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
       >
@@ -350,6 +354,7 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
           accounts={accounts}
         />
       )}
-    </div>
+      </div>
+    </PageTransition>
   )
 }

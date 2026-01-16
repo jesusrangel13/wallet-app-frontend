@@ -12,6 +12,7 @@ import { LoadingPage } from '@/components/ui/Loading'
 import { SelectedMonthProvider } from '@/contexts/SelectedMonthContext'
 import { MonthSelector } from '@/components/MonthSelector'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { PageTransition } from '@/components/ui/animations'
 
 // Import all widgets - using direct imports to avoid Next.js barrel export bundler issue
 import { TotalBalanceWidget } from '@/components/widgets/TotalBalanceWidget'
@@ -60,6 +61,31 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
   'expenses-by-tag': ExpensesByTagWidget,
   'top-tags': TopTagsWidget,
   'tag-trend': TagTrendWidget,
+}
+
+// Widget names map for Error Boundary display
+const WIDGET_NAMES: Record<string, string> = {
+  'total-balance': 'Saldo Total',
+  'monthly-income': 'Ingresos Mensuales',
+  'monthly-expenses': 'Gastos Mensuales',
+  'personal-expenses': 'Gastos Personales',
+  'shared-expenses': 'Gastos Compartidos',
+  'savings': 'Ahorros',
+  'groups': 'Grupos',
+  'loans': 'Préstamos',
+  'quick-actions': 'Acciones Rápidas',
+  'balances': 'Balances',
+  'cash-flow': 'Flujo de Caja',
+  'expenses-by-category': 'Gastos por Categoría',
+  'expenses-by-parent-category': 'Gastos por Categoría Padre',
+  'expense-details-pie': 'Detalle de Gastos',
+  'balance-trend': 'Tendencia de Balance',
+  'group-balances': 'Balances de Grupos',
+  'account-balances': 'Balances de Cuentas',
+  'recent-transactions': 'Transacciones Recientes',
+  'expenses-by-tag': 'Gastos por Etiqueta',
+  'top-tags': 'Etiquetas Principales',
+  'tag-trend': 'Tendencia de Etiquetas',
 }
 
 export default function DashboardPage() {
@@ -118,24 +144,25 @@ export default function DashboardPage() {
 
   return (
     <SelectedMonthProvider>
-      <div className="space-y-6">
-        {/* Header with Month Selector */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
-            <p className="text-gray-600 mt-1">{t('subtitle')}</p>
+      <PageTransition>
+        <div className="space-y-6">
+          {/* Header with Month Selector */}
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
+              <p className="text-gray-600 mt-1">{t('subtitle')}</p>
+            </div>
+            <MonthSelector />
           </div>
-          <MonthSelector />
-        </div>
 
-        {/* Fixed Account Balances Widget - Always at top, full width */}
-        <FixedAccountBalancesWidget />
+          {/* Fixed Account Balances Widget - Always at top, full width */}
+          <FixedAccountBalancesWidget />
 
-        {/* Dashboard Grid with Widgets */}
-        <DashboardGrid>
-          {preferences.widgets.filter((widget) => widget.type !== 'account-balances').map((widget) => {
+          {/* Dashboard Grid with Widgets */}
+          <DashboardGrid>
+          {preferences.widgets.filter((widget) => widget.type !== 'account-balances').map((widget, index) => {
             const WidgetComponent = WIDGET_COMPONENTS[widget.type]
-            const layoutItem = preferences.layout.find((l) => l.i === widget.id)
+            let layoutItem = preferences.layout.find((l) => l.i === widget.id)
 
             // Skip unknown widgets
             if (!WidgetComponent) {
@@ -143,10 +170,18 @@ export default function DashboardPage() {
               return null
             }
 
-            // Skip widgets without layout info
+            // Create default layout if none exists
             if (!layoutItem) {
-              console.warn(`No layout found for widget: ${widget.id}`)
-              return null
+              console.warn(`No layout found for widget: ${widget.id}, using default`)
+              layoutItem = {
+                i: widget.id,
+                x: (index * 2) % 4,
+                y: Math.floor(index / 2) * 2,
+                w: 2,
+                h: 2,
+                minW: 1,
+                minH: 1,
+              }
             }
 
             return (
@@ -158,13 +193,16 @@ export default function DashboardPage() {
                   y: layoutItem.y,
                   w: layoutItem.w,
                   h: layoutItem.h,
-                  minW: layoutItem.minW,
-                  minH: layoutItem.minH,
+                  minW: layoutItem.minW || 1,
+                  minH: layoutItem.minH || 1,
                   maxW: layoutItem.maxW,
                   maxH: layoutItem.maxH,
                 }}
               >
-                <WidgetWrapper widgetId={widget.id}>
+                <WidgetWrapper
+                  widgetId={widget.id}
+                  widgetName={WIDGET_NAMES[widget.type] || widget.type}
+                >
                   <WidgetComponent
                     settings={widget.settings}
                     gridWidth={layoutItem.w}
@@ -176,14 +214,15 @@ export default function DashboardPage() {
           })}
         </DashboardGrid>
 
-        {/* Empty state */}
-        {preferences.widgets.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 mb-4">{t('noWidgets')}</p>
-            <AddWidgetButton />
-          </div>
-        )}
-      </div>
+          {/* Empty state */}
+          {preferences.widgets.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500 mb-4">{t('noWidgets')}</p>
+              <AddWidgetButton />
+            </div>
+          )}
+        </div>
+      </PageTransition>
     </SelectedMonthProvider>
   )
 }

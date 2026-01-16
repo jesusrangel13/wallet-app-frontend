@@ -3,11 +3,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Users } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
-import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI } from '@/lib/api'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
+import { useSharedExpensesTotal } from '@/hooks/useDashboard'
+import { SharedExpensesWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency } from '@/components/ui/animations'
 
 interface SharedExpensesWidgetProps {
   gridWidth?: number
@@ -19,39 +20,12 @@ export const SharedExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: SharedEx
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
   const { month, year } = useSelectedMonth()
-  const [expense, setExpense] = useState(0)
-  const [loading, setLoading] = useState(true)
+  const { data, isLoading } = useSharedExpensesTotal({ month, year })
 
-  useEffect(() => {
-    const fetchExpense = async () => {
-      try {
-        setLoading(true)
-        const res = await dashboardAPI.getSharedExpensesTotal({ month, year })
-        setExpense(res.data.data.total)
-      } catch (error) {
-        console.error('Error fetching shared expenses:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
+  const expense = data?.total ?? 0
 
-    fetchExpense()
-  }, [month, year])
-
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <Users className="h-4 w-4 text-blue-600" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-8 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+  if (isLoading) {
+    return <SharedExpensesWidgetSkeleton />
   }
 
   return (
@@ -64,7 +38,7 @@ export const SharedExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: SharedEx
       </CardHeader>
       <CardContent>
         <div className={`${fontSizes.value} font-bold text-blue-600`}>
-          {formatCurrency(expense, 'CLP')}
+          <AnimatedCurrency amount={expense} currency="CLP" />
         </div>
         <p className={`${fontSizes.label} text-gray-500 mt-1`}>{t('thisMonth')}</p>
       </CardContent>

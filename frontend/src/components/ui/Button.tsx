@@ -1,6 +1,9 @@
+'use client'
+
 import { ButtonHTMLAttributes, forwardRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive'
@@ -27,12 +30,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       lg: 'px-6 py-3 text-lg',
     }
 
+    const MotionButton = motion.button
+
     return (
-      <button
+      <MotionButton
         ref={ref}
+        whileHover={disabled || isLoading ? undefined : { scale: 1.02 }}
+        whileTap={disabled || isLoading ? undefined : { scale: 0.98 }}
+        transition={{ duration: 0.15, ease: 'easeInOut' }}
         className={cn(baseStyles, variants[variant], sizes[size], className)}
         disabled={disabled || isLoading}
-        {...props}
+        {...(props as any)}
       >
         {isLoading ? (
           <>
@@ -45,7 +53,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ) : (
           children
         )}
-      </button>
+      </MotionButton>
     )
   }
 )

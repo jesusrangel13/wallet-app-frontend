@@ -1,13 +1,14 @@
 'use client'
 
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { TrendingUp } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI } from '@/lib/api'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
+import { useTagTrend } from '@/hooks/useDashboard'
+import { TagTrendWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
 
 interface TagTrendData {
   tagId: string
@@ -50,56 +51,47 @@ export const TagTrendWidget = ({
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const [data, setData] = useState<any[]>([])
   const [tags, setTags] = useState<TagTrendData[]>([])
-  const [loading, setLoading] = useState(true)
 
   const months = settings.months || 6
   const tagIds = useMemo(() => settings.tagIds || [], [settings.tagIds])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const res = await dashboardAPI.getTagTrend(months, tagIds.length > 0 ? tagIds : undefined)
-        const tagsData = res.data.data
+  const { data: rawData, isLoading } = useTagTrend(months, tagIds.length > 0 ? tagIds : undefined)
 
-        setTags(tagsData)
+  // Calculate responsive sizes
+  const chartHeight = calculateChartHeight(dimensions.contentHeight)
+  const fontSize = dimensions.isSmall ? 10 : 12
+  const strokeWidth = dimensions.isSmall ? 1.5 : 2
 
-        // Transform data for the chart
-        // Group by month-year and create a data point for each period
-        if (tagsData.length > 0) {
-          const monthlyPoints: Record<string, any> = {}
+  // Transform data for the chart
+  useMemo(() => {
+    if (rawData && rawData.length > 0) {
+      const tagsData = rawData
+      setTags(tagsData)
 
-          // Get all unique months from the first tag (they all have the same months)
-          const allMonths = tagsData[0].monthlyData
+      const monthlyPoints: Record<string, any> = {}
 
-          allMonths.forEach((monthData: any) => {
-            const key = `${MONTH_NAMES[monthData.month - 1]} ${monthData.year}`
-            monthlyPoints[key] = { month: key }
+      // Get all unique months from the first tag (they all have the same months)
+      const allMonths = tagsData[0].monthlyData
 
-            // Add data for each tag
-            tagsData.forEach((tag: TagTrendData) => {
-              const tagMonthData = tag.monthlyData.find(
-                (m: any) => m.month === monthData.month && m.year === monthData.year
-              )
-              monthlyPoints[key][tag.tagName] = tagMonthData ? tagMonthData.amount : 0
-            })
-          })
+      allMonths.forEach((monthData: any) => {
+        const key = `${MONTH_NAMES[monthData.month - 1]} ${monthData.year}`
+        monthlyPoints[key] = { month: key }
 
-          setData(Object.values(monthlyPoints))
-        } else {
-          setData([])
-        }
-      } catch (error) {
-        console.error('Error fetching tag trend:', error)
-        setData([])
-        setTags([])
-      } finally {
-        setLoading(false)
-      }
+        // Add data for each tag
+        tagsData.forEach((tag: TagTrendData) => {
+          const tagMonthData = tag.monthlyData.find(
+            (m: any) => m.month === monthData.month && m.year === monthData.year
+          )
+          monthlyPoints[key][tag.tagName] = tagMonthData ? tagMonthData.amount : 0
+        })
+      })
+
+      setData(Object.values(monthlyPoints))
+    } else {
+      setData([])
+      setTags([])
     }
-
-    fetchData()
-  }, [months, tagIds])
+  }, [rawData])
 
   // Memoize chart configuration
   const chartConfig = useMemo(() => {
@@ -110,23 +102,10 @@ export const TagTrendWidget = ({
     return { chartHeight, fontSize, strokeWidth }
   }, [dimensions])
 
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-64 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+  if (isLoading) {
+    return <TagTrendWidgetSkeleton />
   }
 
-  const { chartHeight, fontSize, strokeWidth } = chartConfig
 
   return (
     <Card>

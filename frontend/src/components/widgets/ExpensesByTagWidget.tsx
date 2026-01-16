@@ -4,12 +4,12 @@ import { useMemo, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Tag as TagIcon } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
-import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI } from '@/lib/api'
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
+import { useExpensesByTag } from '@/hooks/useDashboard'
+import { ExpensesByTagWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
 
 interface TagData {
   tagName: string
@@ -40,29 +40,13 @@ export const ExpensesByTagWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesB
   const t = useTranslations('widgets.expensesByTag')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const { month, year } = useSelectedMonth()
-  const [data, setData] = useState<TagData[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: rawData, isLoading } = useExpensesByTag({ month, year })
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const res = await dashboardAPI.getExpensesByTag({ month, year })
-        const tagData = res.data.data.map((tag: TagData, idx: number) => ({
-          ...tag,
-          // Use tag's color if available, otherwise use default colors
-          color: tag.tagColor || DEFAULT_COLORS[idx % DEFAULT_COLORS.length]
-        }))
-        setData(tagData)
-      } catch (error) {
-        console.error('Error fetching expenses by tag:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [month, year])
+  const data = rawData ? rawData.map((tag: TagData, idx: number) => ({
+    ...tag,
+    // Use tag's color if available, otherwise use default colors
+    color: tag.tagColor || DEFAULT_COLORS[idx % DEFAULT_COLORS.length]
+  })) : []
 
   // Memoize chart configuration
   const chartConfig = useMemo(() => {
@@ -79,20 +63,8 @@ export const ExpensesByTagWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesB
     []
   )
 
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <TagIcon className="h-4 w-4" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-64 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+  if (isLoading) {
+    return <ExpensesByTagWidgetSkeleton />
   }
 
   const { chartHeight, outerRadius, labelFontSize } = chartConfig

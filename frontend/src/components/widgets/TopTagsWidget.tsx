@@ -3,11 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { TrendingUp, Tag as TagIcon } from 'lucide-react'
 import { formatCurrency, type Currency } from '@/types/currency'
-import { useState, useEffect, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI } from '@/lib/api'
-
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
+import { useTopTags } from '@/hooks/useDashboard'
+import { TopTagsWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency, AnimatedCounter } from '@/components/ui/animations'
 
 interface TopTagData {
   tagId: string
@@ -29,43 +29,13 @@ const DEFAULT_TAG_COLOR = '#6b7280'
 export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetProps) => {
   const t = useTranslations('widgets.topTags')
   const { month, year } = useSelectedMonth()
-  const [tags, setTags] = useState<TopTagData[]>([])
-  const [loading, setLoading] = useState(true)
 
   // Always fetch top 10
   const fetchCount = 10
+  const { data: tags, isLoading } = useTopTags({ month, year, limit: fetchCount })
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const res = await dashboardAPI.getTopTags({ month, year, limit: fetchCount })
-        setTags(res.data.data || [])
-      } catch (error) {
-        console.error('Error fetching top tags:', error)
-        setTags([])
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [month, year])
-
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-48 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+  if (isLoading) {
+    return <TopTagsWidgetSkeleton />
   }
 
   return (
@@ -80,8 +50,8 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
         <div
           className="space-y-3 overflow-y-auto pr-2 h-full"
         >
-          {tags.length > 0 ? (
-            tags.map((tag, index) => (
+          {tags && tags.length > 0 ? (
+            tags.map((tag: TopTagData, index: number) => (
               <div
                 key={tag.tagId}
                 className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
@@ -107,11 +77,11 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
                   <p className="font-semibold text-gray-900 truncate">{tag.tagName}</p>
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-xs text-gray-600">
-                      {tag.transactionCount} {tag.transactionCount === 1 ? t('transaction') : t('transactions')}
+                      <AnimatedCounter value={tag.transactionCount} decimals={0} /> {tag.transactionCount === 1 ? t('transaction') : t('transactions')}
                     </span>
                     <span className="text-xs text-gray-400">•</span>
                     <span className="text-xs text-gray-600">
-                      {t('avg')}: {formatCurrency(tag.averageAmount, 'CLP' as Currency)}
+                      {t('avg')}: <AnimatedCurrency amount={tag.averageAmount} currency="CLP" />
                     </span>
                   </div>
                 </div>
@@ -119,7 +89,7 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
                 {/* Total amount */}
                 <div className="flex-shrink-0 text-right">
                   <p className="font-bold text-gray-900">
-                    {formatCurrency(tag.totalAmount, 'CLP' as Currency)}
+                    <AnimatedCurrency amount={tag.totalAmount} currency="CLP" />
                   </p>
                   <p className="text-xs text-gray-500">{t('total')}</p>
                 </div>

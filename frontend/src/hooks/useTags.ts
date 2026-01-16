@@ -21,7 +21,7 @@ export function useTags(params?: { page?: number; limit?: number }) {
 }
 
 /**
- * Hook para crear un nuevo tag
+ * Hook para crear un nuevo tag con optimistic update
  */
 export function useCreateTag() {
   const queryClient = useQueryClient()
@@ -31,19 +31,47 @@ export function useCreateTag() {
       const response = await tagAPI.create(data)
       return response.data.data as Tag
     },
-    onSuccess: (newTag) => {
-      // Invalidate all tags queries to refetch with new tag
-      queryClient.invalidateQueries({ queryKey: ['tags'] })
+    onMutate: async (newTag) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['tags'] })
+
+      // Snapshot the previous value
+      const previousTags = queryClient.getQueryData(['tags'])
+
+      // Optimistically add the new tag
+      queryClient.setQueryData(['tags'], (old: any) => {
+        if (!old) return old
+
+        const optimisticTag: Tag = {
+          ...newTag,
+          id: `temp-${Date.now()}`,
+          userId: 'current-user',
+          createdAt: new Date().toISOString(),
+        }
+
+        if (Array.isArray(old)) {
+          return [optimisticTag, ...old]
+        }
+        return old
+      })
+
+      return { previousTags }
     },
-    onError: () => {
-      // On error, invalidate to refetch
+    onError: (err, newTag, context) => {
+      // Rollback on error
+      if (context?.previousTags) {
+        queryClient.setQueryData(['tags'], context.previousTags)
+      }
+    },
+    onSuccess: () => {
+      // Invalidate to get fresh data from server
       queryClient.invalidateQueries({ queryKey: ['tags'] })
     },
   })
 }
 
 /**
- * Hook para actualizar un tag
+ * Hook para actualizar un tag con optimistic update
  */
 export function useUpdateTag() {
   const queryClient = useQueryClient()
@@ -53,15 +81,36 @@ export function useUpdateTag() {
       const response = await tagAPI.update(id, data)
       return response.data.data as Tag
     },
+    onMutate: async ({ id, data }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['tags'] })
+
+      // Snapshot the previous value
+      const previousTags = queryClient.getQueryData(['tags'])
+
+      // Optimistically update the tag
+      queryClient.setQueryData(['tags'], (old: any) => {
+        if (!old || !Array.isArray(old)) return old
+        return old.map((tag: Tag) => (tag.id === id ? { ...tag, ...data } : tag))
+      })
+
+      return { previousTags }
+    },
+    onError: (err, { id }, context) => {
+      // Rollback on error
+      if (context?.previousTags) {
+        queryClient.setQueryData(['tags'], context.previousTags)
+      }
+    },
     onSuccess: () => {
-      // Invalidate all tags queries to refetch with updated tag
+      // Invalidate to get fresh data from server
       queryClient.invalidateQueries({ queryKey: ['tags'] })
     },
   })
 }
 
 /**
- * Hook para eliminar un tag
+ * Hook para eliminar un tag con optimistic update
  */
 export function useDeleteTag() {
   const queryClient = useQueryClient()
@@ -71,8 +120,29 @@ export function useDeleteTag() {
       await tagAPI.delete(id)
       return id
     },
+    onMutate: async (id) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['tags'] })
+
+      // Snapshot the previous value
+      const previousTags = queryClient.getQueryData(['tags'])
+
+      // Optimistically remove the tag
+      queryClient.setQueryData(['tags'], (old: any) => {
+        if (!old || !Array.isArray(old)) return old
+        return old.filter((tag: Tag) => tag.id !== id)
+      })
+
+      return { previousTags }
+    },
+    onError: (err, id, context) => {
+      // Rollback on error
+      if (context?.previousTags) {
+        queryClient.setQueryData(['tags'], context.previousTags)
+      }
+    },
     onSuccess: () => {
-      // Invalidate all tags queries to refetch after delete
+      // Invalidate to get fresh data from server
       queryClient.invalidateQueries({ queryKey: ['tags'] })
     },
   })

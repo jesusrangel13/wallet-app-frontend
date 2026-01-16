@@ -4,12 +4,13 @@ import { useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { TrendingUp, TrendingDown, DollarSign } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
-import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { dashboardAPI } from '@/lib/api'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
+import { useCashFlow } from '@/hooks/useDashboard'
+import { CashFlowWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCurrency } from '@/components/ui/animations'
 
 interface CashFlowData {
   month: string
@@ -27,33 +28,16 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
   const t = useTranslations('widgets.cashFlow')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const { month, year } = useSelectedMonth()
-  const [data, setData] = useState<CashFlowData[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const res = await dashboardAPI.getCashFlow(6, { month, year })
-        setData(res.data.data)
-      } catch (error) {
-        console.error('Error fetching cash flow:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [month, year])
+  const { data, isLoading } = useCashFlow(6, { month, year })
 
   // Memoize expensive calculations - prevents recalculating on every render
   const statistics = useMemo(() => {
-    if (data.length === 0) {
+    if (!data || data.length === 0) {
       return { avgIncome: 0, avgExpense: 0, avgBalance: 0 }
     }
 
-    const avgIncome = data.reduce((sum, d) => sum + d.income, 0) / data.length
-    const avgExpense = data.reduce((sum, d) => sum + d.expense, 0) / data.length
+    const avgIncome = data.reduce((sum: number, d: CashFlowData) => sum + d.income, 0) / data.length
+    const avgExpense = data.reduce((sum: number, d: CashFlowData) => sum + d.expense, 0) / data.length
     const avgBalance = avgIncome - avgExpense
 
     return { avgIncome, avgExpense, avgBalance }
@@ -68,20 +52,8 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
     xAxisFontSize: dimensions.isSmall ? 8 : 10,
   }), [dimensions])
 
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            {t('name')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-64 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+  if (isLoading) {
+    return <CashFlowWidgetSkeleton />
   }
 
   const { avgIncome, avgExpense, avgBalance } = statistics
@@ -96,7 +68,7 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {data.length > 0 ? (
+        {data && data.length > 0 ? (
           <div className="space-y-3">
             {/* Summary cards - Responsive sizing */}
             <div className="grid grid-cols-3 gap-2">
@@ -106,7 +78,7 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
                   <p className={`${cardFontSize} text-green-700 font-medium`}>{t('averageIncome')}</p>
                 </div>
                 <p className={`${valueFontSize} font-bold text-green-900`}>
-                  {formatCurrency(avgIncome, 'CLP')}
+                  <AnimatedCurrency amount={avgIncome} currency="CLP" />
                 </p>
               </div>
               <div className={`bg-red-50 rounded-lg ${cardPadding} border border-red-100`}>
@@ -115,7 +87,7 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
                   <p className={`${cardFontSize} text-red-700 font-medium`}>{t('averageExpense')}</p>
                 </div>
                 <p className={`${valueFontSize} font-bold text-red-900`}>
-                  {formatCurrency(avgExpense, 'CLP')}
+                  <AnimatedCurrency amount={avgExpense} currency="CLP" />
                 </p>
               </div>
               <div className={`${avgBalance >= 0 ? 'bg-blue-50 border-blue-100' : 'bg-red-50 border-red-100'} rounded-lg ${cardPadding} border`}>
@@ -124,7 +96,7 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
                   <p className={`${cardFontSize} font-medium ${avgBalance >= 0 ? 'text-blue-700' : 'text-red-700'}`}>{t('netBalance')}</p>
                 </div>
                 <p className={`${valueFontSize} font-bold ${avgBalance >= 0 ? 'text-blue-900' : 'text-red-900'}`}>
-                  {formatCurrency(avgBalance, 'CLP')}
+                  <AnimatedCurrency amount={avgBalance} currency="CLP" />
                 </p>
               </div>
             </div>

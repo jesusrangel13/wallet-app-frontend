@@ -2,10 +2,11 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Users } from 'lucide-react'
-import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { userAPI } from '@/lib/api'
+import { useUserStats } from '@/hooks/useUser'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
+import { GroupsWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
+import { AnimatedCounter } from '@/components/ui/animations'
 
 interface GroupsWidgetProps {
   gridWidth?: number
@@ -16,41 +17,15 @@ export const GroupsWidget = ({ gridWidth = 1, gridHeight = 1 }: GroupsWidgetProp
   const t = useTranslations('widgets.groups')
   const dimensions = useWidgetDimensions(gridWidth, gridHeight)
   const fontSizes = getResponsiveFontSizes(dimensions)
-  const [groups, setGroups] = useState(0)
-  const [accounts, setAccounts] = useState(0)
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true)
-        const res = await userAPI.getStats()
-        setGroups(res.data.data.groups)
-        setAccounts(res.data.data.accounts)
-      } catch (error) {
-        console.error('Error fetching stats:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
+  // Use React Query hook for automatic caching and revalidation
+  const { data: stats, isLoading } = useUserStats()
 
-    fetchStats()
-  }, [])
+  const groups = stats?.groups || 0
+  const accounts = stats?.accounts || 0
 
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse h-8 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    )
+  if (isLoading) {
+    return <GroupsWidgetSkeleton />
   }
 
   return (
@@ -62,8 +37,12 @@ export const GroupsWidget = ({ gridWidth = 1, gridHeight = 1 }: GroupsWidgetProp
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={`${fontSizes.value} font-bold text-gray-900`}>{groups}</div>
-        <p className={`${fontSizes.label} text-gray-500 mt-1`}>{groups} {t('groupsCount')}, {accounts} {t('membersCount')}</p>
+        <div className={`${fontSizes.value} font-bold text-gray-900`}>
+          <AnimatedCounter value={groups} decimals={0} />
+        </div>
+        <p className={`${fontSizes.label} text-gray-500 mt-1`}>
+          <AnimatedCounter value={groups} decimals={0} /> {t('groupsCount')}, <AnimatedCounter value={accounts} decimals={0} /> {t('membersCount')}
+        </p>
       </CardContent>
     </Card>
   )

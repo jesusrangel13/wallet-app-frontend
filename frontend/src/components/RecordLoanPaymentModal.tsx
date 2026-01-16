@@ -23,7 +23,7 @@ export type RecordPaymentFormData = z.infer<typeof paymentSchema>
 interface RecordLoanPaymentModalProps {
   isOpen: boolean
   onClose: () => void
-  onSubmit: (data: RecordPaymentFormData) => Promise<void>
+  onSubmit: (data: RecordPaymentFormData) => void
   loan: Loan
   accounts: Account[]
 }
@@ -109,7 +109,7 @@ export default function RecordLoanPaymentModal({
     }
   }
 
-  const handleFormSubmit = async (data: RecordPaymentFormData) => {
+  const handleFormSubmit = (data: RecordPaymentFormData) => {
     // Validate amount doesn't exceed pending
     if (data.amount > pendingAmount) {
       return
@@ -117,7 +117,7 @@ export default function RecordLoanPaymentModal({
 
     setIsSaving(true)
     try {
-      await onSubmit(data)
+      onSubmit(data)
       handleClose()
     } finally {
       setIsSaving(false)
