@@ -524,7 +524,8 @@
     },
     "placeholders": {
       "name": "Nombre del grupo",
-      "description": "Descripción del grupo..."
+      "description": "Descripción del grupo...",
+      "memberEmail": "miembro@email.com"
     },
     "success": {
       "created": "Grupo creado exitosamente",

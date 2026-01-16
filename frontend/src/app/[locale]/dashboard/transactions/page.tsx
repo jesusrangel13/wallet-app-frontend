@@ -26,6 +26,8 @@ import { DateGroupHeader } from '@/components/DateGroupHeader'
 import { useAuthStore } from '@/store/authStore'
 import { GroupedVirtuoso } from 'react-virtuoso'
 import { TransactionsPageSkeleton } from '@/components/ui/PageSkeletons'
+import { LoadingBar } from '@/components/ui/LoadingBar'
+import { TransactionListSkeleton } from '@/components/ui/TransactionListSkeleton'
 
 const transactionSchema = z.object({
   accountId: z.string().min(1, 'Account is required'),
@@ -757,12 +759,17 @@ export default function TransactionsPage() {
     'July', 'August', 'September', 'October', 'November', 'December'
   ]
 
-  // Show skeleton during initial load OR when refreshing with no data yet
+  // Show full page skeleton only on initial load with no data
   if (isLoading || (isRefreshingList && transactions.length === 0)) {
     return <TransactionsPageSkeleton />
   }
+
   return (
-    <div className="space-y-6">
+    <>
+      {/* Top loading bar - Fintech style progress indicator */}
+      <LoadingBar isLoading={isRefreshingList} />
+
+      <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -982,7 +989,10 @@ export default function TransactionsPage() {
 
       {/* Transactions List - Grouped by Date */}
       <div className={`space-y-6 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} h-[calc(100vh-200px)]`}>
-        {transactions.length === 0 ? (
+        {/* Show partial skeleton when refreshing with existing data */}
+        {isRefreshingList && transactions.length > 0 ? (
+          <TransactionListSkeleton itemCount={5} />
+        ) : transactions.length === 0 ? (
           <Card>
             <CardContent>
               <p className="text-center text-gray-500 py-8">
@@ -1444,6 +1454,7 @@ export default function TransactionsPage() {
           </div>
         </div>
       </Modal>
-    </div>
+      </div>
+    </>
   )
 }
