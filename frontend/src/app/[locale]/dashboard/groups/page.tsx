@@ -18,6 +18,7 @@ import { LoadingPage, LoadingSpinner } from '@/components/ui/Loading'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { GroupsPageSkeleton } from '@/components/ui/PageSkeletons'
 import { useGroups, useCreateGroup, useUpdateGroup, useDeleteGroup, useLeaveGroup, useAddMember, useRemoveMember, useUpdateDefaultSplit } from '@/hooks/useGroups'
+import { PageTransition } from '@/components/ui/animations'
 
 const GROUP_COVER_IMAGES = [
   '🏠', '👨‍👩‍👧‍👦', '🎉', '✈️', '🏖️', '🎓', '💼', '🎮', '🍕', '🎬',
@@ -482,9 +483,10 @@ export default function GroupsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
+    <PageTransition>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
           <p className="text-gray-600 mt-1">{t('subtitle')}</p>
@@ -1352,6 +1354,7 @@ export default function GroupsPage() {
           </div>
         </Modal>
       )}
-    </div>
+      </div>
+    </PageTransition>
   )
 }

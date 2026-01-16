@@ -13,6 +13,7 @@ import RecordLoanPaymentModal from '@/components/RecordLoanPaymentModal'
 import { formatCurrency, type Currency } from '@/types/currency'
 import { ArrowLeft, HandCoins, Calendar, DollarSign, User, FileText } from 'lucide-react'
 import { useLoan, useRecordLoanPayment, useCancelLoan, useDeleteLoan } from '@/hooks/useLoans'
+import { PageTransition, AnimatedCurrency, AnimatedCounter } from '@/components/ui/animations'
 
 export default function LoanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -106,9 +107,10 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
   const progress = (loan.paidAmount / loan.originalAmount) * 100
 
   return (
-    <div className="space-y-6">
-      {/* Back Button */}
-      <button
+    <PageTransition>
+      <div className="space-y-6">
+        {/* Back Button */}
+        <button
         onClick={() => router.push('/dashboard/loans')}
         className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
       >
@@ -352,6 +354,7 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
           accounts={accounts}
         />
       )}
-    </div>
+      </div>
+    </PageTransition>
   )
 }

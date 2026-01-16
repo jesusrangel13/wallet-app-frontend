@@ -14,6 +14,7 @@ import { LoansPageSkeleton } from '@/components/ui/PageSkeletons'
 import { formatCurrency, type Currency } from '@/types/currency'
 import { HandCoins, Plus, Filter } from 'lucide-react'
 import { useLoans, useCreateLoan, useCancelLoan, useDeleteLoan } from '@/hooks/useLoans'
+import { PageTransition, AnimatedCurrency, AnimatedCounter } from '@/components/ui/animations'
 
 export default function LoansPage() {
   const router = useRouter()
@@ -125,9 +126,10 @@ export default function LoansPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
+    <PageTransition>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
             <HandCoins className="h-8 w-8 text-orange-600" />
@@ -147,7 +149,7 @@ export default function LoansPage() {
           <CardContent className="pt-6">
             <div className="text-sm text-gray-600 mb-1">Total Prestado</div>
             <div className="text-2xl font-bold text-gray-900">
-              {formatCurrency(stats.totalLent, (loans[0]?.currency as Currency) || 'CLP')}
+              <AnimatedCurrency amount={stats.totalLent} currency={(loans[0]?.currency as Currency) || 'CLP'} />
             </div>
           </CardContent>
         </Card>
@@ -155,7 +157,7 @@ export default function LoansPage() {
           <CardContent className="pt-6">
             <div className="text-sm text-gray-600 mb-1">Pendiente</div>
             <div className="text-2xl font-bold text-orange-600">
-              {formatCurrency(stats.totalPending, (loans[0]?.currency as Currency) || 'CLP')}
+              <AnimatedCurrency amount={stats.totalPending} currency={(loans[0]?.currency as Currency) || 'CLP'} />
             </div>
           </CardContent>
         </Card>
@@ -163,14 +165,14 @@ export default function LoansPage() {
           <CardContent className="pt-6">
             <div className="text-sm text-gray-600 mb-1">Recuperado</div>
             <div className="text-2xl font-bold text-green-600">
-              {formatCurrency(stats.totalRecovered, (loans[0]?.currency as Currency) || 'CLP')}
+              <AnimatedCurrency amount={stats.totalRecovered} currency={(loans[0]?.currency as Currency) || 'CLP'} />
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
             <div className="text-sm text-gray-600 mb-1">Préstamos Activos</div>
-            <div className="text-2xl font-bold text-blue-600">{stats.active}</div>
+            <div className="text-2xl font-bold text-blue-600"><AnimatedCounter value={stats.active} decimals={0} /></div>
           </CardContent>
         </Card>
       </div>
@@ -302,19 +304,19 @@ export default function LoansPage() {
                         <div>
                           <div className="text-xs text-gray-500">Original</div>
                           <div className="text-sm font-medium">
-                            {formatCurrency(loan.originalAmount, loan.currency as Currency)}
+                            <AnimatedCurrency amount={loan.originalAmount} currency={loan.currency as Currency} />
                           </div>
                         </div>
                         <div>
                           <div className="text-xs text-gray-500">Pagado</div>
                           <div className="text-sm font-medium text-green-600">
-                            {formatCurrency(loan.paidAmount, loan.currency as Currency)}
+                            <AnimatedCurrency amount={loan.paidAmount} currency={loan.currency as Currency} />
                           </div>
                         </div>
                         <div>
                           <div className="text-xs text-gray-500">Pendiente</div>
                           <div className="text-sm font-bold text-orange-600">
-                            {formatCurrency(pendingAmount, loan.currency as Currency)}
+                            <AnimatedCurrency amount={pendingAmount} currency={loan.currency as Currency} />
                           </div>
                         </div>
                       </div>
@@ -324,7 +326,7 @@ export default function LoansPage() {
                         <div className="mb-2">
                           <div className="flex justify-between text-xs text-gray-500 mb-1">
                             <span>Progreso</span>
-                            <span>{progress.toFixed(0)}%</span>
+                            <span><AnimatedCounter value={progress} decimals={0} />%</span>
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-2">
                             <div
@@ -396,6 +398,7 @@ export default function LoansPage() {
         onSubmit={handleCreateLoan}
         accounts={accounts}
       />
-    </div>
+      </div>
+    </PageTransition>
   )
 }

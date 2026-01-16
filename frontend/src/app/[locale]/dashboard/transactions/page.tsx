@@ -28,6 +28,7 @@ import { GroupedVirtuoso } from 'react-virtuoso'
 import { TransactionsPageSkeleton } from '@/components/ui/PageSkeletons'
 import { LoadingBar } from '@/components/ui/LoadingBar'
 import { TransactionListSkeleton } from '@/components/ui/TransactionListSkeleton'
+import { PageTransition } from '@/components/ui/animations'
 
 const transactionSchema = z.object({
   accountId: z.string().min(1, 'Account is required'),
@@ -769,7 +770,8 @@ export default function TransactionsPage() {
       {/* Top loading bar - Fintech style progress indicator */}
       <LoadingBar isLoading={isRefreshingList} />
 
-      <div className="space-y-6">
+      <PageTransition>
+        <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -1451,7 +1453,8 @@ export default function TransactionsPage() {
           </div>
         </div>
       </Modal>
-      </div>
+        </div>
+      </PageTransition>
     </>
   )
 }
