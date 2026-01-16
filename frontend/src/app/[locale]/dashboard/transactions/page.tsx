@@ -757,7 +757,8 @@ export default function TransactionsPage() {
     'July', 'August', 'September', 'October', 'November', 'December'
   ]
 
-  if (isLoading) {
+  // Show skeleton during initial load OR when refreshing with no data yet
+  if (isLoading || (isRefreshingList && transactions.length === 0)) {
     return <TransactionsPageSkeleton />
   }
   return (
