@@ -126,13 +126,17 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
   const unreadNotifications = notifications.filter(n => !n.isRead);
 
   return (
-    <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-[600px] flex flex-col">
+    <div
+      className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-[600px] flex flex-col"
+      role="menu"
+      aria-label={t('dropdown.title')}
+    >
       {/* Header */}
       <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between bg-gray-50 rounded-t-lg">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">{t('dropdown.title')}</h3>
+          <h3 id="notifications-title" className="text-lg font-semibold text-gray-900">{t('dropdown.title')}</h3>
           {unreadNotifications.length > 0 && (
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500" aria-live="polite">
               {t('dropdown.newCount', { count: unreadNotifications.length })}
             </p>
           )}
@@ -140,8 +144,11 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
 
         {unreadNotifications.length > 0 && (
           <button
+            type="button"
             onClick={handleMarkAllAsRead}
             disabled={markingAllRead}
+            aria-busy={markingAllRead}
+            aria-label={t('dropdown.markAll')}
             className="text-xs text-blue-600 hover:text-blue-700 font-medium disabled:opacity-50"
           >
             {markingAllRead ? t('dropdown.marking') : t('dropdown.markAll')}
@@ -150,14 +157,14 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
       </div>
 
       {/* Notifications List */}
-      <div className="overflow-y-auto flex-1">
+      <div className="overflow-y-auto flex-1" role="list" aria-labelledby="notifications-title">
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+          <div className="flex items-center justify-center py-12" role="status" aria-label="Loading notifications">
+            <Loader2 className="h-8 w-8 animate-spin text-blue-600" aria-hidden="true" />
           </div>
         ) : notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 px-4">
-            <Bell className="h-12 w-12 text-gray-300 mb-3" />
+            <Bell className="h-12 w-12 text-gray-300 mb-3" aria-hidden="true" />
             <p className="text-gray-500 text-center">{t('dropdown.empty')}</p>
           </div>
         ) : (
@@ -165,14 +172,17 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
             {notifications.map((notification) => (
               <button
                 key={notification.id}
+                type="button"
+                role="menuitem"
                 onClick={() => handleNotificationClick(notification)}
+                aria-label={`${notification.title}: ${notification.message}${!notification.isRead ? ' (unread)' : ''}`}
                 className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors ${
                   !notification.isRead ? 'bg-blue-50' : ''
                 }`}
               >
                 <div className="flex gap-3">
                   {/* Icon */}
-                  <div className="mt-0.5">
+                  <div className="mt-0.5" aria-hidden="true">
                     {getNotificationIcon(notification.type)}
                   </div>
 
@@ -183,7 +193,10 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
                         {notification.title}
                       </p>
                       {!notification.isRead && (
-                        <div className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0 mt-1.5" />
+                        <div
+                          className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0 mt-1.5"
+                          aria-label="Unread"
+                        />
                       )}
                     </div>
                     <p className="text-sm text-gray-600 mt-0.5 line-clamp-2">
@@ -207,6 +220,7 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
       {notifications.length > 0 && (
         <div className="px-4 py-3 border-t border-gray-200 bg-gray-50 rounded-b-lg">
           <button
+            type="button"
             onClick={onClose}
             className="w-full text-center text-sm text-blue-600 hover:text-blue-700 font-medium"
           >

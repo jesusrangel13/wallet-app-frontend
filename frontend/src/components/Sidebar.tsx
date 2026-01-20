@@ -68,11 +68,14 @@ export function Sidebar() {
     <>
       {/* Mobile Menu Button - Only visible on small screens */}
       <button
+        type="button"
         onClick={() => setMobileOpen(!isMobileOpen)}
         className="md:hidden fixed bottom-24 right-6 z-50 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors"
         aria-label={t('toggleMenu')}
+        aria-expanded={isMobileOpen}
+        aria-controls="sidebar-nav"
       >
-        {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        {isMobileOpen ? <X className="w-6 h-6" aria-hidden="true" /> : <Menu className="w-6 h-6" aria-hidden="true" />}
       </button>
 
       {/* Mobile Overlay - Only visible on small screens */}
@@ -80,11 +83,15 @@ export function Sidebar() {
         <div
           className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
           onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
         />
       )}
 
       {/* Sidebar */}
       <aside
+        id="sidebar-nav"
+        role="navigation"
+        aria-label={t('appName')}
         className={`
           fixed inset-y-0 left-0 z-40
           bg-white border-r border-gray-200
@@ -108,17 +115,19 @@ export function Sidebar() {
           {isCollapsed && <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm">💰</div>}
           {/* Desktop collapse button */}
           <button
+            type="button"
             onClick={toggleCollapse}
             className="hidden md:flex p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
             aria-label={t('toggleSidebar')}
+            aria-expanded={!isCollapsed}
             title={t('toggleSidebar')}
           >
-            <Menu className="w-5 h-5 text-gray-600" />
+            <Menu className="w-5 h-5 text-gray-600" aria-hidden="true" />
           </button>
         </div>
 
         {/* Navigation Items */}
-        <nav className="flex-1 px-2 py-4 space-y-2">
+        <nav className="flex-1 px-2 py-4 space-y-2" aria-label="Main navigation">
           {navItems.map((item) => (
             <div key={item.href}>
               {isCollapsed ? (
@@ -136,8 +145,10 @@ export function Sidebar() {
                       }
                     `}
                     title={item.label}
+                    aria-current={isActive(item.href) ? 'page' : undefined}
                   >
-                    {item.icon}
+                    <span aria-hidden="true">{item.icon}</span>
+                    <span className="sr-only">{item.label}</span>
                   </Link>
                 </Tooltip>
               ) : (
@@ -145,6 +156,7 @@ export function Sidebar() {
                   href={item.href}
                   prefetch={true}
                   onClick={() => setMobileOpen(false)}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
                   className={`
                     w-full flex items-center gap-3 px-4 py-3 rounded-lg
                     transition-colors duration-200 text-sm font-medium
@@ -154,7 +166,7 @@ export function Sidebar() {
                     }
                   `}
                 >
-                  <span className="flex-shrink-0">{item.icon}</span>
+                  <span className="flex-shrink-0" aria-hidden="true">{item.icon}</span>
                   <span className="flex-1 text-left">{item.label}</span>
                 </Link>
               )}
