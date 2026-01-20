@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useId, useCallback } from 'react'
 import { DayPicker } from 'react-day-picker'
 import { format, parseISO, isValid, addDays, subDays } from 'date-fns'
 import { Calendar as CalendarIcon, X } from 'lucide-react'
@@ -47,6 +47,25 @@ export function DateTimePicker({
 
   const dropdownRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const dropdownId = useId()
+  const labelId = useId()
+  const errorId = useId()
+
+  // Handle keyboard escape to close dropdown
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape' && isOpen) {
+      setIsOpen(false)
+      buttonRef.current?.focus()
+    }
+  }, [isOpen])
+
+  // Add keyboard listener
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown)
+      return () => document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isOpen, handleKeyDown])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -147,7 +166,7 @@ export function DateTimePicker({
   return (
     <div className={cn('w-full', className)}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+        <label id={labelId} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
       )}
 
       <div className="relative">
@@ -155,6 +174,11 @@ export function DateTimePicker({
           ref={buttonRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
+          aria-expanded={isOpen}
+          aria-haspopup="dialog"
+          aria-controls={isOpen ? dropdownId : undefined}
+          aria-labelledby={label ? labelId : undefined}
+          aria-describedby={error ? errorId : undefined}
           className={cn(
             'w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-left flex items-center justify-between',
             error ? 'border-red-500' : 'border-gray-300',
@@ -166,19 +190,26 @@ export function DateTimePicker({
             {formatDisplayValue()}
           </span>
           {selectedDate && (
-            <X
-              className="w-4 h-4 text-gray-400 hover:text-gray-600"
+            <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation()
                 handleClear()
               }}
-            />
+              aria-label="Clear date"
+              className="p-0.5 hover:bg-gray-100 rounded"
+            >
+              <X className="w-4 h-4 text-gray-400 hover:text-gray-600" aria-hidden="true" />
+            </button>
           )}
         </button>
 
         {isOpen && (
           <div
             ref={dropdownRef}
+            id={dropdownId}
+            role="dialog"
+            aria-label="Date picker"
             className="absolute z-50 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg p-3"
           >
             {/* Calendar */}
@@ -202,7 +233,7 @@ export function DateTimePicker({
             )}
 
             {/* Quick Select Buttons */}
-            <div className="border-t border-gray-200 pt-3 mt-3 flex gap-2 justify-center flex-wrap">
+            <div className="border-t border-gray-200 pt-3 mt-3 flex gap-2 justify-center flex-wrap" role="group" aria-label="Quick date selection">
               <button
                 type="button"
                 onClick={() => handleQuickSelect(0)}
@@ -236,7 +267,7 @@ export function DateTimePicker({
         )}
       </div>
 
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+      {error && <p id={errorId} className="mt-1 text-sm text-red-600" role="alert">{error}</p>}
 
       <style jsx global>{`
         .daypicker-custom {

@@ -6,18 +6,28 @@
 
 interface LoadingBarProps {
   isLoading: boolean
+  /** Accessible label for the loading bar */
+  label?: string
 }
 
-export const LoadingBar = ({ isLoading }: LoadingBarProps) => {
+export const LoadingBar = ({ isLoading, label = 'Loading content' }: LoadingBarProps) => {
   if (!isLoading) return null
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-gray-200">
+    <div
+      className="fixed top-0 left-0 right-0 z-50 h-1 bg-gray-200"
+      role="progressbar"
+      aria-label={label}
+      aria-busy="true"
+      aria-valuemin={0}
+      aria-valuemax={100}
+    >
       <div
         className="h-full bg-blue-600 animate-loading-bar"
         style={{
           animation: 'loading-bar 1.5s ease-in-out infinite',
         }}
+        aria-hidden="true"
       />
       <style jsx>{`
         @keyframes loading-bar {
