@@ -136,7 +136,7 @@ export default function CreateLoanModal({
             className={errors.borrowerName ? 'border-red-500' : ''}
           />
           {errors.borrowerName && (
-            <p className="text-red-500 text-xs mt-1">{errors.borrowerName.message}</p>
+            <p className="text-red-500 text-xs mt-1" role="alert">{errors.borrowerName.message}</p>
           )}
         </div>
 
@@ -166,7 +166,7 @@ export default function CreateLoanModal({
             )}
           </select>
           {errors.accountId && (
-            <p className="text-red-500 text-xs mt-1">{errors.accountId.message}</p>
+            <p className="text-red-500 text-xs mt-1" role="alert">{errors.accountId.message}</p>
           )}
         </div>
 
@@ -186,7 +186,7 @@ export default function CreateLoanModal({
             className={errors.amount ? 'border-red-500' : ''}
           />
           {errors.amount && (
-            <p className="text-red-500 text-xs mt-1">{errors.amount.message}</p>
+            <p className="text-red-500 text-xs mt-1" role="alert">{errors.amount.message}</p>
           )}
         </div>
 
@@ -202,7 +202,7 @@ export default function CreateLoanModal({
             className={errors.loanDate ? 'border-red-500' : ''}
           />
           {errors.loanDate && (
-            <p className="text-red-500 text-xs mt-1">{errors.loanDate.message}</p>
+            <p className="text-red-500 text-xs mt-1" role="alert">{errors.loanDate.message}</p>
           )}
         </div>
 
@@ -221,12 +221,12 @@ export default function CreateLoanModal({
             }`}
           />
           {errors.notes && (
-            <p className="text-red-500 text-xs mt-1">{errors.notes.message}</p>
+            <p className="text-red-500 text-xs mt-1" role="alert">{errors.notes.message}</p>
           )}
         </div>
 
         {/* Info Box */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800" role="note">
           <p className="font-medium mb-1">{t('infoTitle')}</p>
           <ul className="list-disc list-inside space-y-1 text-xs">
             <li>{t('infoPoint1')}</li>
@@ -236,8 +236,8 @@ export default function CreateLoanModal({
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3 pt-4 border-t">
-          <Button type="submit" className="flex-1" disabled={isSaving}>
+        <div className="flex gap-3 pt-4 border-t" role="group" aria-label="Form actions">
+          <Button type="submit" className="flex-1" disabled={isSaving} aria-busy={isSaving}>
             {isSaving ? t('creating') : t('createButton')}
           </Button>
           <Button type="button" variant="outline" onClick={handleClose} disabled={isSaving}>

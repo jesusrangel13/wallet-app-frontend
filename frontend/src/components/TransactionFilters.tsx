@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useId } from 'react'
 import { useTranslations } from 'next-intl'
 import { TransactionType, Account, MergedCategory } from '@/types'
 import { useCategoryTranslation } from '@/hooks/useCategoryTranslation'
@@ -36,6 +36,18 @@ export default function TransactionFiltersComponent({
   const translateCategory = useCategoryTranslation()
   const [isExpanded, setIsExpanded] = useState(false)
   const [searchInput, setSearchInput] = useState(filters.search)
+
+  // Accessibility IDs
+  const searchId = useId()
+  const typeFilterId = useId()
+  const sortFilterId = useId()
+  const accountFilterId = useId()
+  const categoryFilterId = useId()
+  const startDateId = useId()
+  const endDateId = useId()
+  const minAmountId = useId()
+  const maxAmountId = useId()
+  const filtersPanelId = useId()
 
   // Debounce search input - only trigger API call after 300ms of inactivity
   useEffect(() => {
@@ -85,14 +97,17 @@ export default function TransactionFiltersComponent({
   ].filter(Boolean).length
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" role="search" aria-label={t('searchPlaceholder')}>
       {/* Search Bar */}
       <div className="relative">
+        <label htmlFor={searchId} className="sr-only">{t('searchPlaceholder')}</label>
         <input
+          id={searchId}
           type="text"
           value={searchInput}
           onChange={(e) => handleChange('search', e.target.value)}
           placeholder={t('searchPlaceholder')}
+          aria-label={t('searchPlaceholder')}
           className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
         <svg
@@ -100,6 +115,7 @@ export default function TransactionFiltersComponent({
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -111,11 +127,14 @@ export default function TransactionFiltersComponent({
       </div>
 
       {/* Quick Filters & Sort */}
-      <div className="flex flex-wrap gap-2 items-center">
+      <div className="flex flex-wrap gap-2 items-center" role="group" aria-label={t('advancedFilters')}>
         {/* Type Filter */}
+        <label htmlFor={typeFilterId} className="sr-only">{t('allTypes')}</label>
         <select
+          id={typeFilterId}
           value={filters.type}
           onChange={(e) => handleChange('type', e.target.value)}
+          aria-label={t('allTypes')}
           className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="ALL">{t('allTypes')}</option>
@@ -125,13 +144,16 @@ export default function TransactionFiltersComponent({
         </select>
 
         {/* Sort */}
+        <label htmlFor={sortFilterId} className="sr-only">Sort by</label>
         <select
+          id={sortFilterId}
           value={`${filters.sortBy}-${filters.sortOrder}`}
           onChange={(e) => {
             const [sortBy, sortOrder] = e.target.value.split('-')
             handleChange('sortBy', sortBy)
             handleChange('sortOrder', sortOrder)
           }}
+          aria-label="Sort by"
           className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="date-desc">{t('newestFirst')}</option>
@@ -146,6 +168,9 @@ export default function TransactionFiltersComponent({
         <button
           type="button"
           onClick={() => setIsExpanded(!isExpanded)}
+          aria-expanded={isExpanded}
+          aria-controls={filtersPanelId}
+          aria-label={`${t('advancedFilters')}${activeFiltersCount > 0 ? `, ${activeFiltersCount} active` : ''}`}
           className={cn(
             'px-3 py-1.5 text-sm font-medium rounded-lg transition-colors flex items-center gap-2',
             isExpanded || activeFiltersCount > 0
@@ -153,7 +178,7 @@ export default function TransactionFiltersComponent({
               : 'bg-gray-100 text-gray-700 border-2 border-transparent hover:border-gray-300'
           )}
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -163,7 +188,7 @@ export default function TransactionFiltersComponent({
           </svg>
           {t('advancedFilters')}
           {activeFiltersCount > 0 && (
-            <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-blue-600 rounded-full">
+            <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-blue-600 rounded-full" aria-hidden="true">
               {activeFiltersCount}
             </span>
           )}
@@ -173,6 +198,7 @@ export default function TransactionFiltersComponent({
           <button
             type="button"
             onClick={clearFilters}
+            aria-label={t('clearAll')}
             className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900"
           >
             {t('clearAll')}
@@ -182,12 +208,18 @@ export default function TransactionFiltersComponent({
 
       {/* Advanced Filters Panel */}
       {isExpanded && (
-        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 space-y-4">
+        <div
+          id={filtersPanelId}
+          className="border border-gray-200 rounded-lg p-4 bg-gray-50 space-y-4"
+          role="region"
+          aria-label={t('advancedFilters')}
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Account Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('account')}</label>
+              <label htmlFor={accountFilterId} className="block text-sm font-medium text-gray-700 mb-1">{t('account')}</label>
               <select
+                id={accountFilterId}
                 value={filters.accountId}
                 onChange={(e) => handleChange('accountId', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -203,8 +235,9 @@ export default function TransactionFiltersComponent({
 
             {/* Category Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('category')}</label>
+              <label htmlFor={categoryFilterId} className="block text-sm font-medium text-gray-700 mb-1">{t('category')}</label>
               <select
+                id={categoryFilterId}
                 value={filters.categoryId}
                 onChange={(e) => handleChange('categoryId', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -227,8 +260,9 @@ export default function TransactionFiltersComponent({
 
             {/* Date Range */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('startDate')}</label>
+              <label htmlFor={startDateId} className="block text-sm font-medium text-gray-700 mb-1">{t('startDate')}</label>
               <input
+                id={startDateId}
                 type="date"
                 value={filters.startDate}
                 onChange={(e) => handleChange('startDate', e.target.value)}
@@ -237,8 +271,9 @@ export default function TransactionFiltersComponent({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('endDate')}</label>
+              <label htmlFor={endDateId} className="block text-sm font-medium text-gray-700 mb-1">{t('endDate')}</label>
               <input
+                id={endDateId}
                 type="date"
                 value={filters.endDate}
                 onChange={(e) => handleChange('endDate', e.target.value)}
@@ -248,8 +283,9 @@ export default function TransactionFiltersComponent({
 
             {/* Amount Range */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('minAmount')}</label>
+              <label htmlFor={minAmountId} className="block text-sm font-medium text-gray-700 mb-1">{t('minAmount')}</label>
               <input
+                id={minAmountId}
                 type="number"
                 step="0.01"
                 value={filters.minAmount}
@@ -260,8 +296,9 @@ export default function TransactionFiltersComponent({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('maxAmount')}</label>
+              <label htmlFor={maxAmountId} className="block text-sm font-medium text-gray-700 mb-1">{t('maxAmount')}</label>
               <input
+                id={maxAmountId}
                 type="number"
                 step="0.01"
                 value={filters.maxAmount}
