@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useId } from 'react'
 import { useTranslations } from 'next-intl'
 import { getAllWidgets, type WidgetDefinition } from '@/config/widgets'
 import { useDashboardStore } from '@/store/dashboardStore'
@@ -18,6 +18,8 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
   const t = useTranslations('widgets')
   const { widgets, setPreferences } = useDashboardStore()
   const [searchInput, setSearchInput] = useState('')
+  const searchId = useId()
+  const categoryGroupId = useId()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -89,9 +91,11 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
       <div className="space-y-4 max-w-2xl">
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <label htmlFor={searchId} className="sr-only">{t('selector.searchPlaceholder')}</label>
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
           <input
-            type="text"
+            id={searchId}
+            type="search"
             placeholder={t('selector.searchPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -101,10 +105,12 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
 
         {/* Category Filter */}
         <div className="bg-gray-50 p-4 rounded-lg">
-          <p className="text-sm font-semibold text-gray-700 mb-3">{t('selector.categoriesLabel')}</p>
-          <div className="flex gap-2 flex-wrap">
+          <p id={categoryGroupId} className="text-sm font-semibold text-gray-700 mb-3">{t('selector.categoriesLabel')}</p>
+          <div className="flex gap-2 flex-wrap" role="group" aria-labelledby={categoryGroupId}>
             <button
+              type="button"
               onClick={() => setSelectedCategory(null)}
+              aria-pressed={selectedCategory === null}
               className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${selectedCategory === null
                 ? 'bg-blue-600 text-white'
                 : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
@@ -114,8 +120,10 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
             </button>
             {categories.map((category) => (
               <button
+                type="button"
                 key={category}
                 onClick={() => setSelectedCategory(category)}
+                aria-pressed={selectedCategory === category}
                 className={`px-3 py-1 rounded-full text-sm font-medium transition-colors capitalize ${selectedCategory === category
                   ? 'bg-blue-600 text-white'
                   : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
@@ -128,15 +136,18 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
         </div>
 
         {/* Widget List */}
-        <div className="max-h-[60vh] overflow-y-auto">
+        <div className="max-h-[60vh] overflow-y-auto" role="region" aria-label="Available widgets" aria-busy={isLoading}>
           {filteredWidgets.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4" role="list">
               {filteredWidgets.map((widget) => (
                 <button
+                  type="button"
                   key={widget.id}
                   onClick={() => handleAddWidget(widget)}
                   disabled={isLoading}
+                  aria-label={`Add ${widget.name} widget`}
                   className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-left group disabled:opacity-50"
+                  role="listitem"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-semibold text-gray-900 group-hover:text-blue-700">
@@ -159,7 +170,7 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
               ))}
             </div>
           ) : (
-            <div className="flex items-center justify-center h-64 text-center">
+            <div className="flex items-center justify-center h-64 text-center" role="status">
               <div>
                 <p className="text-gray-500 text-lg font-medium">{t('selector.noWidgetsFound')}</p>
                 <p className="text-gray-400 text-sm mt-2">
