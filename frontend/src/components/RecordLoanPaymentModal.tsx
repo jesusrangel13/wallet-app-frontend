@@ -139,7 +139,7 @@ export default function RecordLoanPaymentModal({
     <Modal isOpen={isOpen} onClose={handleClose} title={t('title')}>
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
         {/* Loan Info */}
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-1">
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-1" role="region" aria-label={t('borrower')}>
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">{t('borrower')}:</span>
             <span className="font-medium">{loan.borrowerName}</span>
@@ -180,7 +180,7 @@ export default function RecordLoanPaymentModal({
               )) || []}
           </select>
           {errors.accountId && (
-            <p className="text-red-500 text-xs mt-1">{errors.accountId.message}</p>
+            <p className="text-red-500 text-xs mt-1" role="alert">{errors.accountId.message}</p>
           )}
         </div>
 
@@ -209,10 +209,10 @@ export default function RecordLoanPaymentModal({
             className={errors.amount || selectedAmount > pendingAmount ? 'border-red-500' : ''}
           />
           {errors.amount && (
-            <p className="text-red-500 text-xs mt-1">{errors.amount.message}</p>
+            <p className="text-red-500 text-xs mt-1" role="alert">{errors.amount.message}</p>
           )}
           {selectedAmount > pendingAmount && (
-            <p className="text-red-500 text-xs mt-1">
+            <p className="text-red-500 text-xs mt-1" role="alert">
               {t('paymentExceedsError', { amount: formatCurrency(pendingAmount, loan.currency as Currency) })}
             </p>
           )}
@@ -230,7 +230,7 @@ export default function RecordLoanPaymentModal({
             className={errors.paymentDate ? 'border-red-500' : ''}
           />
           {errors.paymentDate && (
-            <p className="text-red-500 text-xs mt-1">{errors.paymentDate.message}</p>
+            <p className="text-red-500 text-xs mt-1" role="alert">{errors.paymentDate.message}</p>
           )}
         </div>
 
@@ -249,7 +249,7 @@ export default function RecordLoanPaymentModal({
             }`}
           />
           {errors.notes && (
-            <p className="text-red-500 text-xs mt-1">{errors.notes.message}</p>
+            <p className="text-red-500 text-xs mt-1" role="alert">{errors.notes.message}</p>
           )}
         </div>
 
