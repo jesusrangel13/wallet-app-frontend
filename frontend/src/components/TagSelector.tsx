@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useId } from 'react'
 import { Tag } from '@/types'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -41,6 +41,12 @@ export default function TagSelector({
   const [newTagInput, setNewTagInput] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Accessibility IDs
+  const labelId = useId()
+  const listboxId = useId()
+  const errorId = useId()
+  const selectedTagsId = useId()
 
   // Debounce search input - only trigger filtering after 300ms of inactivity
   useEffect(() => {
@@ -146,29 +152,35 @@ export default function TagSelector({
     return (
       <div className="w-full">
         <label className="block text-sm font-medium text-gray-700 mb-1">{displayLabel}</label>
-        <div className="animate-pulse bg-gray-200 h-12 rounded-lg"></div>
+        <div className="animate-pulse bg-gray-200 h-12 rounded-lg" role="status" aria-label="Loading tags"></div>
       </div>
     )
   }
 
   return (
     <div className="w-full space-y-2">
-      <label className="block text-sm font-medium text-gray-700 mb-1">{displayLabel}</label>
+      <label id={labelId} className="block text-sm font-medium text-gray-700 mb-1">{displayLabel}</label>
 
       {/* Selected Tags Display */}
-      <div className="min-h-[44px] p-2 border rounded-lg bg-gray-50 flex flex-wrap gap-2 items-center">
+      <div
+        id={selectedTagsId}
+        className="min-h-[44px] p-2 border rounded-lg bg-gray-50 flex flex-wrap gap-2 items-center"
+        role="list"
+        aria-label={`${selectedTags.length} selected tags`}
+      >
         {selectedTags.length === 0 && (
           <span className="text-sm text-gray-400 px-2">{t('noTagsSelected')}</span>
         )}
         {selectedTags.map((tag, index) => (
           <span
             key={tag.id}
+            role="listitem"
             className={cn(
               'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border transition-all',
               getTagColor(index)
             )}
           >
-            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
               <path
                 fillRule="evenodd"
                 d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z"
@@ -179,9 +191,10 @@ export default function TagSelector({
             <button
               type="button"
               onClick={() => handleToggleTag(tag.id)}
+              aria-label={`Remove tag ${tag.name}`}
               className="ml-1 hover:bg-white/50 rounded-full p-0.5 transition-colors"
             >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -198,6 +211,10 @@ export default function TagSelector({
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
+        aria-expanded={isExpanded}
+        aria-haspopup="listbox"
+        aria-controls={isExpanded ? listboxId : undefined}
+        aria-describedby={error ? errorId : undefined}
         className={cn(
           'w-full px-4 py-2 border rounded-lg text-sm font-medium transition-colors flex items-center justify-between',
           'hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500',
@@ -213,6 +230,7 @@ export default function TagSelector({
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
@@ -220,7 +238,13 @@ export default function TagSelector({
 
       {/* Available Tags Grid */}
       {isExpanded && (
-        <div className="border border-gray-200 rounded-lg p-3 bg-white shadow-lg space-y-3">
+        <div
+          id={listboxId}
+          role="listbox"
+          aria-label="Available tags"
+          aria-multiselectable="true"
+          className="border border-gray-200 rounded-lg p-3 bg-white shadow-lg space-y-3"
+        >
           {/* Create New Tag Input */}
           <div className="flex gap-2">
             <div className="relative flex-1">
@@ -231,6 +255,7 @@ export default function TagSelector({
                 onChange={(e) => setNewTagInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={t('searchPlaceholder')}
+                aria-label="Search or create tag"
                 className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <svg
@@ -238,6 +263,7 @@ export default function TagSelector({
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -252,6 +278,7 @@ export default function TagSelector({
                 type="button"
                 onClick={handleCreateTag}
                 disabled={createTagMutation.isPending}
+                aria-busy={createTagMutation.isPending}
                 className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {createTagMutation.isPending ? t('creating') : `${t('create')} "${newTagInput.trim()}"`}
@@ -270,6 +297,9 @@ export default function TagSelector({
                   <button
                     key={tag.id}
                     type="button"
+                    role="option"
+                    aria-selected="false"
+                    aria-label={`Add tag ${tag.name}`}
                     onClick={() => handleToggleTag(tag.id)}
                     className={cn(
                       'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all',
@@ -277,7 +307,7 @@ export default function TagSelector({
                       getTagColor(selectedTags.length + index)
                     )}
                   >
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path
                         fillRule="evenodd"
                         d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z"
@@ -285,7 +315,7 @@ export default function TagSelector({
                       />
                     </svg>
                     {tag.name}
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -314,7 +344,7 @@ export default function TagSelector({
         </div>
       )}
 
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p id={errorId} className="text-red-500 text-sm mt-1" role="alert">{error}</p>}
     </div>
   )
 }

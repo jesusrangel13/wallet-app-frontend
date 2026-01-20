@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useId } from 'react'
 import { MergedCategory, TransactionType } from '@/types'
 import { useMergedCategories } from '@/hooks/useCategories'
 import { useCategoryTranslation } from '@/hooks/useCategoryTranslation'
@@ -29,6 +29,9 @@ export default function CategorySelector({
   const [selectedMainCategory, setSelectedMainCategory] = useState<string>('')
   const [isExpanded, setIsExpanded] = useState(false)
   const t = useTranslations('transactions.category')
+  const labelId = useId()
+  const listboxId = useId()
+  const errorId = useId()
 
   // Find a category by ID in the nested structure
   const findCategoryById = (cats: MergedCategory[], id: string): MergedCategory | null => {
@@ -78,10 +81,10 @@ export default function CategorySelector({
         {label && (
           <label className="block text-sm font-medium text-gray-700 mb-1">
             {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
+            {required && <span className="text-red-500 ml-1" aria-hidden="true">*</span>}
           </label>
         )}
-        <div className="animate-pulse bg-gray-200 h-12 rounded-lg"></div>
+        <div className="animate-pulse bg-gray-200 h-12 rounded-lg" role="status" aria-label="Loading categories"></div>
       </div>
     )
   }
@@ -89,9 +92,9 @@ export default function CategorySelector({
   return (
     <div className="w-full space-y-2">
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label id={labelId} className="block text-sm font-medium text-gray-700 mb-1">
           {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className="text-red-500 ml-1" aria-hidden="true">*</span>}
         </label>
       )}
 
@@ -99,6 +102,11 @@ export default function CategorySelector({
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
+        aria-expanded={isExpanded}
+        aria-haspopup="listbox"
+        aria-controls={isExpanded ? listboxId : undefined}
+        aria-labelledby={label ? labelId : undefined}
+        aria-describedby={error ? errorId : undefined}
         className={cn(
           'w-full px-4 py-3 border rounded-lg text-left flex items-center justify-between transition-colors',
           'hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500',
@@ -131,6 +139,7 @@ export default function CategorySelector({
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
@@ -138,40 +147,52 @@ export default function CategorySelector({
 
       {/* Category Grid - Expanded View */}
       {isExpanded && (
-        <div className="border border-gray-200 rounded-lg p-3 bg-white shadow-lg">
+        <div
+          id={listboxId}
+          role="listbox"
+          aria-label={label || 'Category selection'}
+          className="border border-gray-200 rounded-lg p-3 bg-white shadow-lg"
+        >
           {/* Main Categories Grid */}
           {!selectedMainCategory && (
             <div className="grid grid-cols-3 gap-2">
-              {mainCategories.map((category) => (
-                <button
-                  key={category.id}
-                  type="button"
-                  onClick={() => handleMainCategoryClick(category.id)}
-                  className={cn(
-                    'flex flex-col items-center gap-2 p-3 rounded-lg transition-all',
-                    'hover:shadow-md border-2',
-                    value === category.id
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-transparent hover:border-gray-300'
-                  )}
-                  style={{
-                    backgroundColor: value === category.id ? undefined : (category.color || '#3b82f6') + '10',
-                  }}
-                >
-                  <span className="text-2xl">{category.icon || '📁'}</span>
-                  <span className="text-xs font-medium text-gray-700 text-center leading-tight">
-                    {translateCategory(category)}
-                  </span>
-                  {category.subcategories && category.subcategories.length > 0 && (
-                    <span className="text-xs text-gray-500">→</span>
-                  )}
-                  {category.source !== 'TEMPLATE' && (
-                    <span className="text-xs text-gray-500">
-                      {category.source === 'CUSTOM' ? '✨' : '✏️'}
+              {mainCategories.map((category) => {
+                const hasSubcategories = category.subcategories && category.subcategories.length > 0
+                const categoryName = translateCategory(category)
+                return (
+                  <button
+                    key={category.id}
+                    type="button"
+                    role="option"
+                    aria-selected={value === category.id}
+                    aria-label={`${categoryName}${hasSubcategories ? ', has subcategories' : ''}`}
+                    onClick={() => handleMainCategoryClick(category.id)}
+                    className={cn(
+                      'flex flex-col items-center gap-2 p-3 rounded-lg transition-all',
+                      'hover:shadow-md border-2',
+                      value === category.id
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-transparent hover:border-gray-300'
+                    )}
+                    style={{
+                      backgroundColor: value === category.id ? undefined : (category.color || '#3b82f6') + '10',
+                    }}
+                  >
+                    <span className="text-2xl" aria-hidden="true">{category.icon || '📁'}</span>
+                    <span className="text-xs font-medium text-gray-700 text-center leading-tight">
+                      {categoryName}
                     </span>
-                  )}
-                </button>
-              ))}
+                    {hasSubcategories && (
+                      <span className="text-xs text-gray-500" aria-hidden="true">→</span>
+                    )}
+                    {category.source !== 'TEMPLATE' && (
+                      <span className="text-xs text-gray-500" aria-hidden="true">
+                        {category.source === 'CUSTOM' ? '✨' : '✏️'}
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
             </div>
           )}
 
@@ -182,9 +203,10 @@ export default function CategorySelector({
               <button
                 type="button"
                 onClick={() => setSelectedMainCategory('')}
+                aria-label={t('backToCategories')}
                 className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -200,6 +222,7 @@ export default function CategorySelector({
                 <span
                   className="flex items-center justify-center w-8 h-8 rounded-lg text-lg"
                   style={{ backgroundColor: (selectedMainCategoryData.color || '#3b82f6') + '20' }}
+                  aria-hidden="true"
                 >
                   {selectedMainCategoryData.icon || '📁'}
                 </span>
@@ -207,35 +230,41 @@ export default function CategorySelector({
               </div>
 
               {/* Subcategories Grid */}
-              <div className="grid grid-cols-3 gap-2">
-                {selectedMainCategoryData.subcategories.map((subcategory) => (
-                  <button
-                    key={subcategory.id}
-                    type="button"
-                    onClick={() => handleSubcategoryClick(subcategory.id)}
-                    className={cn(
-                      'flex flex-col items-center gap-2 p-3 rounded-lg transition-all',
-                      'hover:shadow-md border-2',
-                      value === subcategory.id
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-transparent hover:border-gray-300'
-                    )}
-                    style={{
-                      backgroundColor:
-                        value === subcategory.id ? undefined : (subcategory.color || '#3b82f6') + '10',
-                    }}
-                  >
-                    <span className="text-2xl">{subcategory.icon || '📁'}</span>
-                    <span className="text-xs font-medium text-gray-700 text-center leading-tight">
-                      {translateCategory(subcategory)}
-                    </span>
-                    {subcategory.source !== 'TEMPLATE' && (
-                      <span className="text-xs text-gray-500">
-                        {subcategory.source === 'CUSTOM' ? '✨' : '✏️'}
+              <div className="grid grid-cols-3 gap-2" role="group" aria-label={`Subcategories of ${translateCategory(selectedMainCategoryData)}`}>
+                {selectedMainCategoryData.subcategories.map((subcategory) => {
+                  const subcategoryName = translateCategory(subcategory)
+                  return (
+                    <button
+                      key={subcategory.id}
+                      type="button"
+                      role="option"
+                      aria-selected={value === subcategory.id}
+                      aria-label={subcategoryName}
+                      onClick={() => handleSubcategoryClick(subcategory.id)}
+                      className={cn(
+                        'flex flex-col items-center gap-2 p-3 rounded-lg transition-all',
+                        'hover:shadow-md border-2',
+                        value === subcategory.id
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-transparent hover:border-gray-300'
+                      )}
+                      style={{
+                        backgroundColor:
+                          value === subcategory.id ? undefined : (subcategory.color || '#3b82f6') + '10',
+                      }}
+                    >
+                      <span className="text-2xl" aria-hidden="true">{subcategory.icon || '📁'}</span>
+                      <span className="text-xs font-medium text-gray-700 text-center leading-tight">
+                        {subcategoryName}
                       </span>
-                    )}
-                  </button>
-                ))}
+                      {subcategory.source !== 'TEMPLATE' && (
+                        <span className="text-xs text-gray-500" aria-hidden="true">
+                          {subcategory.source === 'CUSTOM' ? '✨' : '✏️'}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
               </div>
             </div>
           )}
@@ -248,7 +277,7 @@ export default function CategorySelector({
         </div>
       )}
 
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p id={errorId} className="text-red-500 text-sm mt-1" role="alert">{error}</p>}
     </div>
   )
 }
