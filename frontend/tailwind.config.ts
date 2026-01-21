@@ -6,6 +6,7 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -17,6 +18,7 @@ const config: Config = {
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
+          hover: 'hsl(var(--primary-hover))',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -42,11 +44,40 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // Colores semánticos financieros
+        income: {
+          DEFAULT: 'hsl(var(--income))',
+          light: 'hsl(var(--income-light))',
+        },
+        expense: {
+          DEFAULT: 'hsl(var(--expense))',
+          light: 'hsl(var(--expense-light))',
+        },
+        transfer: {
+          DEFAULT: 'hsl(var(--transfer))',
+          light: 'hsl(var(--transfer-light))',
+        },
+        // Acentos premium
+        gold: 'hsl(var(--accent-gold))',
+        purple: 'hsl(var(--accent-purple))',
+        // Superficies
+        surface: {
+          elevated: 'hsl(var(--surface-elevated))',
+          sunken: 'hsl(var(--surface-sunken))',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+        xl: 'calc(var(--radius) + 4px)',
+        '2xl': 'calc(var(--radius) + 8px)',
+      },
+      boxShadow: {
+        'sm': 'var(--shadow-sm)',
+        'md': 'var(--shadow-md)',
+        'lg': 'var(--shadow-lg)',
+        'glow': 'var(--shadow-glow)',
       },
     },
   },

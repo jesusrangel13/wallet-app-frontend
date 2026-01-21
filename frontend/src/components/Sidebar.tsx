@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { Menu, X, Home, CreditCard, TrendingUp, Users, Upload, Settings, HandCoins } from 'lucide-react'
 import { useEffect, useState, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 interface NavItem {
   labelKey: string
@@ -70,7 +71,7 @@ export function Sidebar() {
       <button
         type="button"
         onClick={() => setMobileOpen(!isMobileOpen)}
-        className="md:hidden fixed bottom-24 right-6 z-50 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+        className="md:hidden fixed bottom-24 right-6 z-50 p-3 bg-primary text-white rounded-full shadow-lg hover:bg-primary-hover transition-colors"
         aria-label={t('toggleMenu')}
         aria-expanded={isMobileOpen}
         aria-controls="sidebar-nav"
@@ -94,7 +95,7 @@ export function Sidebar() {
         aria-label={t('appName')}
         className={`
           fixed inset-y-0 left-0 z-40
-          bg-white border-r border-gray-200
+          bg-white dark:bg-card border-r border-gray-200 dark:border-gray-700
           transition-all duration-300 ease-in-out
           h-screen overflow-y-auto
           ${isCollapsed ? 'md:w-16' : 'md:w-64'}
@@ -103,26 +104,26 @@ export function Sidebar() {
         `}
       >
         {/* Header */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
           {!isCollapsed && (
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">
                 💰
               </div>
-              <span className="font-bold text-gray-900">{t('appName')}</span>
+              <span className="font-bold text-gray-900 dark:text-white">{t('appName')}</span>
             </div>
           )}
-          {isCollapsed && <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm">💰</div>}
+          {isCollapsed && <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white text-sm">💰</div>}
           {/* Desktop collapse button */}
           <button
             type="button"
             onClick={toggleCollapse}
-            className="hidden md:flex p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+            className="hidden md:flex p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             aria-label={t('toggleSidebar')}
             aria-expanded={!isCollapsed}
             title={t('toggleSidebar')}
           >
-            <Menu className="w-5 h-5 text-gray-600" aria-hidden="true" />
+            <Menu className="w-5 h-5 text-gray-600 dark:text-gray-300" aria-hidden="true" />
           </button>
         </div>
 
@@ -140,8 +141,8 @@ export function Sidebar() {
                       w-full flex items-center justify-center p-3 rounded-lg
                       transition-colors duration-200
                       ${isActive(item.href)
-                        ? 'bg-blue-100 text-blue-600'
-                        : 'text-gray-600 hover:bg-gray-100'
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                       }
                     `}
                     title={item.label}
@@ -161,8 +162,8 @@ export function Sidebar() {
                     w-full flex items-center gap-3 px-4 py-3 rounded-lg
                     transition-colors duration-200 text-sm font-medium
                     ${isActive(item.href)
-                      ? 'bg-blue-100 text-blue-600'
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                     }
                   `}
                 >
@@ -174,12 +175,19 @@ export function Sidebar() {
           ))}
         </nav>
 
-        {/* Footer - Only visible when expanded */}
-        {!isCollapsed && (
-          <div className="border-t border-gray-200 p-4 text-xs text-gray-500 text-center">
-            <p>{t('version')}</p>
-          </div>
-        )}
+        {/* Footer with Theme Toggle */}
+        <div className="border-t border-gray-200 dark:border-gray-700 p-4">
+          {!isCollapsed ? (
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t('version')}</p>
+              <ThemeToggle size="sm" />
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <ThemeToggle size="sm" />
+            </div>
+          )}
+        </div>
       </aside>
 
     </>

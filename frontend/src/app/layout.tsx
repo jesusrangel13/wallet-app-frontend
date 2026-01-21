@@ -8,15 +8,15 @@ export default function RootLayout({
   return (
     <>
       <NextTopLoader
-        color="#2563eb" // blue-600
+        color="#1A9B8E" // Primary teal color
         initialPosition={0.08}
         crawlSpeed={200}
-        height={4} // h-1 equivalent
+        height={4}
         crawl={true}
         showSpinner={false}
         easing="ease"
         speed={200}
-        shadow="0 0 10px #2563eb,0 0 5px #2563eb"
+        shadow="0 0 10px #1A9B8E,0 0 5px #1A9B8E"
       />
       {children}
     </>
