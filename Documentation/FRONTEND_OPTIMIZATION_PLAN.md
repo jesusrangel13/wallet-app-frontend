@@ -67,9 +67,17 @@
   - Aumentado cache TTL de imágenes a 24h
 - **Documentación**: Ver [OPT-9_IMPLEMENTATION_SUMMARY.md](OPT-9_IMPLEMENTATION_SUMMARY.md)
 
-### [OPT-10] Persistencia de Estado Segura
+### [OPT-10] Persistencia de Estado Segura ✅ COMPLETADO
 - **Problema**: `dashboardStore` guarda todo el layout en `localStorage`. Si crece mucho, puede bloquear el hilo principal al iniciar (JSON.parse).
-- **Solución**: Verificar tamaño y usar `partialize` (ya implementado, pero revisar qué campos exactos se guardan) o migrar a `IndexedDB` si escala. *Nota: Revisión actual indica que está aceptable, mantener bajo vigilancia.*
+- **Solución**: Verificar tamaño y usar `partialize` (ya implementado, pero revisar qué campos exactos se guardan) o migrar a `IndexedDB` si escala.
+- **Implementación (21/01/2026)**:
+  - Creada utilidad `lib/storage.ts` con validación de tamaño y manejo de errores
+  - Todos los stores usan `safeStorage` compatible con Zustand
+  - Agregado `partialize` a `authStore` para excluir `isAuthenticated`
+  - Centralizados todos los accesos a localStorage (api-client, useDashboard, layout)
+  - Sistema de migraciones preparado para cambios futuros de esquema
+  - Debug de storage en desarrollo (logStorageStatus)
+- **Documentación**: Ver [OPT-10_IMPLEMENTATION_SUMMARY.md](OPT-10_IMPLEMENTATION_SUMMARY.md)
 
 ---
 **Plan de Ejecución Sugerido:**
@@ -92,4 +100,4 @@
 | OPT-7 | Accesibilidad A11y | ✅ Completado | - |
 | OPT-8 | Lazy Loading & Bundle Splitting | ✅ Completado | - |
 | OPT-9 | Fuentes e Imágenes | ✅ Completado | 21/01/2026 |
-| OPT-10 | Persistencia de Estado | ⏸️ Bajo vigilancia | - |
+| OPT-10 | Persistencia de Estado | ✅ Completado | 21/01/2026 |
