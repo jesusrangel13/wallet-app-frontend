@@ -12,6 +12,18 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
 
+  // OPT-8: Bundle splitting optimizations
+  // Optimize imports for heavy libraries to enable better tree-shaking
+  // This tells Next.js to only import the specific exports used, not the entire library
+  experimental: {
+    optimizePackageImports: [
+      'recharts',           // ~200KB - Chart library used in widgets
+      'lucide-react',       // Icon library - only import used icons
+      'date-fns',           // Date utilities - only import used functions
+      'framer-motion',      // Animation library
+    ],
+  },
+
   // Configuración de imágenes (si usas next/image)
   images: {
     // Support for remote images (avatars, etc.)
