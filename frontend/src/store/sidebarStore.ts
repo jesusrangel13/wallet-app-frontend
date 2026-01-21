@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { safeStorage } from '@/lib/storage'
 
 interface SidebarState {
   isCollapsed: boolean
@@ -22,6 +23,7 @@ export const useSidebarStore = create<SidebarState>()(
     }),
     {
       name: 'sidebar-storage',
+      storage: safeStorage,
       partialize: (state) => ({ isCollapsed: state.isCollapsed }),
     }
   )

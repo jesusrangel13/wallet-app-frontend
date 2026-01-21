@@ -3,6 +3,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { WidgetConfig, GridLayoutItem } from '@/types/dashboard'
+import { safeStorage } from '@/lib/storage'
 
 export interface DashboardPreference {
   id: string
@@ -175,6 +176,7 @@ export const useDashboardStore = create<DashboardState>()(
     }),
     {
       name: 'dashboard-store',
+      storage: safeStorage,
       partialize: (state) => ({
         preferences: state.preferences,
         widgets: state.widgets,
