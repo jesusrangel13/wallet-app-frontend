@@ -22,8 +22,22 @@ import { z } from 'zod'
 import { DateGroupHeader } from '@/components/DateGroupHeader'
 import TransactionFormModal from '@/components/TransactionFormModal'
 import { exportToCSV, exportToJSON, exportToExcel } from '@/lib/exportTransactions'
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { SharedExpenseIndicator } from '@/components/SharedExpenseIndicator'
+import dynamic from 'next/dynamic'
+
+// Lazy load the chart component to reduce initial bundle size
+// recharts adds ~200KB to the bundle
+const LazyBalanceChart = dynamic(
+  () => import('@/components/charts/AccountBalanceChart').then(mod => ({ default: mod.AccountBalanceChart })),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    ),
+    ssr: false,
+  }
+)
 
 // Account schema for editing
 const accountSchema = z.object({
@@ -610,77 +624,12 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                 <LoadingSpinner />
               </div>
             ) : balanceHistory && balanceHistory.history.length > 0 ? (
-              <div className="relative">
-                {/* Comparison Badge - Top Right */}
-                <div className="absolute top-0 right-8 z-10 bg-white border border-gray-200 rounded-lg shadow-sm px-4 py-2">
-                  <div className="flex items-center gap-3">
-                    <div>
-                      <p className="text-xs text-gray-500">vs periodo anterior</p>
-                      <p className="text-sm font-medium text-gray-700">
-                        {formatCurrency(balanceHistory.previousMonthBalance, account.currency as Currency)}
-                      </p>
-                    </div>
-                    <div className={`flex items-center gap-1 ${balanceHistory.percentageChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {balanceHistory.percentageChange >= 0 ? '↗' : '↘'}
-                      <span className="text-lg font-semibold">
-                        {balanceHistory.percentageChange >= 0 ? '+' : ''}{balanceHistory.percentageChange.toFixed(2)}%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <ResponsiveContainer width="100%" height={400}>
-                  <AreaChart
-                    data={filteredBalanceData}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                  >
-                    <defs>
-                      <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="date"
-                      tickFormatter={(value) => {
-                        const date = new Date(value)
-                        return `${date.getDate()}/${date.getMonth() + 1}`
-                      }}
-                    />
-                    <YAxis
-                      width={80}
-                      tickFormatter={(value) => {
-                        // Format to shorter display (K for thousands, M for millions)
-                        const absValue = Math.abs(value)
-                        if (absValue >= 1000000) {
-                          return `${account.currency === 'CLP' ? '$' : ''}${(value / 1000000).toFixed(1)}M`
-                        } else if (absValue >= 1000) {
-                          return `${account.currency === 'CLP' ? '$' : ''}${(value / 1000).toFixed(0)}K`
-                        }
-                        return formatCurrency(value, account.currency as Currency)
-                      }}
-                      tick={{ fontSize: 12 }}
-                    />
-                    <Tooltip
-                      formatter={(value: number) => formatCurrency(value, account.currency as Currency)}
-                      labelFormatter={(label) => {
-                        const date = new Date(label)
-                        return date.toLocaleDateString()
-                      }}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="balance"
-                      stroke="#3b82f6"
-                      strokeWidth={2}
-                      fillOpacity={1}
-                      fill="url(#colorBalance)"
-                      connectNulls={false}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
+              <LazyBalanceChart
+                data={filteredBalanceData}
+                currency={account.currency as Currency}
+                previousMonthBalance={balanceHistory.previousMonthBalance}
+                percentageChange={balanceHistory.percentageChange}
+              />
             ) : (
               <div className="text-center py-12 text-gray-500">
                 No data available for this month
