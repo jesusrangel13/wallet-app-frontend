@@ -1,5 +1,7 @@
 {
   "title": "Préstamos",
+  "subtitle": "Gestiona tus préstamos personales",
+  "new": "Nuevo Préstamo",
   "noLoans": "No hay préstamos",
   "addLoan": "Registrar Préstamo",
   "status": {

@@ -1,5 +1,7 @@
 {
   "title": "Loans",
+  "subtitle": "Manage your personal loans",
+  "new": "New Loan",
   "noLoans": "No loans",
   "addLoan": "Register Loan",
   "status": {

@@ -60,7 +60,8 @@ export default getRequestConfig(async ({ locale }) => {
     import(`./messages/${validLocale}/deleteAccount.json`),
     import(`./messages/${validLocale}/recordPayment.json`),
     import(`./messages/${validLocale}/filters.json`),
-    import(`./messages/${validLocale}/pagination.json`)
+    import(`./messages/${validLocale}/pagination.json`),
+    import(`./messages/${validLocale}/voice.json`)
   ]);
 
   return {
@@ -88,7 +89,8 @@ export default getRequestConfig(async ({ locale }) => {
       deleteAccount: deleteAccount.default,
       recordPayment: recordPayment.default,
       filters: filters.default,
-      pagination: pagination.default
+      pagination: pagination.default,
+      voice: (await import(`./messages/${validLocale}/voice.json`)).default
     }
   };
 });

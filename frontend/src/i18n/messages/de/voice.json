@@ -1,0 +1,38 @@
+{
+    "title": "Confirm Transaction",
+    "originalText": "Original Text",
+    "labels": {
+        "date": "Date",
+        "account": "Account",
+        "amount": "Amount",
+        "currency": "Currency",
+        "merchant": "Merchant (Payee)",
+        "description": "Description (Item)",
+        "category": "Category",
+        "group": "Select Group",
+        "tags": "Tags"
+    },
+    "placeholders": {
+        "selectAccount": "Select Account",
+        "merchant": "Where/Who?",
+        "description": "What?",
+        "selectCategory": "Select Category",
+        "searchTags": "Search tags..."
+    },
+    "groups": {
+        "markAsShared": "Mark as Shared Expense",
+        "aiSuggested": "AI Suggested: {name}",
+        "personalExpense": "Personal Expense (No Group)",
+        "manualSelection": "Manual Selection"
+    },
+    "tags": {
+        "noTagsFound": "No tags found"
+    },
+    "buttons": {
+        "cancel": "Cancel",
+        "save": "Save Transaction"
+    },
+    "errors": {
+        "requiredFields": "Please fill required fields (Amount and Merchant/Category)"
+    }
+}

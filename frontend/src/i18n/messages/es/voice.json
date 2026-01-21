@@ -1,0 +1,38 @@
+{
+    "title": "Confirmar Transacción",
+    "originalText": "Texto Original",
+    "labels": {
+        "date": "Fecha",
+        "account": "Cuenta",
+        "amount": "Monto",
+        "currency": "Moneda",
+        "merchant": "Comercio (Beneficiario)",
+        "description": "Descripción (Item)",
+        "category": "Categoría",
+        "group": "Seleccionar Grupo",
+        "tags": "Etiquetas"
+    },
+    "placeholders": {
+        "selectAccount": "Seleccionar Cuenta",
+        "merchant": "¿Dónde/Quién?",
+        "description": "¿Qué?",
+        "selectCategory": "Seleccionar Categoría",
+        "searchTags": "Buscar etiquetas..."
+    },
+    "groups": {
+        "markAsShared": "Marcar como Gasto Compartido",
+        "aiSuggested": "Sugerido por IA: {name}",
+        "personalExpense": "Gasto Personal (Sin Grupo)",
+        "manualSelection": "Selección Manual"
+    },
+    "tags": {
+        "noTagsFound": "No se encontraron etiquetas"
+    },
+    "buttons": {
+        "cancel": "Cancelar",
+        "save": "Guardar Transacción"
+    },
+    "errors": {
+        "requiredFields": "Por favor complete los campos requeridos (Monto y Comercio/Categoría)"
+    }
+}
