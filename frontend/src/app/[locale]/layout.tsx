@@ -10,7 +10,17 @@ import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import '../globals.css'
 import '@/styles/dashboard-grid.css'
 
-const inter = Inter({ subsets: ['latin'] })
+// OPT-9: Optimized font loading configuration
+// - display: 'swap' ensures text is visible immediately with fallback font
+// - preload: true (default) ensures font is preloaded for faster LCP
+// - variable: CSS variable for flexible font usage
+// - fallback: explicit fallback fonts for better CLS
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+})
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
@@ -61,7 +71,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
-      <body className={inter.className} suppressHydrationWarning>
+      <body className={`${inter.variable} ${inter.className}`} suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <ErrorBoundary>

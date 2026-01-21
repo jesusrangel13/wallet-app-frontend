@@ -57,15 +57,21 @@ export const NotificationBell = () => {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-        aria-label={t('bell.ariaLabel')}
+        aria-label={`${t('bell.ariaLabel')}${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
+        aria-expanded={isOpen}
+        aria-haspopup="menu"
       >
-        <Bell className="h-6 w-6" />
+        <Bell className="h-6 w-6" aria-hidden="true" />
 
         {/* Badge with count */}
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-red-500 rounded-full animate-pulse">
+          <span
+            className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-red-500 rounded-full animate-pulse"
+            aria-hidden="true"
+          >
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}

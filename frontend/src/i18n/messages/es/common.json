@@ -53,7 +53,10 @@
     "navigation": {
       "previousMonth": "Mes anterior",
       "nextMonth": "Mes siguiente",
-      "currentMonth": "Ir al mes actual"
+      "currentMonth": "Ir al mes actual",
+      "selectMonth": "Seleccionar mes",
+      "monthSelector": "Selector de mes",
+      "selectYear": "Seleccionar año"
     }
   },
   "skipToContent": "Saltar al contenido principal",

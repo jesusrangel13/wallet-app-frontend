@@ -9,6 +9,7 @@ import { DashboardLayoutContent } from '@/components/DashboardLayoutContent'
 
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { VoiceButton } from '@/components/voice/VoiceButton'
+import { safeGetItem } from '@/lib/storage'
 
 export default function DashboardLayout({
   children,
@@ -22,7 +23,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     // Wait for zustand persist to rehydrate
-    const token = localStorage.getItem('token')
+    const token = safeGetItem('token')
     if (!token && !isAuthenticated) {
       router.push('/login')
     }
@@ -31,7 +32,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      const token = localStorage.getItem('token')
+      const token = safeGetItem('token')
       if (!token) {
         router.push('/login')
       }

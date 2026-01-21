@@ -225,14 +225,16 @@ export default function TransactionFormModal({
     <Modal isOpen={isOpen} onClose={handleClose} title={getModalTitle()}>
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
         {/* Transaction Type - Tabs */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t('fields.type')} <span className="text-red-500">*</span>
-          </label>
-          <div className="grid grid-cols-3 gap-2 bg-gray-100 p-1 rounded-lg">
+        <fieldset>
+          <legend className="block text-sm font-medium text-gray-700 mb-2">
+            {t('fields.type')} <span className="text-red-500" aria-hidden="true">*</span>
+          </legend>
+          <div className="grid grid-cols-3 gap-2 bg-gray-100 p-1 rounded-lg" role="radiogroup" aria-label={t('fields.type')}>
             <button
               type="button"
               onClick={() => setValue('type', 'EXPENSE')}
+              role="radio"
+              aria-checked={selectedType === 'EXPENSE'}
               className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${
                 selectedType === 'EXPENSE'
                   ? 'bg-red-500 text-white shadow-md'
@@ -240,7 +242,7 @@ export default function TransactionFormModal({
               }`}
             >
               <div className="flex flex-col items-center gap-1">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
                 <span>{t('types.expense')}</span>
@@ -249,6 +251,8 @@ export default function TransactionFormModal({
             <button
               type="button"
               onClick={() => setValue('type', 'INCOME')}
+              role="radio"
+              aria-checked={selectedType === 'INCOME'}
               className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${
                 selectedType === 'INCOME'
                   ? 'bg-green-500 text-white shadow-md'
@@ -256,7 +260,7 @@ export default function TransactionFormModal({
               }`}
             >
               <div className="flex flex-col items-center gap-1">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
                 </svg>
                 <span>{t('types.income')}</span>
@@ -265,6 +269,8 @@ export default function TransactionFormModal({
             <button
               type="button"
               onClick={() => setValue('type', 'TRANSFER')}
+              role="radio"
+              aria-checked={selectedType === 'TRANSFER'}
               className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${
                 selectedType === 'TRANSFER'
                   ? 'bg-blue-400 text-white shadow-md'
@@ -272,15 +278,15 @@ export default function TransactionFormModal({
               }`}
             >
               <div className="flex flex-col items-center gap-1">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                 </svg>
                 <span>{t('types.transfer')}</span>
               </div>
             </button>
           </div>
-          {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>}
-        </div>
+          {errors.type && <p className="text-red-500 text-sm mt-1" role="alert">{errors.type.message}</p>}
+        </fieldset>
 
         {/* Account */}
         {mode !== 'import' && (
@@ -300,7 +306,7 @@ export default function TransactionFormModal({
               ))}
             </select>
             {errors.accountId && (
-              <p className="text-red-500 text-sm mt-1">{errors.accountId.message}</p>
+              <p className="text-red-500 text-sm mt-1" role="alert">{errors.accountId.message}</p>
             )}
           </div>
         )}
@@ -323,7 +329,7 @@ export default function TransactionFormModal({
               ))}
             </select>
             {errors.toAccountId && (
-              <p className="text-red-500 text-sm mt-1">{errors.toAccountId.message}</p>
+              <p className="text-red-500 text-sm mt-1" role="alert">{errors.toAccountId.message}</p>
             )}
           </div>
         )}
@@ -357,7 +363,7 @@ export default function TransactionFormModal({
               required
             />
           </div>
-          {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount.message}</p>}
+          {errors.amount && <p className="text-red-500 text-sm mt-1" role="alert">{errors.amount.message}</p>}
         </div>
 
         {/* AI Suggested Category (only in import mode) */}
@@ -398,7 +404,7 @@ export default function TransactionFormModal({
             placeholder={t('placeholders.description')}
           />
           {errors.description && (
-            <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+            <p className="text-red-500 text-sm mt-1" role="alert">{errors.description.message}</p>
           )}
         </div>
 

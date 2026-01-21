@@ -1,8 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import type { ApiResponse } from '@/types'
+import { safeGetItem } from '@/lib/storage'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
+
+// Helper to get auth headers consistently
+function getAuthHeaders() {
+  const token = safeGetItem('token')
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
 
 interface DashboardSummary {
   cashFlow: any
@@ -21,14 +28,9 @@ export function useDashboardSummary() {
   return useQuery({
     queryKey: ['dashboard-summary'],
     queryFn: async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
       const response = await axios.get<ApiResponse<DashboardSummary>>(
         `${API_URL}/dashboard/summary`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: getAuthHeaders() }
       )
       return response.data.data
     },
@@ -44,15 +46,9 @@ export function useBalanceHistory(days: number = 30) {
   return useQuery({
     queryKey: ['balance-history', days],
     queryFn: async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
       const response = await axios.get(
         `${API_URL}/dashboard/balance-history`,
-        {
-          params: { days },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { params: { days }, headers: getAuthHeaders() }
       )
       return response.data.data
     },
@@ -67,15 +63,9 @@ export function useGroupBalances(params?: { month?: number; year?: number }) {
   return useQuery({
     queryKey: ['group-balances', params],
     queryFn: async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
       const response = await axios.get(
         `${API_URL}/dashboard/group-balances`,
-        {
-          params,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { params, headers: getAuthHeaders() }
       )
       return response.data.data
     },
@@ -90,14 +80,9 @@ export function useAccountBalances() {
   return useQuery({
     queryKey: ['account-balances'],
     queryFn: async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
       const response = await axios.get(
         `${API_URL}/dashboard/account-balances`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: getAuthHeaders() }
       )
       return response.data.data
     },
@@ -112,15 +97,9 @@ export function useExpensesByCategory(params?: { month?: number; year?: number }
   return useQuery({
     queryKey: ['expenses-by-category', params],
     queryFn: async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
       const response = await axios.get(
         `${API_URL}/dashboard/expenses-by-category`,
-        {
-          params,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { params, headers: getAuthHeaders() }
       )
       return response.data.data
     },
@@ -135,15 +114,9 @@ export function useExpensesByParentCategory(params?: { month?: number; year?: nu
   return useQuery({
     queryKey: ['expenses-by-parent-category', params],
     queryFn: async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
       const response = await axios.get(
         `${API_URL}/dashboard/expenses-by-parent-category`,
-        {
-          params,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { params, headers: getAuthHeaders() }
       )
       return response.data.data
     },
@@ -158,15 +131,9 @@ export function useCashFlow(months?: number, params?: { month?: number; year?: n
   return useQuery({
     queryKey: ['cash-flow', months, params],
     queryFn: async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
       const response = await axios.get(
         `${API_URL}/dashboard/cashflow`,
-        {
-          params: { months, ...(params || {}) },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { params: { months, ...(params || {}) }, headers: getAuthHeaders() }
       )
       return response.data.data
     },
@@ -181,15 +148,9 @@ export function usePersonalExpenses(params?: { month?: number; year?: number }) 
   return useQuery({
     queryKey: ['personal-expenses', params],
     queryFn: async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
       const response = await axios.get(
         `${API_URL}/dashboard/personal-expenses`,
-        {
-          params,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { params, headers: getAuthHeaders() }
       )
       return response.data.data
     },
@@ -204,15 +165,9 @@ export function useSharedExpensesTotal(params?: { month?: number; year?: number 
   return useQuery({
     queryKey: ['shared-expenses-total', params],
     queryFn: async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
       const response = await axios.get(
         `${API_URL}/dashboard/shared-expenses`,
-        {
-          params,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { params, headers: getAuthHeaders() }
       )
       return response.data.data
     },
@@ -227,15 +182,9 @@ export function useMonthlySavings(params?: { month?: number; year?: number }) {
   return useQuery({
     queryKey: ['monthly-savings', params],
     queryFn: async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
       const response = await axios.get(
         `${API_URL}/dashboard/savings`,
-        {
-          params,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { params, headers: getAuthHeaders() }
       )
       return response.data.data
     },
@@ -250,15 +199,9 @@ export function useExpensesByTag(params?: { month?: number; year?: number }) {
   return useQuery({
     queryKey: ['expenses-by-tag', params],
     queryFn: async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
       const response = await axios.get(
         `${API_URL}/dashboard/expenses-by-tag`,
-        {
-          params,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { params, headers: getAuthHeaders() }
       )
       return response.data.data
     },
@@ -273,15 +216,9 @@ export function useTopTags(params?: { month?: number; year?: number; limit?: num
   return useQuery({
     queryKey: ['top-tags', params],
     queryFn: async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
       const response = await axios.get(
         `${API_URL}/dashboard/top-tags`,
-        {
-          params,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { params, headers: getAuthHeaders() }
       )
       return response.data.data
     },
@@ -296,17 +233,11 @@ export function useTagTrend(months?: number, tagIds?: string[]) {
   return useQuery({
     queryKey: ['tag-trend', months, tagIds],
     queryFn: async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
       const response = await axios.get(
         `${API_URL}/dashboard/tag-trend`,
         {
-          params: {
-            months,
-            ...(tagIds && tagIds.length > 0 ? { tagIds } : {})
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          params: { months, ...(tagIds && tagIds.length > 0 ? { tagIds } : {}) },
+          headers: getAuthHeaders(),
         }
       )
       return response.data.data

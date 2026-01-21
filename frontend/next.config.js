@@ -12,22 +12,75 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
 
-  // Configuración de imágenes (si usas next/image)
+  // OPT-8: Bundle splitting optimizations
+  // Optimize imports for heavy libraries to enable better tree-shaking
+  // This tells Next.js to only import the specific exports used, not the entire library
+  experimental: {
+    optimizePackageImports: [
+      'recharts',           // ~200KB - Chart library used in widgets
+      'lucide-react',       // Icon library - only import used icons
+      'date-fns',           // Date utilities - only import used functions
+      'framer-motion',      // Animation library
+    ],
+  },
+
+  // OPT-9: Configuración segura de imágenes remotas
+  // Restricted to specific trusted domains for security (avoid '**' wildcard)
   images: {
-    // Support for remote images (avatars, etc.)
     remotePatterns: [
+      // Google OAuth avatars (Google accounts profile pictures)
       {
         protocol: 'https',
-        hostname: '**', // Allow all HTTPS domains for user avatars
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/**',
+      },
+      // Gravatar (common avatar service)
+      {
+        protocol: 'https',
+        hostname: 'gravatar.com',
+        pathname: '/avatar/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'secure.gravatar.com',
+        pathname: '/avatar/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.gravatar.com',
+        pathname: '/avatar/**',
+      },
+      // UI Avatars (generated avatars service)
+      {
+        protocol: 'https',
+        hostname: 'ui-avatars.com',
+        pathname: '/api/**',
+      },
+      // Cloudinary (if used for image hosting)
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
+      // AWS S3 (if used for file uploads)
+      {
+        protocol: 'https',
+        hostname: '*.s3.amazonaws.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.s3.*.amazonaws.com',
+        pathname: '/**',
       },
     ],
     // Modern formats for better compression
     formats: ['image/avif', 'image/webp'],
-    // Responsive image sizes
+    // Responsive image sizes optimized for avatars and UI elements
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    // Quality settings
-    minimumCacheTTL: 60,
+    // Cache optimization
+    minimumCacheTTL: 60 * 60 * 24, // 24 hours cache for avatars
   },
 
   // Headers de seguridad

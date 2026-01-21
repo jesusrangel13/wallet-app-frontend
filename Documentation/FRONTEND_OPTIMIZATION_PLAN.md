@@ -56,17 +56,48 @@
 
 ## Prioridad 4: Baja (Limpieza & Mantenimiento)
 
-### [OPT-9] Optimización de Fuentes e Imágenes
+### [OPT-9] Optimización de Fuentes e Imágenes ✅ COMPLETADO
 - **Problema**: Configuración `remotePatterns` en `next.config.js` es insegura (`**`).
 - **Solución**: Restringir dominios de imágenes permitidos y verificar preloading de fuentes `next/font`.
 - **Mejora**: Seguridad y leve mejora en LCP.
+- **Implementación (21/01/2026)**:
+  - Restringido `remotePatterns` a dominios confiables (Google, Gravatar, UI Avatars, Cloudinary, S3)
+  - Optimizada configuración de fuentes con `display: 'swap'`, `variable`, y `fallback`
+  - Mejorado componente `Image` con `sizes` y `object-cover`
+  - Aumentado cache TTL de imágenes a 24h
+- **Documentación**: Ver [OPT-9_IMPLEMENTATION_SUMMARY.md](OPT-9_IMPLEMENTATION_SUMMARY.md)
 
-### [OPT-10] Persistencia de Estado Segura
+### [OPT-10] Persistencia de Estado Segura ✅ COMPLETADO
 - **Problema**: `dashboardStore` guarda todo el layout en `localStorage`. Si crece mucho, puede bloquear el hilo principal al iniciar (JSON.parse).
-- **Solución**: Verificar tamaño y usar `partialize` (ya implementado, pero revisar qué campos exactos se guardan) o migrar a `IndexedDB` si escala. *Nota: Revisión actual indica que está aceptable, mantener bajo vigilancia.*
+- **Solución**: Verificar tamaño y usar `partialize` (ya implementado, pero revisar qué campos exactos se guardan) o migrar a `IndexedDB` si escala.
+- **Implementación (21/01/2026)**:
+  - Creada utilidad `lib/storage.ts` con validación de tamaño y manejo de errores
+  - Todos los stores usan `safeStorage` compatible con Zustand
+  - Agregado `partialize` a `authStore` para excluir `isAuthenticated`
+  - Centralizados todos los accesos a localStorage (api-client, useDashboard, layout)
+  - Sistema de migraciones preparado para cambios futuros de esquema
+  - Debug de storage en desarrollo (logStorageStatus)
+- **Documentación**: Ver [OPT-10_IMPLEMENTATION_SUMMARY.md](OPT-10_IMPLEMENTATION_SUMMARY.md)
 
 ---
 **Plan de Ejecución Sugerido:**
-1.  **Fase 1 (Sólida)**: OPT-1, OPT-2, OPT-3
-2.  **Fase 2 (Rápida)**: OPT-4, OPT-5, OPT-6
-3.  **Fase 3 (Pulida)**: OPT-7, OPT-8
+1.  **Fase 1 (Sólida)**: OPT-1 ✅, OPT-2 ✅, OPT-3 ✅
+2.  **Fase 2 (Rápida)**: OPT-4 ✅, OPT-5 ✅, OPT-6 ✅
+3.  **Fase 3 (Pulida)**: OPT-7 ✅, OPT-8 ✅
+4.  **Fase 4 (Limpieza)**: OPT-9 ✅, OPT-10 (pendiente/bajo vigilancia)
+
+---
+## Estado de Implementación
+
+| OPT | Nombre | Estado | Fecha |
+|-----|--------|--------|-------|
+| OPT-1 | Estandarización de Data Fetching | ✅ Completado | - |
+| OPT-2 | Granular Error Boundaries | ✅ Completado | - |
+| OPT-3 | Modularización de API | ✅ Completado | - |
+| OPT-4 | Optimistic Updates | ✅ Completado | - |
+| OPT-5 | Skeletons True-to-Life | ✅ Completado | - |
+| OPT-6 | Micro-interacciones | ✅ Completado | - |
+| OPT-7 | Accesibilidad A11y | ✅ Completado | - |
+| OPT-8 | Lazy Loading & Bundle Splitting | ✅ Completado | - |
+| OPT-9 | Fuentes e Imágenes | ✅ Completado | 21/01/2026 |
+| OPT-10 | Persistencia de Estado | ✅ Completado | 21/01/2026 |

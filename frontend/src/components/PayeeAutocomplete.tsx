@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useId } from 'react'
 import { cn } from '@/lib/utils'
 import { usePayees } from '@/hooks/usePayees'
 
@@ -24,6 +24,11 @@ export default function PayeeAutocomplete({
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined)
   const inputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Accessibility IDs
+  const inputId = useId()
+  const listboxId = useId()
+  const errorId = useId()
 
   // Debounce search
   useEffect(() => {
@@ -108,13 +113,21 @@ export default function PayeeAutocomplete({
   return (
     <div className="relative w-full">
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+        <label htmlFor={inputId} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
       )}
 
       <div className="relative">
         <input
           ref={inputRef}
+          id={inputId}
           type="text"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded={showSuggestions && filteredPayees.length > 0}
+          aria-controls={listboxId}
+          aria-haspopup="listbox"
+          aria-invalid={error ? 'true' : undefined}
+          aria-describedby={error ? errorId : undefined}
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
@@ -128,12 +141,13 @@ export default function PayeeAutocomplete({
 
         {/* Loading indicator */}
         {isLoading && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+          <div className="absolute right-3 top-1/2 -translate-y-1/2" role="status" aria-label="Loading suggestions">
             <svg
               className="animate-spin h-4 w-4 text-gray-400"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <circle
                 className="opacity-25"
@@ -157,16 +171,21 @@ export default function PayeeAutocomplete({
       {showSuggestions && filteredPayees.length > 0 && (
         <div
           ref={dropdownRef}
+          id={listboxId}
+          role="listbox"
+          aria-label="Recent payees"
           className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
         >
           <div className="p-2">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider px-2 py-1">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider px-2 py-1" aria-hidden="true">
               Recent Payees
             </p>
             {filteredPayees.map((payee, index) => (
               <button
                 key={`${payee}-${index}`}
                 type="button"
+                role="option"
+                aria-selected={inputValue.toLowerCase() === payee.toLowerCase()}
                 onClick={() => handleSelectPayee(payee)}
                 className="w-full text-left px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-700 transition-colors flex items-center gap-2"
               >
@@ -175,6 +194,7 @@ export default function PayeeAutocomplete({
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -194,6 +214,8 @@ export default function PayeeAutocomplete({
       {showSuggestions && inputValue.trim().length > 0 && filteredPayees.length === 0 && !isLoading && (
         <div
           ref={dropdownRef}
+          role="status"
+          aria-live="polite"
           className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3"
         >
           <p className="text-sm text-gray-500 italic text-center">
@@ -202,7 +224,7 @@ export default function PayeeAutocomplete({
         </div>
       )}
 
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p id={errorId} className="text-red-500 text-sm mt-1" role="alert">{error}</p>}
     </div>
   )
 }

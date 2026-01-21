@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { User } from '@/types'
 import type { Locale } from '@/i18n/config'
+import { safeStorage, safeSetItem, safeRemoveItem } from '@/lib/storage'
 
 interface AuthState {
   user: User | null
@@ -23,18 +24,15 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
 
       setAuth: (user, token) => {
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('token', token)
-        }
+        // Store token separately for API access
+        safeSetItem('token', token)
         // Set locale from user data if available
         const userLocale = (user.language as Locale) || 'es'
         set({ user, token, locale: userLocale, isAuthenticated: true })
       },
 
       clearAuth: () => {
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('token')
-        }
+        safeRemoveItem('token')
         set({ user: null, token: null, isAuthenticated: false })
       },
 
@@ -49,6 +47,13 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
+      storage: safeStorage,
+      // Only persist essential data, exclude isAuthenticated (derived from token)
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+        locale: state.locale,
+      }),
     }
   )
 )

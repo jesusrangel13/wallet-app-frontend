@@ -14,7 +14,7 @@ import { MonthSelector } from '@/components/MonthSelector'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { PageTransition } from '@/components/ui/animations'
 
-// Import all widgets - using direct imports to avoid Next.js barrel export bundler issue
+// Import light widgets directly - these don't use heavy libraries
 import { TotalBalanceWidget } from '@/components/widgets/TotalBalanceWidget'
 import { MonthlyIncomeWidget } from '@/components/widgets/MonthlyIncomeWidget'
 import { MonthlyExpensesWidget } from '@/components/widgets/MonthlyExpensesWidget'
@@ -24,22 +24,20 @@ import { SavingsWidget } from '@/components/widgets/SavingsWidget'
 import { GroupsWidget } from '@/components/widgets/GroupsWidget'
 import { LoansWidget } from '@/components/widgets/LoansWidget'
 import { QuickActionsWidget } from '@/components/widgets/QuickActionsWidget'
-import { CashFlowWidget } from '@/components/widgets/CashFlowWidget'
-import { ExpensesByCategoryWidget } from '@/components/widgets/ExpensesByCategoryWidget'
-import { ExpensesByParentCategoryWidget } from '@/components/widgets/ExpensesByParentCategoryWidget'
-import { ExpenseDetailsPieWidget } from '@/components/widgets/ExpenseDetailsPieWidget'
-import { BalanceTrendWidget } from '@/components/widgets/BalanceTrendWidget'
 import { GroupBalancesWidget } from '@/components/widgets/GroupBalancesWidget'
 import { AccountBalancesWidget } from '@/components/widgets/AccountBalancesWidget'
 import { RecentTransactionsWidget } from '@/components/widgets/RecentTransactionsWidget'
 import { BalancesWidget } from '@/components/BalancesWidget'
 import { FixedAccountBalancesWidget } from '@/components/FixedAccountBalancesWidget'
-import { ExpensesByTagWidget } from '@/components/widgets/ExpensesByTagWidget'
 import { TopTagsWidget } from '@/components/widgets/TopTagsWidget'
-import { TagTrendWidget } from '@/components/widgets/TagTrendWidget'
 
-// Widget component map
+// Import lazy-loaded chart widgets - these use recharts (~200KB)
+// They are loaded on-demand to reduce initial bundle size
+import { LazyChartWidgets } from '@/lib/lazyWidgets'
+
+// Widget component map - uses lazy-loaded versions for chart widgets
 const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
+  // Light widgets (direct imports - no heavy dependencies)
   'total-balance': TotalBalanceWidget,
   'monthly-income': MonthlyIncomeWidget,
   'monthly-expenses': MonthlyExpensesWidget,
@@ -50,17 +48,18 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
   'loans': LoansWidget,
   'quick-actions': QuickActionsWidget,
   'balances': BalancesWidget,
-  'cash-flow': CashFlowWidget,
-  'expenses-by-category': ExpensesByCategoryWidget,
-  'expenses-by-parent-category': ExpensesByParentCategoryWidget,
-  'expense-details-pie': ExpenseDetailsPieWidget,
-  'balance-trend': BalanceTrendWidget,
   'group-balances': GroupBalancesWidget,
   'account-balances': AccountBalancesWidget,
   'recent-transactions': RecentTransactionsWidget,
-  'expenses-by-tag': ExpensesByTagWidget,
   'top-tags': TopTagsWidget,
-  'tag-trend': TagTrendWidget,
+  // Chart widgets (lazy-loaded - uses recharts ~200KB)
+  'cash-flow': LazyChartWidgets.CashFlowWidget,
+  'expenses-by-category': LazyChartWidgets.ExpensesByCategoryWidget,
+  'expenses-by-parent-category': LazyChartWidgets.ExpensesByParentCategoryWidget,
+  'expense-details-pie': LazyChartWidgets.ExpenseDetailsPieWidget,
+  'balance-trend': LazyChartWidgets.BalanceTrendWidget,
+  'expenses-by-tag': LazyChartWidgets.ExpensesByTagWidget,
+  'tag-trend': LazyChartWidgets.TagTrendWidget,
 }
 
 // Widget names map for Error Boundary display

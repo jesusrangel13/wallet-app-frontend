@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useId } from 'react'
 import { useTranslations } from 'next-intl'
 import { Modal } from './ui/Modal'
 import { Account } from '@/types'
@@ -35,6 +35,9 @@ export function SettleBalanceModal({
   const [selectedAccountId, setSelectedAccountId] = useState<string>('')
   const [defaultAccountId, setDefaultAccountId] = useState<string | null>(null)
   const [loadingAccounts, setLoadingAccounts] = useState(true)
+
+  // Accessibility IDs
+  const accountSelectId = useId()
 
   const loadAccountsAndDefault = useCallback(async () => {
     try {
@@ -119,25 +122,26 @@ export function SettleBalanceModal({
         {/* Account selection */}
         <div>
           <label
-            htmlFor="account"
+            htmlFor={accountSelectId}
             className="block text-sm font-medium text-gray-700 mb-2"
           >
             {t('payment.modal.selectAccount')}
           </label>
 
           {loadingAccounts ? (
-            <div className="text-sm text-gray-500">{t('payment.modal.loadingAccounts')}</div>
+            <div className="text-sm text-gray-500" role="status" aria-live="polite">{t('payment.modal.loadingAccounts')}</div>
           ) : accounts.length === 0 ? (
-            <div className="text-sm text-red-600">
+            <div className="text-sm text-red-600" role="alert">
               {t('payment.modal.noActiveAccounts')}
             </div>
           ) : (
             <select
-              id="account"
+              id={accountSelectId}
               value={selectedAccountId}
               onChange={(e) => setSelectedAccountId(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               disabled={settleBalance.isPending}
+              aria-describedby={defaultAccountId === null ? 'account-hint' : undefined}
             >
               {accounts.map((account) => (
                 <option key={account.id} value={account.id}>
@@ -150,7 +154,7 @@ export function SettleBalanceModal({
           )}
 
           {!loadingAccounts && defaultAccountId === null && accounts.length > 0 && (
-            <p className="mt-2 text-xs text-gray-500">
+            <p id="account-hint" className="mt-2 text-xs text-gray-500">
               {t('payment.modal.defaultAccountHint')}
             </p>
           )}
@@ -164,8 +168,9 @@ export function SettleBalanceModal({
         </div>
 
         {/* Action buttons */}
-        <div className="flex gap-3 justify-end pt-4">
+        <div className="flex gap-3 justify-end pt-4" role="group" aria-label="Modal actions">
           <button
+            type="button"
             onClick={onClose}
             disabled={settleBalance.isPending}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
@@ -173,8 +178,10 @@ export function SettleBalanceModal({
             {t('payment.modal.cancel')}
           </button>
           <button
+            type="button"
             onClick={handleSettle}
             disabled={settleBalance.isPending || loadingAccounts || !selectedAccountId}
+            aria-busy={settleBalance.isPending}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {settleBalance.isPending ? t('payment.modal.settling') : t('payment.modal.confirmPayment')}

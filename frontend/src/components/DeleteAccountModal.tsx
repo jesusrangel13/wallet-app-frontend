@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useId } from 'react'
 import { useTranslations } from 'next-intl'
 import { Modal } from './ui/Modal'
 import { Button } from './ui/Button'
@@ -29,6 +29,11 @@ export default function DeleteAccountModal({
   const [transferToAccountId, setTransferToAccountId] = useState<string>('')
   const [deleteTransactions, setDeleteTransactions] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+
+  // Accessibility IDs
+  const transferSelectId = useId()
+  const transferOptionId = useId()
+  const deleteOptionId = useId()
 
   const availableAccounts = accounts?.filter(a => a.id !== account?.id) || []
   const hasTransactions = transactionCount > 0
@@ -65,8 +70,8 @@ export default function DeleteAccountModal({
     <Modal isOpen={isOpen} onClose={handleClose} title={t('title')}>
       <div className="space-y-4">
         {/* Warning */}
-        <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg" role="alert">
+          <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
           <div className="flex-1">
             <p className="font-medium text-red-900">{t('warning')}</p>
             <p className="text-sm text-red-700 mt-1">
@@ -94,13 +99,16 @@ export default function DeleteAccountModal({
             {/* Option 1: Transfer to another account */}
             {availableAccounts.length > 0 && (
               <div className="space-y-2">
-                <label className="flex items-start gap-3 p-3 border-2 rounded-lg cursor-pointer transition-colors hover:bg-gray-50"
+                <label
+                  htmlFor={transferOptionId}
+                  className="flex items-start gap-3 p-3 border-2 rounded-lg cursor-pointer transition-colors hover:bg-gray-50"
                   style={{
                     borderColor: !deleteTransactions && transferToAccountId ? '#3b82f6' : '#e5e7eb',
                     backgroundColor: !deleteTransactions && transferToAccountId ? '#eff6ff' : 'white'
                   }}
                 >
                   <input
+                    id={transferOptionId}
                     type="radio"
                     name="deleteOption"
                     checked={!deleteTransactions && !!transferToAccountId}
@@ -111,40 +119,49 @@ export default function DeleteAccountModal({
                       }
                     }}
                     className="mt-1"
+                    aria-describedby="transfer-description"
                   />
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">{t('transferOption')}</p>
-                    <p className="text-xs text-gray-600 mt-1">
+                    <p id="transfer-description" className="text-xs text-gray-600 mt-1">
                       {t('transferDescription')}
                     </p>
                   </div>
                 </label>
 
                 {!deleteTransactions && (
-                  <select
-                    value={transferToAccountId}
-                    onChange={(e) => setTransferToAccountId(e.target.value)}
-                    className="w-full ml-9 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">{t('selectAccount')}</option>
-                    {availableAccounts.map((acc) => (
-                      <option key={acc.id} value={acc.id}>
-                        {acc.name} ({acc.type})
-                      </option>
-                    ))}
-                  </select>
+                  <div>
+                    <label htmlFor={transferSelectId} className="sr-only">{t('selectAccount')}</label>
+                    <select
+                      id={transferSelectId}
+                      value={transferToAccountId}
+                      onChange={(e) => setTransferToAccountId(e.target.value)}
+                      className="w-full ml-9 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      aria-label={t('selectAccount')}
+                    >
+                      <option value="">{t('selectAccount')}</option>
+                      {availableAccounts.map((acc) => (
+                        <option key={acc.id} value={acc.id}>
+                          {acc.name} ({acc.type})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 )}
               </div>
             )}
 
             {/* Option 2: Delete all transactions */}
-            <label className="flex items-start gap-3 p-3 border-2 rounded-lg cursor-pointer transition-colors hover:bg-gray-50"
+            <label
+              htmlFor={deleteOptionId}
+              className="flex items-start gap-3 p-3 border-2 rounded-lg cursor-pointer transition-colors hover:bg-gray-50"
               style={{
                 borderColor: deleteTransactions ? '#3b82f6' : '#e5e7eb',
                 backgroundColor: deleteTransactions ? '#eff6ff' : 'white'
               }}
             >
               <input
+                id={deleteOptionId}
                 type="radio"
                 name="deleteOption"
                 checked={deleteTransactions}
@@ -153,10 +170,11 @@ export default function DeleteAccountModal({
                   setTransferToAccountId('')
                 }}
                 className="mt-1"
+                aria-describedby="delete-warning"
               />
               <div className="flex-1">
                 <p className="font-medium text-red-900">{t('deleteOption')}</p>
-                <p className="text-xs text-red-700 mt-1">
+                <p id="delete-warning" className="text-xs text-red-700 mt-1">
                   {t('deleteWarning', { count: transactionCount })}
                 </p>
               </div>
@@ -165,8 +183,9 @@ export default function DeleteAccountModal({
         )}
 
         {/* Action Buttons */}
-        <div className="flex gap-3 pt-4 border-t">
+        <div className="flex gap-3 pt-4 border-t" role="group" aria-label="Modal actions">
           <Button
+            type="button"
             onClick={handleClose}
             variant="outline"
             disabled={isDeleting}
@@ -175,8 +194,10 @@ export default function DeleteAccountModal({
             {tCommon('cancel')}
           </Button>
           <Button
+            type="button"
             onClick={handleConfirm}
             disabled={!canDelete || isDeleting}
+            aria-busy={isDeleting}
             className={`flex-1 ${deleteTransactions ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'}`}
           >
             {isDeleting ? t('deleting') : deleteTransactions ? t('deleteAccountAndTransactions') : t('deleteAccountOnly')}

@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios'
+import { safeGetItem, safeRemoveItem } from '@/lib/storage'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
 
@@ -12,11 +13,9 @@ export const apiClient = axios.create({
 
 // Request interceptor to add token
 apiClient.interceptors.request.use((config) => {
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
+  const token = safeGetItem('token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
   }
   return config
 })
@@ -31,7 +30,7 @@ apiClient.interceptors.response.use(
       // using the global error handler with translated messages
       if (error.response.status === 401) {
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('token')
+          safeRemoveItem('token')
           window.location.href = '/login'
         }
       }

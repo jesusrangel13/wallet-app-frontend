@@ -12,6 +12,11 @@
     "transfer": "Transferencias"
   },
   "fields": {
+    "types": {
+      "expense": "Gasto",
+      "income": "Ingreso",
+      "transfer": "Transferencia"
+    },
     "type": "Tipo",
     "account": "Cuenta",
     "toAccount": "Cuenta destino",

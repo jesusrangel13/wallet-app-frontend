@@ -71,6 +71,24 @@ export const LazyChartWidgets = {
       ssr: false,
     }
   ),
+
+  // Expenses by tag chart (uses recharts PieChart)
+  ExpensesByTagWidget: dynamic(
+    () => import('@/components/widgets/ExpensesByTagWidget').then(mod => ({ default: mod.ExpensesByTagWidget })),
+    {
+      loading: () => <WidgetSkeleton />,
+      ssr: false,
+    }
+  ),
+
+  // Tag trend chart (uses recharts LineChart)
+  TagTrendWidget: dynamic(
+    () => import('@/components/widgets/TagTrendWidget').then(mod => ({ default: mod.TagTrendWidget })),
+    {
+      loading: () => <WidgetSkeleton />,
+      ssr: false,
+    }
+  ),
 }
 
 /**

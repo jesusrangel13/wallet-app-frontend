@@ -44,14 +44,19 @@ export const WidgetWrapper = ({ widgetId, widgetName, children }: WidgetWrapperP
 
 
   return (
-    <div className="relative h-full w-full flex flex-col">
+    <div className="relative h-full w-full flex flex-col" role="region" aria-label={widgetName || 'Dashboard widget'}>
       {/* Overlay for widget controls - positioned absolute over the CardHeader */}
       <div className="absolute top-0 right-0 h-16 flex items-center gap-1 px-6 py-4 z-10 pointer-events-none">
         {/* Widget Controls */}
-        <div className="flex items-center gap-1.5 pointer-events-auto">
+        <div className="flex items-center gap-1.5 pointer-events-auto" role="group" aria-label="Widget controls">
           {/* Drag Handle - Hidden on mobile since drag and drop is disabled on small screens */}
-          <div className="drag-handle cursor-grab active:cursor-grabbing hidden md:flex items-center justify-center w-8 h-8 rounded hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900">
-            <GripHorizontal className="w-4 h-4" />
+          <div
+            className="drag-handle cursor-grab active:cursor-grabbing hidden md:flex items-center justify-center w-8 h-8 rounded hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900"
+            aria-label={`Drag ${widgetName || 'widget'} to reorder`}
+            role="button"
+            tabIndex={0}
+          >
+            <GripHorizontal className="w-4 h-4" aria-hidden="true" />
           </div>
 
           {/* Remove button */}
@@ -60,8 +65,9 @@ export const WidgetWrapper = ({ widgetId, widgetName, children }: WidgetWrapperP
             className="flex items-center justify-center w-8 h-8 rounded hover:bg-red-50 transition-colors text-gray-600 hover:text-red-600"
             title="Remove widget"
             type="button"
+            aria-label={`Remove ${widgetName || 'widget'}`}
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </div>

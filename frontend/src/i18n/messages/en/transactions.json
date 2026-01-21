@@ -12,6 +12,11 @@
     "transfer": "Transfers"
   },
   "fields": {
+    "types": {
+      "expense": "Expense",
+      "income": "Income",
+      "transfer": "Transfer"
+    },
     "type": "Type",
     "account": "Account",
     "toAccount": "Destination account",

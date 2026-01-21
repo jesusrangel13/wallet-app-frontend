@@ -66,17 +66,23 @@ export const Pagination = ({
   }, [currentPage, totalPages])
 
   return (
-    <div className="flex flex-col gap-4 items-center justify-between px-4 py-4 border-t">
+    <nav
+      className="flex flex-col gap-4 items-center justify-between px-4 py-4 border-t"
+      aria-label="Pagination navigation"
+    >
       {/* Items per page selector */}
-      <div className="flex items-center gap-2 text-sm text-gray-600">
-        <span>{t('show')}</span>
+      <div className="flex items-center gap-2 text-sm text-gray-600" role="group" aria-label="Items per page">
+        <span id="items-per-page-label">{t('show')}</span>
         {[10, 20, 50, 100].map((limit) => (
           <button
             key={limit}
+            type="button"
             onClick={() => {
               onItemsPerPageChange(limit)
               onPageChange(1) // Reset to page 1
             }}
+            aria-label={`Show ${limit} items per page`}
+            aria-pressed={itemsPerPage === limit}
             className={`px-3 py-1 rounded ${itemsPerPage === limit
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -91,21 +97,21 @@ export const Pagination = ({
       {/* Info and navigation */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
         {/* Item count info */}
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-600" aria-live="polite">
           {t('showing', { start: startItem, end: endItem, total: totalItems })}
         </div>
 
         {/* Pagination controls */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1" role="group" aria-label="Page navigation">
           {/* First page button */}
           <Button
             variant="outline"
             size="sm"
             onClick={() => onPageChange(1)}
             disabled={currentPage === 1}
-            title={t('firstPage')}
+            aria-label={t('firstPage')}
           >
-            <ChevronsLeft className="w-4 h-4" />
+            <ChevronsLeft className="w-4 h-4" aria-hidden="true" />
           </Button>
 
           {/* Previous button */}
@@ -114,28 +120,36 @@ export const Pagination = ({
             size="sm"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            title={t('previousPage')}
+            aria-label={t('previousPage')}
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-4 h-4" aria-hidden="true" />
           </Button>
 
           {/* Page numbers */}
           <div className="flex items-center gap-1 mx-2">
-            {pageNumbers.map((page, idx) => (
-              <button
-                key={idx}
-                onClick={() => typeof page === 'number' && onPageChange(page)}
-                disabled={page === '...'}
-                className={`w-8 h-8 text-sm rounded ${page === currentPage
-                    ? 'bg-blue-500 text-white font-semibold'
-                    : page === '...'
-                      ? 'text-gray-400 cursor-default'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-              >
-                {page}
-              </button>
-            ))}
+            {pageNumbers.map((page, idx) => {
+              const isCurrentPage = page === currentPage
+              const isEllipsis = page === '...'
+
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => typeof page === 'number' && onPageChange(page)}
+                  disabled={isEllipsis}
+                  aria-label={isEllipsis ? 'More pages' : `Go to page ${page}`}
+                  aria-current={isCurrentPage ? 'page' : undefined}
+                  className={`w-8 h-8 text-sm rounded ${isCurrentPage
+                      ? 'bg-blue-500 text-white font-semibold'
+                      : isEllipsis
+                        ? 'text-gray-400 cursor-default'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                >
+                  {page}
+                </button>
+              )
+            })}
           </div>
 
           {/* Next button */}
@@ -144,9 +158,9 @@ export const Pagination = ({
             size="sm"
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            title={t('nextPage')}
+            aria-label={t('nextPage')}
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-4 h-4" aria-hidden="true" />
           </Button>
 
           {/* Last page button */}
@@ -155,17 +169,17 @@ export const Pagination = ({
             size="sm"
             onClick={() => onPageChange(totalPages)}
             disabled={currentPage === totalPages}
-            title={t('lastPage')}
+            aria-label={t('lastPage')}
           >
-            <ChevronsRight className="w-4 h-4" />
+            <ChevronsRight className="w-4 h-4" aria-hidden="true" />
           </Button>
         </div>
 
         {/* Page info */}
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-600" aria-live="polite">
           {t('pageOf', { current: currentPage, total: totalPages })}
         </div>
       </div>
-    </div>
+    </nav>
   )
 }

@@ -40,6 +40,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         transition={{ duration: 0.15, ease: 'easeInOut' }}
         className={cn(baseStyles, variants[variant], sizes[size], className)}
         disabled={disabled || isLoading}
+        aria-busy={isLoading || undefined}
+        aria-disabled={disabled || isLoading || undefined}
         {...(props as any)}
       >
         {isLoading ? (

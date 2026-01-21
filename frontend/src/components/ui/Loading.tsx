@@ -7,6 +7,8 @@ import { cn } from '@/lib/utils'
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl'
   className?: string
+  /** Accessible label for the spinner */
+  label?: string
 }
 
 const sizeClasses = {
@@ -19,10 +21,12 @@ const sizeClasses = {
 /**
  * Spinner de carga unificado usando Loader2 de lucide-react
  */
-export function LoadingSpinner({ size = 'md', className }: LoadingSpinnerProps) {
+export function LoadingSpinner({ size = 'md', className, label }: LoadingSpinnerProps) {
   return (
     <Loader2
       className={cn('animate-spin text-blue-600', sizeClasses[size], className)}
+      aria-hidden={!label}
+      aria-label={label}
     />
   )
 }
@@ -46,12 +50,15 @@ export function LoadingPage({
 
   return (
     <div
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
       className={cn(
         'flex flex-col items-center justify-center min-h-[400px] gap-3',
         className
       )}
     >
-      <LoadingSpinner size={size} />
+      <LoadingSpinner size={size} aria-hidden="true" />
       <p className="text-gray-500 text-sm">{displayMessage}</p>
     </div>
   )
@@ -76,12 +83,15 @@ export function LoadingOverlay({
 
   return (
     <div
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
       className={cn(
         'absolute inset-0 bg-white/70 flex flex-col items-center justify-center z-10 rounded-lg gap-2',
         className
       )}
     >
-      <LoadingSpinner size={size} />
+      <LoadingSpinner size={size} aria-hidden="true" />
       {displayMessage && <p className="text-gray-600 text-sm font-medium">{displayMessage}</p>}
     </div>
   )
@@ -102,8 +112,12 @@ export function LoadingInline({
   className,
 }: LoadingInlineProps) {
   return (
-    <span className={cn('inline-flex items-center gap-1.5', className)}>
-      <LoadingSpinner size={size} />
+    <span
+      role="status"
+      aria-live="polite"
+      className={cn('inline-flex items-center gap-1.5', className)}
+    >
+      <LoadingSpinner size={size} aria-hidden="true" />
       {message && <span className="text-gray-600 text-sm">{message}</span>}
     </span>
   )
@@ -121,8 +135,8 @@ export function LoadingButtonText({ message }: LoadingButtonTextProps) {
   const displayMessage = message || t('saving')
 
   return (
-    <span className="inline-flex items-center gap-2">
-      <LoadingSpinner size="sm" className="text-current" />
+    <span className="inline-flex items-center gap-2" role="status">
+      <LoadingSpinner size="sm" className="text-current" aria-hidden="true" />
       {displayMessage}
     </span>
   )
@@ -130,14 +144,18 @@ export function LoadingButtonText({ message }: LoadingButtonTextProps) {
 
 interface SkeletonProps {
   className?: string
+  /** Accessible label for the skeleton */
+  label?: string
 }
 
 /**
  * Skeleton loader para placeholders de contenido
  */
-export function Skeleton({ className }: SkeletonProps) {
+export function Skeleton({ className, label }: SkeletonProps) {
   return (
     <div
+      role="status"
+      aria-label={label || 'Loading'}
       className={cn('animate-pulse bg-gray-200 rounded', className)}
     />
   )
@@ -148,9 +166,9 @@ export function Skeleton({ className }: SkeletonProps) {
  */
 export function SkeletonRow({ columns = 4 }: { columns?: number }) {
   return (
-    <div className="flex items-center gap-4 p-4">
+    <div className="flex items-center gap-4 p-4" role="status" aria-label="Loading row">
       {Array.from({ length: columns }).map((_, i) => (
-        <Skeleton key={i} className="h-4 flex-1" />
+        <div key={i} className="animate-pulse bg-gray-200 rounded h-4 flex-1" aria-hidden="true" />
       ))}
     </div>
   )
@@ -161,10 +179,10 @@ export function SkeletonRow({ columns = 4 }: { columns?: number }) {
  */
 export function SkeletonCard() {
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-4">
-      <Skeleton className="h-6 w-1/3" />
-      <Skeleton className="h-4 w-2/3" />
-      <Skeleton className="h-4 w-1/2" />
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-4" role="status" aria-label="Loading card">
+      <div className="animate-pulse bg-gray-200 rounded h-6 w-1/3" aria-hidden="true" />
+      <div className="animate-pulse bg-gray-200 rounded h-4 w-2/3" aria-hidden="true" />
+      <div className="animate-pulse bg-gray-200 rounded h-4 w-1/2" aria-hidden="true" />
     </div>
   )
 }

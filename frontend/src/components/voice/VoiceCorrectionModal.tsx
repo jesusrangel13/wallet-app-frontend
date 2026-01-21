@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { ParsedVoiceTransaction } from '@/lib/voiceApi';
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useAccounts } from '@/hooks/useAccounts';
 import { useMergedCategories } from '@/hooks/useCategories';
@@ -51,7 +52,9 @@ interface VoiceCorrectionModalProps {
     onSave: (data: ParsedVoiceTransaction) => void;
 }
 
+
 export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCorrectionModalProps) => {
+    const t = useTranslations('voice');
     const [formData, setFormData] = useState<Partial<ParsedVoiceTransaction>>({});
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [tagSearch, setTagSearch] = useState("");
@@ -147,24 +150,24 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
             onSave(submissionData as any);
             onClose();
         } else {
-            toast.error("Please fill required fields (Amount and Merchant/Category)");
+            toast.error(t('errors.requiredFields'));
         }
     };
 
     if (!data) return null;
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Confirm Transaction">
+        <Modal isOpen={isOpen} onClose={onClose} title={t('title')}>
             <div className="space-y-4 max-h-[80vh] overflow-y-auto pr-2">
                 <div>
-                    <label className="block text-sm font-medium mb-1">Original Text</label>
+                    <label className="block text-sm font-medium mb-1">{t('originalText')}</label>
                     <p className="text-sm text-zinc-500 italic bg-zinc-50 p-2 rounded">&quot;{data.originalText}&quot;</p>
                 </div>
 
                 {/* Date & Account */}
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium mb-1">Date</label>
+                        <label className="block text-sm font-medium mb-1">{t('labels.date')}</label>
                         <Input
                             type="date"
                             value={(formData.date as string) || ''}
@@ -172,13 +175,13 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Account</label>
+                        <label className="block text-sm font-medium mb-1">{t('labels.account')}</label>
                         <select
                             className="flex h-10 w-full rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             value={formData.resolvedAccountId || ''}
                             onChange={(e) => handleChange('resolvedAccountId', e.target.value)}
                         >
-                            <option value="">Select Account</option>
+                            <option value="">{t('placeholders.selectAccount')}</option>
                             {accounts.map((acc: any) => (
                                 <option key={acc.id} value={acc.id}>
                                     {acc.name}
@@ -191,7 +194,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                 {/* Amount & Currency */}
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium mb-1">Amount</label>
+                        <label className="block text-sm font-medium mb-1">{t('labels.amount')}</label>
                         <Input
                             type="number"
                             value={formData.amount || ''}
@@ -199,7 +202,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Currency</label>
+                        <label className="block text-sm font-medium mb-1">{t('labels.currency')}</label>
                         <Input
                             value={formData.currency || ''}
                             onChange={(e) => handleChange('currency', e.target.value)}
@@ -209,17 +212,17 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium mb-1">Merchant (Payee)</label>
+                        <label className="block text-sm font-medium mb-1">{t('labels.merchant')}</label>
                         <Input
-                            placeholder="Where/Who?"
+                            placeholder={t('placeholders.merchant')}
                             value={formData.merchant || ''}
                             onChange={(e) => handleChange('merchant', e.target.value)}
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Description (Item)</label>
+                        <label className="block text-sm font-medium mb-1">{t('labels.description')}</label>
                         <Input
-                            placeholder="What?"
+                            placeholder={t('placeholders.description')}
                             value={formData.description || ''}
                             onChange={(e) => handleChange('description', e.target.value)}
                         />
@@ -227,7 +230,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium mb-1">Category</label>
+                    <label className="block text-sm font-medium mb-1">{t('labels.category')}</label>
                     <select
                         className="flex h-10 w-full rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         value={formData.resolvedCategoryId || ''}
@@ -237,7 +240,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                             if (cat) handleChange('category', cat.name);
                         }}
                     >
-                        <option value="">Select Category</option>
+                        <option value="">{t('placeholders.selectCategory')}</option>
                         {flatCategories.map((cat: any) => (
                             <option key={cat.id} value={cat.id}>
                                 {cat.displayName}
@@ -265,11 +268,10 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                                     }
                                 } else {
                                     handleChange('resolvedGroupId', null);
-                                    handleChange('groupName', null);
                                 }
                             }}
                         />
-                        <span className="text-sm font-medium text-zinc-900">Mark as Shared Expense</span>
+                        <span className="text-sm font-medium text-zinc-900">{t('groups.markAsShared')}</span>
                     </label>
                 </div>
 
@@ -277,8 +279,8 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                 {(formData.resolvedGroupId || formData.groupName) && (
                     <div className="bg-blue-50 p-4 rounded-md mb-4 border border-blue-100 animate-in fade-in slide-in-from-top-2 duration-200">
                         <label className="block text-sm font-medium mb-1 text-blue-900">
-                            Select Group
-                            {data.groupName && !data.resolvedGroupId && <span className='ml-2 text-xs font-light text-blue-700'>(AI Suggested: {data.groupName})</span>}
+                            {t('labels.group')}
+                            {data.groupName && !data.resolvedGroupId && <span className='ml-2 text-xs font-light text-blue-700'>({t('groups.aiSuggested', { name: data.groupName })})</span>}
                         </label>
                         <select
                             className="flex h-10 w-full rounded-md border border-blue-200 bg-white px-3 py-2 text-sm text-blue-900 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
@@ -294,7 +296,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                                 }
                             }}
                         >
-                            <option value="">Personal Expense (No Group)</option>
+                            <option value="">{t('groups.personalExpense')}</option>
                             {groups?.map((g: any) => (
                                 <option key={g.id} value={g.id}>
                                     {g.name}
@@ -306,9 +308,9 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
 
                 {/* Tags with Search */}
                 <div>
-                    <label className="block text-sm font-medium mb-2">Tags</label>
+                    <label className="block text-sm font-medium mb-2">{t('labels.tags')}</label>
                     <Input
-                        placeholder="Search tags..."
+                        placeholder={t('placeholders.searchTags')}
                         value={tagSearch}
                         onChange={(e) => setTagSearch(e.target.value)}
                         className="mb-2 h-8 text-sm"
@@ -328,14 +330,14 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                             </button>
                         ))}
                         {filteredTags.length === 0 && (
-                            <p className="text-xs text-zinc-400 w-full text-center py-2">No tags found</p>
+                            <p className="text-xs text-zinc-400 w-full text-center py-2">{t('tags.noTagsFound')}</p>
                         )}
                     </div>
                 </div>
 
                 <div className="mt-6 flex justify-end gap-2">
-                    <Button variant="ghost" onClick={onClose}>Cancel</Button>
-                    <Button onClick={handleSave}>Save Transaction</Button>
+                    <Button variant="ghost" onClick={onClose}>{t('buttons.cancel')}</Button>
+                    <Button onClick={handleSave}>{t('buttons.save')}</Button>
                 </div>
             </div>
         </Modal>

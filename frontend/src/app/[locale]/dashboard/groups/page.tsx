@@ -1026,8 +1026,10 @@ export default function GroupsPage() {
                             alt={member.user.name}
                             width={40}
                             height={40}
-                            className="w-10 h-10 rounded-full"
+                            className="w-10 h-10 rounded-full object-cover"
                             loading="lazy"
+                            sizes="40px"
+                            unoptimized={!member.user.avatarUrl.startsWith('https://')}
                           />
                         ) : (
                           <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
