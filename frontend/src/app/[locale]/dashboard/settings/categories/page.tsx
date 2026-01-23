@@ -49,7 +49,7 @@ export default function CategoriesPage() {
   const translateCategory = useCategoryTranslation()
   const queryClient = useQueryClient()
   const { getMutationErrorHandler } = useGlobalErrorHandler()
-  const { categories: allCategories, isLoading, isFetching} = useMergedCategories()
+  const { categories: allCategories, isLoading, isFetching } = useMergedCategories()
 
   const [selectedType, setSelectedType] = useState<TransactionType>('EXPENSE')
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -216,7 +216,7 @@ export default function CategoriesPage() {
     if (!subcategories || subcategories.length === 0) return null
 
     return (
-      <div className="ml-4 sm:ml-6 space-y-2 border-l-2 border-gray-200 pl-3 sm:pl-4">
+      <div className="ml-4 sm:ml-6 space-y-2 border-l-2 border-border pl-3 sm:pl-4">
         {subcategories.map((subCat) => {
           const isExpanded = expandedCategories.has(subCat.id)
           const hasSubcategories = (subCat.subcategories?.length || 0) > 0
@@ -229,19 +229,18 @@ export default function CategoriesPage() {
                   {hasSubcategories && (
                     <button
                       onClick={() => toggleExpanded(subCat.id)}
-                      className="p-1 hover:bg-gray-100 rounded flex-shrink-0"
+                      className="p-1 hover:bg-muted rounded flex-shrink-0"
                     >
                       <ChevronDown
-                        className={`w-4 h-4 transition-transform ${
-                          isExpanded ? 'rotate-0' : '-rotate-90'
-                        }`}
+                        className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-0' : '-rotate-90'
+                          }`}
                       />
                     </button>
                   )}
                   {!hasSubcategories && <div className="w-6 flex-shrink-0" />}
 
                   <span className="text-xl sm:text-2xl flex-shrink-0">{subCat.icon || '📁'}</span>
-                  <span className="text-sm font-medium text-gray-700 truncate">{subCat.name}</span>
+                  <span className="text-sm font-medium text-foreground truncate">{subCat.name}</span>
                 </div>
 
                 {/* Action buttons - responsive */}
@@ -269,7 +268,7 @@ export default function CategoriesPage() {
                     <button
                       onClick={() => handleDelete(subCat.id, subCat.name)}
                       disabled={deleteMutation.isPending}
-                      className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition disabled:opacity-50 whitespace-nowrap"
+                      className="px-2 py-1 text-xs bg-muted text-muted-foreground rounded hover:bg-muted/80 transition disabled:opacity-50 whitespace-nowrap"
                       title={t('hideSubcategory')}
                     >
                       <span className="hidden sm:inline">{t('hide')}</span>
@@ -294,7 +293,7 @@ export default function CategoriesPage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-gray-900">Mis Categorías</h1>
+        <h1 className="text-3xl font-bold text-foreground">Mis Categorías</h1>
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
             <SkeletonCard key={i} />
@@ -308,8 +307,8 @@ export default function CategoriesPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
-        <p className="text-gray-600 mt-1">
+        <h1 className="text-3xl font-bold text-foreground">{t('title')}</h1>
+        <p className="text-muted-foreground mt-1">
           {t('description')}
         </p>
       </div>
@@ -320,11 +319,10 @@ export default function CategoriesPage() {
           <button
             key={type}
             onClick={() => setSelectedType(type)}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              selectedType === type
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${selectedType === type
                 ? 'bg-blue-600 text-white shadow-md'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              }`}
           >
             {type === 'EXPENSE' ? t('types.expense') : t('types.income')}
           </button>
@@ -345,18 +343,18 @@ export default function CategoriesPage() {
       {/* Categories Section - Unified List */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">
+          <h2 className="text-xl font-bold text-foreground mb-4">
             📂 Todas mis Categorías
           </h2>
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm text-muted-foreground mb-4">
             Aquí están tus categorías por defecto y personalizadas. Haz clic en el icono de flecha para expandir las subcategorías.
           </p>
         </div>
 
         {filteredCategories.length > 0 ? (
-          <Card className="bg-white relative">
+          <Card className="bg-card relative">
             {isFetching && !isLoading && (
-              <div className="absolute top-4 right-4 flex items-center gap-2 text-sm text-gray-500">
+              <div className="absolute top-4 right-4 flex items-center gap-2 text-sm text-muted-foreground">
                 <LoadingSpinner size="sm" />
                 <span>{tLoading('updating')}</span>
               </div>
@@ -370,18 +368,17 @@ export default function CategoriesPage() {
 
                   return (
                     <div key={category.id} className="space-y-1">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-3 py-3 px-3 rounded-lg hover:bg-gray-50 transition">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-3 py-3 px-3 rounded-lg hover:bg-muted/50 transition">
                         {/* Top row: Chevron + Icon + Name + Subcategory count + Color */}
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                           {hasSubcategories && (
                             <button
                               onClick={() => toggleExpanded(category.id)}
-                              className="p-1 hover:bg-gray-200 rounded transition flex-shrink-0"
+                              className="p-1 hover:bg-muted rounded transition flex-shrink-0"
                             >
                               <ChevronDown
-                                className={`w-5 h-5 transition-transform text-gray-600 ${
-                                  isExpanded ? 'rotate-0' : '-rotate-90'
-                                }`}
+                                className={`w-5 h-5 transition-transform text-muted-foreground ${isExpanded ? 'rotate-0' : '-rotate-90'
+                                  }`}
                               />
                             </button>
                           )}
@@ -391,9 +388,9 @@ export default function CategoriesPage() {
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <h3 className="font-semibold text-gray-900 truncate">{translateCategory(category)}</h3>
+                              <h3 className="font-semibold text-foreground truncate">{translateCategory(category)}</h3>
                               {hasSubcategories && (
-                                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded whitespace-nowrap">
+                                <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded whitespace-nowrap">
                                   {subCatCount} {subCatCount === 1 ? 'subcat' : 'subcats'}
                                 </span>
                               )}
@@ -401,7 +398,7 @@ export default function CategoriesPage() {
                           </div>
 
                           <div
-                            className="w-5 h-5 rounded border-2 border-gray-300 flex-shrink-0 hidden sm:block"
+                            className="w-5 h-5 rounded border-2 border-border flex-shrink-0 hidden sm:block"
                             style={{ backgroundColor: category.color || '#FF6B6B' }}
                           />
                         </div>
@@ -442,7 +439,7 @@ export default function CategoriesPage() {
                             <button
                               onClick={() => handleDelete(category.id, translateCategory(category))}
                               disabled={deleteMutation.isPending}
-                              className="px-2 py-1 sm:px-3 text-xs sm:text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition disabled:opacity-50 whitespace-nowrap"
+                              className="px-2 py-1 sm:px-3 text-xs sm:text-sm bg-muted text-muted-foreground rounded hover:bg-muted/80 transition disabled:opacity-50 whitespace-nowrap"
                               title={t('hideSubcategory')}
                             >
                               <span className="hidden sm:inline">{t('hide')}</span>
@@ -450,7 +447,7 @@ export default function CategoriesPage() {
                             </button>
                           )}
                           <div
-                            className="w-4 h-4 rounded border-2 border-gray-300 flex-shrink-0 sm:hidden"
+                            className="w-4 h-4 rounded border-2 border-border flex-shrink-0 sm:hidden"
                             style={{ backgroundColor: category.color || '#FF6B6B' }}
                           />
                         </div>
@@ -466,8 +463,8 @@ export default function CategoriesPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="text-center py-12 text-gray-500">
-            <Sparkles className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+          <div className="text-center py-12 text-muted-foreground">
+            <Sparkles className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
             <p className="text-lg font-medium mb-1">No hay categorías para este tipo</p>
             <p className="text-sm mb-4">
               Crea tu primera categoría personalizada para organizarte mejor
@@ -498,9 +495,9 @@ export default function CategoriesPage() {
             {!editingCategory && selectedParentId && (() => {
               const parentCategory = findCategoryById(allCategories, selectedParentId)
               return parentCategory ? (
-                <div className="p-3 bg-blue-50 border border-blue-200 rounded">
-                  <p className="text-sm text-blue-800">
-                    <strong>Crear subcategoría en:</strong><br/>
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded">
+                  <p className="text-sm text-blue-800 dark:text-blue-300">
+                    <strong>Crear subcategoría en:</strong><br />
                     {parentCategory.icon} {parentCategory.name}
                   </p>
                 </div>
@@ -509,7 +506,7 @@ export default function CategoriesPage() {
 
             {/* Name Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Nombre
               </label>
               <Input
@@ -537,7 +534,7 @@ export default function CategoriesPage() {
             />
 
             {/* Action Buttons */}
-            <div className="flex gap-2 justify-end pt-4 border-t border-gray-200">
+            <div className="flex gap-2 justify-end pt-4 border-t border-border">
               <Button
                 type="button"
                 variant="outline"

@@ -57,13 +57,13 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
     return (
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-            <HandCoins className="h-4 w-4 text-orange-600" />
+          <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
+            <HandCoins className="h-4 w-4 text-orange-600 dark:text-orange-500" />
             {t('label')}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-gray-500">{t('errorLoading')}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{t('errorLoading')}</p>
         </CardContent>
       </Card>
     )
@@ -72,18 +72,18 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
   return (
     <Card className="relative group">
       <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-          <HandCoins className="h-4 w-4 text-orange-600" />
+        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
+          <HandCoins className="h-4 w-4 text-orange-600 dark:text-orange-500" />
           {t('label')}
         </CardTitle>
       </CardHeader>
       <CardContent>
         {summary.totalLoans === 0 ? (
           <div className="space-y-2">
-            <p className="text-sm text-gray-500">{t('noLoansYet')}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{t('noLoansYet')}</p>
             <Link
               href="/dashboard/loans"
-              className="block text-sm text-blue-600 hover:text-blue-700 underline"
+              className="block text-sm text-primary hover:text-primary-hover underline"
             >
               {t('createLoan')} →
             </Link>

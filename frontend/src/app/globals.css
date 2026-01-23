@@ -66,6 +66,17 @@
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -1px rgb(0 0 0 / 0.04);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -2px rgb(0 0 0 / 0.03);
     --shadow-glow: 0 0 20px 0 hsl(172 66% 40% / 0.15);
+
+    /* Chart tooltips */
+    --tooltip-bg: #ffffff;
+    --tooltip-border: #e5e7eb;
+    --tooltip-text: #111827;
+
+    /* Chart cursor/hover highlight */
+    --chart-cursor: rgba(156, 163, 175, 0.3);
+
+    /* Chart pie stroke */
+    --chart-pie-stroke: #ffffff;
   }
 
   /* Dark Mode Premium (estilo Revolut) */
@@ -117,6 +128,17 @@
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -1px rgb(0 0 0 / 0.2);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -2px rgb(0 0 0 / 0.3);
     --shadow-glow: 0 0 20px 0 hsl(172 66% 50% / 0.2);
+
+    /* Chart tooltips dark */
+    --tooltip-bg: #1f2937;
+    --tooltip-border: #374151;
+    --tooltip-text: #f9fafb;
+
+    /* Chart cursor/hover highlight */
+    --chart-cursor: rgba(75, 85, 99, 0.4);
+
+    /* Chart pie stroke - gris azulado para dark mode */
+    --chart-pie-stroke: hsl(217.2 32.6% 17.5%);
   }
 
   /* Tipografía para números financieros */
@@ -179,4 +201,65 @@
   body {
     @apply bg-background text-foreground overflow-x-hidden;
   }
+}
+
+/* PieChart stroke colors for dark mode */
+.dark .recharts-pie-sector path {
+  stroke: hsl(217.2 32.6% 17.5%) !important;
+}
+
+/* Utility classes */
+@layer utilities {
+  /* Hide scrollbar utility */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Loading bar animation */
+  @keyframes loading-bar {
+    0% {
+      width: 0%;
+      margin-left: 0%;
+    }
+    50% {
+      width: 70%;
+      margin-left: 15%;
+    }
+    100% {
+      width: 0%;
+      margin-left: 100%;
+    }
+  }
+  .animate-loading-bar {
+    animation: loading-bar 1.5s ease-in-out infinite;
+  }
+}
+
+/* React Day Picker custom styles */
+.daypicker-custom {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: hsl(var(--primary));
+  --rdp-background-color: hsl(var(--primary) / 0.1);
+}
+
+.daypicker-custom .rdp-day_selected:not([disabled]) {
+  background-color: hsl(var(--primary));
+  color: white;
+}
+
+.daypicker-custom .rdp-day_selected:hover:not([disabled]) {
+  background-color: hsl(var(--primary-hover));
+}
+
+.daypicker-custom .rdp-day_today:not(.rdp-day_selected) {
+  font-weight: bold;
+  color: hsl(var(--primary));
+}
+
+.daypicker-custom .rdp-day:hover:not([disabled]):not(.rdp-day_selected) {
+  background-color: hsl(var(--primary) / 0.1);
 }

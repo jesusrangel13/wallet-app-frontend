@@ -108,10 +108,10 @@ export default function TransactionFiltersComponent({
           onChange={(e) => handleChange('search', e.target.value)}
           placeholder={t('searchPlaceholder')}
           aria-label={t('searchPlaceholder')}
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full pl-10 pr-4 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary"
         />
         <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -135,7 +135,7 @@ export default function TransactionFiltersComponent({
           value={filters.type}
           onChange={(e) => handleChange('type', e.target.value)}
           aria-label={t('allTypes')}
-          className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="px-3 py-1.5 text-sm border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary"
         >
           <option value="ALL">{t('allTypes')}</option>
           <option value="EXPENSE">{t('expenses')}</option>
@@ -154,7 +154,7 @@ export default function TransactionFiltersComponent({
             handleChange('sortOrder', sortOrder)
           }}
           aria-label="Sort by"
-          className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="px-3 py-1.5 text-sm border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary"
         >
           <option value="date-desc">{t('newestFirst')}</option>
           <option value="date-asc">{t('oldestFirst')}</option>
@@ -174,8 +174,8 @@ export default function TransactionFiltersComponent({
           className={cn(
             'px-3 py-1.5 text-sm font-medium rounded-lg transition-colors flex items-center gap-2',
             isExpanded || activeFiltersCount > 0
-              ? 'bg-blue-100 text-blue-700 border-2 border-blue-500'
-              : 'bg-gray-100 text-gray-700 border-2 border-transparent hover:border-gray-300'
+              ? 'bg-primary/10 text-primary border-2 border-primary'
+              : 'bg-muted text-muted-foreground border-2 border-transparent hover:border-input'
           )}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -199,7 +199,7 @@ export default function TransactionFiltersComponent({
             type="button"
             onClick={clearFilters}
             aria-label={t('clearAll')}
-            className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900"
+            className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground"
           >
             {t('clearAll')}
           </button>
@@ -210,19 +210,19 @@ export default function TransactionFiltersComponent({
       {isExpanded && (
         <div
           id={filtersPanelId}
-          className="border border-gray-200 rounded-lg p-4 bg-gray-50 space-y-4"
+          className="border border-border rounded-lg p-4 bg-muted/30 space-y-4"
           role="region"
           aria-label={t('advancedFilters')}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Account Filter */}
             <div>
-              <label htmlFor={accountFilterId} className="block text-sm font-medium text-gray-700 mb-1">{t('account')}</label>
+              <label htmlFor={accountFilterId} className="block text-sm font-medium text-foreground mb-1">{t('account')}</label>
               <select
                 id={accountFilterId}
                 value={filters.accountId}
                 onChange={(e) => handleChange('accountId', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary"
               >
                 <option value="">{t('allAccounts')}</option>
                 {accounts.map((account) => (
@@ -235,12 +235,12 @@ export default function TransactionFiltersComponent({
 
             {/* Category Filter */}
             <div>
-              <label htmlFor={categoryFilterId} className="block text-sm font-medium text-gray-700 mb-1">{t('category')}</label>
+              <label htmlFor={categoryFilterId} className="block text-sm font-medium text-foreground mb-1">{t('category')}</label>
               <select
                 id={categoryFilterId}
                 value={filters.categoryId}
                 onChange={(e) => handleChange('categoryId', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary"
               >
                 <option value="">{t('allCategories')}</option>
                 {categories.map((category) => (
@@ -260,30 +260,30 @@ export default function TransactionFiltersComponent({
 
             {/* Date Range */}
             <div>
-              <label htmlFor={startDateId} className="block text-sm font-medium text-gray-700 mb-1">{t('startDate')}</label>
+              <label htmlFor={startDateId} className="block text-sm font-medium text-foreground mb-1">{t('startDate')}</label>
               <input
                 id={startDateId}
                 type="date"
                 value={filters.startDate}
                 onChange={(e) => handleChange('startDate', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary"
               />
             </div>
 
             <div>
-              <label htmlFor={endDateId} className="block text-sm font-medium text-gray-700 mb-1">{t('endDate')}</label>
+              <label htmlFor={endDateId} className="block text-sm font-medium text-foreground mb-1">{t('endDate')}</label>
               <input
                 id={endDateId}
                 type="date"
                 value={filters.endDate}
                 onChange={(e) => handleChange('endDate', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary"
               />
             </div>
 
             {/* Amount Range */}
             <div>
-              <label htmlFor={minAmountId} className="block text-sm font-medium text-gray-700 mb-1">{t('minAmount')}</label>
+              <label htmlFor={minAmountId} className="block text-sm font-medium text-foreground mb-1">{t('minAmount')}</label>
               <input
                 id={minAmountId}
                 type="number"
@@ -291,12 +291,12 @@ export default function TransactionFiltersComponent({
                 value={filters.minAmount}
                 onChange={(e) => handleChange('minAmount', e.target.value)}
                 placeholder="0.00"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary"
               />
             </div>
 
             <div>
-              <label htmlFor={maxAmountId} className="block text-sm font-medium text-gray-700 mb-1">{t('maxAmount')}</label>
+              <label htmlFor={maxAmountId} className="block text-sm font-medium text-foreground mb-1">{t('maxAmount')}</label>
               <input
                 id={maxAmountId}
                 type="number"
@@ -304,7 +304,7 @@ export default function TransactionFiltersComponent({
                 value={filters.maxAmount}
                 onChange={(e) => handleChange('maxAmount', e.target.value)}
                 placeholder="0.00"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary"
               />
             </div>
           </div>

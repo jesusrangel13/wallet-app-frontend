@@ -76,7 +76,7 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
           <BarChart3 className="h-4 w-4" />
           Gastos por Categoría
         </CardTitle>
@@ -110,6 +110,16 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
                   ]
                 }}
                 labelFormatter={(label) => `${t('category')}: ${label}`}
+                contentStyle={{
+                  backgroundColor: 'var(--tooltip-bg, #fff)',
+                  border: '1px solid var(--tooltip-border, #e5e7eb)',
+                  borderRadius: '6px',
+                  color: 'var(--tooltip-text, #111827)',
+                  boxShadow: 'var(--shadow-md)',
+                }}
+                itemStyle={{ color: 'var(--tooltip-text, #111827)' }}
+                labelStyle={{ color: 'var(--tooltip-text, #111827)', fontWeight: 600, marginBottom: '0.25rem' }}
+                cursor={{ fill: 'var(--chart-cursor, rgba(156, 163, 175, 0.3))' }}
               />
               <Bar dataKey="amount" radius={[8, 8, 0, 0]}>
                 {data && data.map((entry: ParentCategoryData, index: number) => (
@@ -122,7 +132,7 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex items-center justify-center text-gray-500" style={{ height: chartHeight }}>
+          <div className="flex items-center justify-center text-gray-500 dark:text-gray-400" style={{ height: chartHeight }}>
             {t('noExpensesThisMonth')}
           </div>
         )}

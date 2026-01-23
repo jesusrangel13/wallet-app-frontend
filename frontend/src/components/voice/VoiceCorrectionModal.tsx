@@ -161,7 +161,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
             <div className="space-y-4 max-h-[80vh] overflow-y-auto pr-2">
                 <div>
                     <label className="block text-sm font-medium mb-1">{t('originalText')}</label>
-                    <p className="text-sm text-zinc-500 italic bg-zinc-50 p-2 rounded">&quot;{data.originalText}&quot;</p>
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400 italic bg-zinc-50 dark:bg-zinc-800/50 p-2 rounded">&quot;{data.originalText}&quot;</p>
                 </div>
 
                 {/* Date & Account */}
@@ -177,7 +177,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                     <div>
                         <label className="block text-sm font-medium mb-1">{t('labels.account')}</label>
                         <select
-                            className="flex h-10 w-full rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-100 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             value={formData.resolvedAccountId || ''}
                             onChange={(e) => handleChange('resolvedAccountId', e.target.value)}
                         >
@@ -232,7 +232,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                 <div>
                     <label className="block text-sm font-medium mb-1">{t('labels.category')}</label>
                     <select
-                        className="flex h-10 w-full rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-100 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         value={formData.resolvedCategoryId || ''}
                         onChange={(e) => {
                             handleChange('resolvedCategoryId', e.target.value);
@@ -271,19 +271,19 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                                 }
                             }}
                         />
-                        <span className="text-sm font-medium text-zinc-900">{t('groups.markAsShared')}</span>
+                        <span className="text-sm font-medium text-zinc-900 dark:text-zinc-200">{t('groups.markAsShared')}</span>
                     </label>
                 </div>
 
                 {/* Group Selection (Visible if toggled or detected) */}
                 {(formData.resolvedGroupId || formData.groupName) && (
-                    <div className="bg-blue-50 p-4 rounded-md mb-4 border border-blue-100 animate-in fade-in slide-in-from-top-2 duration-200">
-                        <label className="block text-sm font-medium mb-1 text-blue-900">
+                    <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-md mb-4 border border-blue-100 dark:border-blue-800 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <label className="block text-sm font-medium mb-1 text-blue-900 dark:text-blue-100">
                             {t('labels.group')}
-                            {data.groupName && !data.resolvedGroupId && <span className='ml-2 text-xs font-light text-blue-700'>({t('groups.aiSuggested', { name: data.groupName })})</span>}
+                            {data.groupName && !data.resolvedGroupId && <span className='ml-2 text-xs font-light text-blue-700 dark:text-blue-300'>({t('groups.aiSuggested', { name: data.groupName })})</span>}
                         </label>
                         <select
-                            className="flex h-10 w-full rounded-md border border-blue-200 bg-white px-3 py-2 text-sm text-blue-900 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                            className="flex h-10 w-full rounded-md border border-blue-200 dark:border-blue-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm text-blue-900 dark:text-blue-100 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                             value={formData.resolvedGroupId || ''}
                             onChange={(e) => {
                                 const newVal = e.target.value;
@@ -315,15 +315,15 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                         onChange={(e) => setTagSearch(e.target.value)}
                         className="mb-2 h-8 text-sm"
                     />
-                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-1 border rounded-md">
+                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-1 border border-zinc-200 dark:border-zinc-700 rounded-md">
                         {filteredTags.map((tag: any) => (
                             <button
                                 key={tag.id}
                                 type="button"
                                 onClick={() => toggleTag(tag.id)}
                                 className={`px-3 py-1 rounded-full text-xs font-medium transition-colors border ${selectedTags.includes(tag.id)
-                                    ? 'bg-zinc-900 text-white border-zinc-900'
-                                    : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-100'
+                                    ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100'
+                                    : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700'
                                     }`}
                             >
                                 {tag.name}

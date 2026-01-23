@@ -26,5 +26,9 @@
   "shares": "partes",
   "totalPercentage": "Porcentaje Total:",
   "totalSplit": "División Total:",
-  "splitMismatch": "¡La división total no coincide con el monto de la transacción!"
+  "splitMismatch": "¡La división total no coincide con el monto de la transacción!",
+  "required": "requerido",
+  "percentageFor": "Porcentaje para {name}",
+  "amountFor": "Monto para {name}",
+  "sharesFor": "Partes para {name}"
 }

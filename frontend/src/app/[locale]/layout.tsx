@@ -10,6 +10,7 @@ import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import '../globals.css'
 import '@/styles/dashboard-grid.css'
+import NextTopLoader from 'nextjs-toploader'
 
 // OPT-9: Optimized font loading configuration
 // - display: 'swap' ensures text is visible immediately with fallback font
@@ -76,6 +77,17 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <ThemeProvider>
+              <NextTopLoader
+                color="#1A9B8E"
+                initialPosition={0.08}
+                crawlSpeed={200}
+                height={4}
+                crawl={true}
+                showSpinner={false}
+                easing="ease"
+                speed={200}
+                shadow="0 0 10px #1A9B8E,0 0 5px #1A9B8E"
+              />
               <ErrorBoundary>
                 <a
                   href="#main-content"

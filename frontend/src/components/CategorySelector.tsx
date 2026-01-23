@@ -84,7 +84,7 @@ export default function CategorySelector({
             {required && <span className="text-red-500 ml-1" aria-hidden="true">*</span>}
           </label>
         )}
-        <div className="animate-pulse bg-gray-200 h-12 rounded-lg" role="status" aria-label="Loading categories"></div>
+        <div className="animate-pulse bg-muted h-12 rounded-lg" role="status" aria-label="Loading categories"></div>
       </div>
     )
   }
@@ -92,7 +92,7 @@ export default function CategorySelector({
   return (
     <div className="w-full space-y-2">
       {label && (
-        <label id={labelId} className="block text-sm font-medium text-gray-700 mb-1">
+        <label id={labelId} className="block text-sm font-medium text-foreground mb-1">
           {label}
           {required && <span className="text-red-500 ml-1" aria-hidden="true">*</span>}
         </label>
@@ -108,9 +108,9 @@ export default function CategorySelector({
         aria-labelledby={label ? labelId : undefined}
         aria-describedby={error ? errorId : undefined}
         className={cn(
-          'w-full px-4 py-3 border rounded-lg text-left flex items-center justify-between transition-colors',
-          'hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500',
-          error ? 'border-red-500' : 'border-gray-300',
+          'w-full px-4 py-3 border rounded-lg text-left flex items-center justify-between transition-colors bg-background text-foreground',
+          'hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-blue-500',
+          error ? 'border-red-500' : 'border-input',
           isExpanded && 'ring-2 ring-blue-500 border-blue-500'
         )}
       >
@@ -123,16 +123,16 @@ export default function CategorySelector({
               {selectedCategoryData.icon || '📁'}
             </span>
             <div className="flex flex-col">
-              <span className="font-medium text-gray-900">{translateCategory(selectedCategoryData)}</span>
+              <span className="font-medium text-foreground">{translateCategory(selectedCategoryData)}</span>
               {selectedCategoryData.source !== 'TEMPLATE' && (
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted-foreground">
                   {selectedCategoryData.source === 'CUSTOM' ? '(Custom)' : '(Override)'}
                 </span>
               )}
             </div>
           </div>
         ) : (
-          <span className="text-gray-500">{t('placeholder')}</span>
+          <span className="text-muted-foreground">{t('placeholder')}</span>
         )}
         <svg
           className={cn('w-5 h-5 text-gray-400 transition-transform', isExpanded && 'rotate-180')}
@@ -151,7 +151,7 @@ export default function CategorySelector({
           id={listboxId}
           role="listbox"
           aria-label={label || 'Category selection'}
-          className="border border-gray-200 rounded-lg p-3 bg-white shadow-lg"
+          className="border border-border rounded-lg p-3 bg-popover shadow-lg"
         >
           {/* Main Categories Grid */}
           {!selectedMainCategory && (
@@ -169,17 +169,17 @@ export default function CategorySelector({
                     onClick={() => handleMainCategoryClick(category.id)}
                     className={cn(
                       'flex flex-col items-center gap-2 p-3 rounded-lg transition-all',
-                      'hover:shadow-md border-2',
+                      'border-2',
                       value === category.id
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-transparent hover:border-gray-300'
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                        : 'border-transparent hover:border-border hover:bg-muted/50'
                     )}
                     style={{
                       backgroundColor: value === category.id ? undefined : (category.color || '#3b82f6') + '10',
                     }}
                   >
                     <span className="text-2xl" aria-hidden="true">{category.icon || '📁'}</span>
-                    <span className="text-xs font-medium text-gray-700 text-center leading-tight">
+                    <span className="text-xs font-medium text-foreground text-center leading-tight">
                       {categoryName}
                     </span>
                     {hasSubcategories && (
@@ -204,7 +204,7 @@ export default function CategorySelector({
                 type="button"
                 onClick={() => setSelectedMainCategory('')}
                 aria-label={t('backToCategories')}
-                className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path
@@ -226,7 +226,7 @@ export default function CategorySelector({
                 >
                   {selectedMainCategoryData.icon || '📁'}
                 </span>
-                <span className="font-semibold text-gray-900">{translateCategory(selectedMainCategoryData)}</span>
+                <span className="font-semibold text-foreground">{translateCategory(selectedMainCategoryData)}</span>
               </div>
 
               {/* Subcategories Grid */}
@@ -245,8 +245,8 @@ export default function CategorySelector({
                         'flex flex-col items-center gap-2 p-3 rounded-lg transition-all',
                         'hover:shadow-md border-2',
                         value === subcategory.id
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-transparent hover:border-gray-300'
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                          : 'border-transparent hover:border-border hover:bg-muted/50'
                       )}
                       style={{
                         backgroundColor:
@@ -254,7 +254,7 @@ export default function CategorySelector({
                       }}
                     >
                       <span className="text-2xl" aria-hidden="true">{subcategory.icon || '📁'}</span>
-                      <span className="text-xs font-medium text-gray-700 text-center leading-tight">
+                      <span className="text-xs font-medium text-foreground text-center leading-tight">
                         {subcategoryName}
                       </span>
                       {subcategory.source !== 'TEMPLATE' && (
@@ -270,7 +270,7 @@ export default function CategorySelector({
           )}
 
           {mainCategories.length === 0 && (
-            <p className="text-sm text-gray-500 italic text-center py-4">
+            <p className="text-sm text-muted-foreground italic text-center py-4">
               {t('noCategories')}
             </p>
           )}

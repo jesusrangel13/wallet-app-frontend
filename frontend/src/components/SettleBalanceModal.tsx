@@ -113,8 +113,8 @@ export function SettleBalanceModal({
     <Modal isOpen={isOpen} onClose={onClose} title={t('payment.modal.settleBalanceTitle')}>
       <div className="space-y-4">
         {/* Amount info */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-sm text-blue-900">
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <p className="text-sm text-blue-900 dark:text-blue-100">
             {t('payment.modal.balanceInfo', { amount: amount.toFixed(0), name: otherUserName })}
           </p>
         </div>
@@ -123,13 +123,13 @@ export function SettleBalanceModal({
         <div>
           <label
             htmlFor={accountSelectId}
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-medium text-foreground mb-2"
           >
             {t('payment.modal.selectAccount')}
           </label>
 
           {loadingAccounts ? (
-            <div className="text-sm text-gray-500" role="status" aria-live="polite">{t('payment.modal.loadingAccounts')}</div>
+            <div className="text-sm text-muted-foreground" role="status" aria-live="polite">{t('payment.modal.loadingAccounts')}</div>
           ) : accounts.length === 0 ? (
             <div className="text-sm text-red-600" role="alert">
               {t('payment.modal.noActiveAccounts')}
@@ -139,7 +139,7 @@ export function SettleBalanceModal({
               id={accountSelectId}
               value={selectedAccountId}
               onChange={(e) => setSelectedAccountId(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-border bg-background text-foreground rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               disabled={settleBalance.isPending}
               aria-describedby={defaultAccountId === null ? 'account-hint' : undefined}
             >
@@ -154,15 +154,15 @@ export function SettleBalanceModal({
           )}
 
           {!loadingAccounts && defaultAccountId === null && accounts.length > 0 && (
-            <p id="account-hint" className="mt-2 text-xs text-gray-500">
+            <p id="account-hint" className="mt-2 text-xs text-muted-foreground">
               {t('payment.modal.defaultAccountHint')}
             </p>
           )}
         </div>
 
         {/* Info message */}
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-          <p className="text-xs text-gray-600">
+        <div className="bg-muted/50 border border-border rounded-lg p-3">
+          <p className="text-xs text-muted-foreground">
             {t('payment.modal.settleInfo')}
           </p>
         </div>
@@ -173,7 +173,7 @@ export function SettleBalanceModal({
             type="button"
             onClick={onClose}
             disabled={settleBalance.isPending}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-muted disabled:opacity-50"
           >
             {t('payment.modal.cancel')}
           </button>

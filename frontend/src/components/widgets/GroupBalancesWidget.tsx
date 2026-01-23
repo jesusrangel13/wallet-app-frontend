@@ -72,9 +72,9 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
           <DollarSign className="h-4 w-4" />
-          Mis Balances
+          {t('title')}
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
@@ -83,21 +83,21 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
             groupedData.slice(0, maxItems).map((group: any) => {
               const isExpanded = expandedGroups.has(group.groupId)
               const isPositive = (group.userBalance ?? 0) > 0 // Positive = others owe you
-              const balanceColor = isPositive ? 'text-green-600' : 'text-red-600'
+              const balanceColor = isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
 
               return (
-                <div key={group.groupId} className="border border-gray-200 rounded-lg overflow-hidden">
+                <div key={group.groupId} className="border border-border rounded-lg overflow-hidden bg-muted/50">
                   {/* Group Header - Clickable */}
                   <button
                     onClick={() => toggleGroup(group.groupId)}
-                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors"
+                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/80 transition-colors"
                   >
                     <div className="flex items-center gap-2 min-w-0 flex-1">
                       {/* Expand/Collapse Icon */}
                       {isExpanded ? (
-                        <ChevronDown className="h-4 w-4 text-gray-600 flex-shrink-0" />
+                        <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       ) : (
-                        <ChevronRight className="h-4 w-4 text-gray-600 flex-shrink-0" />
+                        <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       )}
 
                       {/* Group Icon/Emoji */}
@@ -108,10 +108,10 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
                       )}
 
                       {/* Group Name + Count */}
-                      <span className="font-medium text-sm text-gray-900 truncate">
+                      <span className="font-medium text-sm text-foreground truncate">
                         {group.groupName}
                       </span>
-                      <span className="text-xs text-gray-500 flex-shrink-0">
+                      <span className="text-xs text-muted-foreground flex-shrink-0">
                         (<AnimatedCounter value={group.memberCount} decimals={0} /> {group.memberCount === 1 ? t('person') : t('people')})
                       </span>
                     </div>
@@ -124,11 +124,11 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
 
                   {/* Expandable Member List */}
                   {isExpanded && (
-                    <div className="border-t border-gray-200 bg-gray-50">
+                    <div className="border-t border-border bg-black/5 dark:bg-black/20">
                       {group.membersOwing.map((member: any, index: number) => (
                         <div
                           key={`${group.groupId}-${member.userId}-${index}`}
-                          className="flex items-center justify-between px-4 py-2 border-b border-gray-100 last:border-b-0"
+                          className="flex items-center justify-between px-4 py-2 border-b border-border last:border-b-0"
                         >
                           {/* Member Info */}
                           <div className="flex items-center gap-3 flex-1">
@@ -138,13 +138,13 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
                             </div>
 
                             {/* Name */}
-                            <p className="font-medium text-xs text-gray-700 truncate">
+                            <p className="font-medium text-xs text-muted-foreground truncate">
                               {member.name}
                             </p>
                           </div>
 
                           {/* Amount */}
-                          <span className="font-semibold text-green-600 text-xs ml-3">
+                          <span className="font-semibold text-green-600 dark:text-green-400 text-xs ml-3">
                             <AnimatedCurrency amount={Math.abs(member.balance)} currency="CLP" />
                           </span>
                         </div>
@@ -155,7 +155,7 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
               )
             })
           ) : (
-            <p className="text-gray-500 text-center py-12 text-sm">
+            <p className="text-muted-foreground text-center py-12 text-sm">
               {t('noSharedExpenses')}
             </p>
           )}

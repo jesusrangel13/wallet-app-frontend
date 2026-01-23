@@ -775,8 +775,8 @@ export default function TransactionsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('title')}</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{t('title')}</h1>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">
             {t('subtitle')}
           </p>
         </div>
@@ -801,22 +801,22 @@ export default function TransactionsPage() {
               <span className="hidden sm:inline">{tCommon('actions.export')}</span>
             </Button>
             {showExportMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
+              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-card rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10">
                 <button
                   onClick={() => handleExport('csv')}
-                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2"
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
                 >
                   <span>📄</span> Export as CSV
                 </button>
                 <button
                   onClick={() => handleExport('json')}
-                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2"
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
                 >
                   <span>📋</span> Export as JSON
                 </button>
                 <button
                   onClick={() => handleExport('excel')}
-                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2"
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
                 >
                   <span>📊</span> Export as Excel
                 </button>
@@ -839,16 +839,16 @@ export default function TransactionsPage() {
       </div>
 
       {/* Month/Year Selector */}
-      <div className="flex items-center justify-center gap-4 bg-white rounded-lg border border-gray-200 p-4">
+      <div className="flex items-center justify-center gap-4 bg-white dark:bg-card rounded-lg border border-gray-200 dark:border-gray-700 p-4">
         <button
           onClick={() => {
             const newMonth = selectedMonth === 0 ? 11 : selectedMonth - 1
             const newYear = selectedMonth === 0 ? selectedYear - 1 : selectedYear
             updateMonthFilter(newMonth, newYear)
           }}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
         >
-          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
@@ -860,7 +860,7 @@ export default function TransactionsPage() {
               const month = parseInt(e.target.value)
               updateMonthFilter(month, selectedYear)
             }}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary font-medium"
           >
             {monthNames.map((month, index) => (
               <option key={index} value={index}>
@@ -875,7 +875,7 @@ export default function TransactionsPage() {
               const year = parseInt(e.target.value)
               updateMonthFilter(selectedMonth, year)
             }}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary font-medium"
           >
             {[...Array(10)].map((_, i) => {
               const year = new Date().getFullYear() - 5 + i
@@ -894,9 +894,9 @@ export default function TransactionsPage() {
             const newYear = selectedMonth === 11 ? selectedYear + 1 : selectedYear
             updateMonthFilter(newMonth, newYear)
           }}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
         >
-          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>
@@ -912,22 +912,22 @@ export default function TransactionsPage() {
 
       {/* Select All Button */}
       {transactions.length > 0 && (
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3">
             <input
               type="checkbox"
               checked={selectAll}
               onChange={handleSelectAll}
-              className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+              className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer bg-white dark:bg-gray-800"
             />
             <button
               onClick={handleSelectAll}
-              className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               {selectAll ? 'Deseleccionar todas' : 'Seleccionar todas'}
             </button>
             {selectedTransactionIds.size > 0 && (
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-gray-500 dark:text-gray-400">
                 ({selectedTransactionIds.size} de {transactions.length} seleccionadas)
               </span>
             )}
@@ -959,10 +959,10 @@ export default function TransactionsPage() {
 
       {/* Bulk Delete Action Bar */}
       {selectedTransactionIds.size > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
+        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-card border-t border-gray-200 dark:border-gray-700 shadow-lg z-40">
           <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm font-medium text-gray-900 dark:text-white">
                 {selectedTransactionIds.size} transaction{selectedTransactionIds.size !== 1 ? 's' : ''} selected
               </span>
             </div>
@@ -1010,7 +1010,7 @@ export default function TransactionsPage() {
             groupContent={(index) => {
               const group = groupedTransactions[index]
               return (
-                <div className="pt-6 pb-2 bg-gray-50/95 backdrop-blur z-10 sticky top-0">
+                <div className="pt-6 pb-2 bg-gray-50/95 dark:bg-background/95 backdrop-blur z-10 sticky top-0">
                   <DateGroupHeader
                     date={group.date}
                     totalIncome={group.totalIncome}
@@ -1026,7 +1026,7 @@ export default function TransactionsPage() {
 
               return (
                 <div className="pb-2">
-                  <Card className={`transition-colors ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 border-blue-300' : ''}`}>
+                  <Card className={`transition-colors ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700' : ''}`}>
                     <CardContent className="py-4">
                       <div className="flex items-start justify-between">
                         {/* Left Section: Checkbox + Category Icon + Details */}
@@ -1035,7 +1035,7 @@ export default function TransactionsPage() {
                             type="checkbox"
                             checked={selectedTransactionIds.has(transaction.id)}
                             onChange={() => handleSelectTransaction(transaction.id)}
-                            className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer mt-1"
+                            className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer mt-1 bg-white dark:bg-gray-800"
                           />
 
                           {/* Category Circle Icon */}
@@ -1052,13 +1052,13 @@ export default function TransactionsPage() {
                           {/* Content */}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-baseline gap-2">
-                              <p className="font-semibold text-gray-900">
+                              <p className="font-semibold text-gray-900 dark:text-white">
                                 {transaction.category?.name || 'Uncategorized'}
                               </p>
                             </div>
 
                             {transaction.description && (
-                              <p className="text-sm text-gray-600 truncate">{transaction.description}</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400 truncate">{transaction.description}</p>
                             )}
 
                             {/* Shared Expense Indicator - unified display */}
@@ -1066,10 +1066,10 @@ export default function TransactionsPage() {
 
                             {/* Show payee only for non-shared transactions (shared ones show it in the indicator) */}
                             {!transaction.sharedExpenseId && transaction.payee && (
-                              <p className="text-xs text-gray-500 mt-1">→ {transaction.payee}</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">→ {transaction.payee}</p>
                             )}
 
-                            <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
+                            <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mt-1">
                               <span>{transaction.account?.name}</span>
                               {transaction.toAccount && (
                                 <>
@@ -1084,7 +1084,7 @@ export default function TransactionsPage() {
                                 {transaction.tags.map((t) => (
                                   <span
                                     key={t.id}
-                                    className="inline-block px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded text-xs"
+                                    className="inline-block px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded text-xs"
                                   >
                                     {t.tag.name}
                                   </span>
@@ -1182,7 +1182,7 @@ export default function TransactionsPage() {
 
       {/* End of list indicator */}
       {!hasMore && transactions.length > 0 && (
-        <div className="text-center py-6 text-sm text-gray-500">
+        <div className="text-center py-6 text-sm text-gray-500 dark:text-gray-400">
           Has llegado al final de la lista
         </div>
       )}
@@ -1202,16 +1202,16 @@ export default function TransactionsPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Transaction Type - Tabs */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {t('fields.type')} <span className="text-red-500">*</span>
             </label>
-            <div className="grid grid-cols-3 gap-2 bg-gray-100 p-1 rounded-lg">
+            <div className="grid grid-cols-3 gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
               <button
                 type="button"
                 onClick={() => setValue('type', 'EXPENSE')}
                 className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'EXPENSE'
                   ? 'bg-red-500 text-white shadow-md'
-                  : 'text-gray-700 hover:bg-gray-200'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                   }`}
               >
                 <div className="flex flex-col items-center gap-1">
@@ -1226,7 +1226,7 @@ export default function TransactionsPage() {
                 onClick={() => setValue('type', 'INCOME')}
                 className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'INCOME'
                   ? 'bg-green-500 text-white shadow-md'
-                  : 'text-gray-700 hover:bg-gray-200'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                   }`}
               >
                 <div className="flex flex-col items-center gap-1">
@@ -1241,7 +1241,7 @@ export default function TransactionsPage() {
                 onClick={() => setValue('type', 'TRANSFER')}
                 className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'TRANSFER'
                   ? 'bg-blue-400 text-white shadow-md'
-                  : 'text-gray-700 hover:bg-gray-200'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                   }`}
               >
                 <div className="flex flex-col items-center gap-1">
@@ -1257,12 +1257,12 @@ export default function TransactionsPage() {
 
           {/* Account */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t('fields.account')} <span className="text-red-500">*</span>
             </label>
             <select
               {...register('accountId')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
             >
               <option value="">{t('placeholders.selectAccount')}</option>
               {accounts.map((account) => (
@@ -1279,12 +1279,12 @@ export default function TransactionsPage() {
           {/* To Account (for transfers) */}
           {selectedType === 'TRANSFER' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t('fields.toAccount')} <span className="text-red-500">*</span>
               </label>
               <select
                 {...register('toAccountId')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
               >
                 <option value="">{t('placeholders.selectDestination')}</option>
                 {getAvailableToAccounts().map((account) => (
@@ -1301,11 +1301,11 @@ export default function TransactionsPage() {
 
           {/* Amount */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t('fields.amount')} <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 font-semibold">
                 {selectedAccount
                   ? selectedAccount.currency === 'CLP'
                     ? '$'
@@ -1318,7 +1318,7 @@ export default function TransactionsPage() {
                 type="text"
                 inputMode="decimal"
                 placeholder="0.00"
-                className={`w-full pl-12 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.amount ? 'border-red-500' : 'border-gray-300'
+                className={`w-full pl-12 pr-3 py-2 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary ${errors.amount ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                   }`}
                 value={formattedAmount}
                 onChange={handleAmountChange}
@@ -1351,11 +1351,11 @@ export default function TransactionsPage() {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('fields.description')}</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('fields.description')}</label>
             <textarea
               {...register('description')}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
               placeholder={t('placeholders.description')}
             />
             {errors.description && (
@@ -1390,7 +1390,7 @@ export default function TransactionsPage() {
             />
           )}
 
-          <div className="flex gap-3 pt-4 border-t">
+          <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
             <Button type="submit" className="flex-1" disabled={isSaving}>
               {isSaving ? (
                 <span className="inline-flex items-center gap-2">
@@ -1426,15 +1426,15 @@ export default function TransactionsPage() {
         title={t('delete')}
       >
         <div className="space-y-4">
-          <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-900">
+          <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
+            <p className="text-sm text-red-900 dark:text-red-200">
               Are you sure you want to delete {selectedTransactionIds.size} transaction{selectedTransactionIds.size !== 1 ? 's' : ''}?
             </p>
-            <p className="text-xs text-red-700 mt-2">
+            <p className="text-xs text-red-700 dark:text-red-400 mt-2">
               This action cannot be undone.
             </p>
           </div>
-          <div className="flex gap-3 pt-4 border-t">
+          <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
             <Button
               variant="outline"
               onClick={() => setShowBulkDeleteConfirm(false)}

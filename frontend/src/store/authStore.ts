@@ -9,10 +9,12 @@ interface AuthState {
   token: string | null
   locale: Locale
   isAuthenticated: boolean
+  isHydrated: boolean
   setAuth: (user: User, token: string) => void
   clearAuth: () => void
   updateUser: (user: Partial<User>) => void
   setLocale: (locale: Locale) => void
+  setHydrated: () => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -22,6 +24,7 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       locale: 'es' as Locale,
       isAuthenticated: false,
+      isHydrated: false,
 
       setAuth: (user, token) => {
         // Store token separately for API access
@@ -44,6 +47,7 @@ export const useAuthStore = create<AuthState>()(
         })),
 
       setLocale: (locale) => set({ locale }),
+      setHydrated: () => set({ isHydrated: true }),
     }),
     {
       name: 'auth-storage',
@@ -54,6 +58,14 @@ export const useAuthStore = create<AuthState>()(
         token: state.token,
         locale: state.locale,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.isHydrated = true
+          if (state.token) {
+            state.isAuthenticated = true
+          }
+        }
+      },
     }
   )
 )

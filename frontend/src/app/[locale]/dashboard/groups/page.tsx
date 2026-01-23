@@ -488,8 +488,8 @@ export default function GroupsPage() {
         {/* Header */}
         <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
-          <p className="text-gray-600 mt-1">{t('subtitle')}</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('title')}</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">{t('subtitle')}</p>
         </div>
         <Button onClick={handleAddNew}>
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -506,8 +506,8 @@ export default function GroupsPage() {
             <Card>
               <CardContent className="py-16 text-center">
                 <div className="text-6xl mb-4">👨‍👩‍👧‍👦</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No groups yet</h3>
-                <p className="text-gray-600 mb-6">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No groups yet</h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
                   Create your first group to start sharing expenses with friends and family
                 </p>
                 <Button onClick={handleAddNew}>Create Your First Group</Button>
@@ -535,8 +535,8 @@ export default function GroupsPage() {
                     <div className="flex items-center gap-3 mb-3">
                       <div className="text-3xl">{group.coverImageUrl}</div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-base font-semibold text-gray-900 truncate">{group.name}</h3>
-                        <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+                        <h3 className="text-base font-semibold text-gray-900 dark:text-white truncate">{group.name}</h3>
+                        <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                           <Tooltip content={`${memberCount} miembro${memberCount !== 1 ? 's' : ''}`} side="top">
                             <span>{memberCount}👥</span>
                           </Tooltip>
@@ -564,7 +564,7 @@ export default function GroupsPage() {
                       ))}
                       {group.members.length > 4 && (
                         <Tooltip content={`${group.members.length - 4} miembro${group.members.length - 4 !== 1 ? 's' : ''} más`} side="top">
-                          <div className="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 text-xs font-semibold ring-2 ring-white">
+                          <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-700 dark:text-gray-200 text-xs font-semibold ring-2 ring-white dark:ring-gray-800">
                             +{group.members.length - 4}
                           </div>
                         </Tooltip>
@@ -574,14 +574,14 @@ export default function GroupsPage() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleViewGroup(group)}
-                        className="flex-1 py-1.5 px-3 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors font-medium"
+                        className="flex-1 py-1.5 px-3 text-sm bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors font-medium"
                       >
                         Ver
                       </button>
                       {isCreator ? (
                         <button
                           onClick={() => handleDelete(group.id, group.name)}
-                          className="py-1.5 px-3 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          className="py-1.5 px-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -590,7 +590,7 @@ export default function GroupsPage() {
                       ) : (
                         <button
                           onClick={() => handleLeaveGroup(group.id, group.name)}
-                          className="py-1.5 px-3 text-sm text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                          className="py-1.5 px-3 text-sm text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded-lg transition-colors"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -621,7 +621,7 @@ export default function GroupsPage() {
         <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
           {/* Cover Image Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Cover Image</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cover Image</label>
             <div className="relative">
               <button
                 type="button"
@@ -631,7 +631,7 @@ export default function GroupsPage() {
                 <span className="text-white drop-shadow-lg">{formData.coverImageUrl}</span>
               </button>
               {showImagePicker && (
-                <div className="absolute z-10 mt-2 p-3 bg-white border border-gray-200 rounded-lg shadow-lg w-full">
+                <div className="absolute z-10 mt-2 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg w-full">
                   <div className="grid grid-cols-5 gap-2 max-h-48 overflow-y-auto">
                     {GROUP_COVER_IMAGES.map((image) => (
                       <button
@@ -641,7 +641,7 @@ export default function GroupsPage() {
                           setFormData({ ...formData, coverImageUrl: image })
                           setShowImagePicker(false)
                         }}
-                        className="text-4xl hover:bg-gray-100 rounded p-2"
+                        className="text-4xl hover:bg-gray-100 dark:hover:bg-gray-700 rounded p-2"
                       >
                         {image}
                       </button>
@@ -664,14 +664,14 @@ export default function GroupsPage() {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t('fields.description')}
             </label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
               placeholder={t('placeholders.description')}
             />
           </div>
@@ -679,20 +679,20 @@ export default function GroupsPage() {
           {/* Default Split Type - Only for new groups */}
           {!editingGroup && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Default Split Type
               </label>
               <select
                 value={formData.defaultSplitType}
                 onChange={(e) => setFormData({ ...formData, defaultSplitType: e.target.value as SplitType })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
               >
                 <option value="EQUAL">Equal Split</option>
                 <option value="PERCENTAGE">By Percentage</option>
                 <option value="SHARES">By Shares</option>
                 <option value="EXACT">Exact Amounts</option>
               </select>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 This will be the default when creating shared expenses
               </p>
             </div>
@@ -701,7 +701,7 @@ export default function GroupsPage() {
           {/* Add Members - Only for new groups */}
           {!editingGroup && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Add Members (optional)
               </label>
               <div className="space-y-3">
@@ -746,7 +746,7 @@ export default function GroupsPage() {
                     {formData.memberEmails.map((email) => (
                       <div
                         key={email}
-                        className="flex items-center justify-between bg-blue-50 px-3 py-2 rounded-lg"
+                        className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 px-3 py-2 rounded-lg"
                       >
                         <div className="flex items-center gap-2">
                           <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -757,7 +757,7 @@ export default function GroupsPage() {
                               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                             />
                           </svg>
-                          <span className="text-sm text-gray-700">{email}</span>
+                          <span className="text-sm text-gray-700 dark:text-gray-300">{email}</span>
                         </div>
                         <button
                           type="button"
@@ -772,7 +772,7 @@ export default function GroupsPage() {
                     ))}
                   </div>
                 )}
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {formData.memberEmails.length === 0
                     ? 'You will be added automatically as the group creator'
                     : `${formData.memberEmails.length} member(s) will be invited`}
@@ -784,10 +784,10 @@ export default function GroupsPage() {
           {/* Split Configuration - Only for new groups with non-EQUAL split type */}
           {!editingGroup && formData.defaultSplitType !== 'EQUAL' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Configure Split Values
               </label>
-              <div className="space-y-3 bg-gray-50 p-3 rounded-lg">
+              <div className="space-y-3 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
                 {getAllMembersForSplit().map((email) => (
                   <div key={email} className="flex items-center gap-3">
                     <div className="flex-1 flex items-center gap-2">
@@ -795,7 +795,7 @@ export default function GroupsPage() {
                         {email.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <span className="text-sm text-gray-700 truncate block">
+                        <span className="text-sm text-gray-700 dark:text-gray-300 truncate block">
                           {email === user?.email ? `${user.name} (you)` : email}
                         </span>
                       </div>
@@ -839,7 +839,7 @@ export default function GroupsPage() {
                         className="text-right text-sm"
                       />
                     </div>
-                    <span className="text-xs text-gray-500 w-8">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 w-8">
                       {formData.defaultSplitType === 'PERCENTAGE'
                         ? '%'
                         : formData.defaultSplitType === 'SHARES'
@@ -849,8 +849,8 @@ export default function GroupsPage() {
                   </div>
                 ))}
                 {formData.defaultSplitType === 'PERCENTAGE' && (
-                  <div className="pt-2 border-t border-gray-200">
-                    <p className="text-xs text-gray-600">
+                  <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
                       Total: {getSplitConfigTotal()}%
                       {getSplitConfigTotal() !== 100 && Object.keys(splitConfig).length > 0 && (
                         <span className="text-red-600 ml-2">(must equal 100%)</span>
@@ -862,7 +862,7 @@ export default function GroupsPage() {
                   </div>
                 )}
                 {getAllMembersForSplit().length === 0 && (
-                  <p className="text-xs text-gray-500 text-center py-2">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 text-center py-2">
                     Add members above to configure their split values
                   </p>
                 )}
@@ -871,7 +871,7 @@ export default function GroupsPage() {
           )}
 
           {/* Buttons */}
-          <div className="flex gap-3 pt-4 border-t">
+          <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
             <Button type="submit" className="flex-1" disabled={createGroup.isPending || updateGroup.isPending}>
               {createGroup.isPending || updateGroup.isPending
                 ? tLoading('creating')
@@ -927,18 +927,18 @@ export default function GroupsPage() {
                 )}
               </div>
               {viewingGroup.description && (
-                <p className="text-gray-600">{viewingGroup.description}</p>
+                <p className="text-gray-600 dark:text-gray-400">{viewingGroup.description}</p>
               )}
             </div>
 
             {/* Tabs */}
-            <div className="border-b border-gray-200">
+            <div className="border-b border-gray-200 dark:border-gray-700">
               <nav className="-mb-px flex space-x-8">
                 <button
                   onClick={() => setActiveTab('members')}
                   className={`${activeTab === 'members'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                     } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
                 >
                   Miembros
@@ -946,8 +946,8 @@ export default function GroupsPage() {
                 <button
                   onClick={() => setActiveTab('split')}
                   className={`${activeTab === 'split'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                     } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
                 >
                   Configuración
@@ -955,8 +955,8 @@ export default function GroupsPage() {
                 <button
                   onClick={() => setActiveTab('balances')}
                   className={`${activeTab === 'balances'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                     } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
                 >
                   Gastos y Balances
@@ -968,7 +968,7 @@ export default function GroupsPage() {
             {activeTab === 'members' && (
               <div>
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-semibold text-gray-900">
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
                     Members ({viewingGroup.members.length})
                   </h3>
                   <Button
@@ -983,7 +983,7 @@ export default function GroupsPage() {
                 </div>
 
                 {isAddMemberModalOpen && (
-                  <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
                     <div className="flex gap-2">
                       <Input
                         type="email"
@@ -1017,7 +1017,7 @@ export default function GroupsPage() {
                   {viewingGroup.members.map((member) => (
                     <div
                       key={member.id}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         {member.user.avatarUrl ? (
@@ -1037,11 +1037,11 @@ export default function GroupsPage() {
                           </div>
                         )}
                         <div>
-                          <p className="font-medium text-gray-900">{member.user.name}</p>
-                          <p className="text-sm text-gray-500">{member.user.email}</p>
+                          <p className="font-medium text-gray-900 dark:text-white">{member.user.name}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{member.user.email}</p>
                         </div>
                         {member.userId === viewingGroup.createdBy && (
-                          <span className="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
+                          <span className="ml-2 px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 text-xs font-medium rounded">
                             Creator
                           </span>
                         )}
@@ -1049,7 +1049,7 @@ export default function GroupsPage() {
                       {member.userId !== viewingGroup.createdBy && (
                         <button
                           onClick={() => handleRemoveMember(member.id, member.user.name)}
-                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                          className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
@@ -1065,7 +1065,7 @@ export default function GroupsPage() {
                   ))}
 
                   {viewingGroup.members.length === 0 && (
-                    <p className="text-center text-gray-500 py-4">
+                    <p className="text-center text-gray-500 dark:text-gray-400 py-4">
                       No members yet. Add the first member!
                     </p>
                   )}
@@ -1077,7 +1077,7 @@ export default function GroupsPage() {
             {activeTab === 'split' && (
               <div>
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-semibold text-gray-900">
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
                     Default Split Settings
                   </h3>
                   {!isEditingSplit && (
@@ -1100,16 +1100,16 @@ export default function GroupsPage() {
                 </div>
 
                 {isEditingSplit ? (
-                  <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="space-y-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
                     {/* Split Type Selector */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Split Type
                       </label>
                       <select
                         value={splitType}
                         onChange={(e) => setSplitType(e.target.value as SplitType)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                       >
                         <option value="EQUAL">Equal Split</option>
                         <option value="PERCENTAGE">By Percentage</option>
@@ -1121,7 +1121,7 @@ export default function GroupsPage() {
                     {/* Member Split Inputs */}
                     {splitType !== 'EQUAL' && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Member Splits
                         </label>
                         <div className="space-y-2">
@@ -1131,7 +1131,7 @@ export default function GroupsPage() {
                                 <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold">
                                   {member.user.name.charAt(0).toUpperCase()}
                                 </div>
-                                <span className="text-sm text-gray-700">{member.user.name}</span>
+                                <span className="text-sm text-gray-700 dark:text-gray-300">{member.user.name}</span>
                               </div>
                               <div className="w-32">
                                 <Input
@@ -1166,14 +1166,14 @@ export default function GroupsPage() {
                                   className="text-right"
                                 />
                               </div>
-                              <span className="text-sm text-gray-500 w-10">
+                              <span className="text-sm text-gray-500 dark:text-gray-400 w-10">
                                 {splitType === 'PERCENTAGE' ? '%' : splitType === 'SHARES' ? 'sh' : '$'}
                               </span>
                             </div>
                           ))}
                         </div>
                         {splitType === 'PERCENTAGE' && (
-                          <p className="text-xs text-gray-600 mt-2">
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
                             Total: {Object.values(memberSplits).reduce((sum, split) => sum + (split.percentage || 0), 0)}%
                             {Object.values(memberSplits).reduce((sum, split) => sum + (split.percentage || 0), 0) !== 100 && (
                               <span className="text-red-600 ml-2">(must equal 100%)</span>
@@ -1214,11 +1214,11 @@ export default function GroupsPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="p-4 bg-gray-50 rounded-lg">
+                  <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-gray-700">Split Type:</span>
-                        <span className="text-sm text-gray-900">
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Split Type:</span>
+                        <span className="text-sm text-gray-900 dark:text-white">
                           {splitType === 'EQUAL' ? 'Equal Split' :
                             splitType === 'PERCENTAGE' ? 'By Percentage' :
                               splitType === 'SHARES' ? 'By Shares' :
@@ -1232,8 +1232,8 @@ export default function GroupsPage() {
                             if (!split) return null
                             return (
                               <div key={member.id} className="flex items-center justify-between text-sm">
-                                <span className="text-gray-700">{member.user.name}</span>
-                                <span className="font-medium text-gray-900">
+                                <span className="text-gray-700 dark:text-gray-300">{member.user.name}</span>
+                                <span className="font-medium text-gray-900 dark:text-white">
                                   {splitType === 'PERCENTAGE' && split.percentage ? `${split.percentage}%` :
                                     splitType === 'SHARES' && split.shares ? `${split.shares} shares` :
                                       splitType === 'EXACT' && split.exactAmount ? `$${split.exactAmount}` :
@@ -1253,7 +1253,7 @@ export default function GroupsPage() {
             {/* Balances Tab */}
             {activeTab === 'balances' && (
               <div>
-                <h3 className="font-semibold text-gray-900 mb-4">
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
                   Gastos compartidos del grupo
                 </h3>
 
@@ -1263,20 +1263,20 @@ export default function GroupsPage() {
                   </div>
                 ) : groupExpenses.length === 0 ? (
                   <div className="text-center py-12">
-                    <p className="text-gray-500 mb-4">No hay gastos compartidos en este grupo aún</p>
-                    <p className="text-sm text-gray-400">Crea una transacción compartida desde la página de transacciones</p>
+                    <p className="text-gray-500 dark:text-gray-400 mb-4">No hay gastos compartidos en este grupo aún</p>
+                    <p className="text-sm text-gray-400 dark:text-gray-500">Crea una transacción compartida desde la página de transacciones</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {groupExpenses.map((expense: any) => (
-                      <div key={expense.id} className="border rounded-lg p-4 bg-gray-50">
+                      <div key={expense.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800">
                         <div className="flex items-start justify-between mb-3">
                           <div>
-                            <h4 className="font-medium text-gray-900">{expense.description}</h4>
-                            <p className="text-sm text-gray-500">
+                            <h4 className="font-medium text-gray-900 dark:text-white">{expense.description}</h4>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
                               Pagado por: {expense.paidBy.name} • {new Date(expense.date).toLocaleDateString()}
                             </p>
-                            <p className="text-lg font-semibold text-gray-900 mt-1">
+                            <p className="text-lg font-semibold text-gray-900 dark:text-white mt-1">
                               {formatCurrency(expense.amount, 'CLP')}
                             </p>
                           </div>
@@ -1327,7 +1327,7 @@ export default function GroupsPage() {
             )}
 
             {/* Group Actions */}
-            <div className="flex gap-3 pt-4 border-t">
+            <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
               <Button
                 variant="outline"
                 className="flex-1"

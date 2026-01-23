@@ -1,23 +1,25 @@
 import Link from 'next/link'
 import { ArrowRight, Wallet, Users, TrendingUp, PieChart } from 'lucide-react'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm">
+      <nav className="bg-card border-b border-border shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
-              <Wallet className="h-8 w-8 text-blue-600" />
-              <span className="ml-2 text-xl font-bold text-gray-900">FinanceApp</span>
+              <Wallet className="h-8 w-8 text-blue-600 dark:text-blue-500" />
+              <span className="ml-2 text-xl font-bold text-foreground">FinanceApp</span>
             </div>
             <div className="flex items-center gap-4">
+              <ThemeToggle />
               <Link
                 href={`/${locale}/login`}
-                className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Login
               </Link>
@@ -35,11 +37,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center">
-          <h1 className="text-5xl font-extrabold text-gray-900 sm:text-6xl">
+          <h1 className="text-5xl font-extrabold text-foreground sm:text-6xl">
             Manage Your Money,
-            <span className="text-blue-600"> Effortlessly</span>
+            <span className="text-blue-600 dark:text-blue-500"> Effortlessly</span>
           </h1>
-          <p className="mt-6 text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="mt-6 text-xl text-muted-foreground max-w-3xl mx-auto">
             Track expenses, manage budgets, split bills with friends, and gain insights into your spending habits - all in one powerful app.
           </p>
           <div className="mt-10 flex justify-center gap-4">
@@ -52,7 +54,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </Link>
             <Link
               href={`/${locale}/login`}
-              className="flex items-center gap-2 bg-white text-gray-900 px-8 py-3 rounded-lg text-lg font-medium hover:bg-gray-50 transition-colors shadow-lg border border-gray-200"
+              className="flex items-center gap-2 bg-card text-foreground px-8 py-3 rounded-lg text-lg font-medium hover:bg-muted transition-colors shadow-lg border border-border"
             >
               Sign In
             </Link>
@@ -61,71 +63,71 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
         {/* Features Grid */}
         <div className="mt-32 grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Wallet className="h-6 w-6 text-blue-600" />
+          <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
+            <div className="h-12 w-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+              <Wallet className="h-6 w-6 text-blue-600 dark:text-blue-400" />
             </div>
-            <h3 className="mt-4 text-lg font-semibold text-gray-900">Multiple Accounts</h3>
-            <p className="mt-2 text-gray-600">
+            <h3 className="mt-4 text-lg font-semibold text-foreground">Multiple Accounts</h3>
+            <p className="mt-2 text-muted-foreground">
               Track unlimited bank accounts, credit cards, and cash with multi-currency support.
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="h-6 w-6 text-green-600" />
+          <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
+            <div className="h-12 w-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+              <TrendingUp className="h-6 w-6 text-green-600 dark:text-green-400" />
             </div>
-            <h3 className="mt-4 text-lg font-semibold text-gray-900">Smart Budgets</h3>
-            <p className="mt-2 text-gray-600">
+            <h3 className="mt-4 text-lg font-semibold text-foreground">Smart Budgets</h3>
+            <p className="mt-2 text-muted-foreground">
               Set flexible budgets and get alerts before you overspend. Stay on track automatically.
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Users className="h-6 w-6 text-purple-600" />
+          <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
+            <div className="h-12 w-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+              <Users className="h-6 w-6 text-purple-600 dark:text-purple-400" />
             </div>
-            <h3 className="mt-4 text-lg font-semibold text-gray-900">Split Expenses</h3>
-            <p className="mt-2 text-gray-600">
+            <h3 className="mt-4 text-lg font-semibold text-foreground">Split Expenses</h3>
+            <p className="mt-2 text-muted-foreground">
               Share costs with friends and family. Split bills easily and settle up fast.
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <div className="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center">
-              <PieChart className="h-6 w-6 text-orange-600" />
+          <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
+            <div className="h-12 w-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
+              <PieChart className="h-6 w-6 text-orange-600 dark:text-orange-400" />
             </div>
-            <h3 className="mt-4 text-lg font-semibold text-gray-900">Insights & Reports</h3>
-            <p className="mt-2 text-gray-600">
+            <h3 className="mt-4 text-lg font-semibold text-foreground">Insights & Reports</h3>
+            <p className="mt-2 text-muted-foreground">
               Beautiful charts and detailed reports to understand your spending patterns.
             </p>
           </div>
         </div>
 
         {/* Stats Section */}
-        <div className="mt-32 bg-white rounded-2xl shadow-xl p-12">
+        <div className="mt-32 bg-card rounded-2xl shadow-xl p-12 border border-border">
           <div className="grid md:grid-cols-3 gap-8 text-center">
             <div>
-              <div className="text-4xl font-bold text-blue-600">4,000+</div>
-              <div className="mt-2 text-gray-600">Banks Supported</div>
+              <div className="text-4xl font-bold text-blue-600 dark:text-blue-500">4,000+</div>
+              <div className="mt-2 text-muted-foreground">Banks Supported</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-blue-600">50+</div>
-              <div className="mt-2 text-gray-600">Currencies</div>
+              <div className="text-4xl font-bold text-blue-600 dark:text-blue-500">50+</div>
+              <div className="mt-2 text-muted-foreground">Currencies</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-blue-600">100%</div>
-              <div className="mt-2 text-gray-600">Free to Start</div>
+              <div className="text-4xl font-bold text-blue-600 dark:text-blue-500">100%</div>
+              <div className="mt-2 text-muted-foreground">Free to Start</div>
             </div>
           </div>
         </div>
 
         {/* CTA Section */}
         <div className="mt-32 text-center">
-          <h2 className="text-4xl font-bold text-gray-900">
+          <h2 className="text-4xl font-bold text-foreground">
             Ready to take control of your finances?
           </h2>
-          <p className="mt-4 text-xl text-gray-600">
+          <p className="mt-4 text-xl text-muted-foreground">
             Join thousands of users managing their money smarter
           </p>
           <Link
@@ -139,9 +141,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </div>
 
       {/* Footer */}
-      <footer className="bg-white mt-32 border-t">
+      <footer className="bg-card mt-32 border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center text-gray-600">
+          <div className="text-center text-muted-foreground">
             <p>&copy; 2024 FinanceApp. All rights reserved.</p>
           </div>
         </div>

@@ -72,7 +72,7 @@ export const ExpensesByTagWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesB
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
           <TagIcon className="h-4 w-4" />
           Expenses by Tag
         </CardTitle>
@@ -97,7 +97,17 @@ export const ExpensesByTagWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesB
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip formatter={tooltipFormatter} />
+              <Tooltip
+                formatter={tooltipFormatter}
+                contentStyle={{
+                  backgroundColor: 'var(--tooltip-bg, #fff)',
+                  border: '1px solid var(--tooltip-border, #e5e7eb)',
+                  borderRadius: '6px',
+                  color: 'var(--tooltip-text, #111827)',
+                }}
+                itemStyle={{ color: 'var(--tooltip-text, #111827)' }}
+                labelStyle={{ color: 'var(--tooltip-text, #111827)', fontWeight: 600 }}
+              />
               <Legend
                 wrapperStyle={{ fontSize: dimensions.isSmall ? '10px' : '12px', paddingTop: '10px' }}
                 iconType="circle"
@@ -105,10 +115,10 @@ export const ExpensesByTagWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesB
             </PieChart>
           </ResponsiveContainer>
         ) : (
-          <div className={`flex flex-col items-center justify-center text-gray-500`} style={{ height: chartHeight }}>
-            <TagIcon className="h-12 w-12 mb-2 text-gray-300" />
+          <div className={`flex flex-col items-center justify-center text-gray-500 dark:text-gray-400`} style={{ height: chartHeight }}>
+            <TagIcon className="h-12 w-12 mb-2 text-gray-300 dark:text-gray-600" />
             <p className="text-sm">{t('noTaggedExpenses')}</p>
-            <p className="text-xs text-gray-400 mt-1">{t('addTagsHint')}</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{t('addTagsHint')}</p>
           </div>
         )}
       </CardContent>

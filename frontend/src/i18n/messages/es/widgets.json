@@ -126,6 +126,7 @@
     "label": "Mis Saldos",
     "person": "persona",
     "people": "personas",
+    "title": "Mis Saldos",
     "noSharedExpenses": "No hay gastos compartidos aún. ¡Crea un grupo para comenzar a rastrear!"
   },
   "accountBalances": {

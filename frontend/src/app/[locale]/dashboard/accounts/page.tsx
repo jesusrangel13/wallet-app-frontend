@@ -10,6 +10,7 @@ import { useTranslations } from 'next-intl'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { Select } from '@/components/ui/Select'
 import { Modal } from '@/components/ui/Modal'
 import { accountAPI } from '@/lib/api'
 import type { Account, CreateAccountForm } from '@/types'
@@ -220,195 +221,189 @@ export default function AccountsPage() {
 
   return (
     <PageTransition>
-    <div className="space-y-6">
-      {/* Header - Always visible */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
-          <p className="text-gray-600 mt-1">{t('subtitle')}</p>
+      <div className="space-y-6">
+        {/* Header - Always visible */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('title')}</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">{t('subtitle')}</p>
+          </div>
+          <Button onClick={handleAddNew}>
+            <Plus className="h-4 w-4 mr-2" />
+            {t('new')}
+          </Button>
         </div>
-        <Button onClick={handleAddNew}>
-          <Plus className="h-4 w-4 mr-2" />
-          {t('new')}
-        </Button>
-      </div>
 
-      {/* Accounts Display - With localized loading */}
-      <div className="relative">
-        {/* Refetching overlay */}
-        {isRefetching && (
-          <LoadingOverlay message={tLoading('updating')} />
-        )}
-
-        {/* Accounts content */}
-        {accounts.length === 0 ? (
-          <Card>
-            <CardContent className="py-12">
-              <div className="text-center">
-                <Wallet className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500 text-lg mb-4">No accounts yet</p>
-                <Button onClick={handleAddNew}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create your first account
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <AccountsCardView
-            accounts={accounts}
-            onNavigate={(id) => router.push(`/dashboard/accounts/${id}`)}
-          />
-        )}
-      </div>
-
-      {/* Add/Edit Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false)
-          setEditingAccount(null)
-          reset()
-        }}
-        title={editingAccount ? t('edit') : t('new')}
-      >
-        <form onSubmit={handleSubmit(onSubmit, (errors) => console.log('Form validation failed:', errors))} className="space-y-4">
-          <Input
-            label={t('name')}
-            placeholder={t('placeholders.name')}
-            error={errors.name?.message}
-            {...register('name')}
-          />
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('type')}
-            </label>
-            <select
-              {...register('type')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="CASH">{t('types.CASH')}</option>
-              <option value="DEBIT">{t('types.DEBIT_CARD')}</option>
-              <option value="CREDIT">{t('types.CREDIT_CARD')}</option>
-              <option value="SAVINGS">{t('types.SAVINGS')}</option>
-              <option value="INVESTMENT">{t('types.INVESTMENT')}</option>
-            </select>
-            {errors.type && (
-              <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>
-            )}
-          </div>
-
-          <Input
-            label={t('balance')}
-            type="number"
-            step="0.01"
-            placeholder={t('placeholders.initialBalance')}
-            error={errors.balance?.message}
-            {...register('balance')}
-          />
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('currency')}
-            </label>
-            <select
-              {...register('currency')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              {Object.entries(CURRENCIES).map(([code, info]) => (
-                <option key={code} value={code}>
-                  {info.symbol} {info.name} ({code})
-                </option>
-              ))}
-            </select>
-            {errors.currency && (
-              <p className="text-red-500 text-sm mt-1">{errors.currency.message}</p>
-            )}
-          </div>
-
-          {/* Credit card specific fields */}
-          {selectedType === 'CREDIT' && (
-            <>
-              <Input
-                label="Credit Limit"
-                type="number"
-                step="0.01"
-                placeholder="Enter credit limit"
-                error={errors.creditLimit?.message}
-                {...register('creditLimit')}
-              />
-
-              <Input
-                label="Billing Day (1-31)"
-                type="number"
-                min="1"
-                max="31"
-                placeholder="Day of month for statement generation"
-                error={errors.billingDay?.message}
-                {...register('billingDay')}
-              />
-            </>
+        {/* Accounts Display - With localized loading */}
+        <div className="relative">
+          {/* Refetching overlay */}
+          {isRefetching && (
+            <LoadingOverlay message={tLoading('updating')} />
           )}
 
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="isDefault"
-              {...register('isDefault')}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          {/* Accounts content */}
+          {accounts.length === 0 ? (
+            <Card>
+              <CardContent className="py-12">
+                <div className="text-center">
+                  <Wallet className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                  <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">No accounts yet</p>
+                  <Button onClick={handleAddNew}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create your first account
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <AccountsCardView
+              accounts={accounts}
+              onNavigate={(id) => router.push(`/dashboard/accounts/${id}`)}
             />
-            <label htmlFor="isDefault" className="text-sm font-medium text-gray-700">
-              Set as default account
-            </label>
-          </div>
+          )}
+        </div>
 
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="includeInTotalBalance"
-              {...register('includeInTotalBalance')}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        {/* Add/Edit Modal */}
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false)
+            setEditingAccount(null)
+            reset()
+          }}
+          title={editingAccount ? t('edit') : t('new')}
+        >
+          <form onSubmit={handleSubmit(onSubmit, (errors) => console.log('Form validation failed:', errors))} className="space-y-4">
+            <Input
+              label={t('name')}
+              placeholder={t('placeholders.name')}
+              error={errors.name?.message}
+              {...register('name')}
             />
-            <label htmlFor="includeInTotalBalance" className="text-sm font-medium text-gray-700">
-              Include in total balance
-            </label>
-          </div>
 
-          <div className="flex gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setIsModalOpen(false)
-                setEditingAccount(null)
-                reset()
-              }}
-              className="flex-1"
-            >
-              {tCommon('actions.cancel')}
-            </Button>
-            <Button type="submit" isLoading={isSubmitting} className="flex-1">
-              {editingAccount ? tCommon('actions.update') : tCommon('actions.create')}
-            </Button>
-          </div>
-        </form>
-      </Modal>
+            <div>
+              <Select
+                {...register('type')}
+                label={t('type')}
+              >
+                <option value="CASH">{t('types.CASH')}</option>
+                <option value="DEBIT">{t('types.DEBIT_CARD')}</option>
+                <option value="CREDIT">{t('types.CREDIT_CARD')}</option>
+                <option value="SAVINGS">{t('types.SAVINGS')}</option>
+                <option value="INVESTMENT">{t('types.INVESTMENT')}</option>
+              </Select>
+              {errors.type && (
+                <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>
+              )}
+            </div>
 
-      {/* Delete Account Modal */}
-      <DeleteAccountModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => {
-          setIsDeleteModalOpen(false)
-          setDeletingAccount(null)
-          setTransactionCount(0)
-        }}
-        onConfirm={handleDeleteConfirm}
-        account={deletingAccount}
-        accounts={accounts}
-        transactionCount={transactionCount}
-      />
-    </div>
+            <Input
+              label={t('balance')}
+              type="number"
+              step="0.01"
+              placeholder={t('placeholders.initialBalance')}
+              error={errors.balance?.message}
+              {...register('balance')}
+            />
+
+            <div>
+              <Select
+                {...register('currency')}
+                label={t('currency')}
+              >
+                {Object.entries(CURRENCIES).map(([code, info]) => (
+                  <option key={code} value={code}>
+                    {info.symbol} {info.name} ({code})
+                  </option>
+                ))}
+              </Select>
+              {errors.currency && (
+                <p className="text-red-500 text-sm mt-1">{errors.currency.message}</p>
+              )}
+            </div>
+
+            {/* Credit card specific fields */}
+            {selectedType === 'CREDIT' && (
+              <>
+                <Input
+                  label="Credit Limit"
+                  type="number"
+                  step="0.01"
+                  placeholder="Enter credit limit"
+                  error={errors.creditLimit?.message}
+                  {...register('creditLimit')}
+                />
+
+                <Input
+                  label="Billing Day (1-31)"
+                  type="number"
+                  min="1"
+                  max="31"
+                  placeholder="Day of month for statement generation"
+                  error={errors.billingDay?.message}
+                  {...register('billingDay')}
+                />
+              </>
+            )}
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="isDefault"
+                {...register('isDefault')}
+                className="w-4 h-4 text-primary border-gray-300 dark:border-gray-600 rounded focus:ring-primary bg-white dark:bg-card"
+              />
+              <label htmlFor="isDefault" className="text-sm font-medium text-foreground">
+                Set as default account
+              </label>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="includeInTotalBalance"
+                {...register('includeInTotalBalance')}
+                className="w-4 h-4 text-primary border-gray-300 dark:border-gray-600 rounded focus:ring-primary bg-white dark:bg-card"
+              />
+              <label htmlFor="includeInTotalBalance" className="text-sm font-medium text-foreground">
+                Include in total balance
+              </label>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsModalOpen(false)
+                  setEditingAccount(null)
+                  reset()
+                }}
+                className="flex-1"
+              >
+                {tCommon('actions.cancel')}
+              </Button>
+              <Button type="submit" isLoading={isSubmitting} className="flex-1">
+                {editingAccount ? tCommon('actions.update') : tCommon('actions.create')}
+              </Button>
+            </div>
+          </form>
+        </Modal>
+
+        {/* Delete Account Modal */}
+        <DeleteAccountModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false)
+            setDeletingAccount(null)
+            setTransactionCount(0)
+          }}
+          onConfirm={handleDeleteConfirm}
+          account={deletingAccount}
+          accounts={accounts}
+          transactionCount={transactionCount}
+        />
+      </div>
     </PageTransition>
   )
 }

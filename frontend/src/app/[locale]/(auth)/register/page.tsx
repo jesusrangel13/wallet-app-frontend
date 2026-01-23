@@ -66,7 +66,7 @@ export default function RegisterPage() {
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle>{t('title')}</CardTitle>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           {t('subtitle')}
         </p>
       </CardHeader>
@@ -107,9 +107,9 @@ export default function RegisterPage() {
             {t('createAccountButton')}
           </Button>
 
-          <p className="text-center text-sm text-gray-600">
+          <p className="text-center text-sm text-muted-foreground">
             {t('hasAccount')}{' '}
-            <Link href={`/${locale}/login`} className="text-blue-600 hover:underline">
+            <Link href={`/${locale}/login`} className="text-blue-600 dark:text-blue-500 hover:underline">
               {t('signInLink')}
             </Link>
           </p>

@@ -126,6 +126,7 @@
     "label": "My Balances",
     "person": "person",
     "people": "people",
+    "title": "My Balances",
     "noSharedExpenses": "No shared expenses yet. Create a group to start tracking!"
   },
   "accountBalances": {

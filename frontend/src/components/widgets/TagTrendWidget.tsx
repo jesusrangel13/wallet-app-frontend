@@ -110,7 +110,7 @@ export const TagTrendWidget = ({
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
           <TrendingUp className="h-4 w-4" />
           {t('label')} ({t('lastMonths', { months })})
         </CardTitle>
@@ -134,11 +134,14 @@ export const TagTrendWidget = ({
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#fff',
-                  border: '1px solid #e5e7eb',
+                  backgroundColor: 'var(--tooltip-bg, #fff)',
+                  border: '1px solid var(--tooltip-border, #e5e7eb)',
                   borderRadius: '6px',
                   fontSize: '12px',
+                  color: 'var(--tooltip-text, #111827)',
                 }}
+                itemStyle={{ color: 'var(--tooltip-text, #111827)' }}
+                labelStyle={{ color: 'var(--tooltip-text, #111827)', fontWeight: 600 }}
                 formatter={(value: number) => formatCurrency(value, 'CLP')}
               />
               <Legend
@@ -160,12 +163,12 @@ export const TagTrendWidget = ({
           </ResponsiveContainer>
         ) : (
           <div
-            className="flex flex-col items-center justify-center text-gray-500"
+            className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400"
             style={{ height: chartHeight }}
           >
-            <TrendingUp className="h-12 w-12 mb-2 text-gray-300" />
+            <TrendingUp className="h-12 w-12 mb-2 text-gray-300 dark:text-gray-600" />
             <p className="text-sm">{t('noTagData')}</p>
-            <p className="text-xs text-gray-400 mt-1 text-center px-4">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 text-center px-4">
               {tagIds.length > 0
                 ? t('selectedTagsNoHistory')
                 : t('addTagsForTrends')}

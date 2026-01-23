@@ -25,7 +25,7 @@ export const FixedAccountBalancesWidget = () => {
     <div ref={containerRef} className="mb-6 w-full overflow-hidden px-4">
       {/* Premium style container with max width */}
       <div
-        className="bg-gradient-to-r from-gray-50 to-white border border-gray-200 shadow-lg rounded-lg overflow-hidden"
+        className="bg-gradient-to-r from-gray-50 to-white dark:from-card dark:to-card border border-gray-200 dark:border-border shadow-lg dark:shadow-none rounded-lg overflow-hidden"
         style={{ maxWidth: `${maxWidth}px` }}
       >
         <AccountBalancesWidget />

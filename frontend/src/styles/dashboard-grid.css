@@ -31,8 +31,18 @@
   transition: all 200ms ease;
 }
 
+.dark .react-grid-layout > .react-grid-item {
+  background-color: hsl(222 47% 8%);
+  border: 1px solid hsl(217.2 32.6% 17.5%);
+  box-shadow: none;
+}
+
 .react-grid-layout > .react-grid-item:hover {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.dark .react-grid-layout > .react-grid-item:hover {
+  box-shadow: none;
 }
 
 .react-grid-layout > .react-grid-item.react-grid-placeholder {
@@ -77,6 +87,11 @@
   border-bottom: 2px solid rgba(0, 0, 0, 0.4);
 }
 
+.dark .react-grid-layout > .react-grid-item > .react-resizable-handle::after {
+  border-right-color: rgba(255, 255, 255, 0.4);
+  border-bottom-color: rgba(255, 255, 255, 0.4);
+}
+
 .react-grid-layout > .react-grid-item > .react-resizable-handle.react-resizable-hide {
   display: none;
 }
@@ -87,9 +102,18 @@
   border: 2px solid #3b82f6;
 }
 
+.dark .dashboard-grid-wrapper.edit-mode .react-grid-layout > .react-grid-item {
+  background-color: hsl(222 47% 10%);
+  border-color: #3b82f6;
+}
+
 .dashboard-grid-wrapper.edit-mode .react-grid-layout > .react-grid-item:hover {
   border-color: #2563eb;
   background-color: white;
+}
+
+.dark .dashboard-grid-wrapper.edit-mode .react-grid-layout > .react-grid-item:hover {
+  background-color: hsl(222 47% 12%);
 }
 
 .dashboard-grid-wrapper.edit-mode .react-grid-layout > .react-grid-item > .react-resizable-handle {
@@ -123,6 +147,10 @@
 .dashboard-loading-spinner p {
   color: #4b5563;
   font-size: 0.875rem;
+}
+
+.dark .dashboard-loading-spinner p {
+  color: #9ca3af;
 }
 
 /* Responsive adjustments */

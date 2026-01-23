@@ -4,6 +4,7 @@ import { useState, useId } from 'react'
 import { useTranslations } from 'next-intl'
 import { Modal } from './ui/Modal'
 import { Button } from './ui/Button'
+import { Select } from './ui/Select'
 import { Account } from '@/types'
 import { AlertTriangle } from 'lucide-react'
 
@@ -101,11 +102,10 @@ export default function DeleteAccountModal({
               <div className="space-y-2">
                 <label
                   htmlFor={transferOptionId}
-                  className="flex items-start gap-3 p-3 border-2 rounded-lg cursor-pointer transition-colors hover:bg-gray-50"
-                  style={{
-                    borderColor: !deleteTransactions && transferToAccountId ? '#3b82f6' : '#e5e7eb',
-                    backgroundColor: !deleteTransactions && transferToAccountId ? '#eff6ff' : 'white'
-                  }}
+                  className={`flex items-start gap-3 p-3 border-2 rounded-lg cursor-pointer transition-colors hover:bg-muted/50 ${!deleteTransactions && transferToAccountId
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-card'
+                    }`}
                 >
                   <input
                     id={transferOptionId}
@@ -132,11 +132,11 @@ export default function DeleteAccountModal({
                 {!deleteTransactions && (
                   <div>
                     <label htmlFor={transferSelectId} className="sr-only">{t('selectAccount')}</label>
-                    <select
+                    <Select
                       id={transferSelectId}
                       value={transferToAccountId}
                       onChange={(e) => setTransferToAccountId(e.target.value)}
-                      className="w-full ml-9 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="ml-9"
                       aria-label={t('selectAccount')}
                     >
                       <option value="">{t('selectAccount')}</option>
@@ -145,7 +145,7 @@ export default function DeleteAccountModal({
                           {acc.name} ({acc.type})
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
                 )}
               </div>
@@ -154,11 +154,10 @@ export default function DeleteAccountModal({
             {/* Option 2: Delete all transactions */}
             <label
               htmlFor={deleteOptionId}
-              className="flex items-start gap-3 p-3 border-2 rounded-lg cursor-pointer transition-colors hover:bg-gray-50"
-              style={{
-                borderColor: deleteTransactions ? '#3b82f6' : '#e5e7eb',
-                backgroundColor: deleteTransactions ? '#eff6ff' : 'white'
-              }}
+              className={`flex items-start gap-3 p-3 border-2 rounded-lg cursor-pointer transition-colors hover:bg-muted/50 ${deleteTransactions
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-card'
+                }`}
             >
               <input
                 id={deleteOptionId}

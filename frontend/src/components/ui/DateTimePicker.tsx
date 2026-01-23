@@ -166,7 +166,7 @@ export function DateTimePicker({
   return (
     <div className={cn('w-full', className)}>
       {label && (
-        <label id={labelId} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+        <label id={labelId} className="block text-sm font-medium text-foreground mb-1">{label}</label>
       )}
 
       <div className="relative">
@@ -181,12 +181,12 @@ export function DateTimePicker({
           aria-describedby={error ? errorId : undefined}
           className={cn(
             'w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-left flex items-center justify-between',
-            error ? 'border-red-500' : 'border-gray-300',
-            !selectedDate && 'text-gray-400'
+            error ? 'border-red-500' : 'border-input',
+            !selectedDate && 'text-muted-foreground'
           )}
         >
           <span className="flex items-center gap-2">
-            <CalendarIcon className="w-4 h-4 text-gray-400" />
+            <CalendarIcon className="w-4 h-4 text-muted-foreground" />
             {formatDisplayValue()}
           </span>
           {selectedDate && (
@@ -197,9 +197,9 @@ export function DateTimePicker({
                 handleClear()
               }}
               aria-label="Clear date"
-              className="p-0.5 hover:bg-gray-100 rounded"
+              className="p-0.5 hover:bg-muted rounded"
             >
-              <X className="w-4 h-4 text-gray-400 hover:text-gray-600" aria-hidden="true" />
+              <X className="w-4 h-4 text-muted-foreground hover:text-foreground" aria-hidden="true" />
             </button>
           )}
         </button>
@@ -210,7 +210,7 @@ export function DateTimePicker({
             id={dropdownId}
             role="dialog"
             aria-label="Date picker"
-            className="absolute z-50 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg p-3"
+            className="absolute z-50 mt-2 bg-popover border border-border rounded-lg shadow-lg p-3"
           >
             {/* Calendar */}
             <DayPicker
@@ -227,31 +227,31 @@ export function DateTimePicker({
             {/* Time Picker */}
             {includeTime && (
               <>
-                <div className="border-t border-gray-200 my-2" />
+                <div className="border-t border-border my-2" />
                 <TimePicker value={timeValue} onChange={handleTimeChange} />
               </>
             )}
 
             {/* Quick Select Buttons */}
-            <div className="border-t border-gray-200 pt-3 mt-3 flex gap-2 justify-center flex-wrap" role="group" aria-label="Quick date selection">
+            <div className="border-t border-border pt-3 mt-3 flex gap-2 justify-center flex-wrap" role="group" aria-label="Quick date selection">
               <button
                 type="button"
                 onClick={() => handleQuickSelect(0)}
-                className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+                className="px-3 py-1.5 text-sm bg-muted hover:bg-muted/80 rounded transition-colors"
               >
                 Today
               </button>
               <button
                 type="button"
                 onClick={() => handleQuickSelect(-1)}
-                className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+                className="px-3 py-1.5 text-sm bg-muted hover:bg-muted/80 rounded transition-colors"
               >
                 Yesterday
               </button>
               <button
                 type="button"
                 onClick={() => handleQuickSelect(1)}
-                className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+                className="px-3 py-1.5 text-sm bg-muted hover:bg-muted/80 rounded transition-colors"
               >
                 Tomorrow
               </button>
@@ -268,32 +268,6 @@ export function DateTimePicker({
       </div>
 
       {error && <p id={errorId} className="mt-1 text-sm text-red-600" role="alert">{error}</p>}
-
-      <style jsx global>{`
-        .daypicker-custom {
-          --rdp-cell-size: 40px;
-          --rdp-accent-color: #3b82f6;
-          --rdp-background-color: #eff6ff;
-        }
-
-        .daypicker-custom .rdp-day_selected:not([disabled]) {
-          background-color: #3b82f6;
-          color: white;
-        }
-
-        .daypicker-custom .rdp-day_selected:hover:not([disabled]) {
-          background-color: #2563eb;
-        }
-
-        .daypicker-custom .rdp-day_today:not(.rdp-day_selected) {
-          font-weight: bold;
-          color: #3b82f6;
-        }
-
-        .daypicker-custom .rdp-day:hover:not([disabled]):not(.rdp-day_selected) {
-          background-color: #eff6ff;
-        }
-      `}</style>
     </div>
   )
 }

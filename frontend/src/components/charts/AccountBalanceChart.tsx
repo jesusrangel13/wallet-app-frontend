@@ -30,15 +30,15 @@ export function AccountBalanceChart({
   return (
     <div className="relative">
       {/* Comparison Badge - Top Right */}
-      <div className="absolute top-0 right-8 z-10 bg-white border border-gray-200 rounded-lg shadow-sm px-4 py-2">
+      <div className="absolute top-0 right-8 z-10 bg-card border border-border rounded-lg shadow-sm px-4 py-2">
         <div className="flex items-center gap-3">
           <div>
-            <p className="text-xs text-gray-500">vs periodo anterior</p>
-            <p className="text-sm font-medium text-gray-700">
+            <p className="text-xs text-muted-foreground">vs periodo anterior</p>
+            <p className="text-sm font-medium text-foreground">
               {formatCurrency(previousMonthBalance, currency)}
             </p>
           </div>
-          <div className={`flex items-center gap-1 ${percentageChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+          <div className={`flex items-center gap-1 ${percentageChange >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
             {percentageChange >= 0 ? '↗' : '↘'}
             <span className="text-lg font-semibold">
               {percentageChange >= 0 ? '+' : ''}{percentageChange.toFixed(2)}%
@@ -86,6 +86,14 @@ export function AccountBalanceChart({
               const date = new Date(label)
               return date.toLocaleDateString()
             }}
+            contentStyle={{
+              backgroundColor: 'var(--tooltip-bg, #fff)',
+              border: '1px solid var(--tooltip-border, #e5e7eb)',
+              borderRadius: '6px',
+              color: 'var(--tooltip-text, #111827)',
+            }}
+            itemStyle={{ color: 'var(--tooltip-text, #111827)' }}
+            labelStyle={{ color: 'var(--tooltip-text, #111827)', fontWeight: 600 }}
           />
           <Area
             type="monotone"
