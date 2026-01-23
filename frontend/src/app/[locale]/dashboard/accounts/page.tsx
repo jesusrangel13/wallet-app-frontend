@@ -15,7 +15,7 @@ import { Modal } from '@/components/ui/Modal'
 import { accountAPI } from '@/lib/api'
 import type { Account, CreateAccountForm } from '@/types'
 import { CURRENCIES, type Currency } from '@/types/currency'
-import { Wallet, Plus } from 'lucide-react'
+import { Wallet, Plus, CreditCard } from 'lucide-react'
 import DeleteAccountModal from '@/components/DeleteAccountModal'
 import { LoadingPage, LoadingOverlay } from '@/components/ui/Loading'
 import AccountsCardView from '@/components/accounts/AccountsCardView'
@@ -225,7 +225,10 @@ export default function AccountsPage() {
         {/* Header - Always visible */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('title')}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <CreditCard className="h-8 w-8 text-blue-600" />
+              {t('title')}
+            </h1>
             <p className="text-gray-600 dark:text-gray-400 mt-1">{t('subtitle')}</p>
           </div>
           <Button onClick={handleAddNew}>

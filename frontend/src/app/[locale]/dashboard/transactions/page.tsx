@@ -29,7 +29,7 @@ import { TransactionsPageSkeleton } from '@/components/ui/PageSkeletons'
 import { LoadingBar } from '@/components/ui/LoadingBar'
 import { TransactionListSkeleton } from '@/components/ui/TransactionListSkeleton'
 import { PageTransition } from '@/components/ui/animations'
-import { ArrowRightLeft } from 'lucide-react'
+import { TrendingUp } from 'lucide-react'
 
 const transactionSchema = z.object({
   accountId: z.string().min(1, 'Account is required'),
@@ -777,7 +777,7 @@ export default function TransactionsPage() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <ArrowRightLeft className="h-8 w-8 text-green-600" />
+                <TrendingUp className="h-8 w-8 text-green-600" />
                 {t('title')}
               </h1>
               <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">
