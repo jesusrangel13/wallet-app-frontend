@@ -127,16 +127,16 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
 
   return (
     <div
-      className="absolute right-0 mt-2 w-96 bg-white dark:bg-card rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 max-h-[600px] flex flex-col"
+      className="absolute right-0 mt-2 w-96 bg-popover rounded-lg shadow-lg border border-border z-50 max-h-[600px] flex flex-col"
       role="menu"
       aria-label={t('dropdown.title')}
     >
       {/* Header */}
-      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-t-lg">
+      <div className="px-4 py-3 border-b border-border flex items-center justify-between bg-muted/30 rounded-t-lg">
         <div>
-          <h3 id="notifications-title" className="text-lg font-semibold text-gray-900 dark:text-white">{t('dropdown.title')}</h3>
+          <h3 id="notifications-title" className="text-lg font-semibold text-foreground">{t('dropdown.title')}</h3>
           {unreadNotifications.length > 0 && (
-            <p className="text-xs text-gray-500 dark:text-gray-400" aria-live="polite">
+            <p className="text-xs text-muted-foreground" aria-live="polite">
               {t('dropdown.newCount', { count: unreadNotifications.length })}
             </p>
           )}
@@ -149,7 +149,7 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
             disabled={markingAllRead}
             aria-busy={markingAllRead}
             aria-label={t('dropdown.markAll')}
-            className="text-xs text-primary hover:text-primary-hover font-medium disabled:opacity-50"
+            className="text-xs text-primary hover:text-primary/80 font-medium disabled:opacity-50"
           >
             {markingAllRead ? t('dropdown.marking') : t('dropdown.markAll')}
           </button>
@@ -164,11 +164,11 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
           </div>
         ) : notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 px-4">
-            <Bell className="h-12 w-12 text-gray-300 dark:text-gray-600 mb-3" aria-hidden="true" />
-            <p className="text-gray-500 dark:text-gray-400 text-center">{t('dropdown.empty')}</p>
+            <Bell className="h-12 w-12 text-muted-foreground mb-3" aria-hidden="true" />
+            <p className="text-muted-foreground text-center">{t('dropdown.empty')}</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-100 dark:divide-gray-700">
+          <div className="divide-y divide-border">
             {notifications.map((notification) => (
               <button
                 key={notification.id}
@@ -176,9 +176,8 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
                 role="menuitem"
                 onClick={() => handleNotificationClick(notification)}
                 aria-label={`${notification.title}: ${notification.message}${!notification.isRead ? ' (unread)' : ''}`}
-                className={`w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
-                  !notification.isRead ? 'bg-blue-50 dark:bg-blue-900/30' : ''
-                }`}
+                className={`w-full px-4 py-3 text-left hover:bg-muted/50 transition-colors ${!notification.isRead ? 'bg-blue-500/10' : ''
+                  }`}
               >
                 <div className="flex gap-3">
                   {/* Icon */}
@@ -189,7 +188,7 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
-                      <p className="font-semibold text-sm text-gray-900 dark:text-white">
+                      <p className="font-semibold text-sm text-foreground">
                         {notification.title}
                       </p>
                       {!notification.isRead && (
@@ -199,10 +198,10 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
                         />
                       )}
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5 line-clamp-2">
+                    <p className="text-sm text-muted-foreground mt-0.5 line-clamp-2">
                       {notification.message}
                     </p>
-                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {formatDistanceToNow(new Date(notification.createdAt), {
                         addSuffix: true,
                         locale: dateFnsLocale,
@@ -218,11 +217,11 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
 
       {/* Footer */}
       {notifications.length > 0 && (
-        <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-b-lg">
+        <div className="px-4 py-3 border-t border-border bg-muted/30 rounded-b-lg">
           <button
             type="button"
             onClick={onClose}
-            className="w-full text-center text-sm text-primary hover:text-primary-hover font-medium"
+            className="w-full text-center text-sm text-primary hover:text-primary/80 font-medium"
           >
             {t('dropdown.viewAll')}
           </button>

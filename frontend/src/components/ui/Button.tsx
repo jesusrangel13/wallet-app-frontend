@@ -17,11 +17,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = 'inline-flex items-center justify-center rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
 
     const variants = {
-      primary: 'bg-primary text-white hover:bg-primary-hover focus:ring-primary',
-      secondary: 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 focus:ring-gray-500',
-      outline: 'border border-gray-300 dark:border-gray-600 bg-transparent text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 focus:ring-gray-500',
-      ghost: 'bg-transparent text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:ring-gray-500',
-      destructive: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
+      primary: 'bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-ring',
+      secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-ring',
+      outline: 'border border-input bg-background hover:bg-muted text-foreground focus:ring-ring',
+      ghost: 'hover:bg-muted hover:text-foreground text-foreground focus:ring-ring',
+      destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90 focus:ring-destructive',
     }
 
     const sizes = {

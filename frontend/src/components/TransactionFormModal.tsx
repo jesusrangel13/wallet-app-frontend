@@ -237,8 +237,8 @@ export default function TransactionFormModal({
               role="radio"
               aria-checked={selectedType === 'EXPENSE'}
               className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'EXPENSE'
-                  ? 'bg-red-500 text-white shadow-md'
-                  : 'text-muted-foreground hover:bg-muted/80'
+                ? 'bg-red-500 text-white shadow-md'
+                : 'text-muted-foreground hover:bg-muted/80'
                 }`}
             >
               <div className="flex flex-col items-center gap-1">
@@ -254,8 +254,8 @@ export default function TransactionFormModal({
               role="radio"
               aria-checked={selectedType === 'INCOME'}
               className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'INCOME'
-                  ? 'bg-green-500 text-white shadow-md'
-                  : 'text-gray-700 hover:bg-gray-200'
+                ? 'bg-green-500 text-white shadow-md'
+                : 'text-muted-foreground hover:bg-muted'
                 }`}
             >
               <div className="flex flex-col items-center gap-1">
@@ -271,8 +271,8 @@ export default function TransactionFormModal({
               role="radio"
               aria-checked={selectedType === 'TRANSFER'}
               className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'TRANSFER'
-                  ? 'bg-blue-400 text-white shadow-md'
-                  : 'text-gray-700 hover:bg-gray-200'
+                ? 'bg-blue-400 text-white shadow-md'
+                : 'text-muted-foreground hover:bg-muted'
                 }`}
             >
               <div className="flex flex-col items-center gap-1">
@@ -283,7 +283,7 @@ export default function TransactionFormModal({
               </div>
             </button>
           </div>
-          {errors.type && <p className="text-red-500 text-sm mt-1" role="alert">{errors.type.message}</p>}
+          {errors.type && <p className="text-destructive text-sm mt-1" role="alert">{errors.type.message}</p>}
         </fieldset>
 
         {/* Account */}
@@ -325,7 +325,7 @@ export default function TransactionFormModal({
         {/* Amount */}
         <div>
           <label className="block text-sm font-medium text-foreground mb-1">
-            {t('fields.amount')} <span className="text-red-500">*</span>
+            {t('fields.amount')} <span className="text-destructive">*</span>
           </label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">
@@ -341,7 +341,7 @@ export default function TransactionFormModal({
               type="text"
               inputMode="decimal"
               placeholder={t('placeholders.amount')}
-              className={`w-full pl-12 pr-3 py-2 border rounded-lg bg-white dark:bg-card text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.amount ? 'border-red-500' : 'border-input'
+              className={`w-full pl-12 pr-3 py-2 border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-input ${errors.amount ? 'border-destructive' : 'border-input'
                 }`}
               value={formattedAmount}
               onChange={handleAmountChange}
@@ -350,13 +350,13 @@ export default function TransactionFormModal({
               required
             />
           </div>
-          {errors.amount && <p className="text-red-500 text-sm mt-1" role="alert">{errors.amount.message}</p>}
+          {errors.amount && <p className="text-destructive text-sm mt-1" role="alert">{errors.amount.message}</p>}
         </div>
 
         {/* AI Suggested Category (only in import mode) */}
         {mode === 'import' && suggestedCategory && (
-          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-800">
+          <div className="p-3 bg-blue-50/50 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <p className="text-sm text-blue-600 dark:text-blue-400">
               <span className="font-medium">AI Suggestion:</span> {suggestedCategory}
             </p>
           </div>
@@ -387,11 +387,11 @@ export default function TransactionFormModal({
           <textarea
             {...register('description')}
             rows={3}
-            className="w-full px-3 py-2 border border-input rounded-lg bg-white dark:bg-card text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-input"
             placeholder={t('placeholders.description')}
           />
           {errors.description && (
-            <p className="text-red-500 text-sm mt-1" role="alert">{errors.description.message}</p>
+            <p className="text-destructive text-sm mt-1" role="alert">{errors.description.message}</p>
           )}
         </div>
 
@@ -460,7 +460,7 @@ export default function TransactionFormModal({
             <textarea
               {...register('notes')}
               rows={2}
-              className="w-full px-3 py-2 border border-input rounded-lg bg-white dark:bg-card text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-input"
               placeholder={t('placeholders.notes')}
             />
           </div>

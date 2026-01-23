@@ -71,11 +71,11 @@ export default function DeleteAccountModal({
     <Modal isOpen={isOpen} onClose={handleClose} title={t('title')}>
       <div className="space-y-4">
         {/* Warning */}
-        <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg" role="alert">
-          <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+        <div className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-lg" role="alert">
+          <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" aria-hidden="true" />
           <div className="flex-1">
-            <p className="font-medium text-red-900">{t('warning')}</p>
-            <p className="text-sm text-red-700 mt-1">
+            <p className="font-medium text-destructive">{t('warning')}</p>
+            <p className="text-sm text-destructive/80 mt-1">
               {t('warningMessage')} <span className="font-semibold">{account?.name}</span>.
             </p>
           </div>
@@ -83,8 +83,8 @@ export default function DeleteAccountModal({
 
         {/* Transaction Info */}
         {hasTransactions && (
-          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-sm text-yellow-900">
+          <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+            <p className="text-sm text-yellow-600 dark:text-yellow-500">
               {t('transactionCount', { count: transactionCount })}
             </p>
           </div>
@@ -93,7 +93,7 @@ export default function DeleteAccountModal({
         {/* Options */}
         {hasTransactions && (
           <div className="space-y-4">
-            <p className="text-sm font-medium text-gray-900">
+            <p className="text-sm font-medium text-foreground">
               {t('whatToDo')}
             </p>
 
@@ -103,8 +103,8 @@ export default function DeleteAccountModal({
                 <label
                   htmlFor={transferOptionId}
                   className={`flex items-start gap-3 p-3 border-2 rounded-lg cursor-pointer transition-colors hover:bg-muted/50 ${!deleteTransactions && transferToAccountId
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                      : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-card'
+                    ? 'border-blue-500 bg-blue-500/10'
+                    : 'border-border bg-card'
                     }`}
                 >
                   <input
@@ -122,8 +122,8 @@ export default function DeleteAccountModal({
                     aria-describedby="transfer-description"
                   />
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900">{t('transferOption')}</p>
-                    <p id="transfer-description" className="text-xs text-gray-600 mt-1">
+                    <p className="font-medium text-foreground">{t('transferOption')}</p>
+                    <p id="transfer-description" className="text-xs text-muted-foreground mt-1">
                       {t('transferDescription')}
                     </p>
                   </div>
@@ -155,8 +155,8 @@ export default function DeleteAccountModal({
             <label
               htmlFor={deleteOptionId}
               className={`flex items-start gap-3 p-3 border-2 rounded-lg cursor-pointer transition-colors hover:bg-muted/50 ${deleteTransactions
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-card'
+                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-card'
                 }`}
             >
               <input

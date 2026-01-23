@@ -215,18 +215,18 @@ export default function CreateLoanModal({
             {...register('notes')}
             rows={3}
             placeholder={t('notesPlaceholder')}
-            className={`w-full px-3 py-2 border rounded-md bg-white dark:bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.notes ? 'border-red-500' : 'border-input'
+            className={`w-full px-3 py-2 border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring ${errors.notes ? 'border-destructive' : 'border-input'
               }`}
           />
           {errors.notes && (
-            <p className="text-red-500 text-xs mt-1" role="alert">{errors.notes.message}</p>
+            <p className="text-destructive text-xs mt-1" role="alert">{errors.notes.message}</p>
           )}
         </div>
 
         {/* Info Box */}
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-100" role="note">
+        <div className="bg-muted/50 border border-muted rounded-lg p-3 text-sm text-foreground" role="note">
           <p className="font-medium mb-1">{t('infoTitle')}</p>
-          <ul className="list-disc list-inside space-y-1 text-xs">
+          <ul className="list-disc list-inside space-y-1 text-xs text-muted-foreground">
             <li>{t('infoPoint1')}</li>
             <li>{t('infoPoint2')}</li>
             <li>{t('infoPoint3')}</li>

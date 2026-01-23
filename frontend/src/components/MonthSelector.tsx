@@ -62,11 +62,11 @@ export const MonthSelector = () => {
       <button
         type="button"
         onClick={goToPreviousMonth}
-        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        className="p-2 rounded-lg hover:bg-muted transition-colors"
         aria-label={t('date.navigation.previousMonth')}
         title={t('date.navigation.previousMonth')}
       >
-        <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" aria-hidden="true" />
+        <ChevronLeft className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
       </button>
 
       {/* Month/Year Selectors */}
@@ -77,7 +77,7 @@ export const MonthSelector = () => {
           value={month}
           onChange={handleMonthChange}
           aria-label={t('date.navigation.selectMonth')}
-          className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-card border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+          className="px-3 py-1.5 text-sm font-medium text-foreground bg-background border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-input cursor-pointer"
         >
           {Array.from({ length: 12 }, (_, idx) => {
             // Disable future months
@@ -97,7 +97,7 @@ export const MonthSelector = () => {
           value={year}
           onChange={handleYearChange}
           aria-label={t('date.navigation.selectYear')}
-          className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-card border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+          className="px-3 py-1.5 text-sm font-medium text-foreground bg-background border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-input cursor-pointer"
         >
           {yearOptions.map((yearOption) => (
             <option key={yearOption} value={yearOption}>
@@ -114,12 +114,12 @@ export const MonthSelector = () => {
         disabled={isNextDisabled}
         className={`p-2 rounded-lg transition-colors ${isNextDisabled
           ? 'opacity-40 cursor-not-allowed'
-          : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+          : 'hover:bg-muted'
           }`}
         aria-label={t('date.navigation.nextMonth')}
         title={t('date.navigation.nextMonth')}
       >
-        <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400" aria-hidden="true" />
+        <ChevronRight className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
       </button>
 
       {/* Today Button - Only show when not viewing current month */}

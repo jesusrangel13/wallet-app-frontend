@@ -160,14 +160,14 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
         <Modal isOpen={isOpen} onClose={onClose} title={t('title')}>
             <div className="space-y-4 max-h-[80vh] overflow-y-auto pr-2">
                 <div>
-                    <label className="block text-sm font-medium mb-1">{t('originalText')}</label>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400 italic bg-zinc-50 dark:bg-zinc-800/50 p-2 rounded">&quot;{data.originalText}&quot;</p>
+                    <label className="block text-sm font-medium mb-1 text-foreground">{t('originalText')}</label>
+                    <p className="text-sm text-muted-foreground italic bg-muted/50 p-2 rounded">&quot;{data.originalText}&quot;</p>
                 </div>
 
                 {/* Date & Account */}
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium mb-1">{t('labels.date')}</label>
+                        <label className="block text-sm font-medium mb-1 text-foreground">{t('labels.date')}</label>
                         <Input
                             type="date"
                             value={(formData.date as string) || ''}
@@ -175,9 +175,9 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">{t('labels.account')}</label>
+                        <label className="block text-sm font-medium mb-1 text-foreground">{t('labels.account')}</label>
                         <select
-                            className="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-100 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             value={formData.resolvedAccountId || ''}
                             onChange={(e) => handleChange('resolvedAccountId', e.target.value)}
                         >
@@ -194,7 +194,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                 {/* Amount & Currency */}
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium mb-1">{t('labels.amount')}</label>
+                        <label className="block text-sm font-medium mb-1 text-foreground">{t('labels.amount')}</label>
                         <Input
                             type="number"
                             value={formData.amount || ''}
@@ -202,7 +202,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">{t('labels.currency')}</label>
+                        <label className="block text-sm font-medium mb-1 text-foreground">{t('labels.currency')}</label>
                         <Input
                             value={formData.currency || ''}
                             onChange={(e) => handleChange('currency', e.target.value)}
@@ -212,7 +212,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium mb-1">{t('labels.merchant')}</label>
+                        <label className="block text-sm font-medium mb-1 text-foreground">{t('labels.merchant')}</label>
                         <Input
                             placeholder={t('placeholders.merchant')}
                             value={formData.merchant || ''}
@@ -220,7 +220,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">{t('labels.description')}</label>
+                        <label className="block text-sm font-medium mb-1 text-foreground">{t('labels.description')}</label>
                         <Input
                             placeholder={t('placeholders.description')}
                             value={formData.description || ''}
@@ -230,9 +230,9 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium mb-1">{t('labels.category')}</label>
+                    <label className="block text-sm font-medium mb-1 text-foreground">{t('labels.category')}</label>
                     <select
-                        className="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-100 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         value={formData.resolvedCategoryId || ''}
                         onChange={(e) => {
                             handleChange('resolvedCategoryId', e.target.value);
@@ -254,7 +254,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                     <label className="flex items-center space-x-2 cursor-pointer">
                         <input
                             type="checkbox"
-                            className="rounded border-zinc-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                            className="rounded border-input bg-background text-primary focus:ring-ring h-4 w-4"
                             checked={!!(formData.resolvedGroupId || formData.groupName)}
                             onChange={(e) => {
                                 if (e.target.checked) {
@@ -271,19 +271,19 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
                                 }
                             }}
                         />
-                        <span className="text-sm font-medium text-zinc-900 dark:text-zinc-200">{t('groups.markAsShared')}</span>
+                        <span className="text-sm font-medium text-foreground">{t('groups.markAsShared')}</span>
                     </label>
                 </div>
 
                 {/* Group Selection (Visible if toggled or detected) */}
                 {(formData.resolvedGroupId || formData.groupName) && (
-                    <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-md mb-4 border border-blue-100 dark:border-blue-800 animate-in fade-in slide-in-from-top-2 duration-200">
-                        <label className="block text-sm font-medium mb-1 text-blue-900 dark:text-blue-100">
+                    <div className="bg-blue-500/10 p-4 rounded-md mb-4 border border-blue-500/20 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <label className="block text-sm font-medium mb-1 text-blue-700 dark:text-blue-300">
                             {t('labels.group')}
-                            {data.groupName && !data.resolvedGroupId && <span className='ml-2 text-xs font-light text-blue-700 dark:text-blue-300'>({t('groups.aiSuggested', { name: data.groupName })})</span>}
+                            {data.groupName && !data.resolvedGroupId && <span className='ml-2 text-xs font-light text-blue-600 dark:text-blue-400'>({t('groups.aiSuggested', { name: data.groupName })})</span>}
                         </label>
                         <select
-                            className="flex h-10 w-full rounded-md border border-blue-200 dark:border-blue-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm text-blue-900 dark:text-blue-100 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                             value={formData.resolvedGroupId || ''}
                             onChange={(e) => {
                                 const newVal = e.target.value;
@@ -308,29 +308,29 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
 
                 {/* Tags with Search */}
                 <div>
-                    <label className="block text-sm font-medium mb-2">{t('labels.tags')}</label>
+                    <label className="block text-sm font-medium mb-2 text-foreground">{t('labels.tags')}</label>
                     <Input
                         placeholder={t('placeholders.searchTags')}
                         value={tagSearch}
                         onChange={(e) => setTagSearch(e.target.value)}
                         className="mb-2 h-8 text-sm"
                     />
-                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-1 border border-zinc-200 dark:border-zinc-700 rounded-md">
+                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-1 border border-input rounded-lg bg-background/50">
                         {filteredTags.map((tag: any) => (
                             <button
                                 key={tag.id}
                                 type="button"
                                 onClick={() => toggleTag(tag.id)}
                                 className={`px-3 py-1 rounded-full text-xs font-medium transition-colors border ${selectedTags.includes(tag.id)
-                                    ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100'
-                                    : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700'
+                                    ? 'bg-primary text-primary-foreground border-primary'
+                                    : 'bg-background text-muted-foreground border-input hover:bg-muted'
                                     }`}
                             >
                                 {tag.name}
                             </button>
                         ))}
                         {filteredTags.length === 0 && (
-                            <p className="text-xs text-zinc-400 w-full text-center py-2">{t('tags.noTagsFound')}</p>
+                            <p className="text-xs text-muted-foreground w-full text-center py-2">{t('tags.noTagsFound')}</p>
                         )}
                     </div>
                 </div>

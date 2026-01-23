@@ -320,8 +320,8 @@ export default function CategoriesPage() {
             key={type}
             onClick={() => setSelectedType(type)}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${selectedType === type
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              ? 'bg-blue-600 text-white shadow-md'
+              : 'bg-muted text-muted-foreground hover:bg-muted/80'
               }`}
           >
             {type === 'EXPENSE' ? t('types.expense') : t('types.income')}
@@ -333,7 +333,6 @@ export default function CategoriesPage() {
       <div className="flex justify-end">
         <Button
           onClick={() => openNewCategoryModal()}
-          className="bg-green-600 hover:bg-green-700 text-white"
         >
           <Plus className="w-4 h-4 mr-2" />
           {t('newCategory')}

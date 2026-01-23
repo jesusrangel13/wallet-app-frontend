@@ -65,8 +65,8 @@ export function LanguageSwitcher({ variant = 'default' }: LanguageSwitcherProps)
             className={`
               px-3 py-1.5 text-sm font-medium rounded-md transition-colors
               ${locale === currentLocale
-                ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
+                : 'bg-muted text-muted-foreground hover:bg-muted/80 dark:hover:bg-muted/80'
               }
               ${isPending ? 'opacity-50 cursor-not-allowed' : ''}
             `}
@@ -80,7 +80,7 @@ export function LanguageSwitcher({ variant = 'default' }: LanguageSwitcherProps)
 
   return (
     <div className="relative">
-      <label htmlFor={selectId} className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+      <label htmlFor={selectId} className="block text-sm font-medium text-foreground mb-2">
         {t('language.label')} <span className="text-red-500" aria-hidden="true">*</span>
       </label>
       <div className="relative">
@@ -91,7 +91,7 @@ export function LanguageSwitcher({ variant = 'default' }: LanguageSwitcherProps)
           disabled={isPending}
           aria-describedby={helperId}
           aria-busy={isPending}
-          className="w-full px-4 py-2.5 pr-10 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white dark:bg-card text-gray-900 dark:text-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-4 py-2.5 pr-10 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-input appearance-none bg-background text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {SUPPORTED_LOCALES.map((locale) => (
             <option key={locale} value={locale}>
@@ -99,13 +99,13 @@ export function LanguageSwitcher({ variant = 'default' }: LanguageSwitcherProps)
             </option>
           ))}
         </select>
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 dark:text-gray-400" aria-hidden="true">
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground" aria-hidden="true">
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </div>
       </div>
-      <p id={helperId} className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+      <p id={helperId} className="mt-1 text-xs text-muted-foreground">
         {t('language.helperText')}
       </p>
     </div>

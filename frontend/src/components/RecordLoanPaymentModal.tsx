@@ -139,36 +139,35 @@ export default function RecordLoanPaymentModal({
     <Modal isOpen={isOpen} onClose={handleClose} title={t('title')}>
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
         {/* Loan Info */}
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-1" role="region" aria-label={t('borrower')}>
+        <div className="bg-muted/30 border border-border rounded-lg p-3 space-y-1" role="region" aria-label={t('borrower')}>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">{t('borrower')}:</span>
-            <span className="font-medium">{loan.borrowerName}</span>
+            <span className="text-muted-foreground">{t('borrower')}:</span>
+            <span className="font-medium text-foreground">{loan.borrowerName}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">{t('originalAmount')}:</span>
-            <span className="font-medium">{formatCurrency(loan.originalAmount, loan.currency as Currency)}</span>
+            <span className="text-muted-foreground">{t('originalAmount')}:</span>
+            <span className="font-medium text-foreground">{formatCurrency(loan.originalAmount, loan.currency as Currency)}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">{t('paidAmount')}:</span>
-            <span className="font-medium text-green-600">{formatCurrency(loan.paidAmount, loan.currency as Currency)}</span>
+            <span className="text-muted-foreground">{t('paidAmount')}:</span>
+            <span className="font-medium text-green-600 dark:text-green-500">{formatCurrency(loan.paidAmount, loan.currency as Currency)}</span>
           </div>
-          <div className="flex justify-between text-sm pt-2 border-t border-gray-300">
-            <span className="text-gray-900 font-semibold">{t('pendingAmount')}:</span>
-            <span className="font-bold text-orange-600">{formatCurrency(pendingAmount, loan.currency as Currency)}</span>
+          <div className="flex justify-between text-sm pt-2 border-t border-border">
+            <span className="text-foreground font-semibold">{t('pendingAmount')}:</span>
+            <span className="font-bold text-orange-600 dark:text-orange-500">{formatCurrency(pendingAmount, loan.currency as Currency)}</span>
           </div>
         </div>
 
         {/* Account */}
         <div>
-          <label htmlFor="accountId" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="accountId" className="block text-sm font-medium text-foreground mb-1">
             {t('accountTo')} *
           </label>
           <select
             id="accountId"
             {...register('accountId')}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.accountId ? 'border-red-500' : 'border-gray-300'
-            }`}
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground ${errors.accountId ? 'border-destructive' : 'border-input'
+              }`}
           >
             <option value="">{t('selectAccount')}</option>
             {accounts
@@ -180,20 +179,20 @@ export default function RecordLoanPaymentModal({
               )) || []}
           </select>
           {errors.accountId && (
-            <p className="text-red-500 text-xs mt-1" role="alert">{errors.accountId.message}</p>
+            <p className="text-destructive text-xs mt-1" role="alert">{errors.accountId.message}</p>
           )}
         </div>
 
         {/* Amount */}
         <div>
           <div className="flex justify-between items-center mb-1">
-            <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="amount" className="block text-sm font-medium text-foreground">
               {t('paymentAmount')} *
             </label>
             <button
               type="button"
               onClick={setFullAmount}
-              className="text-xs text-blue-600 hover:text-blue-700 underline"
+              className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 underline"
             >
               {t('payAll', { amount: formatCurrency(pendingAmount, loan.currency as Currency) })}
             </button>
@@ -206,13 +205,13 @@ export default function RecordLoanPaymentModal({
             onBlur={handleAmountBlur}
             onFocus={handleAmountFocus}
             placeholder="0"
-            className={errors.amount || selectedAmount > pendingAmount ? 'border-red-500' : ''}
+            className={errors.amount || selectedAmount > pendingAmount ? 'border-destructive' : ''}
           />
           {errors.amount && (
-            <p className="text-red-500 text-xs mt-1" role="alert">{errors.amount.message}</p>
+            <p className="text-destructive text-xs mt-1" role="alert">{errors.amount.message}</p>
           )}
           {selectedAmount > pendingAmount && (
-            <p className="text-red-500 text-xs mt-1" role="alert">
+            <p className="text-destructive text-xs mt-1" role="alert">
               {t('paymentExceedsError', { amount: formatCurrency(pendingAmount, loan.currency as Currency) })}
             </p>
           )}
@@ -220,23 +219,23 @@ export default function RecordLoanPaymentModal({
 
         {/* Payment Date */}
         <div>
-          <label htmlFor="paymentDate" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="paymentDate" className="block text-sm font-medium text-foreground mb-1">
             {t('paymentDate')}
           </label>
           <Input
             id="paymentDate"
             type="date"
             {...register('paymentDate')}
-            className={errors.paymentDate ? 'border-red-500' : ''}
+            className={errors.paymentDate ? 'border-destructive' : ''}
           />
           {errors.paymentDate && (
-            <p className="text-red-500 text-xs mt-1" role="alert">{errors.paymentDate.message}</p>
+            <p className="text-destructive text-xs mt-1" role="alert">{errors.paymentDate.message}</p>
           )}
         </div>
 
         {/* Notes */}
         <div>
-          <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="notes" className="block text-sm font-medium text-foreground mb-1">
             {t('notes')}
           </label>
           <textarea
@@ -244,17 +243,16 @@ export default function RecordLoanPaymentModal({
             {...register('notes')}
             rows={2}
             placeholder={t('notesPlaceholder')}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.notes ? 'border-red-500' : 'border-gray-300'
-            }`}
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground ${errors.notes ? 'border-destructive' : 'border-input'
+              }`}
           />
           {errors.notes && (
-            <p className="text-red-500 text-xs mt-1" role="alert">{errors.notes.message}</p>
+            <p className="text-destructive text-xs mt-1" role="alert">{errors.notes.message}</p>
           )}
         </div>
 
         {/* Info Box */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-800">
+        <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-sm text-green-700 dark:text-green-500">
           <p className="font-medium mb-1">{t('infoTitle')}</p>
           <ul className="list-disc list-inside space-y-1 text-xs">
             <li>{t('infoPoint1')}</li>

@@ -10,7 +10,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         return (
             <div className="w-full">
                 {label && (
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-foreground mb-1">
                         {label}
                     </label>
                 )}
@@ -18,15 +18,15 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                     <select
                         className={`
               w-full px-3 py-2
-              bg-white dark:bg-card
-              border border-gray-300 dark:border-gray-600
+              bg-background
+              border border-input
               rounded-lg
-              text-gray-900 dark:text-white
-              focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+              text-foreground
+              focus:ring-2 focus:ring-ring focus:border-input
               disabled:opacity-50 disabled:cursor-not-allowed
-              placeholder:text-gray-400 dark:placeholder:text-gray-500
+              placeholder:text-muted-foreground
               transition-colors
-              ${error ? 'border-red-500 dark:border-red-500' : ''}
+              ${error ? 'border-destructive' : ''}
               ${className}
             `}
                         ref={ref}
@@ -37,7 +37,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                     </select>
                 </div>
                 {error && (
-                    <p className="text-red-500 text-sm mt-1 animate-in slide-in-from-top-1 fade-in">
+                    <p className="text-destructive text-sm mt-1 animate-in slide-in-from-top-1 fade-in">
                         {error}
                     </p>
                 )}

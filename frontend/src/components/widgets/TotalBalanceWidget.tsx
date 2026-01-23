@@ -30,7 +30,7 @@ export const TotalBalanceWidget = ({ gridWidth = 1, gridHeight = 1 }: TotalBalan
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
           <Wallet className="h-4 w-4" />
           {t('label')}
         </CardTitle>
@@ -41,15 +41,15 @@ export const TotalBalanceWidget = ({ gridWidth = 1, gridHeight = 1 }: TotalBalan
             const currencyCode = currency as Currency
             return (
               <div key={currency}>
-                <div className={`${fontSizes.value} font-bold text-gray-900 dark:text-white`}>
+                <div className={`${fontSizes.value} font-bold text-foreground`}>
                   <AnimatedCurrency amount={amount} currency={currencyCode} />
                 </div>
-                <p className={`${fontSizes.label} text-gray-500 dark:text-gray-400`}>{CURRENCIES[currencyCode]?.name || currency}</p>
+                <p className={`${fontSizes.label} text-muted-foreground`}>{CURRENCIES[currencyCode]?.name || currency}</p>
               </div>
             )
           })}
           {Object.keys(totalBalance).length === 0 && (
-            <div className={`${fontSizes.value} font-bold text-gray-900 dark:text-white`}>
+            <div className={`${fontSizes.value} font-bold text-foreground`}>
               <AnimatedCurrency amount={0} currency="CLP" />
             </div>
           )}

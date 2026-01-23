@@ -62,10 +62,10 @@ export function ThemeToggle({ showLabel = false, size = 'md' }: ThemeToggleProps
         }}
         className={`
           relative ${sizeClasses[size]} rounded-lg
-          bg-gray-100 dark:bg-gray-800
-          hover:bg-gray-200 dark:hover:bg-gray-700
+          bg-secondary/50
+          hover:bg-secondary
           transition-colors duration-200
-          focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2
+          focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2
           flex items-center gap-2
         `}
         aria-label={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
@@ -102,7 +102,7 @@ export function ThemeToggle({ showLabel = false, size = 'md' }: ThemeToggleProps
         </motion.div>
 
         {showLabel && (
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+          <span className="text-sm font-medium text-foreground">
             {isDark ? 'Oscuro' : 'Claro'}
           </span>
         )}
@@ -116,7 +116,7 @@ export function ThemeToggle({ showLabel = false, size = 'md' }: ThemeToggleProps
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-2 w-36 py-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+            className="absolute right-0 mt-2 w-36 py-1 bg-popover rounded-lg shadow-lg border border-border z-50"
           >
             {themeOptions.map((option) => {
               const Icon = option.icon
@@ -131,7 +131,7 @@ export function ThemeToggle({ showLabel = false, size = 'md' }: ThemeToggleProps
                     transition-colors duration-150
                     ${isSelected
                       ? 'bg-primary/10 text-primary'
-                      : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      : 'text-foreground hover:bg-muted'
                     }
                   `}
                 >

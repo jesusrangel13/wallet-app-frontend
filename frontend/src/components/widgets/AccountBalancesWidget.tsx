@@ -156,7 +156,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                   <button
                     key={account.id}
                     onClick={() => router.push(`/dashboard/accounts/${account.id}`)}
-                    className="min-w-[230px] flex-shrink-0 px-3 py-4 bg-muted/30 dark:bg-muted/10 border border-gray-200 dark:border-gray-700/50 rounded-lg hover:bg-muted/50 dark:hover:bg-muted/20 transition-colors snap-start cursor-pointer text-left relative overflow-hidden"
+                    className="min-w-[230px] flex-shrink-0 px-3 py-4 bg-muted/10 border border-border rounded-lg hover:bg-muted/30 transition-colors snap-start cursor-pointer text-left relative overflow-hidden"
                   >
                     <div
                       className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg"
@@ -165,7 +165,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                     {isCreditCard ? (
                       <div className="flex flex-col gap-1 pl-2">
                         <div className="flex items-center gap-1.5">
-                          <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                          <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
                             <IconComponent className="w-3 h-3" style={{ color: account.color }} />
                           </div>
                           <div className="min-w-0 flex-1">
@@ -191,7 +191,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                     ) : (
                       <div className="flex flex-col gap-1 pl-2">
                         <div className="flex items-center gap-1.5">
-                          <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                          <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
                             <IconComponent className="w-3 h-3" style={{ color: account.color }} />
                           </div>
                           <div className="min-w-0 flex-1">
@@ -213,19 +213,19 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
               {/* Add Account Card */}
               <button
                 onClick={handleAddAccount}
-                className="min-w-[230px] flex-shrink-0 px-3 py-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary dark:hover:border-primary hover:bg-primary/10 dark:hover:bg-primary/20 transition-all snap-start flex flex-col items-center justify-center gap-2"
+                className="min-w-[230px] flex-shrink-0 px-3 py-4 border-2 border-dashed border-muted-foreground/20 rounded-lg hover:border-primary hover:bg-primary/5 transition-all snap-start flex flex-col items-center justify-center gap-2"
               >
-                <div className="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <Plus className="w-5 h-5 text-primary" />
                 </div>
-                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{t('addAccount')}</span>
+                <span className="text-xs font-medium text-muted-foreground">{t('addAccount')}</span>
               </button>
             </div>
 
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-full w-full px-4">
-            <p className="text-gray-500 dark:text-gray-400 text-center text-xs mb-4">
+            <p className="text-muted-foreground text-center text-xs mb-4">
               {t('noAccountsYet')}
             </p>
             <button

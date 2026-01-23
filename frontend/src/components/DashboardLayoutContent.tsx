@@ -40,29 +40,29 @@ export function DashboardLayoutContent({ children, isCollapsed }: DashboardLayou
   return (
     <div className={`flex flex-col flex-1 w-full transition-all duration-300 ${collapsed ? 'md:ml-16' : 'md:ml-64'}`}>{/* Content takes remaining width */}
       {/* Top Navigation */}
-      <nav className="bg-white dark:bg-card shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
+      <nav className="bg-card shadow-sm border-b border-border sticky top-0 z-30">
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-2 md:hidden">
               <Wallet className="h-8 w-8 text-primary" />
-              <span className="text-lg font-bold text-gray-900 dark:text-white">{t('app.name')}</span>
+              <span className="text-lg font-bold text-foreground">{t('app.name')}</span>
             </div>
             <div className="hidden md:flex items-center">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {t('welcome')}<span className="font-semibold text-gray-900 dark:text-white">{user?.name}</span>
+              <span className="text-sm text-muted-foreground">
+                {t('welcome')}<span className="font-semibold text-foreground">{user?.name}</span>
               </span>
             </div>
             <div className="flex items-center gap-2 md:gap-4">
               <NotificationBell />
               {/* Add Widget button - only show on main dashboard */}
               {isMainDashboard && (
-                <div className="hidden sm:block border-l border-gray-200 dark:border-gray-700 pl-2 md:pl-4">
+                <div className="hidden sm:block border-l border-border pl-2 md:pl-4">
                   <AddWidgetButton />
                 </div>
               )}
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 <LogOut className="h-4 w-4" />
                 <span className="hidden sm:inline">{t('logout')}</span>

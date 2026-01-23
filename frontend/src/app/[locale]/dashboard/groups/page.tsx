@@ -19,6 +19,7 @@ import { Tooltip } from '@/components/ui/Tooltip'
 import { GroupsPageSkeleton } from '@/components/ui/PageSkeletons'
 import { useGroups, useCreateGroup, useUpdateGroup, useDeleteGroup, useLeaveGroup, useAddMember, useRemoveMember, useUpdateDefaultSplit } from '@/hooks/useGroups'
 import { PageTransition } from '@/components/ui/animations'
+import { Users } from 'lucide-react'
 
 const GROUP_COVER_IMAGES = [
   '🏠', '👨‍👩‍👧‍👦', '🎉', '✈️', '🏖️', '🎓', '💼', '🎮', '🍕', '🎬',
@@ -487,875 +488,878 @@ export default function GroupsPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('title')}</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">{t('subtitle')}</p>
-        </div>
-        <Button onClick={handleAddNew}>
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          {t('new')}
-        </Button>
-      </div>
-
-      {/* Groups Grid - Diseño Compacto (Virtualizado) */}
-      <div style={{ height: 'calc(100vh - 200px)', width: '100%' }}>
-        {groups.length === 0 ? (
-          <div className="col-span-full">
-            <Card>
-              <CardContent className="py-16 text-center">
-                <div className="text-6xl mb-4">👨‍👩‍👧‍👦</div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No groups yet</h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Create your first group to start sharing expenses with friends and family
-                </p>
-                <Button onClick={handleAddNew}>Create Your First Group</Button>
-              </CardContent>
-            </Card>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <Users className="h-8 w-8 text-indigo-600" />
+              {t('title')}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">{t('subtitle')}</p>
           </div>
-        ) : (
-          <VirtuosoGrid
-            style={{ height: '100%' }}
-            totalCount={groups.length}
-            components={{
-              List: GroupsGridList,
-              Item: GroupsGridItem
-            }}
-            itemContent={(index) => {
-              const group = groups[index]
-              const isCreator = group.createdBy === group.members[0]?.userId
-              const memberCount = group.members.length
-              const totalExpenses = group._count?.expenses || 0
-              const pendingExpenses = group._count?.pendingExpenses || 0
+          <Button onClick={handleAddNew}>
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            {t('new')}
+          </Button>
+        </div>
 
-              return (
-                <Card key={group.id} className="hover:shadow-md transition-all h-full">
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="text-3xl">{group.coverImageUrl}</div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-base font-semibold text-gray-900 dark:text-white truncate">{group.name}</h3>
-                        <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                          <Tooltip content={`${memberCount} miembro${memberCount !== 1 ? 's' : ''}`} side="top">
-                            <span>{memberCount}👥</span>
-                          </Tooltip>
-                          <Tooltip content={`${totalExpenses} gasto${totalExpenses !== 1 ? 's' : ''} total${totalExpenses !== 1 ? 'es' : ''}`} side="top">
-                            <span>{totalExpenses}📝</span>
-                          </Tooltip>
-                          {pendingExpenses > 0 && (
-                            <Tooltip content={`${pendingExpenses} gasto${pendingExpenses !== 1 ? 's' : ''} pendiente${pendingExpenses !== 1 ? 's' : ''}`} side="top">
-                              <span className="text-orange-600">{pendingExpenses}⏳</span>
+        {/* Groups Grid - Diseño Compacto (Virtualizado) */}
+        <div style={{ height: 'calc(100vh - 200px)', width: '100%' }}>
+          {groups.length === 0 ? (
+            <div className="col-span-full">
+              <Card>
+                <CardContent className="py-16 text-center">
+                  <div className="text-6xl mb-4">👨‍👩‍👧‍👦</div>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No groups yet</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-6">
+                    Create your first group to start sharing expenses with friends and family
+                  </p>
+                  <Button onClick={handleAddNew}>Create Your First Group</Button>
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <VirtuosoGrid
+              style={{ height: '100%' }}
+              totalCount={groups.length}
+              components={{
+                List: GroupsGridList,
+                Item: GroupsGridItem
+              }}
+              itemContent={(index) => {
+                const group = groups[index]
+                const isCreator = group.createdBy === group.members[0]?.userId
+                const memberCount = group.members.length
+                const totalExpenses = group._count?.expenses || 0
+                const pendingExpenses = group._count?.pendingExpenses || 0
+
+                return (
+                  <Card key={group.id} className="hover:shadow-md transition-all h-full">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="text-3xl">{group.coverImageUrl}</div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-base font-semibold text-gray-900 dark:text-white truncate">{group.name}</h3>
+                          <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                            <Tooltip content={`${memberCount} miembro${memberCount !== 1 ? 's' : ''}`} side="top">
+                              <span>{memberCount}👥</span>
                             </Tooltip>
-                          )}
+                            <Tooltip content={`${totalExpenses} gasto${totalExpenses !== 1 ? 's' : ''} total${totalExpenses !== 1 ? 'es' : ''}`} side="top">
+                              <span>{totalExpenses}📝</span>
+                            </Tooltip>
+                            {pendingExpenses > 0 && (
+                              <Tooltip content={`${pendingExpenses} gasto${pendingExpenses !== 1 ? 's' : ''} pendiente${pendingExpenses !== 1 ? 's' : ''}`} side="top">
+                                <span className="text-orange-600">{pendingExpenses}⏳</span>
+                              </Tooltip>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="flex items-center gap-1 mb-3">
-                      {group.members.slice(0, 4).map((member) => (
-                        <Tooltip key={member.id} content={member.user.name} side="top">
-                          <div
-                            className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-semibold ring-2 ring-white"
+                      <div className="flex items-center gap-1 mb-3">
+                        {group.members.slice(0, 4).map((member) => (
+                          <Tooltip key={member.id} content={member.user.name} side="top">
+                            <div
+                              className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-semibold ring-2 ring-white"
+                            >
+                              {member.user.name.charAt(0).toUpperCase()}
+                            </div>
+                          </Tooltip>
+                        ))}
+                        {group.members.length > 4 && (
+                          <Tooltip content={`${group.members.length - 4} miembro${group.members.length - 4 !== 1 ? 's' : ''} más`} side="top">
+                            <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-700 dark:text-gray-200 text-xs font-semibold ring-2 ring-white dark:ring-gray-800">
+                              +{group.members.length - 4}
+                            </div>
+                          </Tooltip>
+                        )}
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleViewGroup(group)}
+                          className="flex-1 py-1.5 px-3 text-sm bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors font-medium"
+                        >
+                          Ver
+                        </button>
+                        {isCreator ? (
+                          <button
+                            onClick={() => handleDelete(group.id, group.name)}
+                            className="py-1.5 px-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                           >
-                            {member.user.name.charAt(0).toUpperCase()}
-                          </div>
-                        </Tooltip>
-                      ))}
-                      {group.members.length > 4 && (
-                        <Tooltip content={`${group.members.length - 4} miembro${group.members.length - 4 !== 1 ? 's' : ''} más`} side="top">
-                          <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-700 dark:text-gray-200 text-xs font-semibold ring-2 ring-white dark:ring-gray-800">
-                            +{group.members.length - 4}
-                          </div>
-                        </Tooltip>
-                      )}
-                    </div>
-
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleViewGroup(group)}
-                        className="flex-1 py-1.5 px-3 text-sm bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors font-medium"
-                      >
-                        Ver
-                      </button>
-                      {isCreator ? (
-                        <button
-                          onClick={() => handleDelete(group.id, group.name)}
-                          className="py-1.5 px-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleLeaveGroup(group.id, group.name)}
-                          className="py-1.5 px-3 text-sm text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded-lg transition-colors"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                          </svg>
-                        </button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              )
-            }}
-          />
-        )}
-      </div>
-
-      {/* Group Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false)
-          setEditingGroup(null)
-          setShowImagePicker(false)
-          setNewEmailInput('')
-          setEmailError('')
-        }}
-        title={editingGroup ? t('edit') : t('new')}
-      >
-        <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
-          {/* Cover Image Selection */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cover Image</label>
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setShowImagePicker(!showImagePicker)}
-                className="w-full h-24 border-2 border-gray-300 rounded-lg flex items-center justify-center text-6xl hover:border-blue-500 transition-colors bg-gradient-to-br from-blue-500 to-purple-600"
-              >
-                <span className="text-white drop-shadow-lg">{formData.coverImageUrl}</span>
-              </button>
-              {showImagePicker && (
-                <div className="absolute z-10 mt-2 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg w-full">
-                  <div className="grid grid-cols-5 gap-2 max-h-48 overflow-y-auto">
-                    {GROUP_COVER_IMAGES.map((image) => (
-                      <button
-                        key={image}
-                        type="button"
-                        onClick={() => {
-                          setFormData({ ...formData, coverImageUrl: image })
-                          setShowImagePicker(false)
-                        }}
-                        className="text-4xl hover:bg-gray-100 dark:hover:bg-gray-700 rounded p-2"
-                      >
-                        {image}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Group Name */}
-          <Input
-            label={t('fields.name')}
-            type="text"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder={t('placeholders.name')}
-            required
-          />
-
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {t('fields.description')}
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={2}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-              placeholder={t('placeholders.description')}
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleLeaveGroup(group.id, group.name)}
+                            className="py-1.5 px-3 text-sm text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded-lg transition-colors"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              }}
             />
-          </div>
+          )}
+        </div>
 
-          {/* Default Split Type - Only for new groups */}
-          {!editingGroup && (
+        {/* Group Modal */}
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false)
+            setEditingGroup(null)
+            setShowImagePicker(false)
+            setNewEmailInput('')
+            setEmailError('')
+          }}
+          title={editingGroup ? t('edit') : t('new')}
+        >
+          <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+            {/* Cover Image Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cover Image</label>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setShowImagePicker(!showImagePicker)}
+                  className="w-full h-24 border-2 border-gray-300 rounded-lg flex items-center justify-center text-6xl hover:border-blue-500 transition-colors bg-gradient-to-br from-blue-500 to-purple-600"
+                >
+                  <span className="text-white drop-shadow-lg">{formData.coverImageUrl}</span>
+                </button>
+                {showImagePicker && (
+                  <div className="absolute z-10 mt-2 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg w-full">
+                    <div className="grid grid-cols-5 gap-2 max-h-48 overflow-y-auto">
+                      {GROUP_COVER_IMAGES.map((image) => (
+                        <button
+                          key={image}
+                          type="button"
+                          onClick={() => {
+                            setFormData({ ...formData, coverImageUrl: image })
+                            setShowImagePicker(false)
+                          }}
+                          className="text-4xl hover:bg-gray-100 dark:hover:bg-gray-700 rounded p-2"
+                        >
+                          {image}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Group Name */}
+            <Input
+              label={t('fields.name')}
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder={t('placeholders.name')}
+              required
+            />
+
+            {/* Description */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Default Split Type
+                {t('fields.description')}
               </label>
-              <select
-                value={formData.defaultSplitType}
-                onChange={(e) => setFormData({ ...formData, defaultSplitType: e.target.value as SplitType })}
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                rows={2}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-              >
-                <option value="EQUAL">Equal Split</option>
-                <option value="PERCENTAGE">By Percentage</option>
-                <option value="SHARES">By Shares</option>
-                <option value="EXACT">Exact Amounts</option>
-              </select>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                This will be the default when creating shared expenses
-              </p>
+                placeholder={t('placeholders.description')}
+              />
             </div>
-          )}
 
-          {/* Add Members - Only for new groups */}
-          {!editingGroup && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Add Members (optional)
-              </label>
-              <div className="space-y-3">
-                {/* Email Input */}
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <Input
-                      type="email"
-                      value={newEmailInput}
-                      onChange={(e) => {
-                        setNewEmailInput(e.target.value)
-                        setEmailError('')
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault()
-                          handleAddEmail()
-                        }
-                      }}
-                      placeholder={t('placeholders.memberEmail') || 'member@email.com'}
-                      className={emailError ? 'border-red-500' : ''}
-                    />
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleAddEmail}
-                    className="shrink-0"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                  </Button>
-                </div>
-                {emailError && (
-                  <p className="text-xs text-red-600">{emailError}</p>
-                )}
-
-                {/* Added Emails List */}
-                {formData.memberEmails.length > 0 && (
-                  <div className="space-y-2 max-h-32 overflow-y-auto">
-                    {formData.memberEmails.map((email) => (
-                      <div
-                        key={email}
-                        className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 px-3 py-2 rounded-lg"
-                      >
-                        <div className="flex items-center gap-2">
-                          <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                            />
-                          </svg>
-                          <span className="text-sm text-gray-700 dark:text-gray-300">{email}</span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveEmail(email)}
-                          className="text-gray-400 hover:text-red-600 transition-colors"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {formData.memberEmails.length === 0
-                    ? 'You will be added automatically as the group creator'
-                    : `${formData.memberEmails.length} member(s) will be invited`}
+            {/* Default Split Type - Only for new groups */}
+            {!editingGroup && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Default Split Type
+                </label>
+                <select
+                  value={formData.defaultSplitType}
+                  onChange={(e) => setFormData({ ...formData, defaultSplitType: e.target.value as SplitType })}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                >
+                  <option value="EQUAL">Equal Split</option>
+                  <option value="PERCENTAGE">By Percentage</option>
+                  <option value="SHARES">By Shares</option>
+                  <option value="EXACT">Exact Amounts</option>
+                </select>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  This will be the default when creating shared expenses
                 </p>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Split Configuration - Only for new groups with non-EQUAL split type */}
-          {!editingGroup && formData.defaultSplitType !== 'EQUAL' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Configure Split Values
-              </label>
-              <div className="space-y-3 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
-                {getAllMembersForSplit().map((email) => (
-                  <div key={email} className="flex items-center gap-3">
-                    <div className="flex-1 flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">
-                        {email.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <span className="text-sm text-gray-700 dark:text-gray-300 truncate block">
-                          {email === user?.email ? `${user.name} (you)` : email}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="w-24">
-                      <Input
-                        type="number"
-                        step={
-                          formData.defaultSplitType === 'PERCENTAGE'
-                            ? '0.01'
-                            : formData.defaultSplitType === 'EXACT'
-                              ? '0.01'
-                              : '1'
-                        }
-                        min="0"
-                        value={
-                          formData.defaultSplitType === 'PERCENTAGE'
-                            ? splitConfig[email]?.percentage || ''
-                            : formData.defaultSplitType === 'SHARES'
-                              ? splitConfig[email]?.shares || ''
-                              : splitConfig[email]?.exactAmount || ''
-                        }
-                        onChange={(e) => {
-                          const value = parseFloat(e.target.value) || 0
-                          setSplitConfig({
-                            ...splitConfig,
-                            [email]: {
-                              percentage: formData.defaultSplitType === 'PERCENTAGE' ? value : undefined,
-                              shares: formData.defaultSplitType === 'SHARES' ? value : undefined,
-                              exactAmount: formData.defaultSplitType === 'EXACT' ? value : undefined,
-                            },
-                          })
-                        }}
-                        placeholder={
-                          formData.defaultSplitType === 'PERCENTAGE'
-                            ? '%'
-                            : formData.defaultSplitType === 'SHARES'
-                              ? 'shares'
-                              : '$'
-                        }
-                        className="text-right text-sm"
-                      />
-                    </div>
-                    <span className="text-xs text-gray-500 dark:text-gray-400 w-8">
-                      {formData.defaultSplitType === 'PERCENTAGE'
-                        ? '%'
-                        : formData.defaultSplitType === 'SHARES'
-                          ? 'sh'
-                          : '$'}
-                    </span>
-                  </div>
-                ))}
-                {formData.defaultSplitType === 'PERCENTAGE' && (
-                  <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
-                      Total: {getSplitConfigTotal()}%
-                      {getSplitConfigTotal() !== 100 && Object.keys(splitConfig).length > 0 && (
-                        <span className="text-red-600 ml-2">(must equal 100%)</span>
-                      )}
-                      {getSplitConfigTotal() === 100 && (
-                        <span className="text-green-600 ml-2">✓</span>
-                      )}
-                    </p>
-                  </div>
-                )}
-                {getAllMembersForSplit().length === 0 && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400 text-center py-2">
-                    Add members above to configure their split values
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Buttons */}
-          <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <Button type="submit" className="flex-1" disabled={createGroup.isPending || updateGroup.isPending}>
-              {createGroup.isPending || updateGroup.isPending
-                ? tLoading('creating')
-                : editingGroup
-                  ? tCommon('actions.update')
-                  : formData.memberEmails.length > 0
-                    ? `${tCommon('actions.create')} & ${t('addMember')} ${formData.memberEmails.length}`
-                    : tCommon('actions.create')}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setIsModalOpen(false)
-                setEditingGroup(null)
-                setShowImagePicker(false)
-                setNewEmailInput('')
-                setEmailError('')
-              }}
-              disabled={createGroup.isPending || updateGroup.isPending}
-            >
-              {tCommon('actions.cancel')}
-            </Button>
-          </div>
-        </form>
-      </Modal>
-
-      {/* Group Details Modal */}
-      {viewingGroup && (
-        <Modal
-          isOpen={!!viewingGroup}
-          onClose={() => {
-            setViewingGroup(null)
-            setIsAddMemberModalOpen(false)
-            setNewMemberEmail('')
-            setActiveTab('members')
-          }}
-          title={viewingGroup.name}
-        >
-          <div className="space-y-6">
-            {/* Group Info */}
-            <div>
-              <div
-                className="h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-6xl mb-4"
-                style={{
-                  background: viewingGroup.coverImageUrl?.startsWith('#')
-                    ? viewingGroup.coverImageUrl
-                    : undefined,
-                }}
-              >
-                {!viewingGroup.coverImageUrl?.startsWith('#') && (
-                  <span className="text-white drop-shadow-lg">{viewingGroup.coverImageUrl}</span>
-                )}
-              </div>
-              {viewingGroup.description && (
-                <p className="text-gray-600 dark:text-gray-400">{viewingGroup.description}</p>
-              )}
-            </div>
-
-            {/* Tabs */}
-            <div className="border-b border-gray-200 dark:border-gray-700">
-              <nav className="-mb-px flex space-x-8">
-                <button
-                  onClick={() => setActiveTab('members')}
-                  className={`${activeTab === 'members'
-                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
-                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
-                >
-                  Miembros
-                </button>
-                <button
-                  onClick={() => setActiveTab('split')}
-                  className={`${activeTab === 'split'
-                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
-                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
-                >
-                  Configuración
-                </button>
-                <button
-                  onClick={() => setActiveTab('balances')}
-                  className={`${activeTab === 'balances'
-                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
-                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
-                >
-                  Gastos y Balances
-                </button>
-              </nav>
-            </div>
-
-            {/* Members Tab */}
-            {activeTab === 'members' && (
+            {/* Add Members - Only for new groups */}
+            {!editingGroup && (
               <div>
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-semibold text-gray-900 dark:text-white">
-                    Members ({viewingGroup.members.length})
-                  </h3>
-                  <Button
-                    size="sm"
-                    onClick={() => setIsAddMemberModalOpen(true)}
-                  >
-                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add Member
-                  </Button>
-                </div>
-
-                {isAddMemberModalOpen && (
-                  <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
-                    <div className="flex gap-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Add Members (optional)
+                </label>
+                <div className="space-y-3">
+                  {/* Email Input */}
+                  <div className="flex gap-2">
+                    <div className="flex-1">
                       <Input
                         type="email"
-                        value={newMemberEmail}
-                        onChange={(e) => setNewMemberEmail(e.target.value)}
-                        placeholder="Enter email address"
-                        className="flex-1"
-                      />
-                      <Button
-                        onClick={handleAddMember}
-                        disabled={addMember.isPending || !newMemberEmail.trim()}
-                        size="sm"
-                      >
-                        {addMember.isPending ? 'Adding...' : 'Add'}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setIsAddMemberModalOpen(false)
-                          setNewMemberEmail('')
+                        value={newEmailInput}
+                        onChange={(e) => {
+                          setNewEmailInput(e.target.value)
+                          setEmailError('')
                         }}
-                      >
-                        Cancel
-                      </Button>
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault()
+                            handleAddEmail()
+                          }
+                        }}
+                        placeholder={t('placeholders.memberEmail') || 'member@email.com'}
+                        className={emailError ? 'border-red-500' : ''}
+                      />
                     </div>
-                  </div>
-                )}
-
-                <div className="space-y-2">
-                  {viewingGroup.members.map((member) => (
-                    <div
-                      key={member.id}
-                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleAddEmail}
+                      className="shrink-0"
                     >
-                      <div className="flex items-center gap-3">
-                        {member.user.avatarUrl ? (
-                          <Image
-                            src={member.user.avatarUrl}
-                            alt={member.user.name}
-                            width={40}
-                            height={40}
-                            className="w-10 h-10 rounded-full object-cover"
-                            loading="lazy"
-                            sizes="40px"
-                            unoptimized={!member.user.avatarUrl.startsWith('https://')}
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-                            {member.user.name.charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                        <div>
-                          <p className="font-medium text-gray-900 dark:text-white">{member.user.name}</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{member.user.email}</p>
-                        </div>
-                        {member.userId === viewingGroup.createdBy && (
-                          <span className="ml-2 px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 text-xs font-medium rounded">
-                            Creator
-                          </span>
-                        )}
-                      </div>
-                      {member.userId !== viewingGroup.createdBy && (
-                        <button
-                          onClick={() => handleRemoveMember(member.id, member.user.name)}
-                          className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                    </Button>
+                  </div>
+                  {emailError && (
+                    <p className="text-xs text-red-600">{emailError}</p>
+                  )}
+
+                  {/* Added Emails List */}
+                  {formData.memberEmails.length > 0 && (
+                    <div className="space-y-2 max-h-32 overflow-y-auto">
+                      {formData.memberEmails.map((email) => (
+                        <div
+                          key={email}
+                          className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 px-3 py-2 rounded-lg"
                         >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        </button>
-                      )}
+                          <div className="flex items-center gap-2">
+                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                              />
+                            </svg>
+                            <span className="text-sm text-gray-700 dark:text-gray-300">{email}</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveEmail(email)}
+                            className="text-gray-400 hover:text-red-600 transition-colors"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {formData.memberEmails.length === 0
+                      ? 'You will be added automatically as the group creator'
+                      : `${formData.memberEmails.length} member(s) will be invited`}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Split Configuration - Only for new groups with non-EQUAL split type */}
+            {!editingGroup && formData.defaultSplitType !== 'EQUAL' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Configure Split Values
+                </label>
+                <div className="space-y-3 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                  {getAllMembersForSplit().map((email) => (
+                    <div key={email} className="flex items-center gap-3">
+                      <div className="flex-1 flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">
+                          {email.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <span className="text-sm text-gray-700 dark:text-gray-300 truncate block">
+                            {email === user?.email ? `${user.name} (you)` : email}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="w-24">
+                        <Input
+                          type="number"
+                          step={
+                            formData.defaultSplitType === 'PERCENTAGE'
+                              ? '0.01'
+                              : formData.defaultSplitType === 'EXACT'
+                                ? '0.01'
+                                : '1'
+                          }
+                          min="0"
+                          value={
+                            formData.defaultSplitType === 'PERCENTAGE'
+                              ? splitConfig[email]?.percentage || ''
+                              : formData.defaultSplitType === 'SHARES'
+                                ? splitConfig[email]?.shares || ''
+                                : splitConfig[email]?.exactAmount || ''
+                          }
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value) || 0
+                            setSplitConfig({
+                              ...splitConfig,
+                              [email]: {
+                                percentage: formData.defaultSplitType === 'PERCENTAGE' ? value : undefined,
+                                shares: formData.defaultSplitType === 'SHARES' ? value : undefined,
+                                exactAmount: formData.defaultSplitType === 'EXACT' ? value : undefined,
+                              },
+                            })
+                          }}
+                          placeholder={
+                            formData.defaultSplitType === 'PERCENTAGE'
+                              ? '%'
+                              : formData.defaultSplitType === 'SHARES'
+                                ? 'shares'
+                                : '$'
+                          }
+                          className="text-right text-sm"
+                        />
+                      </div>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 w-8">
+                        {formData.defaultSplitType === 'PERCENTAGE'
+                          ? '%'
+                          : formData.defaultSplitType === 'SHARES'
+                            ? 'sh'
+                            : '$'}
+                      </span>
                     </div>
                   ))}
-
-                  {viewingGroup.members.length === 0 && (
-                    <p className="text-center text-gray-500 dark:text-gray-400 py-4">
-                      No members yet. Add the first member!
+                  {formData.defaultSplitType === 'PERCENTAGE' && (
+                    <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        Total: {getSplitConfigTotal()}%
+                        {getSplitConfigTotal() !== 100 && Object.keys(splitConfig).length > 0 && (
+                          <span className="text-red-600 ml-2">(must equal 100%)</span>
+                        )}
+                        {getSplitConfigTotal() === 100 && (
+                          <span className="text-green-600 ml-2">✓</span>
+                        )}
+                      </p>
+                    </div>
+                  )}
+                  {getAllMembersForSplit().length === 0 && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400 text-center py-2">
+                      Add members above to configure their split values
                     </p>
                   )}
                 </div>
               </div>
             )}
 
-            {/* Split Configuration Tab */}
-            {activeTab === 'split' && (
+            {/* Buttons */}
+            <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <Button type="submit" className="flex-1" disabled={createGroup.isPending || updateGroup.isPending}>
+                {createGroup.isPending || updateGroup.isPending
+                  ? tLoading('creating')
+                  : editingGroup
+                    ? tCommon('actions.update')
+                    : formData.memberEmails.length > 0
+                      ? `${tCommon('actions.create')} & ${t('addMember')} ${formData.memberEmails.length}`
+                      : tCommon('actions.create')}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsModalOpen(false)
+                  setEditingGroup(null)
+                  setShowImagePicker(false)
+                  setNewEmailInput('')
+                  setEmailError('')
+                }}
+                disabled={createGroup.isPending || updateGroup.isPending}
+              >
+                {tCommon('actions.cancel')}
+              </Button>
+            </div>
+          </form>
+        </Modal>
+
+        {/* Group Details Modal */}
+        {viewingGroup && (
+          <Modal
+            isOpen={!!viewingGroup}
+            onClose={() => {
+              setViewingGroup(null)
+              setIsAddMemberModalOpen(false)
+              setNewMemberEmail('')
+              setActiveTab('members')
+            }}
+            title={viewingGroup.name}
+          >
+            <div className="space-y-6">
+              {/* Group Info */}
               <div>
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-semibold text-gray-900 dark:text-white">
-                    Default Split Settings
-                  </h3>
-                  {!isEditingSplit && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setIsEditingSplit(true)}
-                    >
-                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                        />
-                      </svg>
-                      Edit
-                    </Button>
+                <div
+                  className="h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-6xl mb-4"
+                  style={{
+                    background: viewingGroup.coverImageUrl?.startsWith('#')
+                      ? viewingGroup.coverImageUrl
+                      : undefined,
+                  }}
+                >
+                  {!viewingGroup.coverImageUrl?.startsWith('#') && (
+                    <span className="text-white drop-shadow-lg">{viewingGroup.coverImageUrl}</span>
                   )}
                 </div>
+                {viewingGroup.description && (
+                  <p className="text-gray-600 dark:text-gray-400">{viewingGroup.description}</p>
+                )}
+              </div>
 
-                {isEditingSplit ? (
-                  <div className="space-y-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
-                    {/* Split Type Selector */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Split Type
-                      </label>
-                      <select
-                        value={splitType}
-                        onChange={(e) => setSplitType(e.target.value as SplitType)}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                      >
-                        <option value="EQUAL">Equal Split</option>
-                        <option value="PERCENTAGE">By Percentage</option>
-                        <option value="SHARES">By Shares</option>
-                        <option value="EXACT">Exact Amounts</option>
-                      </select>
+              {/* Tabs */}
+              <div className="border-b border-gray-200 dark:border-gray-700">
+                <nav className="-mb-px flex space-x-8">
+                  <button
+                    onClick={() => setActiveTab('members')}
+                    className={`${activeTab === 'members'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
+                  >
+                    Miembros
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('split')}
+                    className={`${activeTab === 'split'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
+                  >
+                    Configuración
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('balances')}
+                    className={`${activeTab === 'balances'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                      } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
+                  >
+                    Gastos y Balances
+                  </button>
+                </nav>
+              </div>
+
+              {/* Members Tab */}
+              {activeTab === 'members' && (
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                      Members ({viewingGroup.members.length})
+                    </h3>
+                    <Button
+                      size="sm"
+                      onClick={() => setIsAddMemberModalOpen(true)}
+                    >
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                      Add Member
+                    </Button>
+                  </div>
+
+                  {isAddMemberModalOpen && (
+                    <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <div className="flex gap-2">
+                        <Input
+                          type="email"
+                          value={newMemberEmail}
+                          onChange={(e) => setNewMemberEmail(e.target.value)}
+                          placeholder="Enter email address"
+                          className="flex-1"
+                        />
+                        <Button
+                          onClick={handleAddMember}
+                          disabled={addMember.isPending || !newMemberEmail.trim()}
+                          size="sm"
+                        >
+                          {addMember.isPending ? 'Adding...' : 'Add'}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setIsAddMemberModalOpen(false)
+                            setNewMemberEmail('')
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
                     </div>
+                  )}
 
-                    {/* Member Split Inputs */}
-                    {splitType !== 'EQUAL' && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Member Splits
-                        </label>
-                        <div className="space-y-2">
-                          {viewingGroup.members.map((member) => (
-                            <div key={member.id} className="flex items-center gap-3">
-                              <div className="flex-1 flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold">
-                                  {member.user.name.charAt(0).toUpperCase()}
-                                </div>
-                                <span className="text-sm text-gray-700 dark:text-gray-300">{member.user.name}</span>
-                              </div>
-                              <div className="w-32">
-                                <Input
-                                  type="number"
-                                  step={splitType === 'PERCENTAGE' ? '0.01' : splitType === 'EXACT' ? '0.01' : '1'}
-                                  min="0"
-                                  value={
-                                    splitType === 'PERCENTAGE'
-                                      ? memberSplits[member.userId]?.percentage || ''
-                                      : splitType === 'SHARES'
-                                        ? memberSplits[member.userId]?.shares || ''
-                                        : memberSplits[member.userId]?.exactAmount || ''
-                                  }
-                                  onChange={(e) => {
-                                    const value = parseFloat(e.target.value) || 0
-                                    setMemberSplits({
-                                      ...memberSplits,
-                                      [member.userId]: {
-                                        percentage: splitType === 'PERCENTAGE' ? value : undefined,
-                                        shares: splitType === 'SHARES' ? value : undefined,
-                                        exactAmount: splitType === 'EXACT' ? value : undefined,
-                                      },
-                                    })
-                                  }}
-                                  placeholder={
-                                    splitType === 'PERCENTAGE'
-                                      ? '%'
-                                      : splitType === 'SHARES'
-                                        ? 'shares'
-                                        : '$'
-                                  }
-                                  className="text-right"
-                                />
-                              </div>
-                              <span className="text-sm text-gray-500 dark:text-gray-400 w-10">
-                                {splitType === 'PERCENTAGE' ? '%' : splitType === 'SHARES' ? 'sh' : '$'}
-                              </span>
+                  <div className="space-y-2">
+                    {viewingGroup.members.map((member) => (
+                      <div
+                        key={member.id}
+                        className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          {member.user.avatarUrl ? (
+                            <Image
+                              src={member.user.avatarUrl}
+                              alt={member.user.name}
+                              width={40}
+                              height={40}
+                              className="w-10 h-10 rounded-full object-cover"
+                              loading="lazy"
+                              sizes="40px"
+                              unoptimized={!member.user.avatarUrl.startsWith('https://')}
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                              {member.user.name.charAt(0).toUpperCase()}
                             </div>
-                          ))}
+                          )}
+                          <div>
+                            <p className="font-medium text-gray-900 dark:text-white">{member.user.name}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">{member.user.email}</p>
+                          </div>
+                          {member.userId === viewingGroup.createdBy && (
+                            <span className="ml-2 px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 text-xs font-medium rounded">
+                              Creator
+                            </span>
+                          )}
                         </div>
-                        {splitType === 'PERCENTAGE' && (
-                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
-                            Total: {Object.values(memberSplits).reduce((sum, split) => sum + (split.percentage || 0), 0)}%
-                            {Object.values(memberSplits).reduce((sum, split) => sum + (split.percentage || 0), 0) !== 100 && (
-                              <span className="text-red-600 ml-2">(must equal 100%)</span>
-                            )}
-                          </p>
+                        {member.userId !== viewingGroup.createdBy && (
+                          <button
+                            onClick={() => handleRemoveMember(member.id, member.user.name)}
+                            className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
+                            </svg>
+                          </button>
                         )}
                       </div>
-                    )}
+                    ))}
 
-                    {/* Action Buttons */}
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        onClick={handleSaveSplitConfig}
-                      >
-                        Save
-                      </Button>
+                    {viewingGroup.members.length === 0 && (
+                      <p className="text-center text-gray-500 dark:text-gray-400 py-4">
+                        No members yet. Add the first member!
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Split Configuration Tab */}
+              {activeTab === 'split' && (
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                      Default Split Settings
+                    </h3>
+                    {!isEditingSplit && (
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => {
-                          setIsEditingSplit(false)
-                          // Reset to current values
-                          setSplitType(viewingGroup.defaultSplitType || 'EQUAL')
-                          const splits: Record<string, { percentage?: number; shares?: number; exactAmount?: number }> = {}
-                          viewingGroup.defaultSplitSettings?.forEach(setting => {
-                            splits[setting.userId] = {
-                              percentage: setting.percentage ? Number(setting.percentage) : undefined,
-                              shares: setting.shares || undefined,
-                              exactAmount: setting.exactAmount ? Number(setting.exactAmount) : undefined,
-                            }
-                          })
-                          setMemberSplits(splits)
-                        }}
+                        onClick={() => setIsEditingSplit(true)}
                       >
-                        Cancel
+                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          />
+                        </svg>
+                        Edit
                       </Button>
-                    </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Split Type:</span>
-                        <span className="text-sm text-gray-900 dark:text-white">
-                          {splitType === 'EQUAL' ? 'Equal Split' :
-                            splitType === 'PERCENTAGE' ? 'By Percentage' :
-                              splitType === 'SHARES' ? 'By Shares' :
-                                'Exact Amounts'}
-                        </span>
+
+                  {isEditingSplit ? (
+                    <div className="space-y-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                      {/* Split Type Selector */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Split Type
+                        </label>
+                        <select
+                          value={splitType}
+                          onChange={(e) => setSplitType(e.target.value as SplitType)}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        >
+                          <option value="EQUAL">Equal Split</option>
+                          <option value="PERCENTAGE">By Percentage</option>
+                          <option value="SHARES">By Shares</option>
+                          <option value="EXACT">Exact Amounts</option>
+                        </select>
                       </div>
+
+                      {/* Member Split Inputs */}
                       {splitType !== 'EQUAL' && (
-                        <div className="mt-3 space-y-1">
-                          {viewingGroup.members.map((member) => {
-                            const split = memberSplits[member.userId]
-                            if (!split) return null
-                            return (
-                              <div key={member.id} className="flex items-center justify-between text-sm">
-                                <span className="text-gray-700 dark:text-gray-300">{member.user.name}</span>
-                                <span className="font-medium text-gray-900 dark:text-white">
-                                  {splitType === 'PERCENTAGE' && split.percentage ? `${split.percentage}%` :
-                                    splitType === 'SHARES' && split.shares ? `${split.shares} shares` :
-                                      splitType === 'EXACT' && split.exactAmount ? `$${split.exactAmount}` :
-                                        '-'}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Member Splits
+                          </label>
+                          <div className="space-y-2">
+                            {viewingGroup.members.map((member) => (
+                              <div key={member.id} className="flex items-center gap-3">
+                                <div className="flex-1 flex items-center gap-2">
+                                  <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold">
+                                    {member.user.name.charAt(0).toUpperCase()}
+                                  </div>
+                                  <span className="text-sm text-gray-700 dark:text-gray-300">{member.user.name}</span>
+                                </div>
+                                <div className="w-32">
+                                  <Input
+                                    type="number"
+                                    step={splitType === 'PERCENTAGE' ? '0.01' : splitType === 'EXACT' ? '0.01' : '1'}
+                                    min="0"
+                                    value={
+                                      splitType === 'PERCENTAGE'
+                                        ? memberSplits[member.userId]?.percentage || ''
+                                        : splitType === 'SHARES'
+                                          ? memberSplits[member.userId]?.shares || ''
+                                          : memberSplits[member.userId]?.exactAmount || ''
+                                    }
+                                    onChange={(e) => {
+                                      const value = parseFloat(e.target.value) || 0
+                                      setMemberSplits({
+                                        ...memberSplits,
+                                        [member.userId]: {
+                                          percentage: splitType === 'PERCENTAGE' ? value : undefined,
+                                          shares: splitType === 'SHARES' ? value : undefined,
+                                          exactAmount: splitType === 'EXACT' ? value : undefined,
+                                        },
+                                      })
+                                    }}
+                                    placeholder={
+                                      splitType === 'PERCENTAGE'
+                                        ? '%'
+                                        : splitType === 'SHARES'
+                                          ? 'shares'
+                                          : '$'
+                                    }
+                                    className="text-right"
+                                  />
+                                </div>
+                                <span className="text-sm text-gray-500 dark:text-gray-400 w-10">
+                                  {splitType === 'PERCENTAGE' ? '%' : splitType === 'SHARES' ? 'sh' : '$'}
                                 </span>
                               </div>
-                            )
-                          })}
+                            ))}
+                          </div>
+                          {splitType === 'PERCENTAGE' && (
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+                              Total: {Object.values(memberSplits).reduce((sum, split) => sum + (split.percentage || 0), 0)}%
+                              {Object.values(memberSplits).reduce((sum, split) => sum + (split.percentage || 0), 0) !== 100 && (
+                                <span className="text-red-600 ml-2">(must equal 100%)</span>
+                              )}
+                            </p>
+                          )}
                         </div>
                       )}
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          onClick={handleSaveSplitConfig}
+                        >
+                          Save
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setIsEditingSplit(false)
+                            // Reset to current values
+                            setSplitType(viewingGroup.defaultSplitType || 'EQUAL')
+                            const splits: Record<string, { percentage?: number; shares?: number; exactAmount?: number }> = {}
+                            viewingGroup.defaultSplitSettings?.forEach(setting => {
+                              splits[setting.userId] = {
+                                percentage: setting.percentage ? Number(setting.percentage) : undefined,
+                                shares: setting.shares || undefined,
+                                exactAmount: setting.exactAmount ? Number(setting.exactAmount) : undefined,
+                              }
+                            })
+                            setMemberSplits(splits)
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Balances Tab */}
-            {activeTab === 'balances' && (
-              <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-                  Gastos compartidos del grupo
-                </h3>
-
-                {loadingExpenses ? (
-                  <div className="flex items-center justify-center py-12">
-                    <LoadingSpinner size="lg" />
-                  </div>
-                ) : groupExpenses.length === 0 ? (
-                  <div className="text-center py-12">
-                    <p className="text-gray-500 dark:text-gray-400 mb-4">No hay gastos compartidos en este grupo aún</p>
-                    <p className="text-sm text-gray-400 dark:text-gray-500">Crea una transacción compartida desde la página de transacciones</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {groupExpenses.map((expense: any) => (
-                      <div key={expense.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800">
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <h4 className="font-medium text-gray-900 dark:text-white">{expense.description}</h4>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Pagado por: {expense.paidBy.name} • {new Date(expense.date).toLocaleDateString()}
-                            </p>
-                            <p className="text-lg font-semibold text-gray-900 dark:text-white mt-1">
-                              {formatCurrency(expense.amount, 'CLP')}
-                            </p>
-                          </div>
-                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                            {expense.splitType}
+                  ) : (
+                    <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Split Type:</span>
+                          <span className="text-sm text-gray-900 dark:text-white">
+                            {splitType === 'EQUAL' ? 'Equal Split' :
+                              splitType === 'PERCENTAGE' ? 'By Percentage' :
+                                splitType === 'SHARES' ? 'By Shares' :
+                                  'Exact Amounts'}
                           </span>
                         </div>
-
-                        <div className="space-y-2 mt-4">
-                          <p className="text-sm font-medium text-gray-700 mb-2">Participantes:</p>
-                          {expense.participants.map((participant: any) => (
-                            <div
-                              key={participant.id}
-                              className="flex items-center justify-between bg-white p-3 rounded-lg"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">
-                                  {participant.user.name.split(' ').map((n: string) => n[0]).join('')}
+                        {splitType !== 'EQUAL' && (
+                          <div className="mt-3 space-y-1">
+                            {viewingGroup.members.map((member) => {
+                              const split = memberSplits[member.userId]
+                              if (!split) return null
+                              return (
+                                <div key={member.id} className="flex items-center justify-between text-sm">
+                                  <span className="text-gray-700 dark:text-gray-300">{member.user.name}</span>
+                                  <span className="font-medium text-gray-900 dark:text-white">
+                                    {splitType === 'PERCENTAGE' && split.percentage ? `${split.percentage}%` :
+                                      splitType === 'SHARES' && split.shares ? `${split.shares} shares` :
+                                        splitType === 'EXACT' && split.exactAmount ? `$${split.exactAmount}` :
+                                          '-'}
+                                  </span>
                                 </div>
-                                <div>
-                                  <p className="font-medium text-gray-900 text-sm">{participant.user.name}</p>
-                                  <p className="text-xs text-gray-500">
-                                    Debe: {formatCurrency(participant.amountOwed, 'CLP')}
-                                  </p>
-                                </div>
-                              </div>
-                              <MarkAsPaidButtonStyled
-                                expenseId={expense.id}
-                                participantUserId={participant.userId}
-                                currentUserId={user?.id || ''}
-                                paidByUserId={expense.paidByUserId}
-                                isPaid={participant.isPaid || false}
-                                onSuccess={() => {
-                                  if (viewingGroup) {
-                                    loadGroupExpenses(viewingGroup.id)
-                                  }
-                                }}
-                                designStyle="icon-only"
-                              />
-                            </div>
-                          ))}
-                        </div>
+                              )
+                            })}
+                          </div>
+                        )}
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+                    </div>
+                  )}
+                </div>
+              )}
 
-            {/* Group Actions */}
-            <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => {
-                  setViewingGroup(null)
-                  handleEdit(viewingGroup)
-                }}
-              >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                  />
-                </svg>
-                Edit Group
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setViewingGroup(null)}
-              >
-                Close
-              </Button>
+              {/* Balances Tab */}
+              {activeTab === 'balances' && (
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+                    Gastos compartidos del grupo
+                  </h3>
+
+                  {loadingExpenses ? (
+                    <div className="flex items-center justify-center py-12">
+                      <LoadingSpinner size="lg" />
+                    </div>
+                  ) : groupExpenses.length === 0 ? (
+                    <div className="text-center py-12">
+                      <p className="text-gray-500 dark:text-gray-400 mb-4">No hay gastos compartidos en este grupo aún</p>
+                      <p className="text-sm text-gray-400 dark:text-gray-500">Crea una transacción compartida desde la página de transacciones</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {groupExpenses.map((expense: any) => (
+                        <div key={expense.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800">
+                          <div className="flex items-start justify-between mb-3">
+                            <div>
+                              <h4 className="font-medium text-gray-900 dark:text-white">{expense.description}</h4>
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                Pagado por: {expense.paidBy.name} • {new Date(expense.date).toLocaleDateString()}
+                              </p>
+                              <p className="text-lg font-semibold text-gray-900 dark:text-white mt-1">
+                                {formatCurrency(expense.amount, 'CLP')}
+                              </p>
+                            </div>
+                            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                              {expense.splitType}
+                            </span>
+                          </div>
+
+                          <div className="space-y-2 mt-4">
+                            <p className="text-sm font-medium text-gray-700 mb-2">Participantes:</p>
+                            {expense.participants.map((participant: any) => (
+                              <div
+                                key={participant.id}
+                                className="flex items-center justify-between bg-white p-3 rounded-lg"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                                    {participant.user.name.split(' ').map((n: string) => n[0]).join('')}
+                                  </div>
+                                  <div>
+                                    <p className="font-medium text-gray-900 text-sm">{participant.user.name}</p>
+                                    <p className="text-xs text-gray-500">
+                                      Debe: {formatCurrency(participant.amountOwed, 'CLP')}
+                                    </p>
+                                  </div>
+                                </div>
+                                <MarkAsPaidButtonStyled
+                                  expenseId={expense.id}
+                                  participantUserId={participant.userId}
+                                  currentUserId={user?.id || ''}
+                                  paidByUserId={expense.paidByUserId}
+                                  isPaid={participant.isPaid || false}
+                                  onSuccess={() => {
+                                    if (viewingGroup) {
+                                      loadGroupExpenses(viewingGroup.id)
+                                    }
+                                  }}
+                                  designStyle="icon-only"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Group Actions */}
+              <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => {
+                    setViewingGroup(null)
+                    handleEdit(viewingGroup)
+                  }}
+                >
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    />
+                  </svg>
+                  Edit Group
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setViewingGroup(null)}
+                >
+                  Close
+                </Button>
+              </div>
             </div>
-          </div>
-        </Modal>
-      )}
+          </Modal>
+        )}
       </div>
     </PageTransition>
   )

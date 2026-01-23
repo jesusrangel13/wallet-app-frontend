@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 import { Account, Group, MergedCategory } from '@/types'
 import { accountAPI, categoryAPI, groupAPI, importAPI } from '@/lib/api'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
@@ -46,6 +47,10 @@ export default function ImportPage() {
   const [fileType, setFileType] = useState<'CSV' | 'EXCEL'>('CSV')
   const [editingTransaction, setEditingTransaction] = useState<ParsedTransaction | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+
+  const t = useTranslations('transactions')
+  const tCommon = useTranslations('common')
+
   const [editFormData, setEditFormData] = useState<Partial<TransactionFormData>>({
     date: '',
     type: 'EXPENSE',
@@ -652,7 +657,10 @@ export default function ImportPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Import Transactions</h1>
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Upload className="h-8 w-8 text-cyan-600" />
+            Import Transactions
+          </h1>
           <p className="text-sm text-muted-foreground mt-1">
             Upload a CSV or Excel file to import multiple transactions at once
           </p>
@@ -857,12 +865,12 @@ export default function ImportPage() {
                     <table className="min-w-full divide-y divide-border">
                       <thead className="bg-muted/50 sticky top-0">
                         <tr>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Date</th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Type</th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Amount</th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Description</th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Category</th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Actions</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('fields.date')}</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('fields.type')}</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('fields.amount')}</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('fields.description')}</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('fields.category')}</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{tCommon('actions.edit')}</th>
                         </tr>
                       </thead>
                       <tbody className="bg-card divide-y divide-border">
@@ -874,7 +882,9 @@ export default function ImportPage() {
                                 ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
                                 : 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
                                 }`}>
-                                {transaction.type}
+                                {transaction.type === 'EXPENSE' ? t('types.expense') :
+                                  transaction.type === 'INCOME' ? t('types.income') :
+                                    t('types.transfer')}
                               </span>
                             </td>
                             <td className="px-4 py-3 text-sm font-medium text-foreground">{transaction.amount}</td>
@@ -883,7 +893,7 @@ export default function ImportPage() {
                               <div className="flex items-center gap-2">
                                 {transaction.isEdited && (
                                   <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
-                                    Edited
+                                    {tCommon('status.pending')}
                                   </span>
                                 )}
                                 {transaction.suggestedCategory && transaction.suggestedCategory !== transaction.category ? (
@@ -903,7 +913,7 @@ export default function ImportPage() {
                                 className="flex items-center gap-1"
                               >
                                 <Edit2 className="w-3 h-3" />
-                                Edit
+                                {tCommon('actions.edit')}
                               </Button>
                             </td>
                           </tr>

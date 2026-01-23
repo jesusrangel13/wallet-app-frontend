@@ -208,8 +208,8 @@ export default function GeneralSettingsPage() {
               {formData.name.charAt(0).toUpperCase()}
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">{t('profile.title')}</h2>
-              <p className="text-sm text-gray-500">{t('profile.subtitle')}</p>
+              <h2 className="text-xl font-semibold text-foreground">{t('profile.title')}</h2>
+              <p className="text-sm text-muted-foreground">{t('profile.subtitle')}</p>
             </div>
           </div>
         </CardHeader>
@@ -241,27 +241,27 @@ export default function GeneralSettingsPage() {
 
               {/* Currency */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('profile.fields.currency')} <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  {t('profile.fields.currency')} <span className="text-destructive">*</span>
                 </label>
                 <div className="relative">
                   <select
                     value={formData.currency}
                     onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                    className="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white"
+                    className="w-full px-4 py-2.5 pr-10 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-input appearance-none bg-background text-foreground"
                     required
                   >
                     <option value="CLP">{t('profile.currencies.CLP')}</option>
                     <option value="USD">{t('profile.currencies.USD')}</option>
                     <option value="EUR">{t('profile.currencies.EUR')}</option>
                   </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </div>
                 </div>
-                <p className="mt-1 text-xs text-gray-500">{t('profile.fields.currencyHelper')}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('profile.fields.currencyHelper')}</p>
               </div>
 
               {/* Country */}
@@ -282,7 +282,7 @@ export default function GeneralSettingsPage() {
 
               {/* Default Shared Expense Account */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   {t('profile.fields.defaultAccount')}
                 </label>
                 <div className="relative">
@@ -294,7 +294,7 @@ export default function GeneralSettingsPage() {
                         defaultSharedExpenseAccountId: e.target.value || null,
                       })
                     }
-                    className="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white"
+                    className="w-full px-4 py-2.5 pr-10 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-input appearance-none bg-background text-foreground"
                   >
                     <option value="">{t('profile.defaultAccountOptions.none')}</option>
                     {accounts.map((account) => (
@@ -303,13 +303,13 @@ export default function GeneralSettingsPage() {
                       </option>
                     ))}
                   </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </div>
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-muted-foreground">
                   {t('profile.fields.defaultAccountHelper')}
                 </p>
               </div>
@@ -346,51 +346,51 @@ export default function GeneralSettingsPage() {
           {/* Account Info */}
           <Card>
             <CardHeader>
-              <h2 className="text-lg font-semibold text-gray-900">{t('accountDetails.title')}</h2>
+              <h2 className="text-lg font-semibold text-foreground">{t('accountDetails.title')}</h2>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="py-3 border-b border-gray-100">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center">
-                      <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="h-8 w-8 bg-muted rounded-full flex items-center justify-center">
+                      <svg className="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-700">{t('accountDetails.userId')}</p>
-                      <p className="text-xs text-gray-500">{t('accountDetails.userIdHelper')}</p>
+                      <p className="text-sm font-medium text-foreground">{t('accountDetails.userId')}</p>
+                      <p className="text-xs text-muted-foreground">{t('accountDetails.userIdHelper')}</p>
                     </div>
                   </div>
-                  <span className="font-mono text-xs text-gray-900 bg-gray-50 px-3 py-1 rounded block w-fit">{profile.id.slice(0, 8)}...</span>
+                  <span className="font-mono text-xs text-foreground bg-muted px-3 py-1 rounded block w-fit">{profile.id.slice(0, 8)}...</span>
                 </div>
                 <div className="py-3 border-b border-gray-100">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center">
-                      <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="h-8 w-8 bg-muted rounded-full flex items-center justify-center">
+                      <svg className="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-700">{t('accountDetails.email')}</p>
-                       <p className="text-xs text-gray-500">{t('accountDetails.emailHelper')}</p>
+                      <p className="text-sm font-medium text-foreground">{t('accountDetails.email')}</p>
+                      <p className="text-xs text-muted-foreground">{t('accountDetails.emailHelper')}</p>
                     </div>
                   </div>
-                  <span className="text-sm text-gray-900 break-all">{profile.email}</span>
+                  <span className="text-sm text-foreground break-all">{profile.email}</span>
                 </div>
                 <div className="py-3">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center">
-                      <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="h-8 w-8 bg-muted rounded-full flex items-center justify-center">
+                      <svg className="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-700">{t('accountDetails.currency')}</p>
-                      <p className="text-xs text-gray-500">{t('accountDetails.currencyHelper')}</p>
+                      <p className="text-sm font-medium text-foreground">{t('accountDetails.currency')}</p>
+                      <p className="text-xs text-muted-foreground">{t('accountDetails.currencyHelper')}</p>
                     </div>
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">{profile.currency}</span>
+                  <span className="text-sm font-semibold text-foreground">{profile.currency}</span>
                 </div>
               </div>
             </CardContent>

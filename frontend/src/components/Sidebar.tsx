@@ -95,7 +95,7 @@ export function Sidebar() {
         aria-label={t('appName')}
         className={`
           fixed inset-y-0 left-0 z-40
-          bg-white dark:bg-card border-r border-gray-200 dark:border-gray-700
+          bg-card border-r border-border
           transition-all duration-300 ease-in-out
           h-screen overflow-y-auto
           ${isCollapsed ? 'md:w-16' : 'md:w-64'}
@@ -104,13 +104,13 @@ export function Sidebar() {
         `}
       >
         {/* Header */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-border">
           {!isCollapsed && (
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">
                 💰
               </div>
-              <span className="font-bold text-gray-900 dark:text-white">{t('appName')}</span>
+              <span className="font-bold text-foreground">{t('appName')}</span>
             </div>
           )}
           {isCollapsed && <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white text-sm">💰</div>}
@@ -118,12 +118,12 @@ export function Sidebar() {
           <button
             type="button"
             onClick={toggleCollapse}
-            className="hidden md:flex p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            className="hidden md:flex p-1.5 hover:bg-muted rounded-lg transition-colors"
             aria-label={t('toggleSidebar')}
             aria-expanded={!isCollapsed}
             title={t('toggleSidebar')}
           >
-            <Menu className="w-5 h-5 text-gray-600 dark:text-gray-300" aria-hidden="true" />
+            <Menu className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
           </button>
         </div>
 
@@ -142,7 +142,7 @@ export function Sidebar() {
                       transition-colors duration-200
                       ${isActive(item.href)
                         ? 'bg-primary/10 text-primary'
-                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        : 'text-muted-foreground hover:bg-muted'
                       }
                     `}
                     title={item.label}
@@ -163,7 +163,7 @@ export function Sidebar() {
                     transition-colors duration-200 text-sm font-medium
                     ${isActive(item.href)
                       ? 'bg-primary/10 text-primary'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      : 'text-muted-foreground hover:bg-muted'
                     }
                   `}
                 >
@@ -176,10 +176,10 @@ export function Sidebar() {
         </nav>
 
         {/* Footer with Theme Toggle */}
-        <div className="border-t border-gray-200 dark:border-gray-700 p-4">
+        <div className="border-t border-border p-4">
           {!isCollapsed ? (
             <div className="flex items-center justify-between">
-              <p className="text-xs text-gray-500 dark:text-gray-400">{t('version')}</p>
+              <p className="text-xs text-muted-foreground">{t('version')}</p>
               <ThemeToggle size="sm" />
             </div>
           ) : (

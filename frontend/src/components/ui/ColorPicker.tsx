@@ -70,7 +70,7 @@ export const ColorPicker = ({ value, onChange, label, error }: ColorPickerProps)
   return (
     <div className="space-y-2">
       {label && (
-        <label id={labelId} className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label id={labelId} className="block text-sm font-medium text-foreground">
           {label}
         </label>
       )}
@@ -93,7 +93,7 @@ export const ColorPicker = ({ value, onChange, label, error }: ColorPickerProps)
                 onClick={() => handlePresetClick(color)}
                 aria-label={`Select ${colorName} color`}
                 aria-pressed={isSelected}
-                className="relative w-10 h-10 rounded-lg transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                className="relative w-10 h-10 rounded-lg transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background"
                 style={{ backgroundColor: color }}
               >
                 {isSelected && (
@@ -112,20 +112,20 @@ export const ColorPicker = ({ value, onChange, label, error }: ColorPickerProps)
             type="button"
             onClick={() => setShowCustom(!showCustom)}
             aria-expanded={showCustom}
-            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             {showCustom ? '← Volver a presets' : '+ Color personalizado'}
           </button>
 
           {showCustom && (
-            <div className="flex gap-2 items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="flex gap-2 items-center p-3 bg-muted/50 rounded-lg border border-border">
               <input
                 id={colorPickerId}
                 type="color"
                 value={customColor}
                 onChange={(e) => handleCustomColorChange(e.target.value)}
                 aria-label="Color picker"
-                className="w-12 h-12 rounded cursor-pointer border-2 border-white dark:border-gray-600 shadow-sm"
+                className="w-12 h-12 rounded cursor-pointer border-2 border-background shadow-sm"
               />
               <div className="flex-1">
                 <label htmlFor={hexInputId} className="sr-only">Hex color value</label>
@@ -143,7 +143,7 @@ export const ColorPicker = ({ value, onChange, label, error }: ColorPickerProps)
                   }}
                   placeholder="#3B82F6"
                   aria-describedby={error ? errorId : undefined}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-sm font-mono"
+                  className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-lg focus:ring-2 focus:ring-ring focus:border-input text-sm font-mono"
                 />
               </div>
             </div>
@@ -152,9 +152,9 @@ export const ColorPicker = ({ value, onChange, label, error }: ColorPickerProps)
 
         {/* Selected Color Preview */}
         {value && !showCustom && (
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400" aria-live="polite">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground" aria-live="polite">
             <div
-              className="w-6 h-6 rounded border-2 border-gray-200 dark:border-gray-600"
+              className="w-6 h-6 rounded border-2 border-border"
               style={{ backgroundColor: value }}
               aria-hidden="true"
             />
@@ -164,7 +164,7 @@ export const ColorPicker = ({ value, onChange, label, error }: ColorPickerProps)
       </div>
 
       {error && (
-        <p id={errorId} className="text-red-500 dark:text-red-400 text-sm mt-1" role="alert">{error}</p>
+        <p id={errorId} className="text-destructive text-sm mt-1" role="alert">{error}</p>
       )}
     </div>
   )
