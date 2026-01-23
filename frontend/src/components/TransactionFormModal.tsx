@@ -237,7 +237,7 @@ export default function TransactionFormModal({
               role="radio"
               aria-checked={selectedType === 'EXPENSE'}
               className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'EXPENSE'
-                ? 'bg-red-500 text-white shadow-md'
+                ? 'bg-expense text-white shadow-md'
                 : 'text-muted-foreground hover:bg-muted/80'
                 }`}
             >
@@ -254,7 +254,7 @@ export default function TransactionFormModal({
               role="radio"
               aria-checked={selectedType === 'INCOME'}
               className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'INCOME'
-                ? 'bg-green-500 text-white shadow-md'
+                ? 'bg-income text-white shadow-md'
                 : 'text-muted-foreground hover:bg-muted'
                 }`}
             >
@@ -271,7 +271,7 @@ export default function TransactionFormModal({
               role="radio"
               aria-checked={selectedType === 'TRANSFER'}
               className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'TRANSFER'
-                ? 'bg-blue-400 text-white shadow-md'
+                ? 'bg-transfer text-white shadow-md'
                 : 'text-muted-foreground hover:bg-muted'
                 }`}
             >

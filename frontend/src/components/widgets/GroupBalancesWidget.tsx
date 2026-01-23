@@ -83,7 +83,8 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
             groupedData.slice(0, maxItems).map((group: any) => {
               const isExpanded = expandedGroups.has(group.groupId)
               const isPositive = (group.userBalance ?? 0) > 0 // Positive = others owe you
-              const balanceColor = isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+              const balanceColor = isPositive ? 'text-income' : 'text-expense'
+
 
               return (
                 <div key={group.groupId} className="border border-border rounded-lg overflow-hidden bg-muted/50">
@@ -144,7 +145,7 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
                           </div>
 
                           {/* Amount */}
-                          <span className="font-semibold text-green-600 dark:text-green-400 text-xs ml-3">
+                          <span className="font-semibold text-income text-xs ml-3">
                             <AnimatedCurrency amount={Math.abs(member.balance)} currency="CLP" />
                           </span>
                         </div>
