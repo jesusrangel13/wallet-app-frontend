@@ -1014,7 +1014,7 @@ export default function TransactionsPage() {
                 groupContent={(index) => {
                   const group = groupedTransactions[index]
                   return (
-                    <div className="pt-6 pb-2 bg-gray-50/95 dark:bg-background/95 backdrop-blur z-10 sticky top-0">
+                    <div className="pt-6 pb-2 bg-background z-10 sticky top-0">
                       <DateGroupHeader
                         date={group.date}
                         totalIncome={group.totalIncome}
