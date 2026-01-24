@@ -842,55 +842,30 @@ export default function TransactionsPage() {
             </div>
           </div>
 
-          {/* Month/Year Selector */}
-          <div className="flex items-center justify-center gap-4 bg-white dark:bg-card rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+          {/* Month/Year Selector - Revolut Style */}
+          <div className="flex items-center justify-center gap-6 py-2">
             <button
               onClick={() => {
                 const newMonth = selectedMonth === 0 ? 11 : selectedMonth - 1
                 const newYear = selectedMonth === 0 ? selectedYear - 1 : selectedYear
                 updateMonthFilter(newMonth, newYear)
               }}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Previous month"
             >
-              <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
 
-            <div className="flex items-center gap-2">
-              <select
-                value={selectedMonth}
-                onChange={(e) => {
-                  const month = parseInt(e.target.value)
-                  updateMonthFilter(month, selectedYear)
-                }}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary font-medium"
-              >
-                {monthNames.map((month, index) => (
-                  <option key={index} value={index}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={selectedYear}
-                onChange={(e) => {
-                  const year = parseInt(e.target.value)
-                  updateMonthFilter(selectedMonth, year)
-                }}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary font-medium"
-              >
-                {[...Array(10)].map((_, i) => {
-                  const year = new Date().getFullYear() - 5 + i
-                  return (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  )
-                })}
-              </select>
-            </div>
+            <button
+              onClick={() => {
+                // TODO: Could open a month/year picker modal for quick navigation
+              }}
+              className="text-xl font-semibold text-foreground hover:text-primary transition-colors cursor-pointer min-w-[200px] text-center"
+            >
+              {monthNames[selectedMonth]} {selectedYear}
+            </button>
 
             <button
               onClick={() => {
@@ -898,9 +873,10 @@ export default function TransactionsPage() {
                 const newYear = selectedMonth === 11 ? selectedYear + 1 : selectedYear
                 updateMonthFilter(newMonth, newYear)
               }}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Next month"
             >
-              <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
@@ -916,7 +892,7 @@ export default function TransactionsPage() {
 
           {/* Select All Button */}
           {transactions.length > 0 && (
-            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-background rounded-lg border border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-3">
                 <input
                   type="checkbox"
