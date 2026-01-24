@@ -9,6 +9,7 @@ import { Account } from '@/types'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { Select } from '@/components/ui/Select'
 import { DateTimePicker } from '@/components/ui/DateTimePicker'
 import CategorySelector from '@/components/CategorySelector'
 import TagSelector from '@/components/TagSelector'
@@ -226,20 +227,19 @@ export default function TransactionFormModal({
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
         {/* Transaction Type - Tabs */}
         <fieldset>
-          <legend className="block text-sm font-medium text-gray-700 mb-2">
+          <legend className="block text-sm font-medium text-foreground mb-2">
             {t('fields.type')} <span className="text-red-500" aria-hidden="true">*</span>
           </legend>
-          <div className="grid grid-cols-3 gap-2 bg-gray-100 p-1 rounded-lg" role="radiogroup" aria-label={t('fields.type')}>
+          <div className="grid grid-cols-3 gap-2 bg-muted p-1 rounded-lg" role="radiogroup" aria-label={t('fields.type')}>
             <button
               type="button"
               onClick={() => setValue('type', 'EXPENSE')}
               role="radio"
               aria-checked={selectedType === 'EXPENSE'}
-              className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${
-                selectedType === 'EXPENSE'
-                  ? 'bg-red-500 text-white shadow-md'
-                  : 'text-gray-700 hover:bg-gray-200'
-              }`}
+              className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'EXPENSE'
+                ? 'bg-expense text-white shadow-md'
+                : 'text-muted-foreground hover:bg-muted/80'
+                }`}
             >
               <div className="flex flex-col items-center gap-1">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -253,11 +253,10 @@ export default function TransactionFormModal({
               onClick={() => setValue('type', 'INCOME')}
               role="radio"
               aria-checked={selectedType === 'INCOME'}
-              className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${
-                selectedType === 'INCOME'
-                  ? 'bg-green-500 text-white shadow-md'
-                  : 'text-gray-700 hover:bg-gray-200'
-              }`}
+              className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'INCOME'
+                ? 'bg-income text-white shadow-md'
+                : 'text-muted-foreground hover:bg-muted'
+                }`}
             >
               <div className="flex flex-col items-center gap-1">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -271,11 +270,10 @@ export default function TransactionFormModal({
               onClick={() => setValue('type', 'TRANSFER')}
               role="radio"
               aria-checked={selectedType === 'TRANSFER'}
-              className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${
-                selectedType === 'TRANSFER'
-                  ? 'bg-blue-400 text-white shadow-md'
-                  : 'text-gray-700 hover:bg-gray-200'
-              }`}
+              className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'TRANSFER'
+                ? 'bg-transfer text-white shadow-md'
+                : 'text-muted-foreground hover:bg-muted'
+                }`}
             >
               <div className="flex flex-col items-center gap-1">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -285,18 +283,16 @@ export default function TransactionFormModal({
               </div>
             </button>
           </div>
-          {errors.type && <p className="text-red-500 text-sm mt-1" role="alert">{errors.type.message}</p>}
+          {errors.type && <p className="text-destructive text-sm mt-1" role="alert">{errors.type.message}</p>}
         </fieldset>
 
         {/* Account */}
         {mode !== 'import' && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('fields.account')} <span className="text-red-500">*</span>
-            </label>
-            <select
+            <Select
               {...register('accountId')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              label={`${t('fields.account')} *`}
+              error={errors.accountId?.message}
             >
               <option value="">{t('placeholders.selectAccount')}</option>
               {accounts.map((account) => (
@@ -304,22 +300,17 @@ export default function TransactionFormModal({
                   {account.name} ({account.currency})
                 </option>
               ))}
-            </select>
-            {errors.accountId && (
-              <p className="text-red-500 text-sm mt-1" role="alert">{errors.accountId.message}</p>
-            )}
+            </Select>
           </div>
         )}
 
         {/* To Account (for transfers) */}
         {selectedType === 'TRANSFER' && mode !== 'import' && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('fields.toAccount')} <span className="text-red-500">*</span>
-            </label>
-            <select
+            <Select
               {...register('toAccountId')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              label={`${t('fields.toAccount')} *`}
+              error={errors.toAccountId?.message}
             >
               <option value="">{t('placeholders.selectDestination')}</option>
               {getAvailableToAccounts().map((account) => (
@@ -327,35 +318,31 @@ export default function TransactionFormModal({
                   {account.name} ({account.currency})
                 </option>
               ))}
-            </select>
-            {errors.toAccountId && (
-              <p className="text-red-500 text-sm mt-1" role="alert">{errors.toAccountId.message}</p>
-            )}
+            </Select>
           </div>
         )}
 
         {/* Amount */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t('fields.amount')} <span className="text-red-500">*</span>
+          <label className="block text-sm font-medium text-foreground mb-1">
+            {t('fields.amount')} <span className="text-destructive">*</span>
           </label>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">
               {selectedAccount
                 ? selectedAccount.currency === 'CLP'
                   ? '$'
                   : selectedAccount.currency === 'USD'
-                  ? 'US$'
-                  : '€'
+                    ? 'US$'
+                    : '€'
                 : '$'}
             </span>
             <input
               type="text"
               inputMode="decimal"
               placeholder={t('placeholders.amount')}
-              className={`w-full pl-12 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                errors.amount ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full pl-12 pr-3 py-2 border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-input ${errors.amount ? 'border-destructive' : 'border-input'
+                }`}
               value={formattedAmount}
               onChange={handleAmountChange}
               onFocus={handleAmountFocus}
@@ -363,13 +350,13 @@ export default function TransactionFormModal({
               required
             />
           </div>
-          {errors.amount && <p className="text-red-500 text-sm mt-1" role="alert">{errors.amount.message}</p>}
+          {errors.amount && <p className="text-destructive text-sm mt-1" role="alert">{errors.amount.message}</p>}
         </div>
 
         {/* AI Suggested Category (only in import mode) */}
         {mode === 'import' && suggestedCategory && (
-          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-800">
+          <div className="p-3 bg-blue-50/50 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <p className="text-sm text-blue-600 dark:text-blue-400">
               <span className="font-medium">AI Suggestion:</span> {suggestedCategory}
             </p>
           </div>
@@ -396,15 +383,15 @@ export default function TransactionFormModal({
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('fields.description')}</label>
+          <label className="block text-sm font-medium text-foreground mb-1">{t('fields.description')}</label>
           <textarea
             {...register('description')}
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-input"
             placeholder={t('placeholders.description')}
           />
           {errors.description && (
-            <p className="text-red-500 text-sm mt-1" role="alert">{errors.description.message}</p>
+            <p className="text-destructive text-sm mt-1" role="alert">{errors.description.message}</p>
           )}
         </div>
 
@@ -451,29 +438,29 @@ export default function TransactionFormModal({
         {/* Shared Group (simplified for import mode) */}
         {mode === 'import' && selectedType === 'EXPENSE' && initialData?.sharedGroup && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               Shared Group
             </label>
             <input
               type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+              className="w-full px-3 py-2 border border-input rounded-lg bg-muted text-muted-foreground"
               value={initialData.sharedGroup}
               disabled
             />
-            <p className="text-xs text-gray-500 mt-1">Shared group will be processed during import</p>
+            <p className="text-xs text-muted-foreground mt-1">Shared group will be processed during import</p>
           </div>
         )}
 
         {/* Notes (for import mode) */}
         {mode === 'import' && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-foreground mb-1">
               {t('fields.notes')}
             </label>
             <textarea
               {...register('notes')}
               rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-input"
               placeholder={t('placeholders.notes')}
             />
           </div>

@@ -26,5 +26,9 @@
   "shares": "shares",
   "totalPercentage": "Total Percentage:",
   "totalSplit": "Total Split:",
-  "splitMismatch": "Split total doesn't match transaction amount!"
+  "splitMismatch": "Split total doesn't match transaction amount!",
+  "required": "required",
+  "percentageFor": "Percentage for {name}",
+  "amountFor": "Amount for {name}",
+  "sharesFor": "Shares for {name}"
 }

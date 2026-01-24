@@ -66,7 +66,7 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
           <TrendingUp className="h-4 w-4" />
           Recent Transactions
         </CardTitle>
@@ -77,7 +77,7 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
             transactions.slice(0, maxItems).map((transaction) => (
               <div
                 key={transaction.id}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-center justify-between p-3 bg-muted/40 rounded-lg hover:bg-muted/60 transition-colors"
               >
                 <div className="flex items-center gap-3 flex-1">
                   <div
@@ -88,28 +88,28 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-foreground">
                         {transaction.description || transaction.category?.name || 'Transaction'}
                       </p>
                       {transaction.sharedExpenseId && (
-                        <span className="inline-flex items-center gap-1 text-xs bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded-full border border-purple-200">
+                        <span className="inline-flex items-center gap-1 text-xs bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 px-1.5 py-0.5 rounded-full border border-purple-200 dark:border-purple-800">
                           👥
                         </span>
                       )}
                     </div>
                     {transaction.payee && (
-                      <p className="text-xs text-gray-600">→ {transaction.payee}</p>
+                      <p className="text-xs text-muted-foreground">→ {transaction.payee}</p>
                     )}
-                    <p className="text-xs text-gray-500">{transaction.account?.name || 'Account'}</p>
+                    <p className="text-xs text-muted-foreground">{transaction.account?.name || 'Account'}</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p
                     className={`font-semibold ${transaction.type === 'EXPENSE'
-                        ? 'text-red-600'
-                        : transaction.type === 'INCOME'
-                          ? 'text-green-600'
-                          : 'text-blue-600'
+                      ? 'text-red-600 dark:text-red-500'
+                      : transaction.type === 'INCOME'
+                        ? 'text-green-600 dark:text-green-500'
+                        : 'text-blue-600 dark:text-blue-500'
                       }`}
                   >
                     {transaction.type === 'EXPENSE'
@@ -122,7 +122,7 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
                       currency={(transaction.account?.currency as Currency) || 'CLP'}
                     />
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     {new Date(transaction.date).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
@@ -132,13 +132,13 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
               </div>
             ))
           ) : (
-            <p className="text-gray-500 text-center py-8">
+            <p className="text-muted-foreground text-center py-8">
               {t('noRecentTransactions')}
             </p>
           )}
         </div>
         {transactions.length > 0 && (
-          <Link href="/dashboard/transactions" prefetch={true} className="block mt-4 w-full text-center py-2 px-4 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg font-medium transition-colors">
+          <Link href="/dashboard/transactions" prefetch={true} className="block mt-4 w-full text-center py-2 px-4 text-sm text-primary hover:text-primary-hover hover:bg-primary/10 rounded-lg font-medium transition-colors">
             {t('viewMoreTransactions')} →
           </Link>
         )}

@@ -29,6 +29,7 @@ import { TransactionsPageSkeleton } from '@/components/ui/PageSkeletons'
 import { LoadingBar } from '@/components/ui/LoadingBar'
 import { TransactionListSkeleton } from '@/components/ui/TransactionListSkeleton'
 import { PageTransition } from '@/components/ui/animations'
+import { TrendingUp } from 'lucide-react'
 
 const transactionSchema = z.object({
   accountId: z.string().min(1, 'Account is required'),
@@ -772,687 +773,690 @@ export default function TransactionsPage() {
 
       <PageTransition>
         <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('title')}</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1">
-            {t('subtitle')}
-          </p>
-        </div>
-        <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
-          {/* Export Menu */}
-          <div className="relative flex-1 sm:flex-initial">
-            <Button
-              variant="outline"
-              onClick={() => setShowExportMenu(!showExportMenu)}
-              disabled={transactions.length === 0}
-              className="w-full sm:w-auto"
-              title="Export transactions"
-            >
-              <svg className="w-4 h-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                />
-              </svg>
-              <span className="hidden sm:inline">{tCommon('actions.export')}</span>
-            </Button>
-            {showExportMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
-                <button
-                  onClick={() => handleExport('csv')}
-                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2"
-                >
-                  <span>📄</span> Export as CSV
-                </button>
-                <button
-                  onClick={() => handleExport('json')}
-                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2"
-                >
-                  <span>📋</span> Export as JSON
-                </button>
-                <button
-                  onClick={() => handleExport('excel')}
-                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2"
-                >
-                  <span>📊</span> Export as Excel
-                </button>
-              </div>
-            )}
-          </div>
-          <Button onClick={handleAddNew} className="flex-1 sm:flex-initial" title="New transaction">
-            <svg className="w-4 h-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            <span className="hidden sm:inline">{t('new')}</span>
-            <span className="sm:hidden">{tCommon('actions.add')}</span>
-          </Button>
-        </div>
-      </div>
-
-      {/* Month/Year Selector */}
-      <div className="flex items-center justify-center gap-4 bg-white rounded-lg border border-gray-200 p-4">
-        <button
-          onClick={() => {
-            const newMonth = selectedMonth === 0 ? 11 : selectedMonth - 1
-            const newYear = selectedMonth === 0 ? selectedYear - 1 : selectedYear
-            updateMonthFilter(newMonth, newYear)
-          }}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-
-        <div className="flex items-center gap-2">
-          <select
-            value={selectedMonth}
-            onChange={(e) => {
-              const month = parseInt(e.target.value)
-              updateMonthFilter(month, selectedYear)
-            }}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium"
-          >
-            {monthNames.map((month, index) => (
-              <option key={index} value={index}>
-                {month}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={selectedYear}
-            onChange={(e) => {
-              const year = parseInt(e.target.value)
-              updateMonthFilter(selectedMonth, year)
-            }}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium"
-          >
-            {[...Array(10)].map((_, i) => {
-              const year = new Date().getFullYear() - 5 + i
-              return (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              )
-            })}
-          </select>
-        </div>
-
-        <button
-          onClick={() => {
-            const newMonth = selectedMonth === 11 ? 0 : selectedMonth + 1
-            const newYear = selectedMonth === 11 ? selectedYear + 1 : selectedYear
-            updateMonthFilter(newMonth, newYear)
-          }}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
-
-      {/* Filters */}
-      <TransactionFiltersComponent
-        filters={filters}
-        onFilterChange={setFilters}
-        accounts={accounts}
-        categories={categories}
-      />
-
-      {/* Select All Button */}
-      {transactions.length > 0 && (
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              checked={selectAll}
-              onChange={handleSelectAll}
-              className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-            />
-            <button
-              onClick={handleSelectAll}
-              className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
-            >
-              {selectAll ? 'Deseleccionar todas' : 'Seleccionar todas'}
-            </button>
-            {selectedTransactionIds.size > 0 && (
-              <span className="text-sm text-gray-500">
-                ({selectedTransactionIds.size} de {transactions.length} seleccionadas)
-              </span>
-            )}
-          </div>
-          {selectedTransactionIds.size > 0 && (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setSelectedTransactionIds(new Set())
-                  setSelectAll(false)
-                }}
-              >
-                Cancelar
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => setShowBulkDeleteConfirm(true)}
-                disabled={isBulkDeleting}
-                className="bg-red-600 hover:bg-red-700 text-white"
-              >
-                {isBulkDeleting ? tLoading('deleting') : 'Eliminar'}
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Bulk Delete Action Bar */}
-      {selectedTransactionIds.size > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
-          <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <span className="text-sm font-medium text-gray-900">
-                {selectedTransactionIds.size} transaction{selectedTransactionIds.size !== 1 ? 's' : ''} selected
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSelectedTransactionIds(new Set())
-                  setSelectAll(false)
-                }}
-                disabled={isBulkDeleting}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => setShowBulkDeleteConfirm(true)}
-                disabled={isBulkDeleting}
-                className="bg-red-600 hover:bg-red-700 text-white"
-              >
-                {isBulkDeleting ? tLoading('deleting') : 'Delete Selected'}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Transactions List - Grouped by Date */}
-      <div className={`space-y-6 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} h-[calc(100vh-200px)]`}>
-        {/* Show partial skeleton when refreshing with existing data */}
-        {isRefreshingList && transactions.length > 0 ? (
-          <TransactionListSkeleton itemCount={5} />
-        ) : transactions.length === 0 ? (
-          <Card>
-            <CardContent>
-              <p className="text-center text-gray-500 py-8">
-                No transactions found.
-              </p>
-            </CardContent>
-          </Card>
-        ) : (
-          <GroupedVirtuoso
-            ref={virtuosoRef}
-            useWindowScroll
-            groupCounts={groupCounts}
-            groupContent={(index) => {
-              const group = groupedTransactions[index]
-              return (
-                <div className="pt-6 pb-2 bg-gray-50/95 backdrop-blur z-10 sticky top-0">
-                  <DateGroupHeader
-                    date={group.date}
-                    totalIncome={group.totalIncome}
-                    totalExpense={group.totalExpense}
-                    currency={group.currency}
-                  />
-                </div>
-              )
-            }}
-            itemContent={(index) => {
-              const transaction = flatTransactions[index];
-              if (!transaction) return null;
-
-              return (
-                <div className="pb-2">
-                  <Card className={`transition-colors ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 border-blue-300' : ''}`}>
-                    <CardContent className="py-4">
-                      <div className="flex items-start justify-between">
-                        {/* Left Section: Checkbox + Category Icon + Details */}
-                        <div className="flex items-start gap-3 flex-1">
-                          <input
-                            type="checkbox"
-                            checked={selectedTransactionIds.has(transaction.id)}
-                            onChange={() => handleSelectTransaction(transaction.id)}
-                            className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer mt-1"
-                          />
-
-                          {/* Category Circle Icon */}
-                          <div
-                            className="flex items-center justify-center w-10 h-10 rounded-full text-lg flex-shrink-0"
-                            style={{
-                              backgroundColor: transaction.category?.color || '#E5E7EB',
-                              color: transaction.category?.icon ? 'inherit' : 'transparent'
-                            }}
-                          >
-                            {transaction.category?.icon || '📌'}
-                          </div>
-
-                          {/* Content */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-baseline gap-2">
-                              <p className="font-semibold text-gray-900">
-                                {transaction.category?.name || 'Uncategorized'}
-                              </p>
-                            </div>
-
-                            {transaction.description && (
-                              <p className="text-sm text-gray-600 truncate">{transaction.description}</p>
-                            )}
-
-                            {/* Shared Expense Indicator - unified display */}
-                            <SharedExpenseIndicator transaction={transaction} variant="compact" className="mt-2" />
-
-                            {/* Show payee only for non-shared transactions (shared ones show it in the indicator) */}
-                            {!transaction.sharedExpenseId && transaction.payee && (
-                              <p className="text-xs text-gray-500 mt-1">→ {transaction.payee}</p>
-                            )}
-
-                            <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
-                              <span>{transaction.account?.name}</span>
-                              {transaction.toAccount && (
-                                <>
-                                  <span>→</span>
-                                  <span>{transaction.toAccount.name}</span>
-                                </>
-                              )}
-                            </div>
-
-                            {transaction.tags && transaction.tags.length > 0 && (
-                              <div className="flex flex-wrap gap-1 mt-2">
-                                {transaction.tags.map((t) => (
-                                  <span
-                                    key={t.id}
-                                    className="inline-block px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded text-xs"
-                                  >
-                                    {t.tag.name}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Right Section: Amount + Date + Actions */}
-                        <div className="flex flex-col items-end gap-2 ml-2 md:ml-4 md:gap-3 flex-shrink-0">
-                          <div className="text-right truncate">
-                            <p
-                              className={`text-sm md:text-lg font-bold whitespace-nowrap ${getTransactionTypeColor(
-                                transaction.type
-                              )}`}
-                            >
-                              {transaction.type === 'EXPENSE' && '-'}
-                              {transaction.type === 'INCOME' && '+'}
-                              {formatCurrency(
-                                Number(transaction.amount),
-                                transaction.account?.currency || 'CLP'
-                              )}
-                            </p>
-                          </div>
-
-                          <div className="flex gap-1.5 md:gap-2">
-                            {/* Mobile: Icon-only buttons */}
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEdit(transaction)}
-                              className="md:hidden px-2.5 py-1.5"
-                              title="Edit transaction"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleDelete(transaction.id)}
-                              className="md:hidden px-2.5 py-1.5 text-red-600 hover:text-red-700"
-                              title="Delete transaction"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                            </Button>
-
-                            {/* Desktop: Text buttons */}
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEdit(transaction)}
-                              className="hidden md:inline-flex"
-                            >
-                              {tCommon('actions.edit')}
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleDelete(transaction.id)}
-                              className="hidden md:inline-flex text-red-600 hover:text-red-700"
-                            >
-                              {tCommon('actions.delete')}
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              )
-            }}
-            endReached={() => {
-              if (hasMore && !isLoadingMore && !isRefreshingList) {
-                loadTransactions(currentPage + 1, true)
-              }
-            }}
-            components={{
-              Footer: () => (
-                isLoadingMore ? (
-                  <div className="pt-2">
-                    <TransactionListSkeleton itemCount={3} />
-                  </div>
-                ) : null
-              )
-            }}
-          />
-        )}
-      </div>
-
-
-      {/* End of list indicator */}
-      {!hasMore && transactions.length > 0 && (
-        <div className="text-center py-6 text-sm text-gray-500">
-          Has llegado al final de la lista
-        </div>
-      )}
-
-      {/* Transaction Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false)
-          setEditingTransaction(null)
-          setIsSharedExpense(false)
-          setSharedExpenseData(null)
-          reset()
-        }}
-        title={editingTransaction ? t('edit') : t('new')}
-      >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Transaction Type - Tabs */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t('fields.type')} <span className="text-red-500">*</span>
-            </label>
-            <div className="grid grid-cols-3 gap-2 bg-gray-100 p-1 rounded-lg">
-              <button
-                type="button"
-                onClick={() => setValue('type', 'EXPENSE')}
-                className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'EXPENSE'
-                  ? 'bg-red-500 text-white shadow-md'
-                  : 'text-gray-700 hover:bg-gray-200'
-                  }`}
-              >
-                <div className="flex flex-col items-center gap-1">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                  </svg>
-                  <span>Expense</span>
-                </div>
-              </button>
-              <button
-                type="button"
-                onClick={() => setValue('type', 'INCOME')}
-                className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'INCOME'
-                  ? 'bg-green-500 text-white shadow-md'
-                  : 'text-gray-700 hover:bg-gray-200'
-                  }`}
-              >
-                <div className="flex flex-col items-center gap-1">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                  </svg>
-                  <span>Income</span>
-                </div>
-              </button>
-              <button
-                type="button"
-                onClick={() => setValue('type', 'TRANSFER')}
-                className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'TRANSFER'
-                  ? 'bg-blue-400 text-white shadow-md'
-                  : 'text-gray-700 hover:bg-gray-200'
-                  }`}
-              >
-                <div className="flex flex-col items-center gap-1">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                  </svg>
-                  <span>Transfer</span>
-                </div>
-              </button>
-            </div>
-            {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>}
-          </div>
-
-          {/* Account */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('fields.account')} <span className="text-red-500">*</span>
-            </label>
-            <select
-              {...register('accountId')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">{t('placeholders.selectAccount')}</option>
-              {accounts.map((account) => (
-                <option key={account.id} value={account.id}>
-                  {account.name} ({account.currency})
-                </option>
-              ))}
-            </select>
-            {errors.accountId && (
-              <p className="text-red-500 text-sm mt-1">{errors.accountId.message}</p>
-            )}
-          </div>
-
-          {/* To Account (for transfers) */}
-          {selectedType === 'TRANSFER' && (
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t('fields.toAccount')} <span className="text-red-500">*</span>
-              </label>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <TrendingUp className="h-8 w-8 text-green-600" />
+                {t('title')}
+              </h1>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">
+                {t('subtitle')}
+              </p>
+            </div>
+            <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
+              {/* Export Menu */}
+              <div className="relative flex-1 sm:flex-initial">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowExportMenu(!showExportMenu)}
+                  disabled={transactions.length === 0}
+                  className="w-full sm:w-auto"
+                  title="Export transactions"
+                >
+                  <svg className="w-4 h-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                    />
+                  </svg>
+                  <span className="hidden sm:inline">{tCommon('actions.export')}</span>
+                </Button>
+                {showExportMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-card rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10">
+                    <button
+                      onClick={() => handleExport('csv')}
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                    >
+                      <span>📄</span> Export as CSV
+                    </button>
+                    <button
+                      onClick={() => handleExport('json')}
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                    >
+                      <span>📋</span> Export as JSON
+                    </button>
+                    <button
+                      onClick={() => handleExport('excel')}
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                    >
+                      <span>📊</span> Export as Excel
+                    </button>
+                  </div>
+                )}
+              </div>
+              <Button onClick={handleAddNew} className="flex-1 sm:flex-initial" title="New transaction">
+                <svg className="w-4 h-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                <span className="hidden sm:inline">{t('new')}</span>
+                <span className="sm:hidden">{tCommon('actions.add')}</span>
+              </Button>
+            </div>
+          </div>
+
+          {/* Month/Year Selector */}
+          <div className="flex items-center justify-center gap-4 bg-white dark:bg-card rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+            <button
+              onClick={() => {
+                const newMonth = selectedMonth === 0 ? 11 : selectedMonth - 1
+                const newYear = selectedMonth === 0 ? selectedYear - 1 : selectedYear
+                updateMonthFilter(newMonth, newYear)
+              }}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <div className="flex items-center gap-2">
               <select
-                {...register('toAccountId')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                value={selectedMonth}
+                onChange={(e) => {
+                  const month = parseInt(e.target.value)
+                  updateMonthFilter(month, selectedYear)
+                }}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary font-medium"
               >
-                <option value="">{t('placeholders.selectDestination')}</option>
-                {getAvailableToAccounts().map((account) => (
-                  <option key={account.id} value={account.id}>
-                    {account.name} ({account.currency})
+                {monthNames.map((month, index) => (
+                  <option key={index} value={index}>
+                    {month}
                   </option>
                 ))}
               </select>
-              {errors.toAccountId && (
-                <p className="text-red-500 text-sm mt-1">{errors.toAccountId.message}</p>
+
+              <select
+                value={selectedYear}
+                onChange={(e) => {
+                  const year = parseInt(e.target.value)
+                  updateMonthFilter(selectedMonth, year)
+                }}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary font-medium"
+              >
+                {[...Array(10)].map((_, i) => {
+                  const year = new Date().getFullYear() - 5 + i
+                  return (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  )
+                })}
+              </select>
+            </div>
+
+            <button
+              onClick={() => {
+                const newMonth = selectedMonth === 11 ? 0 : selectedMonth + 1
+                const newYear = selectedMonth === 11 ? selectedYear + 1 : selectedYear
+                updateMonthFilter(newMonth, newYear)
+              }}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Filters */}
+          <TransactionFiltersComponent
+            filters={filters}
+            onFilterChange={setFilters}
+            accounts={accounts}
+            categories={categories}
+          />
+
+          {/* Select All Button */}
+          {transactions.length > 0 && (
+            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={selectAll}
+                  onChange={handleSelectAll}
+                  className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer bg-white dark:bg-gray-800"
+                />
+                <button
+                  onClick={handleSelectAll}
+                  className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                >
+                  {selectAll ? 'Deseleccionar todas' : 'Seleccionar todas'}
+                </button>
+                {selectedTransactionIds.size > 0 && (
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    ({selectedTransactionIds.size} de {transactions.length} seleccionadas)
+                  </span>
+                )}
+              </div>
+              {selectedTransactionIds.size > 0 && (
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedTransactionIds(new Set())
+                      setSelectAll(false)
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => setShowBulkDeleteConfirm(true)}
+                    disabled={isBulkDeleting}
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    {isBulkDeleting ? tLoading('deleting') : 'Eliminar'}
+                  </Button>
+                </div>
               )}
             </div>
           )}
 
-          {/* Amount */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('fields.amount')} <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
-                {selectedAccount
-                  ? selectedAccount.currency === 'CLP'
-                    ? '$'
-                    : selectedAccount.currency === 'USD'
-                      ? 'US$'
-                      : '€'
-                  : '$'}
-              </span>
-              <input
-                type="text"
-                inputMode="decimal"
-                placeholder="0.00"
-                className={`w-full pl-12 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.amount ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                value={formattedAmount}
-                onChange={handleAmountChange}
-                onFocus={handleAmountFocus}
-                onBlur={handleAmountBlur}
-                required
-              />
+          {/* Bulk Delete Action Bar */}
+          {selectedTransactionIds.size > 0 && (
+            <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-card border-t border-gray-200 dark:border-gray-700 shadow-lg z-40">
+              <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">
+                    {selectedTransactionIds.size} transaction{selectedTransactionIds.size !== 1 ? 's' : ''} selected
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedTransactionIds(new Set())
+                      setSelectAll(false)
+                    }}
+                    disabled={isBulkDeleting}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => setShowBulkDeleteConfirm(true)}
+                    disabled={isBulkDeleting}
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    {isBulkDeleting ? tLoading('deleting') : 'Delete Selected'}
+                  </Button>
+                </div>
+              </div>
             </div>
-            {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount.message}</p>}
-          </div>
-
-          {/* Category */}
-          <CategorySelector
-            value={watch('categoryId')}
-            onChange={(categoryId) => setValue('categoryId', categoryId)}
-            type={selectedType}
-            error={errors.categoryId?.message}
-          />
-
-          {/* Payee (quien recibe el pago) */}
-          {selectedType !== 'TRANSFER' && (
-            <PayeeAutocomplete
-              label={t('fields.payee')}
-              value={watch('payee') || ''}
-              onChange={(value) => setValue('payee', value)}
-              error={errors.payee?.message}
-              placeholder={t('placeholders.payee')}
-            />
           )}
 
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('fields.description')}</label>
-            <textarea
-              {...register('description')}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder={t('placeholders.description')}
-            />
-            {errors.description && (
-              <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+          {/* Transactions List - Grouped by Date */}
+          <div className={`space-y-6 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} h-[calc(100vh-200px)]`}>
+            {/* Show partial skeleton when refreshing with existing data */}
+            {isRefreshingList && transactions.length > 0 ? (
+              <TransactionListSkeleton itemCount={5} />
+            ) : transactions.length === 0 ? (
+              <Card>
+                <CardContent>
+                  <p className="text-center text-gray-500 py-8">
+                    No transactions found.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <GroupedVirtuoso
+                ref={virtuosoRef}
+                useWindowScroll
+                groupCounts={groupCounts}
+                groupContent={(index) => {
+                  const group = groupedTransactions[index]
+                  return (
+                    <div className="pt-6 pb-2 bg-gray-50/95 dark:bg-background/95 backdrop-blur z-10 sticky top-0">
+                      <DateGroupHeader
+                        date={group.date}
+                        totalIncome={group.totalIncome}
+                        totalExpense={group.totalExpense}
+                        currency={group.currency}
+                      />
+                    </div>
+                  )
+                }}
+                itemContent={(index) => {
+                  const transaction = flatTransactions[index];
+                  if (!transaction) return null;
+
+                  return (
+                    <div className="pb-2">
+                      <Card className={`transition-colors ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700' : ''}`}>
+                        <CardContent className="py-4">
+                          <div className="flex items-start justify-between">
+                            {/* Left Section: Checkbox + Category Icon + Details */}
+                            <div className="flex items-start gap-3 flex-1">
+                              <input
+                                type="checkbox"
+                                checked={selectedTransactionIds.has(transaction.id)}
+                                onChange={() => handleSelectTransaction(transaction.id)}
+                                className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer mt-1 bg-white dark:bg-gray-800"
+                              />
+
+                              {/* Category Circle Icon */}
+                              <div
+                                className="flex items-center justify-center w-10 h-10 rounded-full text-lg flex-shrink-0"
+                                style={{
+                                  backgroundColor: transaction.category?.color || '#E5E7EB',
+                                  color: transaction.category?.icon ? 'inherit' : 'transparent'
+                                }}
+                              >
+                                {transaction.category?.icon || '📌'}
+                              </div>
+
+                              {/* Content */}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-baseline gap-2">
+                                  <p className="font-semibold text-gray-900 dark:text-white">
+                                    {transaction.category?.name || 'Uncategorized'}
+                                  </p>
+                                </div>
+
+                                {transaction.description && (
+                                  <p className="text-sm text-gray-600 dark:text-gray-400 truncate">{transaction.description}</p>
+                                )}
+
+                                {/* Shared Expense Indicator - unified display */}
+                                <SharedExpenseIndicator transaction={transaction} variant="compact" className="mt-2" />
+
+                                {/* Show payee only for non-shared transactions (shared ones show it in the indicator) */}
+                                {!transaction.sharedExpenseId && transaction.payee && (
+                                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">→ {transaction.payee}</p>
+                                )}
+
+                                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                  <span>{transaction.account?.name}</span>
+                                  {transaction.toAccount && (
+                                    <>
+                                      <span>→</span>
+                                      <span>{transaction.toAccount.name}</span>
+                                    </>
+                                  )}
+                                </div>
+
+                                {transaction.tags && transaction.tags.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mt-2">
+                                    {transaction.tags.map((t) => (
+                                      <span
+                                        key={t.id}
+                                        className="inline-block px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded text-xs"
+                                      >
+                                        {t.tag.name}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Right Section: Amount + Date + Actions */}
+                            <div className="flex flex-col items-end gap-2 ml-2 md:ml-4 md:gap-3 flex-shrink-0">
+                              <div className="text-right truncate">
+                                <p
+                                  className={`text-sm md:text-lg font-bold whitespace-nowrap ${getTransactionTypeColor(
+                                    transaction.type
+                                  )}`}
+                                >
+                                  {transaction.type === 'EXPENSE' && '-'}
+                                  {transaction.type === 'INCOME' && '+'}
+                                  {formatCurrency(
+                                    Number(transaction.amount),
+                                    transaction.account?.currency || 'CLP'
+                                  )}
+                                </p>
+                              </div>
+
+                              <div className="flex gap-1.5 md:gap-2">
+                                {/* Mobile: Icon-only buttons */}
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleEdit(transaction)}
+                                  className="md:hidden px-2.5 py-1.5"
+                                  title="Edit transaction"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                  </svg>
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleDelete(transaction.id)}
+                                  className="md:hidden px-2.5 py-1.5 text-red-600 hover:text-red-700"
+                                  title="Delete transaction"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  </svg>
+                                </Button>
+
+                                {/* Desktop: Text buttons */}
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleEdit(transaction)}
+                                  className="hidden md:inline-flex"
+                                >
+                                  {tCommon('actions.edit')}
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleDelete(transaction.id)}
+                                  className="hidden md:inline-flex text-red-600 hover:text-red-700"
+                                >
+                                  {tCommon('actions.delete')}
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  )
+                }}
+                endReached={() => {
+                  if (hasMore && !isLoadingMore && !isRefreshingList) {
+                    loadTransactions(currentPage + 1, true)
+                  }
+                }}
+                components={{
+                  Footer: () => (
+                    isLoadingMore ? (
+                      <div className="pt-2">
+                        <TransactionListSkeleton itemCount={3} />
+                      </div>
+                    ) : null
+                  )
+                }}
+              />
             )}
           </div>
 
-          {/* Date */}
-          <Input
-            label={t('fields.dateTime')}
-            type="datetime-local"
-            error={errors.date?.message}
-            {...register('date')}
-          />
 
-          {/* Tags */}
-          <TagSelector
-            value={selectedTags}
-            onChange={(tags) => setValue('tags', tags)}
-            error={errors.tags?.message}
-          />
-
-          {/* Shared Expense */}
-          {selectedType === 'EXPENSE' && (
-            <SharedExpenseForm
-              enabled={isSharedExpense}
-              onToggle={setIsSharedExpense}
-              totalAmount={selectedAmount}
-              currency={selectedAccount?.currency || 'CLP'}
-              onChange={setSharedExpenseData}
-              initialData={sharedExpenseData || undefined}
-            />
+          {/* End of list indicator */}
+          {!hasMore && transactions.length > 0 && (
+            <div className="text-center py-6 text-sm text-gray-500 dark:text-gray-400">
+              Has llegado al final de la lista
+            </div>
           )}
 
-          <div className="flex gap-3 pt-4 border-t">
-            <Button type="submit" className="flex-1" disabled={isSaving}>
-              {isSaving ? (
-                <span className="inline-flex items-center gap-2">
-                  <LoadingSpinner size="sm" className="text-current" />
-                  {tLoading('saving')}
-                </span>
-              ) : (
-                <span>{editingTransaction ? tCommon('actions.update') : tCommon('actions.create')}</span>
-              )}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setIsModalOpen(false)
-                setEditingTransaction(null)
-                setIsSharedExpense(false)
-                setSharedExpenseData(null)
-                reset()
-              }}
-              disabled={isSaving}
-            >
-              {tCommon('actions.cancel')}
-            </Button>
-          </div>
-        </form>
-      </Modal>
+          {/* Transaction Modal */}
+          <Modal
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false)
+              setEditingTransaction(null)
+              setIsSharedExpense(false)
+              setSharedExpenseData(null)
+              reset()
+            }}
+            title={editingTransaction ? t('edit') : t('new')}
+          >
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              {/* Transaction Type - Tabs */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {t('fields.type')} <span className="text-red-500">*</span>
+                </label>
+                <div className="grid grid-cols-3 gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+                  <button
+                    type="button"
+                    onClick={() => setValue('type', 'EXPENSE')}
+                    className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'EXPENSE'
+                      ? 'bg-red-500 text-white shadow-md'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      }`}
+                  >
+                    <div className="flex flex-col items-center gap-1">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                      </svg>
+                      <span>Expense</span>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setValue('type', 'INCOME')}
+                    className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'INCOME'
+                      ? 'bg-green-500 text-white shadow-md'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      }`}
+                  >
+                    <div className="flex flex-col items-center gap-1">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                      </svg>
+                      <span>Income</span>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setValue('type', 'TRANSFER')}
+                    className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'TRANSFER'
+                      ? 'bg-blue-400 text-white shadow-md'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      }`}
+                  >
+                    <div className="flex flex-col items-center gap-1">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                      </svg>
+                      <span>Transfer</span>
+                    </div>
+                  </button>
+                </div>
+                {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>}
+              </div>
 
-      {/* Bulk Delete Confirmation Modal */}
-      <Modal
-        isOpen={showBulkDeleteConfirm}
-        onClose={() => setShowBulkDeleteConfirm(false)}
-        title={t('delete')}
-      >
-        <div className="space-y-4">
-          <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-900">
-              Are you sure you want to delete {selectedTransactionIds.size} transaction{selectedTransactionIds.size !== 1 ? 's' : ''}?
-            </p>
-            <p className="text-xs text-red-700 mt-2">
-              This action cannot be undone.
-            </p>
-          </div>
-          <div className="flex gap-3 pt-4 border-t">
-            <Button
-              variant="outline"
-              onClick={() => setShowBulkDeleteConfirm(false)}
-              disabled={isBulkDeleting}
-              className="flex-1"
-            >
-              {tCommon('actions.cancel')}
-            </Button>
-            <Button
-              onClick={handleBulkDelete}
-              disabled={isBulkDeleting}
-              className="flex-1 bg-red-600 hover:bg-red-700 text-white"
-            >
-              {isBulkDeleting ? tLoading('deleting') : tCommon('actions.delete')}
-            </Button>
-          </div>
-        </div>
-      </Modal>
+              {/* Account */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  {t('fields.account')} <span className="text-red-500">*</span>
+                </label>
+                <select
+                  {...register('accountId')}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
+                >
+                  <option value="">{t('placeholders.selectAccount')}</option>
+                  {accounts.map((account) => (
+                    <option key={account.id} value={account.id}>
+                      {account.name} ({account.currency})
+                    </option>
+                  ))}
+                </select>
+                {errors.accountId && (
+                  <p className="text-red-500 text-sm mt-1">{errors.accountId.message}</p>
+                )}
+              </div>
+
+              {/* To Account (for transfers) */}
+              {selectedType === 'TRANSFER' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    {t('fields.toAccount')} <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    {...register('toAccountId')}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
+                  >
+                    <option value="">{t('placeholders.selectDestination')}</option>
+                    {getAvailableToAccounts().map((account) => (
+                      <option key={account.id} value={account.id}>
+                        {account.name} ({account.currency})
+                      </option>
+                    ))}
+                  </select>
+                  {errors.toAccountId && (
+                    <p className="text-red-500 text-sm mt-1">{errors.toAccountId.message}</p>
+                  )}
+                </div>
+              )}
+
+              {/* Amount */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  {t('fields.amount')} <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 font-semibold">
+                    {selectedAccount
+                      ? selectedAccount.currency === 'CLP'
+                        ? '$'
+                        : selectedAccount.currency === 'USD'
+                          ? 'US$'
+                          : '€'
+                      : '$'}
+                  </span>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="0.00"
+                    className={`w-full pl-12 pr-3 py-2 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary ${errors.amount ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      }`}
+                    value={formattedAmount}
+                    onChange={handleAmountChange}
+                    onFocus={handleAmountFocus}
+                    onBlur={handleAmountBlur}
+                    required
+                  />
+                </div>
+                {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount.message}</p>}
+              </div>
+
+              {/* Category */}
+              <CategorySelector
+                value={watch('categoryId')}
+                onChange={(categoryId) => setValue('categoryId', categoryId)}
+                type={selectedType}
+                error={errors.categoryId?.message}
+              />
+
+              {/* Payee (quien recibe el pago) */}
+              {selectedType !== 'TRANSFER' && (
+                <PayeeAutocomplete
+                  label={t('fields.payee')}
+                  value={watch('payee') || ''}
+                  onChange={(value) => setValue('payee', value)}
+                  error={errors.payee?.message}
+                  placeholder={t('placeholders.payee')}
+                />
+              )}
+
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('fields.description')}</label>
+                <textarea
+                  {...register('description')}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
+                  placeholder={t('placeholders.description')}
+                />
+                {errors.description && (
+                  <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                )}
+              </div>
+
+              {/* Date */}
+              <Input
+                label={t('fields.dateTime')}
+                type="datetime-local"
+                error={errors.date?.message}
+                {...register('date')}
+              />
+
+              {/* Tags */}
+              <TagSelector
+                value={selectedTags}
+                onChange={(tags) => setValue('tags', tags)}
+                error={errors.tags?.message}
+              />
+
+              {/* Shared Expense */}
+              {selectedType === 'EXPENSE' && (
+                <SharedExpenseForm
+                  enabled={isSharedExpense}
+                  onToggle={setIsSharedExpense}
+                  totalAmount={selectedAmount}
+                  currency={selectedAccount?.currency || 'CLP'}
+                  onChange={setSharedExpenseData}
+                  initialData={sharedExpenseData || undefined}
+                />
+              )}
+
+              <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <Button type="submit" className="flex-1" disabled={isSaving}>
+                  {isSaving ? (
+                    <span className="inline-flex items-center gap-2">
+                      <LoadingSpinner size="sm" className="text-current" />
+                      {tLoading('saving')}
+                    </span>
+                  ) : (
+                    <span>{editingTransaction ? tCommon('actions.update') : tCommon('actions.create')}</span>
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setIsModalOpen(false)
+                    setEditingTransaction(null)
+                    setIsSharedExpense(false)
+                    setSharedExpenseData(null)
+                    reset()
+                  }}
+                  disabled={isSaving}
+                >
+                  {tCommon('actions.cancel')}
+                </Button>
+              </div>
+            </form>
+          </Modal>
+
+          {/* Bulk Delete Confirmation Modal */}
+          <Modal
+            isOpen={showBulkDeleteConfirm}
+            onClose={() => setShowBulkDeleteConfirm(false)}
+            title={t('delete')}
+          >
+            <div className="space-y-4">
+              <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-sm text-red-900 dark:text-red-200">
+                  Are you sure you want to delete {selectedTransactionIds.size} transaction{selectedTransactionIds.size !== 1 ? 's' : ''}?
+                </p>
+                <p className="text-xs text-red-700 dark:text-red-400 mt-2">
+                  This action cannot be undone.
+                </p>
+              </div>
+              <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowBulkDeleteConfirm(false)}
+                  disabled={isBulkDeleting}
+                  className="flex-1"
+                >
+                  {tCommon('actions.cancel')}
+                </Button>
+                <Button
+                  onClick={handleBulkDelete}
+                  disabled={isBulkDeleting}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                >
+                  {isBulkDeleting ? tLoading('deleting') : tCommon('actions.delete')}
+                </Button>
+              </div>
+            </div>
+          </Modal>
         </div>
       </PageTransition>
     </>

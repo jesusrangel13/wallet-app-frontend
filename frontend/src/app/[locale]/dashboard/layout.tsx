@@ -17,27 +17,29 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const router = useRouter()
-  const { isAuthenticated } = useAuthStore()
+  const { isAuthenticated, isHydrated } = useAuthStore()
   const { isCollapsed } = useSidebarStore()
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     // Wait for zustand persist to rehydrate
-    const token = safeGetItem('token')
-    if (!token && !isAuthenticated) {
-      router.push('/login')
+    if (isHydrated) {
+      const token = safeGetItem('token')
+      if (!token && !isAuthenticated) {
+        router.push('/login')
+      }
+      setIsLoading(false)
     }
-    setIsLoading(false)
-  }, [isAuthenticated, router])
+  }, [isAuthenticated, isHydrated, router])
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (isHydrated && !isLoading && !isAuthenticated) {
       const token = safeGetItem('token')
       if (!token) {
         router.push('/login')
       }
     }
-  }, [isAuthenticated, isLoading, router])
+  }, [isAuthenticated, isLoading, isHydrated, router])
 
   if (isLoading) {
     return (
@@ -52,7 +54,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-muted/40 flex flex-col md:flex-row">
       {/* Sidebar */}
       <Sidebar />
 

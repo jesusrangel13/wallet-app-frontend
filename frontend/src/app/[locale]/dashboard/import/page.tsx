@@ -2,10 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 import { Account, Group, MergedCategory } from '@/types'
 import { accountAPI, categoryAPI, groupAPI, importAPI } from '@/lib/api'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { Select } from '@/components/ui/Select'
 // import Papa from 'papaparse' // Dynamically imported
 // import * as XLSX from 'xlsx' // Dynamically imported
 import { Upload, FileText, Table, CheckCircle2, AlertCircle, Info, History, Edit2 } from 'lucide-react'
@@ -45,6 +47,10 @@ export default function ImportPage() {
   const [fileType, setFileType] = useState<'CSV' | 'EXCEL'>('CSV')
   const [editingTransaction, setEditingTransaction] = useState<ParsedTransaction | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+
+  const t = useTranslations('transactions')
+  const tCommon = useTranslations('common')
+
   const [editFormData, setEditFormData] = useState<Partial<TransactionFormData>>({
     date: '',
     type: 'EXPENSE',
@@ -651,8 +657,11 @@ export default function ImportPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Import Transactions</h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Upload className="h-8 w-8 text-cyan-600" />
+            Import Transactions
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Upload a CSV or Excel file to import multiple transactions at once
           </p>
         </div>
@@ -669,14 +678,13 @@ export default function ImportPage() {
           {/* Account Selection */}
           <Card>
             <CardHeader>
-              <h2 className="text-lg font-semibold text-gray-900">1. Select Account</h2>
-              <p className="text-sm text-gray-600 mt-1">Choose which account to import transactions to</p>
+              <h2 className="text-lg font-semibold text-foreground">1. Select Account</h2>
+              <p className="text-sm text-muted-foreground mt-1">Choose which account to import transactions to</p>
             </CardHeader>
             <CardContent>
-              <select
+              <Select
                 value={selectedAccount}
                 onChange={(e) => setSelectedAccount(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
               >
                 <option value="">Select an account...</option>
@@ -685,15 +693,15 @@ export default function ImportPage() {
                     {account.name} ({account.currency})
                   </option>
                 ))}
-              </select>
+              </Select>
             </CardContent>
           </Card>
 
           {/* Download Templates */}
           <Card>
             <CardHeader>
-              <h2 className="text-lg font-semibold text-gray-900">2. Download Template</h2>
-              <p className="text-sm text-gray-600 mt-1">Get a template file with examples and instructions</p>
+              <h2 className="text-lg font-semibold text-foreground">2. Download Template</h2>
+              <p className="text-sm text-muted-foreground mt-1">Get a template file with examples and instructions</p>
             </CardHeader>
             <CardContent>
               <div className="flex gap-4">
@@ -715,12 +723,12 @@ export default function ImportPage() {
                 </Button>
               </div>
 
-              <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+              <div className="mt-4 p-4 bg-muted/50 rounded-lg">
                 <div className="flex items-start gap-3">
-                  <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-blue-900">
+                  <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm text-foreground">
                     <p className="font-medium mb-1">Template includes:</p>
-                    <ul className="list-disc list-inside space-y-1 text-blue-800">
+                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                       <li>Required fields: date, type, amount, description</li>
                       <li>Optional fields: category, tags, notes, sharedGroup</li>
                       <li>List of your available categories and groups</li>
@@ -735,8 +743,8 @@ export default function ImportPage() {
           {/* File Upload */}
           <Card>
             <CardHeader>
-              <h2 className="text-lg font-semibold text-gray-900">3. Upload File</h2>
-              <p className="text-sm text-gray-600 mt-1">Upload your completed CSV or Excel file</p>
+              <h2 className="text-lg font-semibold text-foreground">3. Upload File</h2>
+              <p className="text-sm text-muted-foreground mt-1">Upload your completed CSV or Excel file</p>
             </CardHeader>
             <CardContent>
               <div
@@ -744,15 +752,15 @@ export default function ImportPage() {
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
                 className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${isDragging
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-300 hover:border-gray-400'
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                  : 'border-border hover:border-muted-foreground/50'
                   }`}
               >
-                <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-lg font-medium text-gray-900 mb-2">
+                <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-lg font-medium text-foreground mb-2">
                   Drop your file here or click to browse
                 </p>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-muted-foreground mb-4">
                   Supports CSV and Excel (.xlsx) files
                 </p>
                 <input
@@ -783,8 +791,8 @@ export default function ImportPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Preview & Validate</h2>
-                <p className="text-sm text-gray-600 mt-1">Review transactions before importing</p>
+                <h2 className="text-lg font-semibold text-foreground">Preview & Validate</h2>
+                <p className="text-sm text-muted-foreground mt-1">Review transactions before importing</p>
               </div>
               <Button onClick={resetImport} variant="outline">
                 Start Over
@@ -794,39 +802,39 @@ export default function ImportPage() {
           <CardContent>
             {/* Summary */}
             <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600">Total Rows</p>
-                <p className="text-2xl font-bold text-gray-900">{parsedData.length}</p>
+              <div className="p-4 bg-muted/50 rounded-lg">
+                <p className="text-sm text-muted-foreground">Total Rows</p>
+                <p className="text-2xl font-bold text-foreground">{parsedData.length}</p>
               </div>
-              <div className="p-4 bg-green-50 rounded-lg">
+              <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-600" />
-                  <p className="text-sm text-green-600 font-medium">Valid</p>
+                  <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  <p className="text-sm text-green-600 dark:text-green-300 font-medium">Valid</p>
                 </div>
-                <p className="text-2xl font-bold text-green-900">{validTransactions.length}</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-200">{validTransactions.length}</p>
               </div>
-              <div className="p-4 bg-red-50 rounded-lg">
+              <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
                 <div className="flex items-center gap-2">
-                  <AlertCircle className="w-5 h-5 text-red-600" />
-                  <p className="text-sm text-red-600 font-medium">Errors</p>
+                  <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                  <p className="text-sm text-red-600 dark:text-red-300 font-medium">Errors</p>
                 </div>
-                <p className="text-2xl font-bold text-red-900">{invalidTransactions.length}</p>
+                <p className="text-2xl font-bold text-red-700 dark:text-red-200">{invalidTransactions.length}</p>
               </div>
             </div>
 
             {/* Error List */}
             {invalidTransactions.length > 0 && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <h3 className="font-semibold text-red-900 mb-3">Rows with Errors:</h3>
+              <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <h3 className="font-semibold text-red-900 dark:text-red-200 mb-3">Rows with Errors:</h3>
                 <div className="space-y-2 max-h-60 overflow-y-auto">
                   {invalidTransactions.map((transaction) => (
-                    <div key={transaction.row} className="p-3 bg-white rounded border border-red-200">
+                    <div key={transaction.row} className="p-3 bg-card rounded border border-red-200 dark:border-red-800">
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900 mb-1">
+                          <p className="text-sm font-medium text-foreground mb-1">
                             Row {transaction.row}: {transaction.description || '(no description)'}
                           </p>
-                          <ul className="text-xs text-red-700 list-disc list-inside">
+                          <ul className="text-xs text-red-600 dark:text-red-300 list-disc list-inside">
                             {transaction.errors.map((error, idx) => (
                               <li key={idx}>{error}</li>
                             ))}
@@ -851,39 +859,41 @@ export default function ImportPage() {
             {/* Valid Transactions Preview */}
             {validTransactions.length > 0 && (
               <div className="mb-6">
-                <h3 className="font-semibold text-gray-900 mb-3">Valid Transactions ({validTransactions.length}):</h3>
-                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                <h3 className="font-semibold text-foreground mb-3">Valid Transactions ({validTransactions.length}):</h3>
+                <div className="border border-border rounded-lg overflow-hidden">
                   <div className="max-h-96 overflow-y-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50 sticky top-0">
+                    <table className="min-w-full divide-y divide-border">
+                      <thead className="bg-muted/50 sticky top-0">
                         <tr>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Date</th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Type</th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Amount</th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Description</th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Category</th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Actions</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('fields.date')}</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('fields.type')}</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('fields.amount')}</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('fields.description')}</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('fields.category')}</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{tCommon('actions.edit')}</th>
                         </tr>
                       </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
+                      <tbody className="bg-card divide-y divide-border">
                         {validTransactions.map((transaction) => (
-                          <tr key={transaction.row} className="hover:bg-gray-50">
-                            <td className="px-4 py-3 text-sm text-gray-900">{formatDateForDisplay(transaction.date)}</td>
+                          <tr key={transaction.row} className="hover:bg-muted/50">
+                            <td className="px-4 py-3 text-sm text-foreground">{formatDateForDisplay(transaction.date)}</td>
                             <td className="px-4 py-3">
                               <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${transaction.type === 'EXPENSE'
-                                  ? 'bg-red-100 text-red-800'
-                                  : 'bg-green-100 text-green-800'
+                                ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
+                                : 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
                                 }`}>
-                                {transaction.type}
+                                {transaction.type === 'EXPENSE' ? t('types.expense') :
+                                  transaction.type === 'INCOME' ? t('types.income') :
+                                    t('types.transfer')}
                               </span>
                             </td>
-                            <td className="px-4 py-3 text-sm font-medium text-gray-900">{transaction.amount}</td>
-                            <td className="px-4 py-3 text-sm text-gray-900">{transaction.description}</td>
-                            <td className="px-4 py-3 text-sm text-gray-600">
+                            <td className="px-4 py-3 text-sm font-medium text-foreground">{transaction.amount}</td>
+                            <td className="px-4 py-3 text-sm text-foreground">{transaction.description}</td>
+                            <td className="px-4 py-3 text-sm text-muted-foreground">
                               <div className="flex items-center gap-2">
                                 {transaction.isEdited && (
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-                                    Edited
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
+                                    {tCommon('status.pending')}
                                   </span>
                                 )}
                                 {transaction.suggestedCategory && transaction.suggestedCategory !== transaction.category ? (
@@ -903,7 +913,7 @@ export default function ImportPage() {
                                 className="flex items-center gap-1"
                               >
                                 <Edit2 className="w-3 h-3" />
-                                Edit
+                                {tCommon('actions.edit')}
                               </Button>
                             </td>
                           </tr>
@@ -944,24 +954,24 @@ export default function ImportPage() {
       {step === 'complete' && (
         <Card>
           <CardContent className="py-12 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle2 className="w-10 h-10 text-green-600" />
+            <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-10 h-10 text-green-600 dark:text-green-400" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Import Complete!</h2>
-            <p className="text-gray-600 mb-6">Your transactions have been imported successfully</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Import Complete!</h2>
+            <p className="text-muted-foreground mb-6">Your transactions have been imported successfully</p>
 
             <div className="grid grid-cols-3 gap-4 max-w-md mx-auto mb-6">
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600">Total</p>
-                <p className="text-2xl font-bold text-gray-900">{importStats.total}</p>
+              <div className="p-4 bg-muted/50 rounded-lg">
+                <p className="text-sm text-muted-foreground">Total</p>
+                <p className="text-2xl font-bold text-foreground">{importStats.total}</p>
               </div>
-              <div className="p-4 bg-green-50 rounded-lg">
-                <p className="text-sm text-green-600">Success</p>
-                <p className="text-2xl font-bold text-green-900">{importStats.success}</p>
+              <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <p className="text-sm text-green-600 dark:text-green-300">Success</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-200">{importStats.success}</p>
               </div>
-              <div className="p-4 bg-red-50 rounded-lg">
-                <p className="text-sm text-red-600">Failed</p>
-                <p className="text-2xl font-bold text-red-900">{importStats.failed}</p>
+              <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                <p className="text-sm text-red-600 dark:text-red-300">Failed</p>
+                <p className="text-2xl font-bold text-red-700 dark:text-red-200">{importStats.failed}</p>
               </div>
             </div>
 

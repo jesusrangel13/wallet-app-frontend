@@ -39,11 +39,11 @@ export default function AccountsCardView({
             />
 
             {/* Card content - Fixed height */}
-            <div className="border border-gray-200 rounded-lg p-4 pl-6 hover:border-gray-300 transition-colors h-[139px] flex flex-col justify-between">
+            <div className="bg-card border border-border rounded-lg p-4 pl-6 hover:border-input transition-colors h-[139px] flex flex-col justify-between">
               {/* Top: Name + Default indicator */}
               <div className="flex items-center gap-2">
-                <Icon className="h-4 w-4 text-gray-400" />
-                <h3 className="text-lg font-semibold text-gray-900 truncate">
+                <Icon className="h-4 w-4 text-muted-foreground" />
+                <h3 className="text-lg font-semibold text-foreground truncate">
                   {account.name}
                 </h3>
                 {account.isDefault && (
@@ -53,16 +53,16 @@ export default function AccountsCardView({
 
               {/* Middle: Balance display */}
               <div className="text-center flex-1 flex flex-col items-center justify-center">
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-2xl font-bold text-foreground">
                   {formatCurrency(Number(account.balance), account.currency as Currency)}
                 </div>
-                <div className="text-xs text-gray-500 h-3">
+                <div className="text-xs text-muted-foreground h-3">
                   {isCredit ? 'Available credit' : '\u00A0'}
                 </div>
               </div>
 
               {/* Bottom: Type + Currency */}
-              <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
+              <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
                 <span className="capitalize">{account.type.toLowerCase()}</span>
                 <span>·</span>
                 <span>{CURRENCIES[account.currency as Currency]?.name || account.currency}</span>

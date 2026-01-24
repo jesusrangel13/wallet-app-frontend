@@ -1,14 +1,30 @@
 import { HTMLAttributes, forwardRef } from 'react'
 import { cn } from '@/lib/utils'
 
-interface CardProps extends HTMLAttributes<HTMLDivElement> {}
+export type CardVariant = 'default' | 'elevated' | 'gradient' | 'glass' | 'highlight'
+
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  variant?: CardVariant
+}
+
+const cardVariants: Record<CardVariant, string> = {
+  default: 'bg-card border border-border shadow-sm',
+  elevated: 'bg-card border border-border shadow-lg hover:shadow-xl transition-shadow duration-200',
+  gradient: 'bg-gradient-to-br from-card to-muted/50 border border-border shadow-md',
+  glass: 'bg-card/80 backdrop-blur-lg border border-border/50 shadow-lg',
+  highlight: 'bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 shadow-md',
+}
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, variant = 'default', ...props }, ref) => {
     return (
       <div
         ref={ref}
-        className={cn('bg-white rounded-lg shadow-md border border-gray-200 h-full flex flex-col', className)}
+        className={cn(
+          'rounded-xl h-full flex flex-col transition-all duration-200',
+          cardVariants[variant],
+          className
+        )}
         {...props}
       />
     )
@@ -17,12 +33,14 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
 
 Card.displayName = 'Card'
 
-export const CardHeader = forwardRef<HTMLDivElement, CardProps>(
+interface CardHeaderProps extends HTMLAttributes<HTMLDivElement> { }
+
+export const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(
   ({ className, ...props }, ref) => {
     return (
       <div
         ref={ref}
-        className={cn('px-6 py-4 border-b border-gray-200 flex items-start justify-between gap-4', className)}
+        className={cn('px-6 py-4 border-b border-border flex items-start justify-between gap-4', className)}
         {...props}
       />
     )
@@ -36,7 +54,7 @@ export const CardTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadi
     return (
       <h3
         ref={ref}
-        className={cn('text-lg font-semibold text-gray-900 flex items-center gap-2 flex-1', className)}
+        className={cn('text-lg font-semibold text-foreground flex items-center gap-2 flex-1', className)}
         {...props}
       />
     )
@@ -45,7 +63,9 @@ export const CardTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadi
 
 CardTitle.displayName = 'CardTitle'
 
-export const CardHeaderActions = forwardRef<HTMLDivElement, CardProps>(
+interface CardHeaderActionsProps extends HTMLAttributes<HTMLDivElement> { }
+
+export const CardHeaderActions = forwardRef<HTMLDivElement, CardHeaderActionsProps>(
   ({ className, ...props }, ref) => {
     return (
       <div
@@ -59,7 +79,9 @@ export const CardHeaderActions = forwardRef<HTMLDivElement, CardProps>(
 
 CardHeaderActions.displayName = 'CardHeaderActions'
 
-export const CardContent = forwardRef<HTMLDivElement, CardProps>(
+interface CardContentProps extends HTMLAttributes<HTMLDivElement> { }
+
+export const CardContent = forwardRef<HTMLDivElement, CardContentProps>(
   ({ className, ...props }, ref) => {
     return (
       <div

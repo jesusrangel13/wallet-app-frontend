@@ -50,8 +50,8 @@ export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: Expen
               className="w-3 h-3 rounded-full flex-shrink-0"
               style={{ backgroundColor: entry.color }}
             />
-            <span className="truncate flex-1">{entry.value}</span>
-            <span className="text-gray-500 text-xs">
+            <span className="truncate flex-1 text-foreground">{entry.value}</span>
+            <span className="text-muted-foreground text-xs">
               {entry.payload.percentage.toFixed(0)}%
             </span>
           </li>
@@ -69,11 +69,11 @@ export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: Expen
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
           <PieChartIcon className="h-4 w-4" />
           {t('label')}
         </CardTitle>
-        <p className="text-sm text-gray-500">{t('thisMonth')}</p>
+        <p className="text-sm text-muted-foreground">{t('thisMonth')}</p>
       </CardHeader>
       <CardContent>
         {data.length > 0 ? (
@@ -101,6 +101,14 @@ export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: Expen
                     props.payload.category
                   ]
                 }}
+                contentStyle={{
+                  backgroundColor: 'var(--tooltip-bg, #fff)',
+                  border: '1px solid var(--tooltip-border, #e5e7eb)',
+                  borderRadius: '6px',
+                  color: 'var(--tooltip-text, #111827)',
+                }}
+                itemStyle={{ color: 'var(--tooltip-text, #111827)' }}
+                labelStyle={{ color: 'var(--tooltip-text, #111827)', fontWeight: 600 }}
               />
               {showLegend && (
                 <Legend
@@ -118,7 +126,7 @@ export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: Expen
             </PieChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex items-center justify-center text-gray-500" style={{ height: chartHeight }}>
+          <div className="flex items-center justify-center text-muted-foreground" style={{ height: chartHeight }}>
             {t('noExpensesThisMonth')}
           </div>
         )}

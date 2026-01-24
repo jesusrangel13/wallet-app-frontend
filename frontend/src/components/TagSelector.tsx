@@ -15,14 +15,14 @@ interface TagSelectorProps {
 }
 
 const TAG_COLORS = [
-  'bg-blue-100 text-blue-800 border-blue-300',
-  'bg-green-100 text-green-800 border-green-300',
-  'bg-purple-100 text-purple-800 border-purple-300',
-  'bg-pink-100 text-pink-800 border-pink-300',
-  'bg-yellow-100 text-yellow-800 border-yellow-300',
-  'bg-indigo-100 text-indigo-800 border-indigo-300',
-  'bg-red-100 text-red-800 border-red-300',
-  'bg-orange-100 text-orange-800 border-orange-300',
+  'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
+  'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800',
+  'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800',
+  'bg-pink-100 text-pink-800 border-pink-300 dark:bg-pink-900/30 dark:text-pink-300 dark:border-pink-800',
+  'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800',
+  'bg-indigo-100 text-indigo-800 border-indigo-300 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800',
+  'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800',
+  'bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800',
 ]
 
 export default function TagSelector({
@@ -151,25 +151,25 @@ export default function TagSelector({
   if (isLoading) {
     return (
       <div className="w-full">
-        <label className="block text-sm font-medium text-gray-700 mb-1">{displayLabel}</label>
-        <div className="animate-pulse bg-gray-200 h-12 rounded-lg" role="status" aria-label="Loading tags"></div>
+        <label className="block text-sm font-medium text-foreground mb-1">{displayLabel}</label>
+        <div className="animate-pulse bg-muted h-12 rounded-lg" role="status" aria-label="Loading tags"></div>
       </div>
     )
   }
 
   return (
     <div className="w-full space-y-2">
-      <label id={labelId} className="block text-sm font-medium text-gray-700 mb-1">{displayLabel}</label>
+      <label id={labelId} className="block text-sm font-medium text-foreground mb-1">{displayLabel}</label>
 
       {/* Selected Tags Display */}
       <div
         id={selectedTagsId}
-        className="min-h-[44px] p-2 border rounded-lg bg-gray-50 flex flex-wrap gap-2 items-center"
+        className="min-h-[44px] p-2 border border-input rounded-lg bg-muted/30 flex flex-wrap gap-2 items-center"
         role="list"
         aria-label={`${selectedTags.length} selected tags`}
       >
         {selectedTags.length === 0 && (
-          <span className="text-sm text-gray-400 px-2">{t('noTagsSelected')}</span>
+          <span className="text-sm text-muted-foreground px-2">{t('noTagsSelected')}</span>
         )}
         {selectedTags.map((tag, index) => (
           <span
@@ -192,7 +192,7 @@ export default function TagSelector({
               type="button"
               onClick={() => handleToggleTag(tag.id)}
               aria-label={`Remove tag ${tag.name}`}
-              className="ml-1 hover:bg-white/50 rounded-full p-0.5 transition-colors"
+              className="ml-1 hover:bg-white/50 dark:hover:bg-black/20 rounded-full p-0.5 transition-colors"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path
@@ -217,12 +217,12 @@ export default function TagSelector({
         aria-describedby={error ? errorId : undefined}
         className={cn(
           'w-full px-4 py-2 border rounded-lg text-sm font-medium transition-colors flex items-center justify-between',
-          'hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500',
-          error ? 'border-red-500' : 'border-gray-300',
-          isExpanded && 'bg-gray-50 border-blue-500 ring-2 ring-blue-500'
+          'hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-blue-500',
+          error ? 'border-red-500' : 'border-input',
+          isExpanded && 'bg-muted/50 border-blue-500 ring-2 ring-blue-500'
         )}
       >
-        <span className="text-gray-700">
+        <span className="text-foreground">
           {isExpanded ? t('closeSelector') : t('addTags')}
         </span>
         <svg
@@ -243,7 +243,7 @@ export default function TagSelector({
           role="listbox"
           aria-label="Available tags"
           aria-multiselectable="true"
-          className="border border-gray-200 rounded-lg p-3 bg-white shadow-lg space-y-3"
+          className="border border-border rounded-lg p-3 bg-popover shadow-lg space-y-3"
         >
           {/* Create New Tag Input */}
           <div className="flex gap-2">
@@ -256,7 +256,7 @@ export default function TagSelector({
                 onKeyDown={handleKeyDown}
                 placeholder={t('searchPlaceholder')}
                 aria-label="Search or create tag"
-                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full pl-9 pr-3 py-2 border border-input bg-background rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <svg
                 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
@@ -289,7 +289,7 @@ export default function TagSelector({
           {/* Available Tags */}
           {availableTags.length > 0 && (
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
                 {t('availableTags')}
               </p>
               <div className="flex flex-wrap gap-2">
@@ -330,13 +330,13 @@ export default function TagSelector({
           )}
 
           {tagsList.length === 0 ? (
-            <p className="text-sm text-gray-500 italic text-center py-2">
+            <p className="text-sm text-muted-foreground italic text-center py-2">
               {t('noTagsYet')}
             </p>
           ) : (
             availableTags.length === 0 &&
             newTagInput.trim() && (
-              <p className="text-sm text-gray-500 italic text-center py-2">
+              <p className="text-sm text-muted-foreground italic text-center py-2">
                 {t('noMatchFound', { search: newTagInput.trim() })}
               </p>
             )

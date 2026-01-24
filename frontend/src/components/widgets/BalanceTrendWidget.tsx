@@ -64,11 +64,11 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
       }
 
       return (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-2.5">
-          <p className="text-xs text-gray-500 mb-0.5">
+        <div className="bg-popover border border-border rounded-lg shadow-lg p-2.5">
+          <p className="text-xs text-muted-foreground mb-0.5">
             {formattedDate}
           </p>
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-foreground">
             {formatCurrency(data.balance, 'CLP')}
           </p>
         </div>
@@ -85,7 +85,7 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
           <Wallet className="h-4 w-4" />
           Balance Trend
         </CardTitle>
@@ -94,21 +94,21 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
         {data && data.length > 0 ? (
           <div className={`flex flex-col items-center justify-center ${spacingClass}`}>
             <div className="text-center w-full">
-              <p className={`${labelFontSize} text-gray-500 ${dimensions.isSmall ? 'mb-0.5' : 'mb-1.5'}`}>{t('currentBalance')}</p>
-              <p className={`${valueFontSize} font-bold text-gray-900 ${dimensions.isSmall ? 'mb-1' : 'mb-2'} leading-tight`}>
+              <p className={`${labelFontSize} text-muted-foreground ${dimensions.isSmall ? 'mb-0.5' : 'mb-1.5'}`}>{t('currentBalance')}</p>
+              <p className={`${valueFontSize} font-bold text-foreground ${dimensions.isSmall ? 'mb-1' : 'mb-2'} leading-tight`}>
                 <AnimatedCurrency amount={currentBalance} currency="CLP" />
               </p>
-              <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full ${isPositive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+              <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full ${isPositive ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400'}`}>
                 {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                 <span className={`${badgeFontSize} font-semibold`}>
                   <AnimatedCounter value={changePercentage} decimals={1} />% {t('sinceStart')}
                 </span>
               </div>
               {/* Compact info line */}
-              <div className="flex items-center justify-center gap-3 mt-2 text-xs text-gray-600">
+              <div className="flex items-center justify-center gap-3 mt-2 text-xs text-muted-foreground">
                 <span>{t('initial')}: <span className="font-semibold"><AnimatedCurrency amount={initialBalance} currency="CLP" /></span></span>
-                <span className="text-gray-300">|</span>
-                <span className={isPositive ? 'text-green-600' : 'text-red-600'}>
+                <span className="text-muted-foreground/50">|</span>
+                <span className={isPositive ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'}>
                   {t('change')}: <span className="font-semibold">{isPositive ? '+' : ''}<AnimatedCurrency amount={change} currency="CLP" /></span>
                 </span>
               </div>
@@ -120,8 +120,8 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
                 <AreaChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                   <defs>
                     <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={isPositive ? '#10b981' : '#ef4444'} stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor={isPositive ? '#10b981' : '#ef4444'} stopOpacity={0}/>
+                      <stop offset="5%" stopColor={isPositive ? '#10b981' : '#ef4444'} stopOpacity={0.3} />
+                      <stop offset="95%" stopColor={isPositive ? '#10b981' : '#ef4444'} stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <Tooltip content={<CustomTooltip />} />
@@ -138,7 +138,7 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
             </div>
           </div>
         ) : (
-          <div className="flex items-center justify-center h-full text-gray-500">
+          <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
             {t('noBalanceHistory')}
           </div>
         )}

@@ -6,9 +6,11 @@ import { notFound } from 'next/navigation'
 import { locales } from '@/i18n/config'
 import { Toaster } from 'sonner'
 import { QueryProvider } from '@/components/providers/QueryProvider'
+import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import '../globals.css'
 import '@/styles/dashboard-grid.css'
+import NextTopLoader from 'nextjs-toploader'
 
 // OPT-9: Optimized font loading configuration
 // - display: 'swap' ensures text is visible immediately with fallback font
@@ -70,20 +72,33 @@ export default async function LocaleLayout({
   const messages = await getMessages({ locale })
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body className={`${inter.variable} ${inter.className}`} suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
-            <ErrorBoundary>
-              <a
-                href="#main-content"
-                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-white text-blue-600 px-4 py-2 rounded-md shadow-lg"
-              >
-                Skip to main content
-              </a>
-              <div id="main-content">{children}</div>
-            </ErrorBoundary>
-            <Toaster richColors position="top-right" />
+            <ThemeProvider>
+              <NextTopLoader
+                color="#1A9B8E"
+                initialPosition={0.08}
+                crawlSpeed={200}
+                height={4}
+                crawl={true}
+                showSpinner={false}
+                easing="ease"
+                speed={200}
+                shadow="0 0 10px #1A9B8E,0 0 5px #1A9B8E"
+              />
+              <ErrorBoundary>
+                <a
+                  href="#main-content"
+                  className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-white dark:bg-gray-800 text-primary px-4 py-2 rounded-md shadow-lg"
+                >
+                  Skip to main content
+                </a>
+                <div id="main-content">{children}</div>
+              </ErrorBoundary>
+              <Toaster richColors position="top-right" />
+            </ThemeProvider>
           </QueryProvider>
         </NextIntlClientProvider>
       </body>

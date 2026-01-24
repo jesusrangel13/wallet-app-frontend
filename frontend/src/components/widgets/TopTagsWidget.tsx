@@ -41,7 +41,7 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
           <TrendingUp className="h-4 w-4" />
           {t('label')}
         </CardTitle>
@@ -54,7 +54,7 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
             tags.map((tag: TopTagData, index: number) => (
               <div
                 key={tag.tagId}
-                className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-start gap-3 p-3 bg-muted/40 rounded-lg hover:bg-muted/60 transition-colors"
                 style={{
                   /* Ensure minimum height/structure doesn't break */
                 }}
@@ -74,13 +74,13 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
 
                 {/* Tag details */}
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-900 truncate">{tag.tagName}</p>
+                  <p className="font-semibold text-foreground truncate">{tag.tagName}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs text-gray-600">
+                    <span className="text-xs text-muted-foreground">
                       <AnimatedCounter value={tag.transactionCount} decimals={0} /> {tag.transactionCount === 1 ? t('transaction') : t('transactions')}
                     </span>
-                    <span className="text-xs text-gray-400">•</span>
-                    <span className="text-xs text-gray-600">
+                    <span className="text-xs text-muted-foreground/50">•</span>
+                    <span className="text-xs text-muted-foreground">
                       {t('avg')}: <AnimatedCurrency amount={tag.averageAmount} currency="CLP" />
                     </span>
                   </div>
@@ -88,18 +88,18 @@ export const TopTagsWidget = ({ gridWidth = 2, gridHeight = 2 }: TopTagsWidgetPr
 
                 {/* Total amount */}
                 <div className="flex-shrink-0 text-right">
-                  <p className="font-bold text-gray-900">
+                  <p className="font-bold text-foreground">
                     <AnimatedCurrency amount={tag.totalAmount} currency="CLP" />
                   </p>
-                  <p className="text-xs text-gray-500">{t('total')}</p>
+                  <p className="text-xs text-muted-foreground">{t('total')}</p>
                 </div>
               </div>
             ))
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-              <TagIcon className="h-12 w-12 mb-3 text-gray-300" />
+            <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
+              <TagIcon className="h-12 w-12 mb-3 text-gray-300 dark:text-gray-600" />
               <p className="text-sm font-medium">{t('noTaggedTransactions')}</p>
-              <p className="text-xs text-gray-400 mt-1 text-center px-4">
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 text-center px-4">
                 {t('addTagsHint')}
               </p>
             </div>

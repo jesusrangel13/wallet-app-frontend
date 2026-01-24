@@ -92,28 +92,28 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
         {/* Search */}
         <div className="relative">
           <label htmlFor={searchId} className="sr-only">{t('selector.searchPlaceholder')}</label>
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
           <input
             id={searchId}
             type="search"
             placeholder={t('selector.searchPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-10 pr-4 py-2 border border-input bg-background text-foreground rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         {/* Category Filter */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <p id={categoryGroupId} className="text-sm font-semibold text-gray-700 mb-3">{t('selector.categoriesLabel')}</p>
+        <div className="bg-muted/50 p-4 rounded-lg">
+          <p id={categoryGroupId} className="text-sm font-semibold text-foreground mb-3">{t('selector.categoriesLabel')}</p>
           <div className="flex gap-2 flex-wrap" role="group" aria-labelledby={categoryGroupId}>
             <button
               type="button"
               onClick={() => setSelectedCategory(null)}
               aria-pressed={selectedCategory === null}
               className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${selectedCategory === null
-                ? 'bg-blue-600 text-white'
-                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-background border border-input text-foreground hover:bg-muted'
                 }`}
             >
               {t('selector.all')}
@@ -125,8 +125,8 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
                 onClick={() => setSelectedCategory(category)}
                 aria-pressed={selectedCategory === category}
                 className={`px-3 py-1 rounded-full text-sm font-medium transition-colors capitalize ${selectedCategory === category
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-background border border-input text-foreground hover:bg-muted'
                   }`}
               >
                 {category}
@@ -146,24 +146,24 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
                   onClick={() => handleAddWidget(widget)}
                   disabled={isLoading}
                   aria-label={`Add ${widget.name} widget`}
-                  className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-left group disabled:opacity-50"
+                  className="p-4 border-2 border-border rounded-lg hover:border-primary hover:bg-primary/10 transition-all text-left group disabled:opacity-50"
                   role="listitem"
                 >
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-semibold text-gray-900 group-hover:text-blue-700">
+                    <h3 className="font-semibold text-foreground group-hover:text-primary">
                       {widget.name}
                     </h3>
-                    <span className="text-xs px-2 py-1 bg-gray-200 text-gray-700 rounded capitalize">
+                    <span className="text-xs px-2 py-1 bg-muted text-muted-foreground rounded capitalize">
                       {widget.category}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">{widget.description}</p>
-                  <div className="flex gap-2 text-xs text-gray-500">
+                  <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{widget.description}</p>
+                  <div className="flex gap-2 text-xs text-muted-foreground">
                     {widget.resizable && (
-                      <span className="px-2 py-1 bg-gray-100 rounded">{t('selector.features.resizable')}</span>
+                      <span className="px-2 py-1 bg-muted rounded">{t('selector.features.resizable')}</span>
                     )}
                     {widget.draggable && (
-                      <span className="px-2 py-1 bg-gray-100 rounded">{t('selector.features.draggable')}</span>
+                      <span className="px-2 py-1 bg-muted rounded">{t('selector.features.draggable')}</span>
                     )}
                   </div>
                 </button>
@@ -172,8 +172,8 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
           ) : (
             <div className="flex items-center justify-center h-64 text-center" role="status">
               <div>
-                <p className="text-gray-500 text-lg font-medium">{t('selector.noWidgetsFound')}</p>
-                <p className="text-gray-400 text-sm mt-2">
+                <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">{t('selector.noWidgetsFound')}</p>
+                <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
                   {t('selector.tryAdjusting')}
                 </p>
               </div>

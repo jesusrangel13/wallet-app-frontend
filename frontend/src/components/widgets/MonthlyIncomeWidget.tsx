@@ -31,16 +31,16 @@ export const MonthlyIncomeWidget = ({ gridWidth = 1, gridHeight = 1 }: MonthlyIn
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-          <TrendingUp className="h-4 w-4 text-green-600" />
+        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
+          <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-500" />
           {t('label')}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={`${fontSizes.value} font-bold text-green-600`}>
+        <div className={`${fontSizes.value} font-bold text-green-600 dark:text-green-500`}>
           <AnimatedCurrency amount={income} currency="CLP" />
         </div>
-        <p className={`${fontSizes.label} text-gray-500 mt-1`}>{t('thisMonth')}</p>
+        <p className={`${fontSizes.label} text-gray-500 dark:text-gray-400 mt-1`}>{t('thisMonth')}</p>
       </CardContent>
     </Card>
   )

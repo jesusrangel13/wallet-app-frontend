@@ -150,8 +150,8 @@ export default function TagsSettingsPage() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">{t('title')}</h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <h2 className="text-lg font-semibold text-foreground">{t('title')}</h2>
+          <p className="text-sm text-muted-foreground mt-1">
             {t('description')}
           </p>
         </div>
@@ -174,11 +174,11 @@ export default function TagsSettingsPage() {
                   style={{ backgroundColor: tag.color || '#FF6B6B' }}
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-gray-900 truncate text-sm">{tag.name}</p>
-                  <p className="text-xs text-gray-400 font-mono">{tag.color}</p>
+                  <p className="font-semibold text-foreground truncate text-sm">{tag.name}</p>
+                  <p className="text-xs text-muted-foreground font-mono">{tag.color}</p>
                 </div>
               </div>
-              <div className="flex gap-1.5 pt-2 border-t border-gray-100">
+              <div className="flex gap-1.5 pt-2 border-t border-border">
                 <button
                   onClick={() => handleEdit(tag)}
                   className="flex-1 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded transition-colors"
@@ -202,13 +202,13 @@ export default function TagsSettingsPage() {
           <div className="col-span-full">
             <Card>
               <CardContent className="py-16 text-center">
-                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-10 h-10 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('noTags')}</h3>
-                <p className="text-gray-500 mb-6 max-w-sm mx-auto">
+                <h3 className="text-lg font-semibold text-foreground mb-2">{t('noTags')}</h3>
+                <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
                   {t('noTagsDescription')}
                 </p>
                 <Button onClick={handleAddNew}>{t('createFirstTag')}</Button>
@@ -242,12 +242,12 @@ export default function TagsSettingsPage() {
 
           {/* Color Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('form.color')}</label>
+            <label className="block text-sm font-medium text-foreground mb-2">{t('form.color')}</label>
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setShowColorPicker(!showColorPicker)}
-                className="w-full h-12 border-2 border-gray-300 rounded-lg flex items-center gap-3 px-3 hover:border-blue-500 transition-colors"
+                className="w-full h-12 border-2 border-input rounded-lg flex items-center gap-3 px-3 hover:border-primary transition-colors"
               >
                 <div
                   className="w-8 h-8 rounded-full border-2 border-white shadow-sm"
@@ -256,7 +256,7 @@ export default function TagsSettingsPage() {
                 <span className="font-mono text-sm">{formData.color}</span>
               </button>
               {showColorPicker && (
-                <div className="absolute z-10 mt-2 p-3 bg-white border border-gray-200 rounded-lg shadow-lg w-full">
+                <div className="absolute z-10 mt-2 p-3 bg-popover border border-border rounded-lg shadow-lg w-full">
                   <div className="grid grid-cols-5 gap-2">
                     {COLOR_PALETTE.map((color) => (
                       <button
@@ -266,11 +266,10 @@ export default function TagsSettingsPage() {
                           setFormData({ ...formData, color })
                           setShowColorPicker(false)
                         }}
-                        className={`w-10 h-10 rounded-full transition-all ${
-                          formData.color === color
+                        className={`w-10 h-10 rounded-full transition-all ${formData.color === color
                             ? 'ring-2 ring-blue-500 ring-offset-2 scale-110'
                             : 'hover:scale-110'
-                        }`}
+                          }`}
                         style={{ backgroundColor: color }}
                         title={color}
                       />

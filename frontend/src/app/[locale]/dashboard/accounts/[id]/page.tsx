@@ -15,6 +15,7 @@ import { toast } from 'sonner'
 import DeleteAccountModal from '@/components/DeleteAccountModal'
 import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
+import { Select } from '@/components/ui/Select'
 import { ColorPicker } from '@/components/ui/ColorPicker'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -467,13 +468,13 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
               })()}
             </div>
             <div className="min-w-0">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 truncate">{account.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground truncate">{account.name}</h1>
               <div className="flex items-center gap-2 mt-1 flex-wrap">
-                <p className="text-sm sm:text-base text-gray-600 capitalize">{account.type.toLowerCase()} Account</p>
+                <p className="text-sm sm:text-base text-muted-foreground capitalize">{account.type.toLowerCase()} Account</p>
                 {account.accountNumber && (
                   <>
-                    <span className="text-gray-400">•</span>
-                    <p className="text-xs sm:text-sm text-gray-500">#{account.accountNumber}</p>
+                    <span className="text-muted-foreground">•</span>
+                    <p className="text-xs sm:text-sm text-muted-foreground">#{account.accountNumber}</p>
                   </>
                 )}
               </div>
@@ -521,16 +522,16 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Current Balance Card */}
         <div
-          className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-white p-2.5 shadow-sm border-l-4"
+          className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-muted/20 dark:to-muted/5 p-2.5 shadow-sm border-l-4"
           style={{ borderLeftColor: account.color }}
         >
           <div className="flex items-start justify-between mb-1">
-            <Wallet className="w-3.5 h-3.5 text-gray-400" />
+            <Wallet className="w-3.5 h-3.5 text-muted-foreground" />
           </div>
-          <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
+          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-0.5">
             Current Balance
           </p>
-          <p className="text-xl font-bold text-gray-900 tabular-nums">
+          <p className="text-xl font-bold text-foreground tabular-nums">
             {formatCurrency(Number(account.balance), account.currency as Currency)}
           </p>
         </div>
@@ -539,33 +540,33 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
         {account.type === 'CREDIT' && account.creditLimit && (
           <>
             <div
-              className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-white p-2.5 shadow-sm border-l-4 border-blue-400"
+              className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-muted/20 dark:to-muted/5 p-2.5 shadow-sm border-l-4 border-blue-400"
             >
               <div className="flex items-start justify-between mb-1">
-                <CreditCard className="w-3.5 h-3.5 text-gray-400" />
+                <CreditCard className="w-3.5 h-3.5 text-muted-foreground" />
               </div>
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
+              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-0.5">
                 Credit Limit
               </p>
-              <p className="text-xl font-bold text-gray-900 tabular-nums">
+              <p className="text-xl font-bold text-foreground tabular-nums">
                 {formatCurrency(Number(account.creditLimit), account.currency as Currency)}
               </p>
             </div>
 
             <div
-              className="relative overflow-hidden rounded-lg bg-gradient-to-br from-red-50 to-white p-2.5 shadow-sm border-l-4 border-red-400"
+              className="relative overflow-hidden rounded-lg bg-gradient-to-br from-red-50 to-white dark:from-red-900/10 dark:to-background p-2.5 shadow-sm border-l-4 border-red-400"
             >
               <div className="flex items-start justify-between mb-1">
                 <TrendingUp className="w-3.5 h-3.5 text-red-400" />
               </div>
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
+              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-0.5">
                 Used
               </p>
               <p className="text-xl font-bold text-red-600 tabular-nums">
                 {formatCurrency(Number(account.creditLimit) - Number(account.balance), account.currency as Currency)}
               </p>
               {/* Progress bar */}
-              <div className="mt-1 w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+              <div className="mt-1 w-full h-1 bg-muted rounded-full overflow-hidden">
                 <div
                   className="h-full bg-red-500 rounded-full transition-all"
                   style={{
@@ -573,7 +574,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                   }}
                 />
               </div>
-              <p className="text-[10px] text-gray-500 mt-0.5">
+              <p className="text-[10px] text-muted-foreground mt-0.5">
                 {((Number(account.creditLimit) - Number(account.balance)) / Number(account.creditLimit) * 100).toFixed(1)}% utilization
               </p>
             </div>
@@ -582,11 +583,11 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
 
         {/* Currency */}
         {!(account.type === 'CREDIT' && account.creditLimit) && (
-          <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-white p-2.5 shadow-sm border-l-4 border-gray-300">
-            <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
+          <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-muted/20 dark:to-muted/5 p-2.5 shadow-sm border-l-4 border-border">
+            <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-0.5">
               Currency
             </p>
-            <p className="text-lg font-bold text-gray-900">{account.currency}</p>
+            <p className="text-lg font-bold text-foreground">{account.currency}</p>
           </div>
         )}
       </div>
@@ -597,8 +598,8 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
           <button
             onClick={() => setActiveTab('balance')}
             className={`${activeTab === 'balance'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
               } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
             Saldo
@@ -606,8 +607,8 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
           <button
             onClick={() => setActiveTab('transactions')}
             className={`${activeTab === 'transactions'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
               } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
             Registros
@@ -631,7 +632,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                 percentageChange={balanceHistory.percentageChange}
               />
             ) : (
-              <div className="text-center py-12 text-gray-500">
+              <div className="text-center py-12 text-muted-foreground">
                 No data available for this month
               </div>
             )}
@@ -702,7 +703,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
           ) : transactions.length === 0 ? (
             <Card>
               <CardContent className="py-12">
-                <div className="text-center text-gray-500">
+                <div className="text-center text-muted-foreground">
                   No transactions for this account yet
                 </div>
               </CardContent>
@@ -721,7 +722,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                     {group.transactions.map((transaction) => (
                       <Card
                         key={transaction.id}
-                        className={`transition-colors ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 border-blue-300' : ''}`}
+                        className={`transition-colors ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-800' : ''}`}
                       >
                         <CardContent className="py-4">
                           <div className="flex items-start justify-between">
@@ -731,7 +732,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                                 type="checkbox"
                                 checked={selectedTransactionIds.has(transaction.id)}
                                 onChange={() => handleSelectTransaction(transaction.id)}
-                                className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer mt-1"
+                                className="w-5 h-5 rounded border-input dark:border-gray-600 bg-background text-blue-600 focus:ring-blue-500 cursor-pointer mt-1"
                               />
 
                               {/* Category Circle Icon */}
@@ -748,13 +749,13 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                               {/* Content */}
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-baseline gap-2">
-                                  <p className="font-semibold text-gray-900">
+                                  <p className="font-semibold text-foreground">
                                     {transaction.category?.name || 'Uncategorized'}
                                   </p>
                                 </div>
 
                                 {transaction.description && (
-                                  <p className="text-sm text-gray-600 truncate">{transaction.description}</p>
+                                  <p className="text-sm text-muted-foreground truncate">{transaction.description}</p>
                                 )}
 
                                 {/* Shared Expense Indicator - unified display */}
@@ -762,10 +763,10 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
 
                                 {/* Show payee only for non-shared transactions (shared ones show it in the indicator) */}
                                 {!transaction.sharedExpenseId && transaction.payee && (
-                                  <p className="text-xs text-gray-500 mt-1">→ {transaction.payee}</p>
+                                  <p className="text-xs text-muted-foreground mt-1">→ {transaction.payee}</p>
                                 )}
 
-                                <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
                                   <span>{transaction.account?.name}</span>
                                   {transaction.toAccount && (
                                     <>
@@ -780,7 +781,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                                     {transaction.tags.map((t) => (
                                       <span
                                         key={t.id}
-                                        className="inline-block px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded text-xs"
+                                        className="inline-block px-1.5 py-0.5 bg-muted text-muted-foreground rounded text-xs"
                                       >
                                         {t.tag.name}
                                       </span>
@@ -795,8 +796,8 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                               <div className="text-right truncate">
                                 <p
                                   className={`text-sm md:text-lg font-bold whitespace-nowrap ${transaction.type === 'INCOME' ? 'text-green-600' :
-                                      transaction.type === 'EXPENSE' ? 'text-red-600' :
-                                        'text-blue-600'
+                                    transaction.type === 'EXPENSE' ? 'text-red-600' :
+                                      'text-blue-600'
                                     }`}
                                 >
                                   {transaction.type === 'EXPENSE' && '-'}
@@ -878,19 +879,16 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Account Type
-            </label>
-            <select
+            <Select
               {...register('type')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              label="Account Type"
             >
               <option value="CASH">Cash</option>
               <option value="DEBIT">Debit Card</option>
               <option value="CREDIT">Credit Card</option>
               <option value="SAVINGS">Savings</option>
               <option value="INVESTMENT">Investment</option>
-            </select>
+            </Select>
             {errors.type && (
               <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>
             )}
@@ -905,17 +903,14 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Currency
-            </label>
-            <select
+            <Select
               {...register('currency')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              label="Currency"
             >
               <option value="CLP">CLP - Chilean Peso</option>
               <option value="USD">USD - US Dollar</option>
               <option value="EUR">EUR - Euro</option>
-            </select>
+            </Select>
             {errors.currency && (
               <p className="text-red-500 text-sm mt-1">{errors.currency.message}</p>
             )}
@@ -960,9 +955,9 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
               type="checkbox"
               id="isDefault"
               {...register('isDefault')}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              className="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 bg-white dark:bg-card"
             />
-            <label htmlFor="isDefault" className="text-sm font-medium text-gray-700">
+            <label htmlFor="isDefault" className="text-sm font-medium text-foreground">
               Set as default account
             </label>
           </div>
@@ -972,9 +967,9 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
               type="checkbox"
               id="includeInTotalBalance"
               {...register('includeInTotalBalance')}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              className="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 bg-white dark:bg-card"
             />
-            <label htmlFor="includeInTotalBalance" className="text-sm font-medium text-gray-700">
+            <label htmlFor="includeInTotalBalance" className="text-sm font-medium text-foreground">
               Include in total balance
             </label>
           </div>

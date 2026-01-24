@@ -62,7 +62,7 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
           <TrendingUp className="h-4 w-4" />
           {t('name')}
         </CardTitle>
@@ -72,30 +72,30 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
           <div className="space-y-3">
             {/* Summary cards - Responsive sizing */}
             <div className="grid grid-cols-3 gap-2">
-              <div className={`bg-green-50 rounded-lg ${cardPadding} border border-green-100`}>
+              <div className={`bg-green-50 dark:bg-green-900/20 rounded-lg ${cardPadding} border border-green-100 dark:border-green-800`}>
                 <div className="flex items-center gap-1.5 mb-0.5">
-                  <TrendingUp className="h-3.5 w-3.5 text-green-600" />
-                  <p className={`${cardFontSize} text-green-700 font-medium`}>{t('averageIncome')}</p>
+                  <TrendingUp className="h-3.5 w-3.5 text-green-600 dark:text-green-500" />
+                  <p className={`${cardFontSize} text-green-700 dark:text-green-400 font-medium`}>{t('averageIncome')}</p>
                 </div>
-                <p className={`${valueFontSize} font-bold text-green-900`}>
+                <p className={`${valueFontSize} font-bold text-green-900 dark:text-green-300`}>
                   <AnimatedCurrency amount={avgIncome} currency="CLP" />
                 </p>
               </div>
-              <div className={`bg-red-50 rounded-lg ${cardPadding} border border-red-100`}>
+              <div className={`bg-red-50 dark:bg-red-900/20 rounded-lg ${cardPadding} border border-red-100 dark:border-red-800`}>
                 <div className="flex items-center gap-1.5 mb-0.5">
-                  <TrendingDown className="h-3.5 w-3.5 text-red-600" />
-                  <p className={`${cardFontSize} text-red-700 font-medium`}>{t('averageExpense')}</p>
+                  <TrendingDown className="h-3.5 w-3.5 text-red-600 dark:text-red-500" />
+                  <p className={`${cardFontSize} text-red-700 dark:text-red-400 font-medium`}>{t('averageExpense')}</p>
                 </div>
-                <p className={`${valueFontSize} font-bold text-red-900`}>
+                <p className={`${valueFontSize} font-bold text-red-900 dark:text-red-300`}>
                   <AnimatedCurrency amount={avgExpense} currency="CLP" />
                 </p>
               </div>
-              <div className={`${avgBalance >= 0 ? 'bg-blue-50 border-blue-100' : 'bg-red-50 border-red-100'} rounded-lg ${cardPadding} border`}>
+              <div className={`${avgBalance >= 0 ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-800' : 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800'} rounded-lg ${cardPadding} border`}>
                 <div className="flex items-center gap-1.5 mb-0.5">
-                  <DollarSign className={`h-3.5 w-3.5 ${avgBalance >= 0 ? 'text-blue-600' : 'text-red-600'}`} />
-                  <p className={`${cardFontSize} font-medium ${avgBalance >= 0 ? 'text-blue-700' : 'text-red-700'}`}>{t('netBalance')}</p>
+                  <DollarSign className={`h-3.5 w-3.5 ${avgBalance >= 0 ? 'text-blue-600 dark:text-blue-500' : 'text-red-600 dark:text-red-500'}`} />
+                  <p className={`${cardFontSize} font-medium ${avgBalance >= 0 ? 'text-blue-700 dark:text-blue-400' : 'text-red-700 dark:text-red-400'}`}>{t('netBalance')}</p>
                 </div>
-                <p className={`${valueFontSize} font-bold ${avgBalance >= 0 ? 'text-blue-900' : 'text-red-900'}`}>
+                <p className={`${valueFontSize} font-bold ${avgBalance >= 0 ? 'text-blue-900 dark:text-blue-300' : 'text-red-900 dark:text-red-300'}`}>
                   <AnimatedCurrency amount={avgBalance} currency="CLP" />
                 </p>
               </div>
@@ -107,14 +107,25 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis dataKey="month" tick={{ fontSize: xAxisFontSize }} tickLine={false} />
                 <YAxis hide />
-                <Tooltip formatter={(value) => formatCurrency(Number(value), 'CLP')} />
+                <Tooltip
+                  formatter={(value) => formatCurrency(Number(value), 'CLP')}
+                  contentStyle={{
+                    backgroundColor: 'var(--tooltip-bg, #fff)',
+                    border: '1px solid var(--tooltip-border, #e5e7eb)',
+                    borderRadius: '6px',
+                    color: 'var(--tooltip-text, #111827)',
+                  }}
+                  itemStyle={{ color: 'var(--tooltip-text, #111827)' }}
+                  labelStyle={{ color: 'var(--tooltip-text, #111827)', fontWeight: 600 }}
+                  cursor={{ fill: 'var(--chart-cursor, rgba(156, 163, 175, 0.3))' }}
+                />
                 <Bar dataKey="income" fill="#10b981" name={t('income')} radius={[4, 4, 0, 0]} />
                 <Bar dataKey="expense" fill="#ef4444" name={t('expenses')} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         ) : (
-          <div className="flex items-center justify-center h-[240px] text-gray-500">
+          <div className="flex items-center justify-center h-[240px] text-gray-500 dark:text-gray-400">
             {t('noDataAvailable')}
           </div>
         )}

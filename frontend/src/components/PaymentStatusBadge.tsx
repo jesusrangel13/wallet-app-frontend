@@ -17,7 +17,7 @@ export const PaymentStatusBadge = memo(function PaymentStatusBadge({
 
   if (variant === 'compact') {
     return (
-      <span className={`inline-flex items-center text-sm ${isPaid ? 'text-green-600' : 'text-amber-600'}`}>
+      <span className={`inline-flex items-center text-sm ${isPaid ? 'text-income' : 'text-yellow-600 dark:text-yellow-400'}`}>
         {isPaid ? (
           <CheckCircle2 className="h-4 w-4" />
         ) : (
@@ -29,9 +29,9 @@ export const PaymentStatusBadge = memo(function PaymentStatusBadge({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${isPaid
-          ? 'bg-green-50 text-green-700 border border-green-200'
-          : 'bg-amber-50 text-amber-700 border border-amber-200'
+      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border ${isPaid
+        ? 'bg-income-light text-income border-income/20'
+        : 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20'
         }`}
     >
       {isPaid ? (

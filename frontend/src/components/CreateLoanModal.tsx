@@ -9,6 +9,7 @@ import { Account } from '@/types'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { Select } from '@/components/ui/Select'
 
 const loanSchema = z.object({
   borrowerName: z.string().min(1, 'Borrower name is required'),
@@ -126,7 +127,7 @@ export default function CreateLoanModal({
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
         {/* Borrower Name */}
         <div>
-          <label htmlFor="borrowerName" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="borrowerName" className="block text-sm font-medium text-foreground mb-1">
             {t('borrowerName')} *
           </label>
           <Input
@@ -142,15 +143,13 @@ export default function CreateLoanModal({
 
         {/* Account */}
         <div>
-          <label htmlFor="accountId" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="accountId" className="block text-sm font-medium text-foreground mb-1">
             {t('accountFrom')} *
           </label>
-          <select
+          <Select
             id="accountId"
             {...register('accountId')}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.accountId ? 'border-red-500' : 'border-gray-300'
-            }`}
+            error={errors.accountId?.message}
           >
             <option value="">{t('selectAccount')}</option>
             {!accounts || accounts.length === 0 ? (
@@ -164,7 +163,7 @@ export default function CreateLoanModal({
                   </option>
                 ))
             )}
-          </select>
+          </Select>
           {errors.accountId && (
             <p className="text-red-500 text-xs mt-1" role="alert">{errors.accountId.message}</p>
           )}
@@ -172,7 +171,7 @@ export default function CreateLoanModal({
 
         {/* Amount */}
         <div>
-          <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="amount" className="block text-sm font-medium text-foreground mb-1">
             {t('amount')} *
           </label>
           <Input
@@ -192,7 +191,7 @@ export default function CreateLoanModal({
 
         {/* Loan Date */}
         <div>
-          <label htmlFor="loanDate" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="loanDate" className="block text-sm font-medium text-foreground mb-1">
             {t('loanDate')}
           </label>
           <Input
@@ -208,7 +207,7 @@ export default function CreateLoanModal({
 
         {/* Notes */}
         <div>
-          <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="notes" className="block text-sm font-medium text-foreground mb-1">
             {t('notes')}
           </label>
           <textarea
@@ -216,19 +215,18 @@ export default function CreateLoanModal({
             {...register('notes')}
             rows={3}
             placeholder={t('notesPlaceholder')}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.notes ? 'border-red-500' : 'border-gray-300'
-            }`}
+            className={`w-full px-3 py-2 border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring ${errors.notes ? 'border-destructive' : 'border-input'
+              }`}
           />
           {errors.notes && (
-            <p className="text-red-500 text-xs mt-1" role="alert">{errors.notes.message}</p>
+            <p className="text-destructive text-xs mt-1" role="alert">{errors.notes.message}</p>
           )}
         </div>
 
         {/* Info Box */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800" role="note">
+        <div className="bg-muted/50 border border-muted rounded-lg p-3 text-sm text-foreground" role="note">
           <p className="font-medium mb-1">{t('infoTitle')}</p>
-          <ul className="list-disc list-inside space-y-1 text-xs">
+          <ul className="list-disc list-inside space-y-1 text-xs text-muted-foreground">
             <li>{t('infoPoint1')}</li>
             <li>{t('infoPoint2')}</li>
             <li>{t('infoPoint3')}</li>

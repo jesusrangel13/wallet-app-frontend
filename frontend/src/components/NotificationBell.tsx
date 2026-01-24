@@ -59,7 +59,7 @@ export const NotificationBell = () => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+        className="relative p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
         aria-label={`${t('bell.ariaLabel')}${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
         aria-expanded={isOpen}
         aria-haspopup="menu"

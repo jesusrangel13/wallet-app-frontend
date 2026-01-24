@@ -113,7 +113,7 @@ export default function PayeeAutocomplete({
   return (
     <div className="relative w-full">
       {label && (
-        <label htmlFor={inputId} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+        <label htmlFor={inputId} className="block text-sm font-medium text-foreground mb-1">{label}</label>
       )}
 
       <div className="relative">
@@ -134,8 +134,8 @@ export default function PayeeAutocomplete({
           onFocus={handleFocus}
           placeholder={placeholder}
           className={cn(
-            'w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-            error ? 'border-red-500' : 'border-gray-300'
+            'w-full px-3 py-2 border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary',
+            error ? 'border-red-500' : 'border-input'
           )}
         />
 
@@ -143,7 +143,7 @@ export default function PayeeAutocomplete({
         {isLoading && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2" role="status" aria-label="Loading suggestions">
             <svg
-              className="animate-spin h-4 w-4 text-gray-400"
+              className="animate-spin h-4 w-4 text-muted-foreground"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -174,10 +174,10 @@ export default function PayeeAutocomplete({
           id={listboxId}
           role="listbox"
           aria-label="Recent payees"
-          className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+          className="absolute z-50 w-full mt-1 bg-popover border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto"
         >
           <div className="p-2">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider px-2 py-1" aria-hidden="true">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider px-2 py-1" aria-hidden="true">
               Recent Payees
             </p>
             {filteredPayees.map((payee, index) => (
@@ -187,10 +187,10 @@ export default function PayeeAutocomplete({
                 role="option"
                 aria-selected={inputValue.toLowerCase() === payee.toLowerCase()}
                 onClick={() => handleSelectPayee(payee)}
-                className="w-full text-left px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-700 transition-colors flex items-center gap-2"
+                className="w-full text-left px-3 py-2 rounded-md text-foreground hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary transition-colors flex items-center gap-2"
               >
                 <svg
-                  className="w-4 h-4 text-gray-400"
+                  className="w-4 h-4 text-muted-foreground"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -216,9 +216,9 @@ export default function PayeeAutocomplete({
           ref={dropdownRef}
           role="status"
           aria-live="polite"
-          className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3"
+          className="absolute z-50 w-full mt-1 bg-popover border border-border rounded-lg shadow-lg p-3"
         >
-          <p className="text-sm text-gray-500 italic text-center">
+          <p className="text-sm text-muted-foreground italic text-center">
             No previous payees found. Type a new payee name.
           </p>
         </div>

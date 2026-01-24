@@ -131,12 +131,12 @@ export function Modal({ isOpen, onClose, title, children, description }: ModalPr
               ease: [0.25, 0.46, 0.45, 0.94] as const,
             }}
             id="modal-content"
-            className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto"
+            className="relative bg-white dark:bg-card rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b">
+            <div className="flex items-center justify-between p-6 border-b border-border">
               <div>
-                <h2 id="modal-title" className="text-xl font-semibold text-gray-900">{title}</h2>
+                <h2 id="modal-title" className="text-xl font-semibold text-foreground">{title}</h2>
                 {description && (
                   <p id="modal-description" className="sr-only">{description}</p>
                 )}
@@ -144,7 +144,7 @@ export function Modal({ isOpen, onClose, title, children, description }: ModalPr
               <button
                 onClick={onClose}
                 type="button"
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
                 aria-label={t('closeModal')}
                 data-modal-close="true"
               >

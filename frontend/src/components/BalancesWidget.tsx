@@ -131,7 +131,7 @@ export const BalancesWidget = () => {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
           <Wallet className="h-4 w-4" />
           Mis Balances
         </CardTitle>
@@ -141,7 +141,7 @@ export const BalancesWidget = () => {
         <div>
           {balances.groupBalances.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500 text-sm mb-3">No tienes gastos compartidos aún</p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mb-3">No tienes gastos compartidos aún</p>
               <Link href="/dashboard/groups" prefetch={true} className="inline-block bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
                 Crear grupo
               </Link>
@@ -158,21 +158,21 @@ export const BalancesWidget = () => {
                     {/* Group header - clickable accordion trigger */}
                     <button
                       onClick={() => toggleGroup(groupBalance.group.id)}
-                      className="w-full mb-3 p-3 bg-gray-50/50 rounded-lg hover:bg-gray-100/50 transition-colors"
+                      className="w-full mb-3 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-3 flex-1">
                           <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
                             {groupBalance.group.name.charAt(0)}
                           </div>
-                          <h3 className="text-sm font-semibold text-gray-900">{groupBalance.group.name}</h3>
+                          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{groupBalance.group.name}</h3>
                         </div>
                         <div className="flex items-center gap-2">
                           <Link
                             href={`/dashboard/groups/${groupBalance.group.id}`}
                             prefetch={true}
                             onClick={(e) => e.stopPropagation()}
-                            className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 font-medium"
+                            className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1 font-medium"
                           >
                             <Eye className="w-3 h-3" />
                             Ver
@@ -191,14 +191,14 @@ export const BalancesWidget = () => {
                           </span>
                         )}
                         {hasPeopleWhoOweMe && hasPeopleIOweTo && (
-                          <span className="text-gray-400">|</span>
+                          <span className="text-gray-400 dark:text-gray-500">|</span>
                         )}
                         {hasPeopleIOweTo && (
                           <span className="text-red-600 font-medium">
                             Debes: {formatCurrency(groupBalance.iOweOthers, 'CLP')}
                           </span>
                         )}
-                        <span className="text-gray-400">|</span>
+                        <span className="text-gray-400 dark:text-gray-500">|</span>
                         <span className="text-blue-600 font-medium">
                           Total gastos: {formatCurrency(groupBalance.totalSharedExpenses || 0, 'CLP')}
                         </span>
@@ -210,8 +210,8 @@ export const BalancesWidget = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Left: Te deben */}
                         {hasPeopleWhoOweMe && (
-                          <div className="bg-green-50/30 rounded-lg p-3">
-                            <p className="text-xs font-semibold text-green-700 mb-3">Te deben</p>
+                          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
+                            <p className="text-xs font-semibold text-green-700 dark:text-green-400 mb-3">Te deben</p>
                             <div className="space-y-2.5">
                               {groupBalance.peopleWhoOweMe.map((person) => {
                                 const personKey = `${groupBalance.group.id}-${person.user.id}`;
@@ -220,20 +220,20 @@ export const BalancesWidget = () => {
                                 const percentage = person.totalHistorical > 0 ? (person.totalPaid / person.totalHistorical) * 100 : 0;
 
                                 return (
-                                  <div key={person.user.id} className="rounded-lg p-2.5 hover:bg-white/60 transition-colors">
+                                  <div key={person.user.id} className="rounded-lg p-2.5 hover:bg-gray-200/60 dark:hover:bg-gray-700/60 transition-colors">
                                     <div className="flex items-center justify-between gap-2 mb-2">
                                       <div className="flex items-center gap-2.5 flex-1 min-w-0">
                                         <div className="w-7 h-7 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm">
                                           {person.user.name.split(' ').map((n) => n[0]).join('')}
                                         </div>
-                                        <span className="text-sm font-medium text-gray-900 truncate">{person.user.name}</span>
+                                        <span className="text-sm font-medium text-gray-900 dark:text-white truncate">{person.user.name}</span>
                                       </div>
-                                      <span className="text-sm font-bold text-green-600">{formatCurrency(person.amount, 'CLP')}</span>
+                                      <span className="text-sm font-bold text-green-600 dark:text-green-400">{formatCurrency(person.amount, 'CLP')}</span>
                                     </div>
 
                                     {/* Inline progress bar */}
                                     {person.totalHistorical > 0 && (
-                                      <div className="w-full h-1 bg-green-200/50 rounded-full mb-2.5">
+                                      <div className="w-full h-1 bg-green-200/50 dark:bg-green-900/50 rounded-full mb-2.5">
                                         <div className="h-full bg-green-500 rounded-full transition-all" style={{ width: `${percentage}%` }} />
                                       </div>
                                     )}
@@ -248,7 +248,7 @@ export const BalancesWidget = () => {
                                       {allExpenses.length > 0 && (
                                         <button
                                           onClick={() => togglePerson(groupBalance.group.id, person.user.id)}
-                                          className="text-xs text-gray-600 hover:text-gray-900 px-2 hover:bg-white/60 rounded-md transition-colors"
+                                          className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-2 hover:bg-gray-200/60 dark:hover:bg-gray-700/60 rounded-md transition-colors"
                                         >
                                           {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                                         </button>
@@ -257,16 +257,16 @@ export const BalancesWidget = () => {
 
                                     {/* Expenses - simple list */}
                                     {isExpanded && allExpenses.length > 0 && (
-                                      <div className="mt-2.5 pt-2.5 space-y-1.5 border-t border-green-200/50">
+                                      <div className="mt-2.5 pt-2.5 space-y-1.5 border-t border-gray-200 dark:border-gray-700">
                                         {allExpenses.map((expense, idx) => {
                                           const isPaid = person.paidExpenses.some(e => e.expenseId === expense.expenseId);
                                           return (
                                             <div key={idx} className="flex items-center justify-between text-xs py-0.5">
                                               <div className="flex items-center gap-1.5 flex-1 min-w-0">
                                                 {isPaid ? <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" /> : <Clock className="w-3 h-3 text-orange-500 flex-shrink-0" />}
-                                                <span className="truncate text-gray-700">{expense.description}</span>
+                                                <span className="truncate text-gray-700 dark:text-gray-300">{expense.description}</span>
                                               </div>
-                                              <span className="font-medium text-gray-900 ml-2">{formatCurrency(expense.amount, 'CLP')}</span>
+                                              <span className="font-medium text-gray-900 dark:text-white ml-2">{formatCurrency(expense.amount, 'CLP')}</span>
                                             </div>
                                           );
                                         })}
@@ -281,8 +281,8 @@ export const BalancesWidget = () => {
 
                         {/* Right: Debes */}
                         {hasPeopleIOweTo && (
-                          <div className="bg-red-50/30 rounded-lg p-3">
-                            <p className="text-xs font-semibold text-red-700 mb-3">Debes</p>
+                          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
+                            <p className="text-xs font-semibold text-red-700 dark:text-red-400 mb-3">Debes</p>
                             <div className="space-y-2.5">
                               {groupBalance.peopleIOweTo.map((person) => {
                                 const personKey = `${groupBalance.group.id}-${person.user.id}`;
@@ -291,20 +291,20 @@ export const BalancesWidget = () => {
                                 const percentage = person.totalHistorical > 0 ? (person.totalPaid / person.totalHistorical) * 100 : 0;
 
                                 return (
-                                  <div key={person.user.id} className="rounded-lg p-2.5 hover:bg-white/60 transition-colors">
+                                  <div key={person.user.id} className="rounded-lg p-2.5 hover:bg-gray-200/60 dark:hover:bg-gray-700/60 transition-colors">
                                     <div className="flex items-center justify-between gap-2 mb-2">
                                       <div className="flex items-center gap-2.5 flex-1 min-w-0">
                                         <div className="w-7 h-7 bg-gradient-to-br from-red-500 to-orange-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm">
                                           {person.user.name.split(' ').map((n) => n[0]).join('')}
                                         </div>
-                                        <span className="text-sm font-medium text-gray-900 truncate">{person.user.name}</span>
+                                        <span className="text-sm font-medium text-gray-900 dark:text-white truncate">{person.user.name}</span>
                                       </div>
-                                      <span className="text-sm font-bold text-red-600">{formatCurrency(person.amount, 'CLP')}</span>
+                                      <span className="text-sm font-bold text-red-600 dark:text-red-400">{formatCurrency(person.amount, 'CLP')}</span>
                                     </div>
 
                                     {/* Inline progress bar */}
                                     {person.totalHistorical > 0 && (
-                                      <div className="w-full h-1 bg-red-200/50 rounded-full mb-2.5">
+                                      <div className="w-full h-1 bg-red-200/50 dark:bg-red-900/50 rounded-full mb-2.5">
                                         <div className="h-full bg-green-500 rounded-full transition-all" style={{ width: `${percentage}%` }} />
                                       </div>
                                     )}
@@ -319,7 +319,7 @@ export const BalancesWidget = () => {
                                       {allExpenses.length > 0 && (
                                         <button
                                           onClick={() => togglePerson(groupBalance.group.id, person.user.id)}
-                                          className="text-xs text-gray-600 hover:text-gray-900 px-2 hover:bg-white/60 rounded-md transition-colors"
+                                          className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-2 hover:bg-gray-200/60 dark:hover:bg-gray-700/60 rounded-md transition-colors"
                                         >
                                           {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                                         </button>
@@ -328,16 +328,16 @@ export const BalancesWidget = () => {
 
                                     {/* Expenses - simple list */}
                                     {isExpanded && allExpenses.length > 0 && (
-                                      <div className="mt-2.5 pt-2.5 space-y-1.5 border-t border-red-200/50">
+                                      <div className="mt-2.5 pt-2.5 space-y-1.5 border-t border-gray-200 dark:border-gray-700">
                                         {allExpenses.map((expense, idx) => {
                                           const isPaid = person.paidExpenses.some(e => e.expenseId === expense.expenseId);
                                           return (
                                             <div key={idx} className="flex items-center justify-between text-xs py-0.5">
                                               <div className="flex items-center gap-1.5 flex-1 min-w-0">
                                                 {isPaid ? <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" /> : <Clock className="w-3 h-3 text-orange-500 flex-shrink-0" />}
-                                                <span className="truncate text-gray-700">{expense.description}</span>
+                                                <span className="truncate text-gray-700 dark:text-gray-300">{expense.description}</span>
                                               </div>
-                                              <span className="font-medium text-gray-900 ml-2">{formatCurrency(expense.amount, 'CLP')}</span>
+                                              <span className="font-medium text-gray-900 dark:text-white ml-2">{formatCurrency(expense.amount, 'CLP')}</span>
                                             </div>
                                           );
                                         })}

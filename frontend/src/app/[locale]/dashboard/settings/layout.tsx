@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import { Settings } from 'lucide-react'
 
 const getSettingsTabs = (locale: string) => [
   {
@@ -64,8 +65,11 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
     <div className="h-full">
       {/* Header with Title */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
-        <p className="text-sm text-gray-600 mt-1">{t('description')}</p>
+        <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
+          <Settings className="h-8 w-8 text-blue-600" />
+          {t('title')}
+        </h1>
+        <p className="text-muted-foreground mt-1">{t('description')}</p>
       </div>
 
       {/* Tabs Navigation */}
@@ -77,16 +81,14 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
               <Link
                 key={tab.id}
                 href={tab.href}
-                className={`group inline-flex items-center gap-2 px-1 py-4 border-b-2 font-medium text-sm transition-colors ${
-                  isActive
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`group inline-flex items-center gap-2 px-1 py-4 border-b-2 font-medium text-sm transition-colors ${isActive
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
               >
                 <span
-                  className={`transition-colors ${
-                    isActive ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-500'
-                  }`}
+                  className={`transition-colors ${isActive ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-500'
+                    }`}
                 >
                   {tab.icon}
                 </span>

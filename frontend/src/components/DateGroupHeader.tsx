@@ -45,12 +45,12 @@ export const DateGroupHeader = memo(function DateGroupHeader({
   )
 
   return (
-    <div className="flex items-center justify-between py-3 px-1 border-b border-gray-200">
-      <h3 className="text-sm font-semibold text-gray-900 capitalize">
+    <div className="flex items-center justify-between py-3 px-1 border-b border-gray-200 dark:border-gray-700">
+      <h3 className="text-sm font-semibold text-gray-900 dark:text-white capitalize">
         {displayDate}
       </h3>
       <div className="flex items-center gap-3 text-sm">
-        <span className={`font-semibold ${netAmount >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+        <span className={`font-semibold ${netAmount >= 0 ? 'text-green-700 dark:text-green-500' : 'text-red-700 dark:text-red-500'}`}>
           {netAmount >= 0 ? '+' : ''}{formatCurrency(Math.abs(netAmount), currency)}
         </span>
       </div>

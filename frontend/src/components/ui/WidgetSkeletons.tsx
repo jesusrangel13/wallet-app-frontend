@@ -33,12 +33,12 @@ export const MetricWidgetSkeleton = ({
   icon: Icon,
   title,
   showSecondaryText = true,
-  iconColor = 'text-gray-600'
+  iconColor = 'text-gray-600 dark:text-gray-400'
 }: MetricWidgetSkeletonProps) => {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className={`text-sm font-medium text-gray-600 flex items-center gap-2`}>
+        <CardTitle className={`text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2`}>
           <Icon className={`h-4 w-4 ${iconColor}`} />
           {title}
         </CardTitle>
@@ -61,7 +61,7 @@ export const AccountBalancesWidgetSkeleton = () => {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="min-w-[230px] flex-shrink-0 px-3 py-4 bg-gray-50 rounded-lg relative overflow-hidden"
+                className="min-w-[230px] flex-shrink-0 px-3 py-4 bg-gray-50 dark:bg-gray-800 rounded-lg relative overflow-hidden"
               >
                 {/* Color bar */}
                 <Skeleton className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg" />
@@ -105,7 +105,7 @@ export const ChartWidgetSkeleton = ({
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
           <Icon className="h-4 w-4" />
           {title}
         </CardTitle>
@@ -150,7 +150,7 @@ export const ListWidgetSkeleton = ({
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
           <Icon className="h-4 w-4" />
           {title}
         </CardTitle>
@@ -178,7 +178,7 @@ export const QuickActionsWidgetSkeleton = () => {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600">
+        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
           Quick Actions
         </CardTitle>
       </CardHeader>
@@ -208,7 +208,7 @@ export const ProgressListWidgetSkeleton = ({
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
           <Icon className="h-4 w-4" />
           {title}
         </CardTitle>
@@ -237,11 +237,11 @@ export const TotalBalanceWidgetSkeleton = () => (
 )
 
 export const MonthlyIncomeWidgetSkeleton = () => (
-  <MetricWidgetSkeleton icon={TrendingUp} title="Monthly Income" iconColor="text-green-600" />
+  <MetricWidgetSkeleton icon={TrendingUp} title="Monthly Income" iconColor="text-green-600 dark:text-green-500" />
 )
 
 export const MonthlyExpensesWidgetSkeleton = () => (
-  <MetricWidgetSkeleton icon={TrendingDown} title="Monthly Expenses" iconColor="text-red-600" />
+  <MetricWidgetSkeleton icon={TrendingDown} title="Monthly Expenses" iconColor="text-red-600 dark:text-red-500" />
 )
 
 export const SavingsWidgetSkeleton = () => (
@@ -297,7 +297,7 @@ export const GroupBalancesWidgetSkeleton = () => (
 )
 
 export const PersonalExpensesWidgetSkeleton = () => (
-  <MetricWidgetSkeleton icon={ShoppingCart} title="Personal Expenses" iconColor="text-amber-600" />
+  <MetricWidgetSkeleton icon={ShoppingCart} title="Personal Expenses" iconColor="text-amber-600 dark:text-amber-500" />
 )
 
 export const RecentTransactionsWidgetSkeleton = () => (
