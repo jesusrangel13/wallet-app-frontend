@@ -263,3 +263,12 @@
 .daypicker-custom .rdp-day:hover:not([disabled]):not(.rdp-day_selected) {
   background-color: hsl(var(--primary) / 0.1);
 }
+
+/* Safe Area utilities for iOS notch/home indicator */
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.pb-safe {
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0));
+}
