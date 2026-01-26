@@ -19,7 +19,7 @@ interface MenuItem {
 
 const moreMenuItems: MenuItem[] = [
     { icon: HandCoins, labelKey: 'loans', color: 'bg-amber-500', path: 'dashboard/loans' },
-    { icon: Users, labelKey: 'groups', color: 'bg-purple-500', path: 'dashboard/groups' },
+    { icon: Users, labelKey: 'groups', color: 'bg-violet-500', path: 'dashboard/groups' },
     { icon: Upload, labelKey: 'import', color: 'bg-blue-500', path: 'dashboard/import' },
     { icon: Settings, labelKey: 'settings', color: 'bg-gray-500', path: 'dashboard/settings' },
 ]
