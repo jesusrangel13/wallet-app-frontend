@@ -7,7 +7,6 @@ import Link from 'next/link'
 import { Menu, X, Home, CreditCard, TrendingUp, Users, Upload, Settings, HandCoins } from 'lucide-react'
 import { useEffect, useState, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
-import { ThemeToggle } from '@/components/ThemeToggle'
 
 interface NavItem {
   labelKey: string
@@ -23,7 +22,6 @@ const baseNavItems: NavItem[] = [
   { labelKey: 'loans', icon: <HandCoins className="w-6 h-6" />, path: 'dashboard/loans', descriptionKey: 'loansDescription' },
   { labelKey: 'groups', icon: <Users className="w-6 h-6" />, path: 'dashboard/groups', descriptionKey: 'groupsDescription' },
   { labelKey: 'import', icon: <Upload className="w-6 h-6" />, path: 'dashboard/import', descriptionKey: 'importDescription' },
-  { labelKey: 'settings', icon: <Settings className="w-6 h-6" />, path: 'dashboard/settings', descriptionKey: 'settingsDescription' },
 ]
 
 export function Sidebar() {
@@ -67,11 +65,11 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile Menu Button - Only visible on small screens */}
+      {/* Mobile Menu Button - Hidden since we now have bottom nav on mobile */}
       <button
         type="button"
         onClick={() => setMobileOpen(!isMobileOpen)}
-        className="md:hidden fixed bottom-24 right-6 z-50 p-3 bg-primary text-white rounded-full shadow-lg hover:bg-primary-hover transition-colors"
+        className="hidden"
         aria-label={t('toggleMenu')}
         aria-expanded={isMobileOpen}
         aria-controls="sidebar-nav"
@@ -175,18 +173,9 @@ export function Sidebar() {
           ))}
         </nav>
 
-        {/* Footer with Theme Toggle */}
+        {/* Footer with Version */}
         <div className="border-t border-border p-4">
-          {!isCollapsed ? (
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-muted-foreground">{t('version')}</p>
-              <ThemeToggle size="sm" />
-            </div>
-          ) : (
-            <div className="flex justify-center">
-              <ThemeToggle size="sm" />
-            </div>
-          )}
+          <p className="text-xs text-muted-foreground text-center">{t('version')}</p>
         </div>
       </aside>
 
