@@ -27,9 +27,6 @@ interface TransactionFiltersProps {
   categories: MergedCategory[]
 }
 
-// UI Mode type for testing different selector styles
-type SelectorMode = 'chips' | 'searchable' | 'hybrid'
-
 export default function TransactionFiltersComponent({
   filters,
   onFilterChange,
@@ -43,18 +40,10 @@ export default function TransactionFiltersComponent({
   const popoverRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
-  // UI Mode selector for testing - change this to test different styles
-  const [selectorMode, setSelectorMode] = useState<SelectorMode>('chips')
-
   // Searchable dropdown states
-  const [accountSearch, setAccountSearch] = useState('')
   const [categorySearch, setCategorySearch] = useState('')
-  const [accountDropdownOpen, setAccountDropdownOpen] = useState(false)
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false)
-
-  // Hybrid mode states
   const [showMoreAccounts, setShowMoreAccounts] = useState(false)
-  const [showMoreCategories, setShowMoreCategories] = useState(false)
 
   // Accessibility IDs
   const searchId = useId()
@@ -83,7 +72,6 @@ export default function TransactionFiltersComponent({
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isAdvancedOpen) {
         setIsAdvancedOpen(false)
-        setAccountDropdownOpen(false)
         setCategoryDropdownOpen(false)
       }
     }
@@ -155,7 +143,7 @@ export default function TransactionFiltersComponent({
     setIsAdvancedOpen(false)
   }, [onFilterChange])
 
-  // Get active advanced filters for chips
+  // Get active advanced filters for chips显示
   const getActiveFilters = () => {
     const active: { key: keyof TransactionFilters; label: string; value: string }[] = []
 
@@ -229,343 +217,11 @@ export default function TransactionFiltersComponent({
 
   const allCategories = flattenCategories(categories)
 
-  // Filter accounts and categories for searchable dropdown
-  const filteredAccounts = accounts.filter(a =>
-    a.name.toLowerCase().includes(accountSearch.toLowerCase())
-  )
-
   const filteredCategories = allCategories.filter(c =>
     translateCategory(c).toLowerCase().includes(categorySearch.toLowerCase())
   )
 
-  // Get selected account/category names
-  const selectedAccount = accounts.find(a => a.id === filters.accountId)
   const selectedCategory = allCategories.find(c => c.id === filters.categoryId)
-
-  // ============ OPTION 1: CHIPS SELECTOR ============
-  const renderChipsSelector = () => (
-    <>
-      {/* Account Chips */}
-      <div className="space-y-2">
-        <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          <Building2 className="w-3.5 h-3.5" />
-          {t('account')}
-        </label>
-        <div className="flex flex-wrap gap-1.5">
-          <button
-            onClick={() => handleFilterChange('accountId', '')}
-            className={cn(
-              'px-3 py-1.5 text-xs font-medium rounded-full transition-all',
-              !filters.accountId
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted/50 text-muted-foreground hover:bg-muted'
-            )}
-          >
-            {t('allAccounts')}
-          </button>
-          {accounts.map((account) => (
-            <button
-              key={account.id}
-              onClick={() => handleFilterChange('accountId', account.id)}
-              className={cn(
-                'px-3 py-1.5 text-xs font-medium rounded-full transition-all',
-                filters.accountId === account.id
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted/50 text-muted-foreground hover:bg-muted'
-              )}
-            >
-              {account.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Category Chips */}
-      <div className="space-y-2">
-        <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          <Tag className="w-3.5 h-3.5" />
-          {t('category')}
-        </label>
-        <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
-          <button
-            onClick={() => handleFilterChange('categoryId', '')}
-            className={cn(
-              'px-3 py-1.5 text-xs font-medium rounded-full transition-all',
-              !filters.categoryId
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted/50 text-muted-foreground hover:bg-muted'
-            )}
-          >
-            {t('allCategories')}
-          </button>
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => handleFilterChange('categoryId', category.id)}
-              className={cn(
-                'px-3 py-1.5 text-xs font-medium rounded-full transition-all',
-                filters.categoryId === category.id
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted/50 text-muted-foreground hover:bg-muted'
-              )}
-            >
-              {category.icon} {translateCategory(category)}
-            </button>
-          ))}
-        </div>
-      </div>
-    </>
-  )
-
-  // ============ OPTION 2: SEARCHABLE DROPDOWN ============
-  const renderSearchableSelector = () => (
-    <>
-      {/* Account Searchable Dropdown */}
-      <div className="space-y-1.5">
-        <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          <Building2 className="w-3.5 h-3.5" />
-          {t('account')}
-        </label>
-        <div className="relative">
-          <button
-            onClick={() => {
-              setAccountDropdownOpen(!accountDropdownOpen)
-              setCategoryDropdownOpen(false)
-            }}
-            className="w-full flex items-center justify-between px-3 py-2 text-sm border border-border rounded-lg bg-background text-foreground hover:border-primary/50 transition-all"
-          >
-            <span className={selectedAccount ? 'text-foreground' : 'text-muted-foreground'}>
-              {selectedAccount ? selectedAccount.name : t('allAccounts')}
-            </span>
-            <ChevronDown className={cn('w-4 h-4 text-muted-foreground transition-transform', accountDropdownOpen && 'rotate-180')} />
-          </button>
-
-          {accountDropdownOpen && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-40 overflow-hidden">
-              <div className="p-2 border-b border-border">
-                <div className="relative">
-                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <input
-                    type="text"
-                    value={accountSearch}
-                    onChange={(e) => setAccountSearch(e.target.value)}
-                    placeholder="Buscar cuenta..."
-                    className="w-full pl-8 pr-3 py-1.5 text-sm bg-muted/50 border-0 rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
-                    autoFocus
-                  />
-                </div>
-              </div>
-              <div className="max-h-48 overflow-y-auto">
-                <button
-                  onClick={() => {
-                    handleFilterChange('accountId', '')
-                    setAccountDropdownOpen(false)
-                    setAccountSearch('')
-                  }}
-                  className={cn(
-                    'w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-muted transition-colors',
-                    !filters.accountId && 'bg-primary/10 text-primary'
-                  )}
-                >
-                  {!filters.accountId && <Check className="w-4 h-4" />}
-                  <span className={!filters.accountId ? '' : 'pl-6'}>{t('allAccounts')}</span>
-                </button>
-                {filteredAccounts.map((account) => (
-                  <button
-                    key={account.id}
-                    onClick={() => {
-                      handleFilterChange('accountId', account.id)
-                      setAccountDropdownOpen(false)
-                      setAccountSearch('')
-                    }}
-                    className={cn(
-                      'w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-muted transition-colors',
-                      filters.accountId === account.id && 'bg-primary/10 text-primary'
-                    )}
-                  >
-                    {filters.accountId === account.id && <Check className="w-4 h-4" />}
-                    <span className={filters.accountId === account.id ? '' : 'pl-6'}>
-                      {account.name} <span className="text-muted-foreground">({account.currency})</span>
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Category Searchable Dropdown */}
-      <div className="space-y-1.5">
-        <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          <Tag className="w-3.5 h-3.5" />
-          {t('category')}
-        </label>
-        <div className="relative">
-          <button
-            onClick={() => {
-              setCategoryDropdownOpen(!categoryDropdownOpen)
-              setAccountDropdownOpen(false)
-            }}
-            className="w-full flex items-center justify-between px-3 py-2 text-sm border border-border rounded-lg bg-background text-foreground hover:border-primary/50 transition-all"
-          >
-            <span className={selectedCategory ? 'text-foreground' : 'text-muted-foreground'}>
-              {selectedCategory ? `${selectedCategory.icon} ${translateCategory(selectedCategory)}` : t('allCategories')}
-            </span>
-            <ChevronDown className={cn('w-4 h-4 text-muted-foreground transition-transform', categoryDropdownOpen && 'rotate-180')} />
-          </button>
-
-          {categoryDropdownOpen && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-40 overflow-hidden">
-              <div className="p-2 border-b border-border">
-                <div className="relative">
-                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <input
-                    type="text"
-                    value={categorySearch}
-                    onChange={(e) => setCategorySearch(e.target.value)}
-                    placeholder="Buscar categoría..."
-                    className="w-full pl-8 pr-3 py-1.5 text-sm bg-muted/50 border-0 rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
-                    autoFocus
-                  />
-                </div>
-              </div>
-              <div className="max-h-48 overflow-y-auto">
-                <button
-                  onClick={() => {
-                    handleFilterChange('categoryId', '')
-                    setCategoryDropdownOpen(false)
-                    setCategorySearch('')
-                  }}
-                  className={cn(
-                    'w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-muted transition-colors',
-                    !filters.categoryId && 'bg-primary/10 text-primary'
-                  )}
-                >
-                  {!filters.categoryId && <Check className="w-4 h-4" />}
-                  <span className={!filters.categoryId ? '' : 'pl-6'}>{t('allCategories')}</span>
-                </button>
-                {filteredCategories.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => {
-                      handleFilterChange('categoryId', category.id)
-                      setCategoryDropdownOpen(false)
-                      setCategorySearch('')
-                    }}
-                    className={cn(
-                      'w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-muted transition-colors',
-                      filters.categoryId === category.id && 'bg-primary/10 text-primary'
-                    )}
-                  >
-                    {filters.categoryId === category.id && <Check className="w-4 h-4" />}
-                    <span className={filters.categoryId === category.id ? '' : 'pl-6'}>
-                      {category.icon} {translateCategory(category)}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </>
-  )
-
-  // ============ OPTION 3: HYBRID (Chips + "Ver más") ============
-  const MAX_VISIBLE_ITEMS = 3
-
-  const renderHybridSelector = () => (
-    <>
-      {/* Account Hybrid */}
-      <div className="space-y-2">
-        <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          <Building2 className="w-3.5 h-3.5" />
-          {t('account')}
-        </label>
-        <div className="flex flex-wrap gap-1.5">
-          <button
-            onClick={() => handleFilterChange('accountId', '')}
-            className={cn(
-              'px-3 py-1.5 text-xs font-medium rounded-full transition-all',
-              !filters.accountId
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted/50 text-muted-foreground hover:bg-muted'
-            )}
-          >
-            {t('allAccounts')}
-          </button>
-          {accounts.slice(0, showMoreAccounts ? accounts.length : MAX_VISIBLE_ITEMS).map((account) => (
-            <button
-              key={account.id}
-              onClick={() => handleFilterChange('accountId', account.id)}
-              className={cn(
-                'px-3 py-1.5 text-xs font-medium rounded-full transition-all',
-                filters.accountId === account.id
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted/50 text-muted-foreground hover:bg-muted'
-              )}
-            >
-              {account.name}
-            </button>
-          ))}
-          {accounts.length > MAX_VISIBLE_ITEMS && (
-            <button
-              onClick={() => setShowMoreAccounts(!showMoreAccounts)}
-              className="px-3 py-1.5 text-xs font-medium rounded-full bg-muted/30 text-muted-foreground hover:bg-muted transition-all flex items-center gap-1"
-            >
-              <MoreHorizontal className="w-3 h-3" />
-              {showMoreAccounts ? 'Menos' : `+${accounts.length - MAX_VISIBLE_ITEMS}`}
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Category Hybrid */}
-      <div className="space-y-2">
-        <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          <Tag className="w-3.5 h-3.5" />
-          {t('category')}
-        </label>
-        <div className="flex flex-wrap gap-1.5">
-          <button
-            onClick={() => handleFilterChange('categoryId', '')}
-            className={cn(
-              'px-3 py-1.5 text-xs font-medium rounded-full transition-all',
-              !filters.categoryId
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted/50 text-muted-foreground hover:bg-muted'
-            )}
-          >
-            {t('allCategories')}
-          </button>
-          {categories.slice(0, showMoreCategories ? categories.length : MAX_VISIBLE_ITEMS).map((category) => (
-            <button
-              key={category.id}
-              onClick={() => handleFilterChange('categoryId', category.id)}
-              className={cn(
-                'px-3 py-1.5 text-xs font-medium rounded-full transition-all',
-                filters.categoryId === category.id
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted/50 text-muted-foreground hover:bg-muted'
-              )}
-            >
-              {category.icon} {translateCategory(category)}
-            </button>
-          ))}
-          {categories.length > MAX_VISIBLE_ITEMS && (
-            <button
-              onClick={() => setShowMoreCategories(!showMoreCategories)}
-              className="px-3 py-1.5 text-xs font-medium rounded-full bg-muted/30 text-muted-foreground hover:bg-muted transition-all flex items-center gap-1"
-            >
-              <MoreHorizontal className="w-3 h-3" />
-              {showMoreCategories ? 'Menos' : `+${categories.length - MAX_VISIBLE_ITEMS}`}
-            </button>
-          )}
-        </div>
-      </div>
-    </>
-  )
 
   return (
     <div className="space-y-4" role="search" aria-label={t('searchPlaceholder')}>
@@ -663,34 +319,133 @@ export default function TransactionFiltersComponent({
               role="dialog"
               aria-label={t('advancedFilters')}
             >
-              {/* Header with Mode Selector */}
               <div className="flex items-center justify-between px-4 py-3 border-b border-border">
                 <h3 className="text-sm font-semibold text-foreground">{t('advancedFilters')}</h3>
-                <div className="flex items-center gap-1">
-                  {/* Mode selector for testing */}
-                  <select
-                    value={selectorMode}
-                    onChange={(e) => setSelectorMode(e.target.value as SelectorMode)}
-                    className="text-xs bg-muted/50 border-0 rounded px-1.5 py-0.5 text-muted-foreground"
-                  >
-                    <option value="chips">Chips</option>
-                    <option value="searchable">Searchable</option>
-                    <option value="hybrid">Hybrid</option>
-                  </select>
-                  <button
-                    onClick={() => setIsAdvancedOpen(false)}
-                    className="p-1 text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
+                <button
+                  onClick={() => setIsAdvancedOpen(false)}
+                  className="p-1 text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
 
-              {/* Content - Dynamic based on mode */}
               <div className="p-4 space-y-4">
-                {selectorMode === 'chips' && renderChipsSelector()}
-                {selectorMode === 'searchable' && renderSearchableSelector()}
-                {selectorMode === 'hybrid' && renderHybridSelector()}
+
+                {/* Account Chips */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                    <Building2 className="w-3.5 h-3.5" />
+                    {t('account')}
+                  </label>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      onClick={() => handleFilterChange('accountId', '')}
+                      className={cn(
+                        'px-3 py-1.5 text-xs font-medium rounded-full transition-all',
+                        !filters.accountId
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+                      )}
+                    >
+                      {t('allAccounts')}
+                    </button>
+                    {accounts.slice(0, showMoreAccounts ? accounts.length : 4).map((account) => (
+                      <button
+                        key={account.id}
+                        onClick={() => handleFilterChange('accountId', account.id)}
+                        className={cn(
+                          'px-3 py-1.5 text-xs font-medium rounded-full transition-all',
+                          filters.accountId === account.id
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+                        )}
+                      >
+                        {account.name}
+                      </button>
+                    ))}
+                    {accounts.length > 4 && (
+                      <button
+                        onClick={() => setShowMoreAccounts(!showMoreAccounts)}
+                        className="px-3 py-1.5 text-xs font-medium rounded-full bg-muted/30 text-muted-foreground hover:bg-muted transition-all flex items-center gap-1"
+                      >
+                        <MoreHorizontal className="w-3 h-3" />
+                        {showMoreAccounts ? 'Menos' : `+${accounts.length - 4}`}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Category Searchable Dropdown */}
+                <div className="space-y-1.5">
+                  <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                    <Tag className="w-3.5 h-3.5" />
+                    {t('category')}
+                  </label>
+                  <div className="relative">
+                    <button
+                      onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
+                      className="w-full flex items-center justify-between px-3 py-2 text-sm border border-border rounded-lg bg-background text-foreground hover:border-primary/50 transition-all"
+                    >
+                      <span className={selectedCategory ? 'text-foreground' : 'text-muted-foreground'}>
+                        {selectedCategory ? `${selectedCategory.icon} ${translateCategory(selectedCategory)}` : t('allCategories')}
+                      </span>
+                      <ChevronDown className={cn('w-4 h-4 text-muted-foreground transition-transform', categoryDropdownOpen && 'rotate-180')} />
+                    </button>
+
+                    {categoryDropdownOpen && (
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-40 overflow-hidden">
+                        <div className="p-2 border-b border-border">
+                          <div className="relative">
+                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <input
+                              type="text"
+                              value={categorySearch}
+                              onChange={(e) => setCategorySearch(e.target.value)}
+                              placeholder="Buscar categoría..."
+                              className="w-full pl-8 pr-3 py-1.5 text-sm bg-muted/50 border-0 rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+                              autoFocus
+                            />
+                          </div>
+                        </div>
+                        <div className="max-h-48 overflow-y-auto">
+                          <button
+                            onClick={() => {
+                              handleFilterChange('categoryId', '')
+                              setCategoryDropdownOpen(false)
+                              setCategorySearch('')
+                            }}
+                            className={cn(
+                              'w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-muted transition-colors',
+                              !filters.categoryId && 'bg-primary/10 text-primary'
+                            )}
+                          >
+                            {!filters.categoryId && <Check className="w-4 h-4" />}
+                            <span className={!filters.categoryId ? '' : 'pl-6'}>{t('allCategories')}</span>
+                          </button>
+                          {filteredCategories.map((category) => (
+                            <button
+                              key={category.id}
+                              onClick={() => {
+                                handleFilterChange('categoryId', category.id)
+                                setCategoryDropdownOpen(false)
+                                setCategorySearch('')
+                              }}
+                              className={cn(
+                                'w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-muted transition-colors',
+                                filters.categoryId === category.id && 'bg-primary/10 text-primary'
+                              )}
+                            >
+                              {filters.categoryId === category.id && <Check className="w-4 h-4" />}
+                              <span className={filters.categoryId === category.id ? '' : 'pl-6'}>
+                                {category.icon} {translateCategory(category)}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
                 {/* Divider */}
                 <div className="border-t border-border" />
