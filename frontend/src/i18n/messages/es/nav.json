@@ -16,5 +16,26 @@
   "settingsDescription": "Configuración de la aplicación",
   "toggleMenu": "Alternar menú",
   "toggleSidebar": "Contraer/Expandir barra lateral",
-  "version": "Versión 1.0.0"
+  "version": "Versión 1.0.0",
+  "bottomNav": {
+    "home": "Inicio",
+    "transactions": "Movimientos",
+    "add": "Agregar",
+    "accounts": "Cuentas",
+    "more": "Más"
+  },
+  "quickAdd": {
+    "title": "Agregar",
+    "expense": "Gasto",
+    "income": "Ingreso",
+    "transfer": "Transferencia",
+    "shared": "Gasto Compartido"
+  },
+  "moreMenu": {
+    "title": "Más",
+    "loans": "Préstamos",
+    "groups": "Grupos",
+    "import": "Importación",
+    "settings": "Configuración"
+  }
 }
