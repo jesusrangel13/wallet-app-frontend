@@ -56,7 +56,28 @@
     "toggleSidebar": "Toggle sidebar",
     "toggleMenu": "Toggle menu",
     "appName": "Finance",
-    "version": "v1.0.0"
+    "version": "v1.0.0",
+    "bottomNav": {
+      "home": "Home",
+      "transactions": "Transactions",
+      "add": "Add",
+      "accounts": "Accounts",
+      "more": "More"
+    },
+    "quickAdd": {
+      "title": "Add",
+      "expense": "Expense",
+      "income": "Income",
+      "transfer": "Transfer",
+      "shared": "Shared Expense"
+    },
+    "moreMenu": {
+      "title": "More",
+      "loans": "Loans",
+      "groups": "Groups",
+      "import": "Import",
+      "settings": "Settings"
+    }
   },
   "errors": {
     "api": {
