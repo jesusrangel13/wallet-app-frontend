@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useSidebarStore } from '@/store/sidebarStore'
 import { Sidebar } from '@/components/Sidebar'
 import { DashboardLayoutContent } from '@/components/DashboardLayoutContent'
+import { BottomNav } from '@/components/navigation/BottomNav'
 
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { VoiceButton } from '@/components/voice/VoiceButton'
@@ -62,6 +63,7 @@ export default function DashboardLayout({
       <ErrorBoundary>
         <DashboardLayoutContent isCollapsed={isCollapsed}>{children}</DashboardLayoutContent>
         <VoiceButton />
+        <BottomNav />
       </ErrorBoundary>
     </div>
   )
