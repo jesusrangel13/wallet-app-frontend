@@ -11,12 +11,12 @@
     "income": "Income",
     "transfer": "Transfers"
   },
+  "types": {
+    "expense": "Expense",
+    "income": "Income",
+    "transfer": "Transfer"
+  },
   "fields": {
-    "types": {
-      "expense": "Expense",
-      "income": "Income",
-      "transfer": "Transfer"
-    },
     "type": "Type",
     "account": "Account",
     "toAccount": "Destination account",
@@ -24,8 +24,10 @@
     "category": "Category",
     "payee": "Payee",
     "description": "Description",
+    "date": "Date",
     "dateTime": "Date and time",
-    "tags": "Tags"
+    "tags": "Tags",
+    "notes": "Notes"
   },
   "placeholders": {
     "selectAccount": "Select an account",
@@ -57,5 +59,25 @@
     "placeholder": "Select a category...",
     "backToCategories": "Back to categories",
     "noCategories": "No categories available. Create your first category to get started."
+  },
+  "placeholders": {
+    "selectAccount": "Select an account",
+    "selectDestination": "Select destination account",
+    "amount": "0.00",
+    "payee": "Payee name",
+    "description": "Add a description (optional)",
+    "selectDate": "Select date...",
+    "selectDateTime": "Select date and time...",
+    "notes": "Add any additional notes"
+  },
+  "validation": {
+    "amountPositive": "Amount must be positive",
+    "destinationRequired": "Destination account is required for transfers",
+    "sameAccountTransfer": "Cannot transfer to the same account"
+  },
+  "success": {
+    "created": "Transaction created successfully",
+    "updated": "Transaction updated successfully",
+    "deleted": "Transaction deleted successfully"
   }
 }

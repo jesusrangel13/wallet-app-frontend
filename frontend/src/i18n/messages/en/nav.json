@@ -16,5 +16,26 @@
   "settingsDescription": "Application settings",
   "toggleMenu": "Toggle menu",
   "toggleSidebar": "Collapse/Expand sidebar",
-  "version": "Version 1.0.0"
+  "version": "Version 1.0.0",
+  "bottomNav": {
+    "home": "Home",
+    "transactions": "Transactions",
+    "add": "Add",
+    "accounts": "Accounts",
+    "more": "More"
+  },
+  "quickAdd": {
+    "title": "Add",
+    "expense": "Expense",
+    "income": "Income",
+    "transfer": "Transfer",
+    "shared": "Shared Expense"
+  },
+  "moreMenu": {
+    "title": "More",
+    "loans": "Loans",
+    "groups": "Groups",
+    "import": "Import",
+    "settings": "Settings"
+  }
 }

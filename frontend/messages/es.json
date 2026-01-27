@@ -56,7 +56,28 @@
     "toggleSidebar": "Alternar barra lateral",
     "toggleMenu": "Alternar menú",
     "appName": "Finanzas",
-    "version": "v1.0.0"
+    "version": "v1.0.0",
+    "bottomNav": {
+      "home": "Inicio",
+      "transactions": "Movimientos",
+      "add": "Agregar",
+      "accounts": "Cuentas",
+      "more": "Más"
+    },
+    "quickAdd": {
+      "title": "Agregar",
+      "expense": "Gasto",
+      "income": "Ingreso",
+      "transfer": "Transferencia",
+      "shared": "Gasto Compartido"
+    },
+    "moreMenu": {
+      "title": "Más",
+      "loans": "Préstamos",
+      "groups": "Grupos",
+      "import": "Importación",
+      "settings": "Configuración"
+    }
   },
   "errors": {
     "api": {

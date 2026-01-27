@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -96,7 +96,7 @@ export default function TransactionFormModal({
   const selectedAmount = watch('amount') || 0
   const selectedAccount = accounts.find((a) => a.id === selectedAccountId)
 
-  const formatAmountDisplay = (value: string | number, currency: string): string => {
+  const formatAmountDisplay = useCallback((value: string | number, currency: string): string => {
     if (!value) return ''
     const numValue = typeof value === 'string' ? parseFloat(value.replace(/,/g, '')) : value
     if (isNaN(numValue)) return ''
@@ -115,7 +115,8 @@ export default function TransactionFormModal({
         maximumFractionDigits: 2,
       }).format(numValue)
     }
-  }
+  }, [])
+
 
   useEffect(() => {
     if (initialData) {

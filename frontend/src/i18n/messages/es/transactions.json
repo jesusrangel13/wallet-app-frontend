@@ -11,12 +11,12 @@
     "income": "Ingresos",
     "transfer": "Transferencias"
   },
+  "types": {
+    "expense": "Gasto",
+    "income": "Ingreso",
+    "transfer": "Transferencia"
+  },
   "fields": {
-    "types": {
-      "expense": "Gasto",
-      "income": "Ingreso",
-      "transfer": "Transferencia"
-    },
     "type": "Tipo",
     "account": "Cuenta",
     "toAccount": "Cuenta destino",
@@ -24,14 +24,20 @@
     "category": "Categoría",
     "payee": "Beneficiario",
     "description": "Descripción",
+    "date": "Fecha",
     "dateTime": "Fecha y hora",
-    "tags": "Etiquetas"
+    "tags": "Etiquetas",
+    "notes": "Notas"
   },
   "placeholders": {
     "selectAccount": "Selecciona una cuenta",
     "selectDestination": "Selecciona cuenta destino",
+    "amount": "0.00",
     "payee": "Nombre del beneficiario",
-    "description": "Agrega una descripción (opcional)"
+    "description": "Agrega una descripción (opcional)",
+    "selectDate": "Selecciona fecha...",
+    "selectDateTime": "Selecciona fecha y hora...",
+    "notes": "Agrega notas adicionales"
   },
   "columns": {
     "date": "Fecha",
@@ -57,5 +63,15 @@
     "placeholder": "Selecciona una categoría...",
     "backToCategories": "Volver a categorías",
     "noCategories": "No hay categorías disponibles. Crea tu primera categoría para empezar."
+  },
+  "validation": {
+    "amountPositive": "El monto debe ser positivo",
+    "destinationRequired": "La cuenta de destino es requerida para transferencias",
+    "sameAccountTransfer": "No se puede transferir a la misma cuenta"
+  },
+  "success": {
+    "created": "Transacción creada exitosamente",
+    "updated": "Transacción actualizada exitosamente",
+    "deleted": "Transacción eliminada exitosamente"
   }
 }

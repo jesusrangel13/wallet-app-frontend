@@ -45,6 +45,20 @@ const levenshtein = (a: string, b: string): number => {
     return matrix[b.length][a.length];
 };
 
+// Flatten categories logic
+const flattenCategories = (cats: any[], prefix = ''): any[] => {
+    let result: any[] = [];
+    cats.forEach(cat => {
+        const displayName = prefix ? `${prefix} › ${cat.name}` : cat.name;
+        result.push({ ...cat, displayName });
+
+        if (cat.subcategories && cat.subcategories.length > 0) {
+            result = [...result, ...flattenCategories(cat.subcategories, displayName)];
+        }
+    });
+    return result;
+};
+
 interface VoiceCorrectionModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -69,19 +83,7 @@ export const VoiceCorrectionModal = ({ isOpen, onClose, data, onSave }: VoiceCor
 
     const accounts = (accountsData as any)?.data?.data || (accountsData as any)?.data || [];
 
-    // Flatten categories logic
-    const flattenCategories = (cats: any[], prefix = ''): any[] => {
-        let result: any[] = [];
-        cats.forEach(cat => {
-            const displayName = prefix ? `${prefix} › ${cat.name}` : cat.name;
-            result.push({ ...cat, displayName });
 
-            if (cat.subcategories && cat.subcategories.length > 0) {
-                result = [...result, ...flattenCategories(cat.subcategories, displayName)];
-            }
-        });
-        return result;
-    };
 
     const flatCategories = React.useMemo(() => flattenCategories(rawCategories || []), [rawCategories]);
 
