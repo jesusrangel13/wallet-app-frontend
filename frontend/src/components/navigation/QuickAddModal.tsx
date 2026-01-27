@@ -1,7 +1,5 @@
-'use client'
-
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ArrowDownLeft, ArrowUpRight, ArrowLeftRight, Users } from 'lucide-react'
+import { X, ArrowDownLeft, ArrowUpRight, ArrowLeftRight, Users, Mic } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { LazyTransactionFormModal } from '@/lib/lazyModals'
@@ -72,6 +70,15 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
         }
     }
 
+    const handleVoiceClick = () => {
+        onClose()
+        // Trigger voice recognition on the main FAB
+        // We use a small timeout to let the modal close animation start/finish cleanly
+        setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('trigger-voice-input'))
+        }, 300)
+    }
+
     return (
         <>
             <AnimatePresence>
@@ -108,6 +115,29 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
                                     <X className="w-5 h-5 text-muted-foreground" />
                                 </button>
                             </div>
+
+                            {/* Voice Option - Prominent */}
+                            <motion.button
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={handleVoiceClick}
+                                className="w-full flex items-center justify-between p-4 mb-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/20"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-white/20 rounded-full">
+                                        <Mic className="w-6 h-6" />
+                                    </div>
+                                    <div className="flex flex-col items-start">
+                                        <span className="font-bold text-lg">Asistente de Voz</span>
+                                        <span className="text-xs text-blue-100">Habla para registrar transacciones</span>
+                                    </div>
+                                </div>
+                                <div className="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">
+                                    IA Powered
+                                </div>
+                            </motion.button>
 
                             {/* Quick Actions Grid */}
                             <div className="grid grid-cols-2 gap-4">

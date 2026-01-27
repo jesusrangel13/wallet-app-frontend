@@ -53,16 +53,45 @@ export const VoiceButton = () => {
   // Helper to get default account ID
   const defaultAccountId = (accountsData as any)?.data?.data?.[0]?.id || (accountsData as any)?.data?.[0]?.id;
 
-  const handleToggle = async () => {
-    if (isListening) {
+  // Debounce ref to prevent accidental double-toggles
+  const lastToggleTimeRef = React.useRef(0);
+
+  const handleToggle = React.useCallback(async (forceStop = false) => {
+    const now = Date.now();
+    if (now - lastToggleTimeRef.current < 500) return; // Ignore toggles too close together
+    lastToggleTimeRef.current = now;
+
+    if (forceStop || isListening) {
+      if (!isListening && forceStop) return; // If forced to stop but already stopped, do nothing
+
       shouldProcessRef.current = true; // Mark intent to process
       stopListening();
+      window.dispatchEvent(new CustomEvent('voice-status-change', { detail: { isListening: false } }));
     } else {
       shouldProcessRef.current = false;
       resetTranscript();
       startListening();
+      window.dispatchEvent(new CustomEvent('voice-status-change', { detail: { isListening: true } }));
     }
-  };
+  }, [isListening, resetTranscript, startListening, stopListening]);
+
+  // Dispatch processing state for mobile Floating UI
+  React.useEffect(() => {
+    window.dispatchEvent(new CustomEvent('voice-processing-change', { detail: { isProcessing } }));
+  }, [isProcessing]);
+
+  React.useEffect(() => {
+    const handleVoiceTrigger = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const forceStop = customEvent.detail?.forceStop;
+
+      // If forceStop is requested, or if it's a toggle request
+      handleToggle(forceStop);
+    };
+
+    window.addEventListener('trigger-voice-input', handleVoiceTrigger);
+    return () => window.removeEventListener('trigger-voice-input', handleVoiceTrigger);
+  }, [handleToggle]);
 
   const saveTransaction = async (data: ParsedVoiceTransaction) => {
     try {
@@ -164,24 +193,36 @@ export const VoiceButton = () => {
     }
   }
 
-  if (!isSupported) return null;
 
   // Combine final and interim for display
   const displayTranscript = (transcript + (interimTranscript ? ' ' + interimTranscript : '')).trim();
 
+  // Dispatch transcript for mobile Floating UI (BottomNav)
+  // MOVED UP: Hooks must be before any return statement
+  React.useEffect(() => {
+    if (isListening) {
+      window.dispatchEvent(new CustomEvent('voice-input-transcript', { detail: { text: displayTranscript } }));
+    } else {
+      // Clear when stopped
+      window.dispatchEvent(new CustomEvent('voice-input-transcript', { detail: { text: '' } }));
+    }
+  }, [displayTranscript, isListening]);
+
+  if (!isSupported) return null;
+
   return (
     <>
       {isListening && displayTranscript && (
-        <div className="fixed bottom-24 right-6 p-4 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg max-w-xs z-50 border border-gray-200">
+        <div className="fixed bottom-24 right-6 p-4 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg max-w-xs z-50 border border-gray-200 hidden md:block">
           <p className="text-sm text-gray-700 font-medium animate-pulse">
             {displayTranscript}
           </p>
         </div>
       )}
       <button
-        onClick={handleToggle}
+        onClick={() => handleToggle()}
         className={cn(
-          "fixed bottom-6 right-6 p-4 rounded-full shadow-xl transition-all duration-300 z-50",
+          "fixed bottom-6 right-6 p-4 rounded-full shadow-xl transition-all duration-300 z-50 hidden md:block",
           isListening ? "bg-red-500 hover:bg-red-600 scale-110 animate-pulse" : "bg-blue-600 hover:bg-blue-700",
           isProcessing && "bg-zinc-500 cursor-wait"
         )}

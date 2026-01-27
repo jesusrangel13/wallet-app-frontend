@@ -246,7 +246,8 @@ export default function SharedExpenseForm({
         // The first condition above will trigger when totalAmount > 0
       }
     }
-  }, [splitType, totalAmount, participantsKey])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [splitType, totalAmount, participantsKey, calculateSplit, initialData, selectedGroupId])
 
   // Notify parent when data changes
   useEffect(() => {
@@ -260,7 +261,7 @@ export default function SharedExpenseForm({
     } else {
       onChange(null)
     }
-  }, [enabled, selectedGroupId, paidByUserId, splitType, participants])
+  }, [enabled, selectedGroupId, paidByUserId, splitType, participants, onChange])
 
   const handleParticipantChange = (userId: string, field: string, value: number) => {
     setParticipants((prevParticipants) => {
