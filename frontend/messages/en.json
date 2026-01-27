@@ -436,8 +436,8 @@
       "notes": "Notes"
     },
     "placeholders": {
-      "selectAccount": "Select account...",
-      "selectDestination": "Select destination account...",
+      "selectAccount": "Select an account",
+      "selectDestination": "Select destination account",
       "amount": "0.00",
       "description": "Add details about this transaction...",
       "payee": "e.g., McDonald's, Uber, Enel",

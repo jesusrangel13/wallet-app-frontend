@@ -2,11 +2,6 @@
 
 import { usePathname } from 'next/navigation'
 import { useSidebarStore } from '@/store/sidebarStore'
-import { Wallet } from 'lucide-react'
-import { NotificationBell } from '@/components/NotificationBell'
-import { ThemeToggle } from '@/components/ThemeToggle'
-import { UserMenu } from '@/components/UserMenu'
-import { AddWidgetButton } from '@/components/AddWidgetButton'
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 
@@ -14,6 +9,8 @@ interface DashboardLayoutContentProps {
   children: React.ReactNode
   isCollapsed?: boolean
 }
+
+import { HeaderGlass } from './header/HeaderGlass'
 
 export function DashboardLayoutContent({ children, isCollapsed }: DashboardLayoutContentProps) {
   const t = useTranslations('common')
@@ -27,35 +24,19 @@ export function DashboardLayoutContent({ children, isCollapsed }: DashboardLayou
   }, [])
 
   // Check if we're on the main dashboard page
-  // Support both root /dashboard and localized /en/dashboard, /es/dashboard etc.
   const isMainDashboard = pathname === '/dashboard' || /^\/[a-z]{2}\/dashboard$/.test(pathname || '')
 
+  // Fixed Floating Layout margins
+  // Sidebar has ml-4 (1rem) + width
+  // Collapsed: w-20 (5rem) -> Total 6rem (ml-24)
+  // Expanded: w-72 (18rem) -> Total 19rem (ml-[19rem])
+  // Adding a bit more spacing for content: ml-28 (7rem) and ml-[20rem]
+  const marginClass = collapsed ? 'md:ml-28' : 'md:ml-[20rem]'
+
   return (
-    <div className={`flex flex-col flex-1 w-full transition-all duration-300 ${collapsed ? 'md:ml-16' : 'md:ml-64'}`}>{/* Content takes remaining width */}
-      {/* Top Navigation */}
-      <nav className="bg-card shadow-sm border-b border-border sticky top-0 z-30">
-        <div className="px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center gap-2 md:hidden">
-              <Wallet className="h-8 w-8 text-primary" />
-              <span className="text-lg font-bold text-foreground">{t('app.name')}</span>
-            </div>
-            <div className="flex-1" />
-            <div className="flex items-center gap-2 md:gap-3">
-              {/* Add Widget button - only show on main dashboard */}
-              {isMainDashboard && (
-                <div className="hidden sm:block">
-                  <AddWidgetButton />
-                </div>
-              )}
-              <NotificationBell />
-              <ThemeToggle size="md" />
-              <div className="border-l border-border h-6 hidden md:block" />
-              <UserMenu />
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className={`flex flex-col flex-1 w-full transition-all duration-300 ${marginClass}`}>{/* Content takes remaining width */}
+      {/* Dynamic Header */}
+      {mounted && <HeaderGlass />}
 
       {/* Main Content */}
       <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8 pb-20 md:pb-8">
