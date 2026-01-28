@@ -39,7 +39,7 @@ export function LoginSplit({ form, onSubmit, isLoading, t, locale }: LoginProps)
                                 <Input
                                     label={t('email')}
                                     placeholder="ejemplo@empresa.com"
-                                    error={errors.email?.message}
+                                    error={errors.email?.message as string}
                                     {...register('email')}
                                     className="h-12 bg-secondary/30 border-border focus:ring-2 focus:ring-primary transition-all rounded-lg"
                                 />
@@ -47,7 +47,7 @@ export function LoginSplit({ form, onSubmit, isLoading, t, locale }: LoginProps)
                                     type="password"
                                     label={t('password')}
                                     placeholder="••••••••"
-                                    error={errors.password?.message}
+                                    error={errors.password?.message as string}
                                     {...register('password')}
                                     className="h-12 bg-secondary/30 border-border focus:ring-2 focus:ring-primary transition-all rounded-lg"
                                 />
