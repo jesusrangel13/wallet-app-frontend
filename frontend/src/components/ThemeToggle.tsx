@@ -25,7 +25,14 @@ const iconSizes = {
 export function ThemeToggle({ showLabel = false, size = 'md' }: ThemeToggleProps) {
   const { theme, resolvedTheme, setTheme, toggleTheme } = useThemeStore()
   const [showMenu, setShowMenu] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+
+  // Wait for hydration to avoid mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const isDark = resolvedTheme === 'dark'
 
   // Close menu when clicking outside
@@ -43,6 +50,13 @@ export function ThemeToggle({ showLabel = false, size = 'md' }: ThemeToggleProps
   const handleThemeSelect = (newTheme: Theme) => {
     setTheme(newTheme)
     setShowMenu(false)
+  }
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <div className={`relative ${sizeClasses[size]} rounded-lg bg-secondary/50 opacity-0`} />
+    )
   }
 
   const themeOptions: { value: Theme; label: string; icon: typeof Sun }[] = [
