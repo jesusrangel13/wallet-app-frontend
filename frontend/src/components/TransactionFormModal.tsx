@@ -15,6 +15,7 @@ import CategorySelector from '@/components/CategorySelector'
 import TagSelector from '@/components/TagSelector'
 import SharedExpenseForm, { SharedExpenseData } from '@/components/SharedExpenseForm'
 import PayeeAutocomplete from '@/components/PayeeAutocomplete'
+import { SuccessAnimation, ShakeAnimation } from '@/components/ui/animations'
 
 const transactionSchema = z.object({
   accountId: z.string().optional(),
@@ -72,6 +73,7 @@ export default function TransactionFormModal({
   const [sharedExpenseData, setSharedExpenseData] = useState<SharedExpenseData | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [formattedAmount, setFormattedAmount] = useState('')
+  const [showSuccess, setShowSuccess] = useState(false)
 
   const {
     register,
@@ -202,12 +204,20 @@ export default function TransactionFormModal({
     setIsSaving(true)
     try {
       await onSubmit(data, sharedExpenseData)
-      handleClose()
+      setShowSuccess(true)
+      // Close handled by onComplete in SuccessAnimation
     } catch (error) {
       // Error handling is done in parent component
     } finally {
-      setIsSaving(false)
+      if (!showSuccess) {
+        setIsSaving(false)
+      }
     }
+  }
+
+  const handleSuccessComplete = () => {
+    setShowSuccess(false)
+    handleClose()
   }
 
   const handleClose = () => {
@@ -225,6 +235,11 @@ export default function TransactionFormModal({
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title={getModalTitle()}>
+      <SuccessAnimation
+        show={showSuccess}
+        message={editingTransaction ? t('successUpdate') : t('successCreate') || 'Transaction Saved!'}
+        onComplete={handleSuccessComplete}
+      />
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
         {/* Transaction Type - Tabs */}
         <fieldset>
@@ -325,33 +340,35 @@ export default function TransactionFormModal({
 
         {/* Amount */}
         <div>
-          <label className="block text-sm font-medium text-foreground mb-1">
-            {t('fields.amount')} <span className="text-destructive">*</span>
-          </label>
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">
-              {selectedAccount
-                ? selectedAccount.currency === 'CLP'
-                  ? '$'
-                  : selectedAccount.currency === 'USD'
-                    ? 'US$'
-                    : '€'
-                : '$'}
-            </span>
-            <input
-              type="text"
-              inputMode="decimal"
-              placeholder={t('placeholders.amount')}
-              className={`w-full pl-12 pr-3 py-2 border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-input ${errors.amount ? 'border-destructive' : 'border-input'
-                }`}
-              value={formattedAmount}
-              onChange={handleAmountChange}
-              onFocus={handleAmountFocus}
-              onBlur={handleAmountBlur}
-              required
-            />
-          </div>
-          {errors.amount && <p className="text-destructive text-sm mt-1" role="alert">{errors.amount.message}</p>}
+          <ShakeAnimation shake={!!errors.amount}>
+            <label className="block text-sm font-medium text-foreground mb-1">
+              {t('fields.amount')} <span className="text-destructive">*</span>
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">
+                {selectedAccount
+                  ? selectedAccount.currency === 'CLP'
+                    ? '$'
+                    : selectedAccount.currency === 'USD'
+                      ? 'US$'
+                      : '€'
+                  : '$'}
+              </span>
+              <input
+                type="text"
+                inputMode="decimal"
+                placeholder={t('placeholders.amount')}
+                className={`w-full pl-12 pr-3 py-2 border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-ring focus:border-input ${errors.amount ? 'border-destructive' : 'border-input'
+                  }`}
+                value={formattedAmount}
+                onChange={handleAmountChange}
+                onFocus={handleAmountFocus}
+                onBlur={handleAmountBlur}
+                required
+              />
+            </div>
+            {errors.amount && <p className="text-destructive text-sm mt-1" role="alert">{errors.amount.message}</p>}
+          </ShakeAnimation>
         </div>
 
         {/* AI Suggested Category (only in import mode) */}
