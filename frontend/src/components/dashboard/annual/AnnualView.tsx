@@ -128,7 +128,7 @@ export function AnnualView() {
                         totalExpense={data.totals.expense}
                     />
                 </div>
-                <div>
+                <div className="lg:col-span-1">
                     <AnnualTagsBreakdown
                         tags={data.topTags}
                         currency={'CLP' as Currency}

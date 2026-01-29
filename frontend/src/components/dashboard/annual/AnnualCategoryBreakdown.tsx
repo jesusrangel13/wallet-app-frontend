@@ -1,15 +1,17 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { formatCurrency, type Currency } from '@/types/currency';
+import { ChevronDown, ChevronRight, Layers } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface CategoryItem {
     name: string;
     icon?: string | null;
     color?: string | null;
     amount: number;
-    percentage?: number;
 }
 
 interface SubcategoryItem {
@@ -26,101 +28,138 @@ interface AnnualCategoryBreakdownProps {
 }
 
 export function AnnualCategoryBreakdown({ categories, subcategories, currency, totalExpense }: AnnualCategoryBreakdownProps) {
-    const [displayLimit, setDisplayLimit] = useState(10);
-    const observerTarget = useRef<HTMLDivElement>(null);
+    const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
-    const calculatePercent = (amount: number) => {
-        if (totalExpense <= 0) return 0;
-        return (amount / totalExpense) * 100;
+    const calculatePercent = (amount: number, total: number = totalExpense) => {
+        if (total <= 0) return 0;
+        return (amount / total) * 100;
     };
 
-    const displayedSubcategories = subcategories.slice(0, displayLimit);
+    const toggleCategory = (name: string) => {
+        setExpandedCategory(prev => prev === name ? null : name);
+    };
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting && displayLimit < subcategories.length) {
-                    setDisplayLimit((prev) => Math.min(prev + 10, subcategories.length));
-                }
-            },
-            { threshold: 0.1 }
-        );
-
-        if (observerTarget.current) {
-            observer.observe(observerTarget.current);
+    // Group subcategories by parent
+    const subcategoriesByParent = subcategories.reduce((acc, sub) => {
+        if (!acc[sub.parentName]) {
+            acc[sub.parentName] = [];
         }
-
-        return () => observer.disconnect();
-    }, [displayLimit, subcategories.length]);
+        acc[sub.parentName].push(sub);
+        return acc;
+    }, {} as Record<string, SubcategoryItem[]>);
 
     return (
-        <div className="grid gap-4 grid-cols-1">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Gastos por Categoría</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-4">
-                        {categories.map((cat, i) => {
-                            const percent = calculatePercent(cat.amount);
-                            return (
-                                <div key={i} className="space-y-1">
-                                    <div className="flex items-center justify-between text-sm">
-                                        <div className="flex items-center gap-2">
-                                            {cat.icon && <span>{cat.icon}</span>}
-                                            <span className="font-medium">{cat.name}</span>
+        <Card className="h-full">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Layers className="w-5 h-5" />
+                    Desglose de Gastos
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-2">
+                    {categories.map((cat, i) => {
+                        const isExpanded = expandedCategory === cat.name;
+                        const catPercent = calculatePercent(cat.amount);
+                        const catSubcategories = subcategoriesByParent[cat.name] || [];
+                        const hasSubcategories = catSubcategories.length > 0;
+
+                        return (
+                            <div key={i} className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden transition-all">
+                                {/* Category Header (Clickable) */}
+                                <div
+                                    onClick={() => hasSubcategories && toggleCategory(cat.name)}
+                                    className={cn(
+                                        "flex flex-col p-4 cursor-pointer hover:bg-muted/50 transition-colors relative",
+                                        isExpanded && "bg-muted/30"
+                                    )}
+                                >
+                                    {/* Progress Background */}
+                                    <div
+                                        className="absolute bottom-0 left-0 h-1 bg-primary/20 w-full"
+                                    />
+                                    <div
+                                        className="absolute bottom-0 left-0 h-1 bg-primary transition-all duration-500"
+                                        style={{
+                                            width: `${catPercent}%`,
+                                            backgroundColor: cat.color || undefined
+                                        }}
+                                    />
+
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-3">
+                                            <div className={cn(
+                                                "p-2 rounded-full bg-secondary transition-transform duration-200",
+                                                isExpanded && "rotate-90"
+                                            )}>
+                                                {hasSubcategories ? (
+                                                    isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
+                                                ) : <div className="w-4 h-4" />}
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                {cat.icon && <span className="text-xl">{cat.icon}</span>}
+                                                <span className="font-semibold text-base">{cat.name}</span>
+                                            </div>
                                         </div>
                                         <div className="text-right">
-                                            <span className="font-bold">{formatCurrency(cat.amount, currency)}</span>
-                                            <span className="text-xs text-muted-foreground ml-2">({percent.toFixed(1)}%)</span>
+                                            <div className="font-bold text-base">{formatCurrency(cat.amount, currency)}</div>
+                                            <div className="text-xs text-muted-foreground">{catPercent.toFixed(1)}% del total</div>
                                         </div>
                                     </div>
-                                    <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-primary"
-                                            style={{
-                                                width: `${percent}%`,
-                                                backgroundColor: cat.color || undefined
-                                            }}
-                                        />
-                                    </div>
                                 </div>
-                            );
-                        })}
-                    </div>
-                </CardContent>
-            </Card>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Top Subcategorías</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="max-h-[400px] overflow-y-auto pr-2 space-y-4">
-                        {displayedSubcategories.map((sub, i) => {
-                            const percent = calculatePercent(sub.amount);
-                            return (
-                                <div key={i} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                    <div>
-                                        <p className="text-sm font-medium leading-none">{sub.name}</p>
-                                        <p className="text-xs text-muted-foreground mt-1">{sub.parentName}</p>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="font-bold text-sm">{formatCurrency(sub.amount, currency)}</div>
-                                        <div className="text-xs text-muted-foreground">{percent.toFixed(1)}%</div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                        {/* Sentinel element for infinite scroll */}
-                        {displayLimit < subcategories.length && (
-                            <div ref={observerTarget} className="h-4 w-full flex justify-center items-center py-4">
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                                {/* Accordion Body */}
+                                <AnimatePresence initial={false}>
+                                    {isExpanded && (
+                                        <motion.div
+                                            initial={{ height: 0, opacity: 0 }}
+                                            animate={{ height: "auto", opacity: 1 }}
+                                            exit={{ height: 0, opacity: 0 }}
+                                            transition={{ duration: 0.2 }}
+                                        >
+                                            <div className="bg-muted/10 p-4 pt-0 border-t border-dashed">
+                                                <div className="space-y-3 mt-4 pl-12 pr-4">
+                                                    {catSubcategories.length > 0 ? (
+                                                        catSubcategories
+                                                            .sort((a, b) => b.amount - a.amount)
+                                                            .map((sub, j) => {
+                                                                // Calculate percent distinct from category total
+                                                                const subPercentOfCat = (sub.amount / cat.amount) * 100;
+                                                                return (
+                                                                    <div key={j} className="space-y-1">
+                                                                        <div className="flex justify-between text-sm">
+                                                                            <span className="font-medium text-muted-foreground">{sub.name}</span>
+                                                                            <div className="flex gap-3">
+                                                                                <span className="font-medium">{formatCurrency(sub.amount, currency)}</span>
+                                                                                <span className="text-muted-foreground w-12 text-right">{subPercentOfCat.toFixed(1)}%</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        {/* Subcategory Progress Bar */}
+                                                                        <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                                                                            <div
+                                                                                className="h-full bg-primary/60"
+                                                                                style={{
+                                                                                    width: `${subPercentOfCat}%`,
+                                                                                    backgroundColor: cat.color ? `${cat.color}99` : undefined // Add transparency
+                                                                                }}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                    ) : (
+                                                        <p className="text-sm text-muted-foreground italic">Sin subcategorías detalladas.</p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
-        </div>
+                        );
+                    })}
+                </div>
+            </CardContent>
+        </Card>
     );
 }
