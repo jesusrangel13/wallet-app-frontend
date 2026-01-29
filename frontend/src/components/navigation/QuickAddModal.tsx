@@ -85,7 +85,7 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
         <>
             <SuccessAnimation
                 show={showSuccess}
-                message={t('transactionCreated') || 'Transaction Created!'}
+                message={t('quickAdd.transactionCreated') || 'Transaction Created!'}
                 onComplete={() => setShowSuccess(false)}
             />
             <AnimatePresence>

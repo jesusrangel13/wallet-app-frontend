@@ -104,45 +104,7 @@ export default function SharedExpenseForm({
     }
   }, [])
 
-  const calculateSplit = useCallback(() => {
-    const currentParticipants = participantsRef.current
-    if (!totalAmount || currentParticipants.length === 0) return
 
-    let updatedParticipants = [...currentParticipants]
-
-    switch (splitType) {
-      case 'EQUAL':
-        const equalAmount = totalAmount / currentParticipants.length
-        updatedParticipants = currentParticipants.map((p) => ({
-          ...p,
-          amountOwed: equalAmount,
-          percentage: undefined,
-          shares: undefined,
-        }))
-        break
-
-      case 'PERCENTAGE':
-        updatedParticipants = currentParticipants.map((p) => ({
-          ...p,
-          amountOwed: (totalAmount * (p.percentage || 0)) / 100,
-        }))
-        break
-
-      case 'EXACT':
-        // Keep manual amounts
-        break
-
-      case 'SHARES':
-        const totalShares = currentParticipants.reduce((sum, p) => sum + (p.shares || 1), 0)
-        updatedParticipants = currentParticipants.map((p) => ({
-          ...p,
-          amountOwed: (totalAmount * (p.shares || 1)) / totalShares,
-        }))
-        break
-    }
-
-    setParticipants(updatedParticipants)
-  }, [totalAmount, splitType])
 
   useEffect(() => {
     if (enabled) {
@@ -150,12 +112,12 @@ export default function SharedExpenseForm({
     }
   }, [enabled, loadGroups])
 
-  // Reset initialization when initialData changes (to support editing different expenses)
+  // Auto-select single group if available
   useEffect(() => {
-    if (initialData) {
-      setIsInitialized(false)
+    if (enabled && !isLoadingGroups && groups.length === 1 && !selectedGroupId && !initialData) {
+      setSelectedGroupId(groups[0].id)
     }
-  }, [initialData])
+  }, [enabled, isLoadingGroups, groups, selectedGroupId, initialData])
 
   // Load initial data when editing a shared expense
   useEffect(() => {
@@ -171,15 +133,26 @@ export default function SharedExpenseForm({
     }
   }, [enabled, initialData, groups, isInitialized])
 
+  // Create a stable key for participants data content to avoid loops
+  const participantsContentKey = useMemo(() => {
+    return JSON.stringify(participants.map(p => ({
+      userId: p.userId,
+      amountOwed: p.amountOwed,
+      percentage: p.percentage,
+      shares: p.shares
+    })))
+  }, [participants])
+
+  // Initial group selection effect
   useEffect(() => {
     // Only handle new group selection (not from initial data)
-    // If editing (initialData exists), skip this - the first useEffect handles it
     if (selectedGroupId && !initialData && !isInitialized) {
       const group = groups.find((g) => g.id === selectedGroupId)
       setSelectedGroup(group || null)
+
       if (group) {
         // Load default split type from group settings
-        const defaultSplitType = group.defaultSplitType || 'EQUAL'
+        const defaultSplitType = (group.defaultSplitType || 'EQUAL') as SplitType
         setSplitType(defaultSplitType)
 
         // Initialize participants from group members with default values
@@ -199,18 +172,26 @@ export default function SharedExpenseForm({
         })
         setParticipants(initialParticipants)
 
-        // Preselect logged-in user if they are in the group, otherwise select first member
-        if (group.members.length > 0 && !paidByUserId) {
-          const currentUserInGroup = group.members.find((member) => member.userId === user?.id)
-          if (currentUserInGroup) {
-            setPaidByUserId(currentUserInGroup.userId)
-          } else {
-            setPaidByUserId(group.members[0].userId)
+        // Select payer logic - SEPARATED from dependency array
+        if (group.members.length > 0) {
+          // If current payer is in new group, keep them. Otherwise default.
+          const currentPayerInGroup = group.members.find(m => m.userId === paidByUserId)
+          if (!currentPayerInGroup) {
+            const currentUserInGroup = group.members.find((member) => member.userId === user?.id)
+            if (currentUserInGroup) {
+              setPaidByUserId(currentUserInGroup.userId)
+            } else {
+              setPaidByUserId(group.members[0].userId)
+            }
           }
         }
       }
     }
-  }, [selectedGroupId, groups, initialData, isInitialized, paidByUserId, user?.id])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedGroupId, groups, initialData, isInitialized]) // Removed paidByUserId and user?.id to prevent loops
+
+  // Memoized key to track input changes for calculations is already defined as participantsKey below
+  // We keep it but ensure calculated effects don't loop
 
   // Create a memoized key that tracks only the input values (percentage/shares)
   // This prevents infinite loops while still recalculating when needed
@@ -225,43 +206,108 @@ export default function SharedExpenseForm({
     }
   }, [participants, splitType])
 
+  const calculateSplit = useCallback(() => {
+    const currentParticipants = participantsRef.current
+    if (!totalAmount || currentParticipants.length === 0) return
+
+    let updatedParticipants = [...currentParticipants]
+    let hasChanges = false
+
+    // ... calculation logic ...
+    // We need to implement the calculation logic here again because we are replacing the function
+    // But to minimize code, we'll let the existing calculateSplit handle the logic
+    // and just wrap the state update in the calling effect.
+    // However, replace_file_content replaces the block. So I must provide full implementation.
+
+    switch (splitType) {
+      case 'EQUAL':
+        const equalAmount = totalAmount / currentParticipants.length
+        updatedParticipants = currentParticipants.map((p) => {
+          if (Math.abs(p.amountOwed - equalAmount) > 0.001) hasChanges = true
+          return {
+            ...p,
+            amountOwed: equalAmount,
+            percentage: undefined,
+            shares: undefined,
+          }
+        })
+        break
+
+      case 'PERCENTAGE':
+        updatedParticipants = currentParticipants.map((p) => {
+          const newAmount = (totalAmount * (p.percentage || 0)) / 100
+          if (Math.abs(p.amountOwed - newAmount) > 0.001) hasChanges = true
+          return {
+            ...p,
+            amountOwed: newAmount,
+          }
+        })
+        break
+
+      case 'EXACT':
+        // Keep manual amounts - typically no auto-calc unless ensuring sum?
+        // Let's rely on manual input for EXACT.
+        break
+
+      case 'SHARES':
+        const totalShares = currentParticipants.reduce((sum, p) => sum + (p.shares || 1), 0)
+        updatedParticipants = currentParticipants.map((p) => {
+          const newAmount = (totalAmount * (p.shares || 1)) / totalShares
+          if (Math.abs(p.amountOwed - newAmount) > 0.001) hasChanges = true
+          return {
+            ...p,
+            amountOwed: newAmount,
+          }
+        })
+        break
+    }
+
+    if (hasChanges) {
+      setParticipants(updatedParticipants)
+    }
+  }, [totalAmount, splitType])
+
+  // Recalculate amounts effect
   useEffect(() => {
-    // Recalculate amounts when split type or total changes
     if (participants.length > 0 && totalAmount > 0) {
-      // Always recalculate when we have a valid total amount
       calculateSplit()
 
-      // Show feedback when calculation happens automatically (not editing)
       if (!initialData && selectedGroupId) {
-        setShowCalculationFeedback(true)
-        const timer = setTimeout(() => setShowCalculationFeedback(false), 2000)
+        // Debounce feedback to not show on every micro-calc
+        const timer = setTimeout(() => {
+          setShowCalculationFeedback(true)
+          setTimeout(() => setShowCalculationFeedback(false), 2000)
+        }, 500)
         return () => clearTimeout(timer)
       }
-    } else if (participants.length > 0 && splitType && totalAmount === 0) {
-      // Check if defaults are loaded (percentage/shares) but total amount is 0
-      // When totalAmount becomes available later, this will recalculate
-      const hasDefaults = participants.some(p => p.percentage !== undefined || p.shares !== undefined)
-      if (hasDefaults) {
-        // Defaults are loaded, just waiting for totalAmount to be set
-        // The first condition above will trigger when totalAmount > 0
-      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [splitType, totalAmount, participantsKey, calculateSplit, initialData, selectedGroupId])
+
+  // Notify parent check
+  const prevNotifyData = useRef<string>('')
 
   // Notify parent when data changes
   useEffect(() => {
     if (enabled && selectedGroupId && paidByUserId && participants.length > 0) {
-      onChange({
+      const newData = {
         groupId: selectedGroupId,
         paidByUserId,
         splitType,
         participants,
-      })
+      }
+      const newDataString = JSON.stringify(newData)
+
+      if (newDataString !== prevNotifyData.current) {
+        prevNotifyData.current = newDataString
+        onChange(newData)
+      }
     } else {
-      onChange(null)
+      if (prevNotifyData.current !== 'null') {
+        prevNotifyData.current = 'null'
+        onChange(null)
+      }
     }
-  }, [enabled, selectedGroupId, paidByUserId, splitType, participants, onChange])
+  }, [enabled, selectedGroupId, paidByUserId, splitType, participantsContentKey, onChange])
 
   const handleParticipantChange = (userId: string, field: string, value: number) => {
     setParticipants((prevParticipants) => {
