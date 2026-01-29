@@ -10,6 +10,8 @@ import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { formatCurrency, type Currency } from '@/types/currency'
+import { useConfetti } from '@/components/ui/animations'
+import { toast } from 'sonner'
 
 const paymentSchema = z.object({
   amount: z.coerce.number().positive('Amount must be positive'),
@@ -37,6 +39,7 @@ export default function RecordLoanPaymentModal({
 }: RecordLoanPaymentModalProps) {
   const t = useTranslations('recordPayment')
   const tCommon = useTranslations('common.actions')
+  const { fire } = useConfetti()
   const [isSaving, setIsSaving] = useState(false)
   const [formattedAmount, setFormattedAmount] = useState('')
 
@@ -109,7 +112,7 @@ export default function RecordLoanPaymentModal({
     }
   }
 
-  const handleFormSubmit = (data: RecordPaymentFormData) => {
+  const handleFormSubmit = async (data: RecordPaymentFormData) => {
     // Validate amount doesn't exceed pending
     if (data.amount > pendingAmount) {
       return
@@ -117,6 +120,12 @@ export default function RecordLoanPaymentModal({
 
     setIsSaving(true)
     try {
+      // Check for full payment celebration before closing
+      if (Math.abs(data.amount - pendingAmount) < 0.01) {
+        fire()
+        toast.success(t('fullPaymentCelebration') || '🎉 Loan paid in full!')
+      }
+
       onSubmit(data)
       handleClose()
     } finally {

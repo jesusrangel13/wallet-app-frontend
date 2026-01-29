@@ -66,6 +66,7 @@
     },
     "quickAdd": {
       "title": "Agregar",
+      "transactionCreated": "Transacción creada",
       "expense": "Gasto",
       "income": "Ingreso",
       "transfer": "Transferencia",
@@ -492,6 +493,7 @@
     "edit": "Editar Préstamo",
     "delete": "Eliminar Préstamo",
     "recordPayment": "Registrar Pago",
+    "recordPaymentBtn": "Registrar Pago",
     "markAsPaid": "Marcar como Pagado",
     "viewDetails": "Ver Detalles",
     "fields": {
@@ -772,6 +774,7 @@
     "paidAmount": "Ya pagado",
     "pendingAmount": "Pendiente",
     "accountTo": "Cuenta donde recibes el pago",
+    "selectAccount": "Selecciona una cuenta",
     "paymentAmount": "Monto del pago",
     "payAll": "Pagar todo ({amount})",
     "paymentExceedsError": "El monto no puede exceder el pendiente de {amount}",
@@ -780,6 +783,7 @@
     "infoPoint1": "Se creará una transacción de INGRESO en tu cuenta",
     "infoPoint2": "El dinero entrará a tu cuenta (afectará tu balance)",
     "infoPoint3": "El estado del préstamo se actualizará automáticamente",
+    "fullPaymentCelebration": "¡Préstamo pagado por completo! 🎉",
     "recording": "Registrando...",
     "recordButton": "Registrar Pago"
   },

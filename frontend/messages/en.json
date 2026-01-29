@@ -66,6 +66,7 @@
     },
     "quickAdd": {
       "title": "Add",
+      "transactionCreated": "Transaction Created",
       "expense": "Expense",
       "income": "Income",
       "transfer": "Transfer",
@@ -492,6 +493,7 @@
     "edit": "Edit Loan",
     "delete": "Delete Loan",
     "recordPayment": "Record Payment",
+    "recordPaymentBtn": "Record Payment",
     "markAsPaid": "Mark as Paid",
     "viewDetails": "View Details",
     "fields": {
@@ -772,6 +774,7 @@
     "paidAmount": "Paid Amount",
     "pendingAmount": "Pending",
     "accountTo": "Account where you receive the payment",
+    "selectAccount": "Select an account",
     "paymentAmount": "Payment Amount",
     "payAll": "Pay all ({amount})",
     "paymentExceedsError": "Amount cannot exceed pending {amount}",
@@ -780,6 +783,7 @@
     "infoPoint1": "An INCOME transaction will be created in your account",
     "infoPoint2": "The money will enter your account (will affect your balance)",
     "infoPoint3": "The loan status will be automatically updated",
+    "fullPaymentCelebration": "Loan paid in full! 🎉",
     "recording": "Recording...",
     "recordButton": "Record Payment"
   },

@@ -2,18 +2,18 @@
 
 import { useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
-import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { authAPI } from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
 import { useGlobalErrorHandler } from '@/hooks/useGlobalErrorHandler'
+import { ThemeToggle } from '@/components/ThemeToggle'
+
+// Design Variant
+import { LoginSplit } from './components/LoginSplit'
 
 export default function LoginPage() {
   const t = useTranslations('auth.login')
@@ -32,11 +32,7 @@ export default function LoginPage() {
 
   type LoginForm = z.infer<typeof loginSchema>
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginForm>({
+  const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
   })
 
@@ -57,43 +53,19 @@ export default function LoginPage() {
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>{t('title')}</CardTitle>
-        <p className="text-sm text-muted-foreground mt-1">
-          {t('subtitle')}
-        </p>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <Input
-            label={t('email')}
-            type="email"
-            placeholder={t('emailPlaceholder')}
-            error={errors.email?.message}
-            {...register('email')}
-          />
+    <>
+      {/* Theme Toggle (Top Right) */}
+      <div className="fixed top-6 right-6 z-50">
+        <ThemeToggle size="lg" />
+      </div>
 
-          <Input
-            label={t('password')}
-            type="password"
-            placeholder={t('passwordPlaceholder')}
-            error={errors.password?.message}
-            {...register('password')}
-          />
-
-          <Button type="submit" className="w-full" isLoading={isLoading}>
-            {t('signInButton')}
-          </Button>
-
-          <p className="text-center text-sm text-muted-foreground">
-            {t('noAccount')}{' '}
-            <Link href={`/${locale}/register`} className="text-blue-600 dark:text-blue-500 hover:underline">
-              {t('signUpLink')}
-            </Link>
-          </p>
-        </form>
-      </CardContent>
-    </Card>
+      <LoginSplit
+        form={form}
+        onSubmit={onSubmit}
+        isLoading={isLoading}
+        t={t}
+        locale={locale}
+      />
+    </>
   )
 }

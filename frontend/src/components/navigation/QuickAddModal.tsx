@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
+import { SuccessAnimation } from '@/components/ui/animations'
 import { X, ArrowDownLeft, ArrowUpRight, ArrowLeftRight, Users, Mic } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
@@ -32,10 +33,12 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
     const t = useTranslations('nav')
     const { data: accountsData } = useAccounts()
     const [showTransactionModal, setShowTransactionModal] = useState(false)
+    const [showSuccess, setShowSuccess] = useState(false)
     const [selectedType, setSelectedType] = useState<'EXPENSE' | 'INCOME' | 'TRANSFER'>('EXPENSE')
 
     // Extract accounts array from the query result
-    const accounts = (accountsData as any)?.data?.data || []
+    // The hook returns { data: Account[] } when no params are provided
+    const accounts = (accountsData as any)?.data || []
 
     const handleQuickAction = (type: QuickAction['type']) => {
         // Close QuickAddModal first
@@ -62,8 +65,8 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
             // Type assertion needed because TransactionFormData has optional fields
             // but the API expects required fields - the form validates this
             await transactionAPI.create(data as any)
-            toast.success('Transaction created successfully')
             setShowTransactionModal(false)
+            setShowSuccess(true)
         } catch (error: any) {
             toast.error(error.response?.data?.message || 'Failed to create transaction')
             throw error
@@ -81,6 +84,11 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
 
     return (
         <>
+            <SuccessAnimation
+                show={showSuccess}
+                message={t('quickAdd.transactionCreated') || 'Transaction Created!'}
+                onComplete={() => setShowSuccess(false)}
+            />
             <AnimatePresence>
                 {isOpen && (
                     <>
