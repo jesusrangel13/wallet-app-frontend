@@ -9,6 +9,7 @@ import { AnnualSummaryCards } from './AnnualSummaryCards';
 import { AnnualTrendChart } from './AnnualTrendChart';
 import { AnnualCategoryBreakdown } from './AnnualCategoryBreakdown';
 import { MultiYearComparisonModal } from './MultiYearComparisonModal';
+import { AnnualViewSkeleton } from '@/components/ui/PageSkeletons';
 import { dashboardAPI } from '@/services/dashboard.service';
 import type { Currency } from '@/types/currency';
 
@@ -73,7 +74,7 @@ export function AnnualView() {
     const nextYear = () => setYear(y => y + 1);
 
     if (loading) {
-        return <div className="flex justify-center p-8">Cargando...</div>;
+        return <AnnualViewSkeleton />;
     }
 
     if (!data) return <div className="p-8">No data</div>;
