@@ -37,7 +37,8 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
     const [selectedType, setSelectedType] = useState<'EXPENSE' | 'INCOME' | 'TRANSFER'>('EXPENSE')
 
     // Extract accounts array from the query result
-    const accounts = (accountsData as any)?.data?.data || []
+    // The hook returns { data: Account[] } when no params are provided
+    const accounts = (accountsData as any)?.data || []
 
     const handleQuickAction = (type: QuickAction['type']) => {
         // Close QuickAddModal first
