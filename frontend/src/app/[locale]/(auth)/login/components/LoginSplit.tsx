@@ -5,6 +5,7 @@ import { Wallet, PieChart, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { ShakeAnimation } from '@/components/ui/animations'
 import { LoginProps } from './types'
 
 export function LoginSplit({ form, onSubmit, isLoading, t, locale }: LoginProps) {
@@ -36,21 +37,25 @@ export function LoginSplit({ form, onSubmit, isLoading, t, locale }: LoginProps)
 
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                             <div className="space-y-4">
-                                <Input
-                                    label={t('email')}
-                                    placeholder="ejemplo@empresa.com"
-                                    error={errors.email?.message as string}
-                                    {...register('email')}
-                                    className="h-12 bg-secondary/30 border-border focus:ring-2 focus:ring-primary transition-all rounded-lg"
-                                />
-                                <Input
-                                    type="password"
-                                    label={t('password')}
-                                    placeholder="••••••••"
-                                    error={errors.password?.message as string}
-                                    {...register('password')}
-                                    className="h-12 bg-secondary/30 border-border focus:ring-2 focus:ring-primary transition-all rounded-lg"
-                                />
+                                <ShakeAnimation shake={!!errors.email}>
+                                    <Input
+                                        label={t('email')}
+                                        placeholder="ejemplo@empresa.com"
+                                        error={errors.email?.message as string}
+                                        {...register('email')}
+                                        className="h-12 bg-secondary/30 border-border focus:ring-2 focus:ring-primary transition-all rounded-lg"
+                                    />
+                                </ShakeAnimation>
+                                <ShakeAnimation shake={!!errors.password}>
+                                    <Input
+                                        type="password"
+                                        label={t('password')}
+                                        placeholder="••••••••"
+                                        error={errors.password?.message as string}
+                                        {...register('password')}
+                                        className="h-12 bg-secondary/30 border-border focus:ring-2 focus:ring-primary transition-all rounded-lg"
+                                    />
+                                </ShakeAnimation>
                             </div>
 
                             <div className="flex items-center justify-between">

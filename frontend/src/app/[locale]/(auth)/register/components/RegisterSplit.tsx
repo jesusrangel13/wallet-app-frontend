@@ -5,6 +5,7 @@ import { Wallet, TrendingUp, PieChart, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { ShakeAnimation } from '@/components/ui/animations'
 import { RegisterProps } from './types'
 
 export function RegisterSplit({ form, onSubmit, isLoading, t, locale }: RegisterProps) {
@@ -36,36 +37,44 @@ export function RegisterSplit({ form, onSubmit, isLoading, t, locale }: Register
 
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                             <div className="space-y-4">
-                                <Input
-                                    label={t('fullName')}
-                                    placeholder={t('namePlaceholder')}
-                                    error={errors.name?.message as string}
-                                    {...register('name')}
-                                    className="h-12 bg-secondary/30 border-border focus:ring-2 focus:ring-primary transition-all rounded-lg"
-                                />
-                                <Input
-                                    label={t('email')}
-                                    placeholder={t('emailPlaceholder')}
-                                    error={errors.email?.message as string}
-                                    {...register('email')}
-                                    className="h-12 bg-secondary/30 border-border focus:ring-2 focus:ring-primary transition-all rounded-lg"
-                                />
-                                <Input
-                                    type="password"
-                                    label={t('password')}
-                                    placeholder="••••••••"
-                                    error={errors.password?.message as string}
-                                    {...register('password')}
-                                    className="h-12 bg-secondary/30 border-border focus:ring-2 focus:ring-primary transition-all rounded-lg"
-                                />
-                                <Input
-                                    type="password"
-                                    label={t('confirmPassword')}
-                                    placeholder="••••••••"
-                                    error={errors.confirmPassword?.message as string}
-                                    {...register('confirmPassword')}
-                                    className="h-12 bg-secondary/30 border-border focus:ring-2 focus:ring-primary transition-all rounded-lg"
-                                />
+                                <ShakeAnimation shake={!!errors.name}>
+                                    <Input
+                                        label={t('fullName')}
+                                        placeholder={t('namePlaceholder')}
+                                        error={errors.name?.message as string}
+                                        {...register('name')}
+                                        className="h-12 bg-secondary/30 border-border focus:ring-2 focus:ring-primary transition-all rounded-lg"
+                                    />
+                                </ShakeAnimation>
+                                <ShakeAnimation shake={!!errors.email}>
+                                    <Input
+                                        label={t('email')}
+                                        placeholder={t('emailPlaceholder')}
+                                        error={errors.email?.message as string}
+                                        {...register('email')}
+                                        className="h-12 bg-secondary/30 border-border focus:ring-2 focus:ring-primary transition-all rounded-lg"
+                                    />
+                                </ShakeAnimation>
+                                <ShakeAnimation shake={!!errors.password}>
+                                    <Input
+                                        type="password"
+                                        label={t('password')}
+                                        placeholder="••••••••"
+                                        error={errors.password?.message as string}
+                                        {...register('password')}
+                                        className="h-12 bg-secondary/30 border-border focus:ring-2 focus:ring-primary transition-all rounded-lg"
+                                    />
+                                </ShakeAnimation>
+                                <ShakeAnimation shake={!!errors.confirmPassword}>
+                                    <Input
+                                        type="password"
+                                        label={t('confirmPassword')}
+                                        placeholder="••••••••"
+                                        error={errors.confirmPassword?.message as string}
+                                        {...register('confirmPassword')}
+                                        className="h-12 bg-secondary/30 border-border focus:ring-2 focus:ring-primary transition-all rounded-lg"
+                                    />
+                                </ShakeAnimation>
                             </div>
 
                             <Button
