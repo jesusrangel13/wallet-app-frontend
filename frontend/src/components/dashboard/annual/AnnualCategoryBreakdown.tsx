@@ -54,8 +54,8 @@ export function AnnualCategoryBreakdown({ categories, subcategories, currency, t
     }, [displayLimit, subcategories.length]);
 
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-3">
+        <div className="grid gap-4 grid-cols-1">
+            <Card>
                 <CardHeader>
                     <CardTitle>Gastos por Categoría</CardTitle>
                 </CardHeader>
@@ -91,7 +91,7 @@ export function AnnualCategoryBreakdown({ categories, subcategories, currency, t
                 </CardContent>
             </Card>
 
-            <Card className="col-span-4">
+            <Card>
                 <CardHeader>
                     <CardTitle>Top Subcategorías</CardTitle>
                 </CardHeader>

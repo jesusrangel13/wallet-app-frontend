@@ -10,6 +10,7 @@ import { AnnualTrendChart } from './AnnualTrendChart';
 import { AnnualCategoryBreakdown } from './AnnualCategoryBreakdown';
 import { MultiYearComparisonModal } from './MultiYearComparisonModal';
 import { AnnualViewSkeleton } from '@/components/ui/PageSkeletons';
+import { AnnualTagsBreakdown } from './AnnualTagsBreakdown';
 import { dashboardAPI } from '@/services/dashboard.service';
 import type { Currency } from '@/types/currency';
 
@@ -30,7 +31,12 @@ interface AnnualData {
         expense: number;
         savings: number;
     }[];
-    topTags: any[];
+    topTags: {
+        name: string;
+        color: string | null;
+        amount: number;
+        count: number;
+    }[];
     topCategories: any[];
     topSubcategories: any[];
 }
@@ -113,12 +119,23 @@ export function AnnualView() {
 
             <AnnualTrendChart data={data.monthlyTrend} currency={'CLP' as Currency} />
 
-            <AnnualCategoryBreakdown
-                categories={data.topCategories}
-                subcategories={data.topSubcategories}
-                currency={'CLP' as Currency}
-                totalExpense={data.totals.expense}
-            />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                    <AnnualCategoryBreakdown
+                        categories={data.topCategories}
+                        subcategories={data.topSubcategories}
+                        currency={'CLP' as Currency}
+                        totalExpense={data.totals.expense}
+                    />
+                </div>
+                <div>
+                    <AnnualTagsBreakdown
+                        tags={data.topTags}
+                        currency={'CLP' as Currency}
+                        totalExpense={data.totals.expense}
+                    />
+                </div>
+            </div>
         </div>
     );
 }
