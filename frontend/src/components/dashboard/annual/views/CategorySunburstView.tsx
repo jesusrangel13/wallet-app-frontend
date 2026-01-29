@@ -92,7 +92,7 @@ export function CategorySunburstView({ categories, subcategoriesByParent, curren
                     {/* Inner Ring: Categories */}
                     <Pie
                         activeIndex={activeIndex}
-                        activeShape={(props) => renderActiveShape(props, currency)}
+                        activeShape={(props: any) => renderActiveShape(props, currency)}
                         data={categoryData}
                         dataKey="value"
                         cx="50%"

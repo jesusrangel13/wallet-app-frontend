@@ -35,26 +35,25 @@ export function MultiYearComparisonModal({ isOpen, onClose, currentYear, currenc
     const yearOptions = Array.from({ length: 5 }, (_, i) => currentYear - i);
 
     useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const { data: response } = await dashboardAPI.getMultiYearComparison(selectedYears);
+                if (response && response.success) {
+                    setData(response.data.sort((a: YearData, b: YearData) => a.year - b.year));
+                }
+            } catch (error) {
+                console.error(error);
+                toast.error('Error al cargar datos comparativos');
+            } finally {
+                setLoading(false);
+            }
+        };
+
         if (isOpen && selectedYears.length > 0) {
             fetchData();
         }
     }, [isOpen, selectedYears]);
-
-    const fetchData = async () => {
-        setLoading(true);
-        try {
-            const { data: response } = await dashboardAPI.getMultiYearComparison(selectedYears);
-            if (response && response.success) {
-                // Sort by year ascending for better visualization
-                setData(response.data.sort((a: YearData, b: YearData) => a.year - b.year));
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error('Error al cargar datos comparativos');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const toggleYear = (year: number) => {
         setSelectedYears(prev => {
