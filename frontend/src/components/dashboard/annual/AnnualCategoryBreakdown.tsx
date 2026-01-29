@@ -1,20 +1,15 @@
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { formatCurrency, type Currency } from '@/types/currency';
-
-// Note: verify Progress path. `components/ui/ui/progress` seems wrong. `list_dir components/ui` might clarify. 
-// I'll guess standard `components/ui/progress` or implement custom bar.
-// I'll use a simple div based progress for safety if I don't confirm.
-// Actually, I'll use simple HTML for progress bar to be safe.
 
 interface CategoryItem {
     name: string;
     icon?: string | null;
     color?: string | null;
     amount: number;
-    percentage?: number; // Calculated in backend? Backend logic sends totals. Percentage might need calculation.
-    // Backend `topCategories` in `getAnnualSummary` logic:
-    // "topCategoriesResult = Object.values(categoryAggregates)..."
-    // It returns {name, icon, color, amount}. No percentage.
+    percentage?: number;
 }
 
 interface SubcategoryItem {
@@ -31,11 +26,32 @@ interface AnnualCategoryBreakdownProps {
 }
 
 export function AnnualCategoryBreakdown({ categories, subcategories, currency, totalExpense }: AnnualCategoryBreakdownProps) {
+    const [displayLimit, setDisplayLimit] = useState(10);
+    const observerTarget = useRef<HTMLDivElement>(null);
 
     const calculatePercent = (amount: number) => {
         if (totalExpense <= 0) return 0;
         return (amount / totalExpense) * 100;
     };
+
+    const displayedSubcategories = subcategories.slice(0, displayLimit);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && displayLimit < subcategories.length) {
+                    setDisplayLimit((prev) => Math.min(prev + 10, subcategories.length));
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (observerTarget.current) {
+            observer.observe(observerTarget.current);
+        }
+
+        return () => observer.disconnect();
+    }, [displayLimit, subcategories.length]);
 
     return (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -80,11 +96,11 @@ export function AnnualCategoryBreakdown({ categories, subcategories, currency, t
                     <CardTitle>Top Subcategorías</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="space-y-4">
-                        {subcategories.map((sub, i) => {
+                    <div className="max-h-[400px] overflow-y-auto pr-2 space-y-4">
+                        {displayedSubcategories.map((sub, i) => {
                             const percent = calculatePercent(sub.amount);
                             return (
-                                <div key={i} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
+                                <div key={i} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0 animate-in fade-in slide-in-from-bottom-2 duration-300">
                                     <div>
                                         <p className="text-sm font-medium leading-none">{sub.name}</p>
                                         <p className="text-xs text-muted-foreground mt-1">{sub.parentName}</p>
@@ -96,6 +112,12 @@ export function AnnualCategoryBreakdown({ categories, subcategories, currency, t
                                 </div>
                             );
                         })}
+                        {/* Sentinel element for infinite scroll */}
+                        {displayLimit < subcategories.length && (
+                            <div ref={observerTarget} className="h-4 w-full flex justify-center items-center py-4">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                            </div>
+                        )}
                     </div>
                 </CardContent>
             </Card>
