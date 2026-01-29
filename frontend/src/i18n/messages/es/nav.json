@@ -13,6 +13,8 @@
   "loansDescription": "Gestionar préstamos y deudas",
   "groupsDescription": "Gestionar gastos compartidos",
   "importDescription": "Importar datos financieros",
+  "annual": "Vista Anual",
+  "annualDescription": "Resumen financiero anual",
   "settingsDescription": "Configuración de la aplicación",
   "toggleMenu": "Alternar menú",
   "toggleSidebar": "Contraer/Expandir barra lateral",
