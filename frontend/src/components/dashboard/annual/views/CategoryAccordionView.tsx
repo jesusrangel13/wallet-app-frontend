@@ -17,6 +17,7 @@ interface SubcategoryItem {
     name: string;
     parentName: string;
     amount: number;
+    groupAmount: number;
 }
 
 interface CategoryAccordionViewProps {
@@ -115,15 +116,37 @@ export function CategoryAccordionView({ categories, subcategoriesByParent, curre
                                                                         <span className="text-muted-foreground w-12 text-right">{subPercentOfCat.toFixed(1)}%</span>
                                                                     </div>
                                                                 </div>
-                                                                <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                                                                <div className="h-2 w-full bg-secondary/50 rounded-full overflow-hidden flex">
+                                                                    {/* Personal Portion */}
                                                                     <div
-                                                                        className="h-full bg-primary/60"
+                                                                        className="h-full bg-primary"
                                                                         style={{
-                                                                            width: `${subPercentOfCat}%`,
-                                                                            backgroundColor: cat.color ? `${cat.color}99` : undefined
+                                                                            width: `${(Math.max(0, sub.amount - sub.groupAmount) / cat.amount) * 100}%`,
+                                                                            backgroundColor: cat.color || undefined
                                                                         }}
+                                                                        title={`Personal: ${formatCurrency(Math.max(0, sub.amount - sub.groupAmount), currency)}`}
+                                                                    />
+                                                                    {/* Group Portion */}
+                                                                    <div
+                                                                        className="h-full bg-amber-400/80 dark:bg-amber-500/80"
+                                                                        style={{
+                                                                            width: `${(sub.groupAmount / cat.amount) * 100}%`
+                                                                        }}
+                                                                        title={`Grupo: ${formatCurrency(sub.groupAmount, currency)}`}
                                                                     />
                                                                 </div>
+                                                                {sub.groupAmount > 0 && (
+                                                                    <div className="flex justify-end gap-3 text-[10px] text-muted-foreground mt-0.5">
+                                                                        <span className="flex items-center gap-1">
+                                                                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: cat.color || 'var(--primary)' }} />
+                                                                            Yo: {formatCurrency(Math.max(0, sub.amount - sub.groupAmount), currency)}
+                                                                        </span>
+                                                                        <span className="flex items-center gap-1">
+                                                                            <div className="w-1.5 h-1.5 rounded-full bg-amber-400/80" />
+                                                                            Grupo: {formatCurrency(sub.groupAmount, currency)}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         )
                                                     })

@@ -11,6 +11,7 @@ interface SubcategoryItem {
     name: string;
     parentName: string;
     amount: number;
+    groupAmount: number;
 }
 
 interface CategoryBreakdownWidgetProps {
