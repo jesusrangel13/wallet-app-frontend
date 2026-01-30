@@ -11,21 +11,31 @@
     "thisMonth": "Este mes"
   },
   "monthlyExpenses": {
-    "name": "Gastos Mensuales",
-    "description": "Tus gastos de este mes",
-    "label": "Gastos Mensuales",
+    "name": "Gastos Totales",
+    "description": "Flujo total de salidas de dinero este mes",
+    "label": "Gastos Totales",
+    "tooltip": "Incluye todos los gastos de flujo de caja: personales, inversiones y pagos completos de gastos compartidos.",
+    "thisMonth": "Este mes"
+  },
+  "netMonthlyExpenses": {
+    "name": "Mis Gastos Mensuales",
+    "description": "Tus gastos personales + tu parte de compartidos",
+    "label": "Mis Gastos Mensuales",
+    "tooltip": "Suma de tus gastos personales reales más tu parte proporcional de gastos compartidos.",
     "thisMonth": "Este mes"
   },
   "personalExpenses": {
     "name": "Gastos Personales",
     "description": "Gastos personales excluyendo compartidos y transferencias",
     "label": "Gastos Personales",
+    "tooltip": "Gastos exclusivamente personales. Excluye gastos de grupos e inversiones.",
     "thisMonth": "Este mes"
   },
   "sharedExpenses": {
     "name": "Gastos Compartidos",
     "description": "Tu parte de gastos compartidos del grupo",
     "label": "Gastos Compartidos",
+    "tooltip": "Solo tu participación o deuda en los gastos grupales.",
     "thisMonth": "Este mes"
   },
   "savings": {

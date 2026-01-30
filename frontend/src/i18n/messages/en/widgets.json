@@ -11,21 +11,31 @@
     "thisMonth": "This month"
   },
   "monthlyExpenses": {
-    "name": "Monthly Expenses",
-    "description": "Your expenses for this month",
-    "label": "Monthly Expenses",
+    "name": "Total Expenses",
+    "description": "Total cash flow out this month",
+    "label": "Total Expenses",
+    "tooltip": "Includes all cash flow expenses: personal, investments, and full shared expense payments.",
+    "thisMonth": "This month"
+  },
+  "netMonthlyExpenses": {
+    "name": "My Monthly Expenses",
+    "description": "Your personal expenses + your share of shared ones",
+    "label": "My Monthly Expenses",
+    "tooltip": "Sum of your real personal expenses plus your proportional share of shared expenses.",
     "thisMonth": "This month"
   },
   "personalExpenses": {
     "name": "Personal Expenses",
     "description": "Personal expenses excluding shared and transfers",
     "label": "Personal Expenses",
+    "tooltip": "Exclusively personal expenses. Excludes group expenses and investments.",
     "thisMonth": "This month"
   },
   "sharedExpenses": {
     "name": "Shared Expenses",
     "description": "Your share of shared group expenses",
     "label": "Shared Expenses",
+    "tooltip": "Only your share or debt in group expenses.",
     "thisMonth": "This month"
   },
   "savings": {

@@ -59,7 +59,7 @@ export function AnnualTagsBreakdown({ tags, currency, totalExpense }: AnnualTags
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="max-h-[400px] overflow-y-auto pr-2 space-y-4">
+                <div className="h-[400px] overflow-y-auto custom-scrollbar pr-2 space-y-4">
                     {displayedTags.map((tag, i) => {
                         const percent = calculatePercent(tag.amount);
                         return (

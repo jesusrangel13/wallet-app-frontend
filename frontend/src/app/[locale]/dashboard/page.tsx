@@ -18,6 +18,7 @@ import { PageTransition } from '@/components/ui/animations'
 import { TotalBalanceWidget } from '@/components/widgets/TotalBalanceWidget'
 import { MonthlyIncomeWidget } from '@/components/widgets/MonthlyIncomeWidget'
 import { MonthlyExpensesWidget } from '@/components/widgets/MonthlyExpensesWidget'
+import { NetMonthlyExpensesWidget } from '@/components/widgets/NetMonthlyExpensesWidget'
 import { PersonalExpensesWidget } from '@/components/widgets/PersonalExpensesWidget'
 import { SharedExpensesWidget } from '@/components/widgets/SharedExpensesWidget'
 import { SavingsWidget } from '@/components/widgets/SavingsWidget'
@@ -41,6 +42,7 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
   'total-balance': TotalBalanceWidget,
   'monthly-income': MonthlyIncomeWidget,
   'monthly-expenses': MonthlyExpensesWidget,
+  'net-monthly-expenses': NetMonthlyExpensesWidget,
   'personal-expenses': PersonalExpensesWidget,
   'shared-expenses': SharedExpensesWidget,
   'savings': SavingsWidget,
@@ -67,7 +69,8 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
 const WIDGET_NAMES: Record<string, string> = {
   'total-balance': 'Saldo Total',
   'monthly-income': 'Ingresos Mensuales',
-  'monthly-expenses': 'Gastos Mensuales',
+  'monthly-expenses': 'Gastos Totales',
+  'net-monthly-expenses': 'Mis Gastos Mensuales',
   'personal-expenses': 'Gastos Personales',
   'shared-expenses': 'Gastos Compartidos',
   'savings': 'Ahorros',

@@ -19,7 +19,7 @@ interface CategoryBreakdownWidgetProps {
 }
 
 export const CategoryBreakdownWidget = ({ gridWidth = 2, gridHeight = 2 }: CategoryBreakdownWidgetProps) => {
-    const t = useTranslations('dashboard')
+    const t = useTranslations('widgets')
     const { month, year } = useSelectedMonth()
     const { data, isLoading } = useCategoryBreakdown({ month, year })
 
@@ -58,7 +58,7 @@ export const CategoryBreakdownWidget = ({ gridWidth = 2, gridHeight = 2 }: Categ
             <CardHeader className="flex-none pb-2">
                 <CardTitle className="flex items-center gap-2 text-base">
                     <Layers className="w-5 h-5 text-gray-500" />
-                    {t('widgets.expensesByCategory')}
+                    {t('expensesByCategory.name')}
                 </CardTitle>
             </CardHeader>
             <CardContent className="flex-1 min-h-0 overflow-y-auto pr-2 custom-scrollbar">

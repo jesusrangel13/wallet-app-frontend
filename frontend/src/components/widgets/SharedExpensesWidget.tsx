@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
-import { Users } from 'lucide-react'
+import { Users, Info } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useTranslations } from 'next-intl'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
@@ -9,6 +9,7 @@ import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { useSharedExpensesTotal } from '@/hooks/useDashboard'
 import { SharedExpensesWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
 import { AnimatedCurrency } from '@/components/ui/animations'
+import { Tooltip } from '@/components/ui/Tooltip'
 
 interface SharedExpensesWidgetProps {
   gridWidth?: number
@@ -40,7 +41,12 @@ export const SharedExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: SharedEx
         <div className={`${fontSizes.value} font-bold text-blue-600 dark:text-blue-500`}>
           <AnimatedCurrency amount={expense} currency="CLP" />
         </div>
-        <p className={`${fontSizes.label} text-gray-500 dark:text-gray-400 mt-1`}>{t('thisMonth')}</p>
+        <div className={`${fontSizes.label} text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1`}>
+          {t('thisMonth')}
+          <Tooltip content={t('tooltip')} side="bottom">
+            <Info className="h-3 w-3 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors cursor-help" />
+          </Tooltip>
+        </div>
       </CardContent>
     </Card>
   )

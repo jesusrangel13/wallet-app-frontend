@@ -26,6 +26,7 @@ export type WidgetType =
   | 'top-tags'
   | 'tag-trend'
   | 'category-breakdown-list'
+  | 'net-monthly-expenses'
 
 export interface WidgetDefinition {
   id: WidgetType
@@ -76,6 +77,19 @@ export const WIDGET_REGISTRY: Record<WidgetType, WidgetDefinition> = {
     description: 'Your expenses for this month',
     category: 'summary',
     icon: 'TrendingDown',
+    defaultWidth: 1,
+    defaultHeight: 2,
+    minWidth: 1,
+    minHeight: 1,
+    resizable: true,
+    draggable: true,
+  },
+  'net-monthly-expenses': {
+    id: 'net-monthly-expenses',
+    name: 'Mis Gastos Mensuales',
+    description: 'Tus gastos personales + tu parte de compartidos',
+    category: 'summary',
+    icon: 'Wallet',
     defaultWidth: 1,
     defaultHeight: 2,
     minWidth: 1,

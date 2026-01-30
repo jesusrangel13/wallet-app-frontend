@@ -44,7 +44,7 @@ export function AnnualCategoryBreakdown({ categories, subcategories, currency, t
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="min-h-[400px]">
+                <div className="h-[400px] overflow-y-auto custom-scrollbar pr-2">
                     <CategoryAccordionView
                         categories={categories}
                         subcategoriesByParent={subcategoriesByParent}
