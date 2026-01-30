@@ -11,6 +11,8 @@ import { AnnualCategoryBreakdown } from './AnnualCategoryBreakdown';
 import { MultiYearComparisonModal } from './MultiYearComparisonModal';
 import { AnnualViewSkeleton } from '@/components/ui/PageSkeletons';
 import { AnnualTagsBreakdown } from './AnnualTagsBreakdown';
+import { NetWorthChart } from './NetWorthChart';
+import { ExpenseCompositionChart } from './ExpenseCompositionChart';
 import { dashboardAPI } from '@/services/dashboard.service';
 import type { Currency } from '@/types/currency';
 
@@ -31,6 +33,15 @@ interface AnnualData {
         expense: number;
         savings: number;
     }[];
+    netWorthData: {
+        month: number;
+        amount: number;
+    }[];
+    expenseComposition: {
+        fixed: number;
+        variable: number;
+    };
+    people?: any[]; // Potentially for future "People" breakdown if needed
     topTags: {
         name: string;
         color: string | null;
@@ -117,23 +128,38 @@ export function AnnualView() {
 
             <AnnualSummaryCards totals={data.totals} currency={'CLP' as Currency} />
 
+            {/* 1. Monthly Trend Chart (100% Width) */}
             <AnnualTrendChart data={data.monthlyTrend} currency={'CLP' as Currency} />
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="lg:col-span-1">
-                    <AnnualCategoryBreakdown
-                        categories={data.topCategories}
-                        subcategories={data.topSubcategories}
-                        currency={'CLP' as Currency}
-                        totalExpense={data.totals.expense}
-                    />
+            {/* 2. Detailed Breakdown Grid (2 Columns, Fixed Height on Desktop/Responsive on Mobile) */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-auto lg:h-[900px]">
+                {/* Left Column: Categories & Net Worth */}
+                <div className="flex flex-col gap-6 lg:h-full">
+                    <div className="h-[350px] lg:h-auto lg:flex-1 lg:max-h-[600px] min-h-0">
+                        <AnnualCategoryBreakdown
+                            categories={data.topCategories}
+                            subcategories={data.topSubcategories}
+                            currency={'CLP' as Currency}
+                            totalExpense={data.totals.expense}
+                        />
+                    </div>
+                    <div className="h-[300px] lg:h-auto lg:flex-1 lg:max-h-[300px] min-h-0">
+                        <NetWorthChart data={data.netWorthData} currency={'CLP' as Currency} />
+                    </div>
                 </div>
-                <div className="lg:col-span-1">
-                    <AnnualTagsBreakdown
-                        tags={data.topTags}
-                        currency={'CLP' as Currency}
-                        totalExpense={data.totals.expense}
-                    />
+
+                {/* Right Column: Fixed/Variable & Tags */}
+                <div className="flex flex-col gap-6 lg:h-full">
+                    <div className="h-[300px] lg:h-auto lg:flex-1 lg:max-h-[300px] min-h-0">
+                        <ExpenseCompositionChart data={data.expenseComposition} currency={'CLP' as Currency} />
+                    </div>
+                    <div className="h-[350px] lg:h-auto lg:flex-1 lg:max-h-[600px] min-h-0">
+                        <AnnualTagsBreakdown
+                            tags={data.topTags}
+                            currency={'CLP' as Currency}
+                            totalExpense={data.totals.expense}
+                        />
+                    </div>
                 </div>
             </div>
         </div>

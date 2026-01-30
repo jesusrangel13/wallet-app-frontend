@@ -135,6 +135,14 @@ export const dashboardAPI = {
         expense: number
         savings: number
       }>
+      netWorthData: Array<{
+        month: number
+        amount: number
+      }>
+      expenseComposition: {
+        fixed: number
+        variable: number
+      }
       topTags: any[]
       topCategories: any[]
       topSubcategories: any[]

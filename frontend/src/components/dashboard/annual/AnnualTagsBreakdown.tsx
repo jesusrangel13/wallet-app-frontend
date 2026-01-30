@@ -51,15 +51,15 @@ export function AnnualTagsBreakdown({ tags, currency, totalExpense }: AnnualTags
     }
 
     return (
-        <Card>
-            <CardHeader>
+        <Card className="h-full flex flex-col">
+            <CardHeader className="flex-none">
                 <CardTitle className="flex items-center gap-2">
                     <Tag className="w-5 h-5" />
                     Top Etiquetas
                 </CardTitle>
             </CardHeader>
-            <CardContent>
-                <div className="h-[400px] overflow-y-auto custom-scrollbar pr-2 space-y-4">
+            <CardContent className="flex-1 min-h-0 overflow-hidden flex flex-col">
+                <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-4">
                     {displayedTags.map((tag, i) => {
                         const percent = calculatePercent(tag.amount);
                         return (

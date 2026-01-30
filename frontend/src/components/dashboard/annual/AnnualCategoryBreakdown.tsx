@@ -37,15 +37,15 @@ export function AnnualCategoryBreakdown({ categories, subcategories, currency, t
     }, {} as Record<string, SubcategoryItem[]>);
 
     return (
-        <Card className="h-full">
-            <CardHeader>
+        <Card className="h-full flex flex-col">
+            <CardHeader className="flex-none">
                 <CardTitle className="flex items-center gap-2">
                     <Layers className="w-5 h-5" />
                     Gastos por categoría
                 </CardTitle>
             </CardHeader>
-            <CardContent>
-                <div className="h-[400px] overflow-y-auto custom-scrollbar pr-2">
+            <CardContent className="flex-1 min-h-0 overflow-hidden flex flex-col">
+                <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
                     <CategoryAccordionView
                         categories={categories}
                         subcategoriesByParent={subcategoriesByParent}
