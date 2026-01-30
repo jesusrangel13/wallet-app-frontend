@@ -26,7 +26,7 @@ const CustomizedContent = (props: any) => {
                 width={width}
                 height={height}
                 style={{
-                    fill: payload.color || '#8884d8',
+                    fill: payload?.color || '#8884d8',
                     stroke: '#fff',
                     strokeWidth: 2 / (depth + 1e-10),
                     strokeOpacity: 1 / (depth + 1e-10),
@@ -34,7 +34,7 @@ const CustomizedContent = (props: any) => {
                 rx={4}
                 ry={4}
             />
-            {width > 50 && height > 30 && (
+            {width > 50 && height > 30 && payload?.icon && (
                 <text
                     x={x + width / 2}
                     y={y + height / 2}
