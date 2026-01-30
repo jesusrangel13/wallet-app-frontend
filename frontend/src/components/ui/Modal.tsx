@@ -1,7 +1,8 @@
 'use client'
 
+import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -12,12 +13,19 @@ interface ModalProps {
   children: React.ReactNode
   /** Optional description for aria-describedby */
   description?: string
+  /** Optional class name for the modal container */
+  className?: string
 }
 
-export function Modal({ isOpen, onClose, title, children, description }: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, description, className }: ModalProps) {
   const t = useTranslations('common');
   const hasInitializedFocusRef = useRef(false)
   const previousActiveElementRef = useRef<HTMLElement | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Effect for initial focus - only runs when modal opens
   useEffect(() => {
@@ -100,11 +108,13 @@ export function Modal({ isOpen, onClose, title, children, description }: ModalPr
     }
   }, [isOpen, onClose])
 
-  return (
+  if (!mounted) return null
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center"
+          className="fixed inset-0 z-[1000] grid place-items-center p-4 sm:p-6 overflow-hidden"
           role="dialog"
           aria-modal="true"
           aria-labelledby="modal-title"
@@ -116,7 +126,7 @@ export function Modal({ isOpen, onClose, title, children, description }: ModalPr
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="absolute inset-0 bg-black bg-opacity-50"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={onClose}
             aria-hidden="true"
           />
@@ -131,7 +141,7 @@ export function Modal({ isOpen, onClose, title, children, description }: ModalPr
               ease: [0.25, 0.46, 0.45, 0.94] as const,
             }}
             id="modal-content"
-            className="relative bg-white dark:bg-card rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto"
+            className={`relative bg-background rounded-xl shadow-2xl w-full max-h-[85vh] overflow-y-auto border border-border ${className || 'max-w-md'}`}
           >
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-border">
@@ -157,6 +167,7 @@ export function Modal({ isOpen, onClose, title, children, description }: ModalPr
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   )
 }

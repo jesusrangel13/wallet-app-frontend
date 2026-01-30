@@ -148,4 +148,21 @@ export const dashboardAPI = {
       savings: number
       savingsRate: number
     }>>>('/dashboard/annual/compare', { params: { years } }),
+
+  getCategoryBreakdown: (params?: { month?: number; year?: number }) =>
+    apiClient.get<ApiResponse<{
+      categories: Array<{
+        name: string
+        amount: number
+        percentage: number
+        icon: string | null
+        color: string | null
+      }>
+      subcategories: Array<{
+        name: string
+        parentName: string
+        amount: number
+      }>
+      totalExpense: number
+    }>>('/dashboard/category-breakdown', { params }),
 }

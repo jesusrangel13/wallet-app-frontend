@@ -125,6 +125,23 @@ export function useExpensesByParentCategory(params?: { month?: number; year?: nu
 }
 
 /**
+ * Hook para obtener desglose completo de categorías (padres + hijos)
+ */
+export function useCategoryBreakdown(params?: { month?: number; year?: number }) {
+  return useQuery({
+    queryKey: ['category-breakdown', params],
+    queryFn: async () => {
+      const response = await axios.get(
+        `${API_URL}/dashboard/category-breakdown`,
+        { params, headers: getAuthHeaders() }
+      )
+      return response.data.data
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  })
+}
+
+/**
  * Hook para obtener flujo de caja
  */
 export function useCashFlow(months?: number, params?: { month?: number; year?: number }) {

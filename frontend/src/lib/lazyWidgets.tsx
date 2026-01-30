@@ -89,12 +89,21 @@ export const LazyChartWidgets = {
       ssr: false,
     }
   ),
+
+  // Category Breakdown List (Accordion)
+  CategoryBreakdownWidget: dynamic(
+    () => import('@/components/widgets/CategoryBreakdownWidget').then(mod => ({ default: mod.CategoryBreakdownWidget })),
+    {
+      loading: () => <WidgetSkeleton />,
+      ssr: false,
+    }
+  ),
 }
 
 /**
  * Helper function to wrap lazy widget with Suspense
  */
-export function LazyWidget({ component: Component, ...props }: { component: React.ComponentType<any>; [key: string]: any }) {
+export function LazyWidget({ component: Component, ...props }: { component: React.ComponentType<any>;[key: string]: any }) {
   return (
     <Suspense fallback={<WidgetSkeleton />}>
       <Component {...props} />
