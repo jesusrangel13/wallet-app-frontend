@@ -89,6 +89,7 @@ export function AnnualCategoryBreakdown({ categories, subcategories, currency, t
                     {viewMode === 'treemap' && (
                         <CategoryTreemapView
                             categories={categories}
+                            subcategoriesByParent={subcategoriesByParent}
                             currency={currency}
                         />
                     )}

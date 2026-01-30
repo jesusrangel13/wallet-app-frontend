@@ -10,8 +10,15 @@ interface CategoryItem {
     amount: number;
 }
 
+interface SubcategoryItem {
+    name: string;
+    parentName: string;
+    amount: number;
+}
+
 interface CategoryTreemapViewProps {
     categories: CategoryItem[];
+    subcategoriesByParent: Record<string, SubcategoryItem[]>;
     currency: Currency;
 }
 
@@ -34,27 +41,30 @@ const CustomizedContent = (props: any) => {
                 rx={4}
                 ry={4}
             />
-            {width > 50 && height > 30 && payload?.icon && (
+            {/* Show label only if box is big enough */}
+            {width > 60 && height > 30 && (
                 <text
                     x={x + width / 2}
                     y={y + height / 2}
                     textAnchor="middle"
                     fill="#fff"
-                    fontSize={14}
-                    fontWeight="bold"
-                    dy={-10}
+                    fontSize={depth === 1 ? 14 : 12} // Larger for Categories (depth 1), smaller for Subs (depth 2)
+                    fontWeight={depth === 1 ? "bold" : "normal"}
+                    dy={-6}
                 >
-                    {payload.icon} {name}
+                    {/* If it's a category (depth 1), show icon + name. If sub (depth 2), just name */}
+                    {depth === 1 ? `${payload?.icon || ''} ${name}` : name}
                 </text>
             )}
-            {width > 50 && height > 30 && (
+            {width > 60 && height > 30 && (
                 <text
                     x={x + width / 2}
                     y={y + height / 2}
                     textAnchor="middle"
                     fill="#fff"
-                    fontSize={12}
-                    dy={14}
+                    fontSize={11}
+                    dy={12}
+                    fillOpacity={0.9}
                 >
                     {formatCurrency(value, currency)}
                 </text>
@@ -63,23 +73,40 @@ const CustomizedContent = (props: any) => {
     );
 };
 
-export function CategoryTreemapView({ categories, currency }: CategoryTreemapViewProps) {
-    // Filter out very small categories to keep treemap clean
+export function CategoryTreemapView({ categories, subcategoriesByParent, currency }: CategoryTreemapViewProps) {
+    // Structure data for Recharts Treemap:
+    // Root -> Categories -> Subcategories
+
     const data = categories
         .filter(c => c.amount > 0)
-        .map(c => ({
-            name: c.name,
-            value: c.amount,
-            color: c.color,
-            icon: c.icon
-        }));
+        .map(c => {
+            const subs = subcategoriesByParent[c.name] || [];
+
+            // If has subcategories, map them as children
+            const children = subs.length > 0
+                ? subs.map(s => ({
+                    name: s.name,
+                    size: s.amount, // Leaf nodes use 'size' (or whatever dataKey is)
+                    color: c.color, // Inherit color logic could be here, but CustomizedContent handles it via payload
+                    icon: ''
+                }))
+                : [{ name: c.name, size: c.amount, color: c.color, icon: c.icon }]; // If no subs, treat cat as leaf
+
+            return {
+                name: c.name,
+                children: children,
+                color: c.color,
+                icon: c.icon,
+                // Treemap ignores 'value' on parent nodes if children exist, it sums children
+            };
+        });
 
     return (
         <div className="h-[500px] w-full">
             <ResponsiveContainer width="100%" height="100%">
                 <Treemap
                     data={data}
-                    dataKey="value"
+                    dataKey="size"
                     aspectRatio={4 / 3}
                     stroke="#fff"
                     fill="#8884d8"
