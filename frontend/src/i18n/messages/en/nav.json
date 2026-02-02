@@ -31,7 +31,8 @@
     "expense": "Expense",
     "income": "Income",
     "transfer": "Transfer",
-    "shared": "Shared Expense"
+    "shared": "Shared Expense",
+    "transactionCreated": "Transaction Created"
   },
   "moreMenu": {
     "title": "More",

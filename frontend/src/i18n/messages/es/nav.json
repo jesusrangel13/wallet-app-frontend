@@ -31,7 +31,8 @@
     "expense": "Gasto",
     "income": "Ingreso",
     "transfer": "Transferencia",
-    "shared": "Gasto Compartido"
+    "shared": "Gasto Compartido",
+    "transactionCreated": "Transacción creada"
   },
   "moreMenu": {
     "title": "Más",
