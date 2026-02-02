@@ -14,7 +14,7 @@ export const AddWidgetButton = () => {
       <button
         type="button"
         onClick={() => setShowWidgetSelector(true)}
-        className="flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-medium text-sm md:px-4 md:py-2"
+        className="flex items-center gap-2 px-3 py-1.5 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium text-sm md:px-4 md:py-2 shadow-sm"
         title={t('addWidget')}
         aria-label={t('addWidget')}
       >

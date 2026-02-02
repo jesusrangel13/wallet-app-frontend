@@ -116,4 +116,61 @@ export const dashboardAPI = {
         ...(tagIds && tagIds.length > 0 ? { tagIds } : {})
       }
     }),
+
+
+  getAnnualSummary: (year?: number) =>
+    apiClient.get<ApiResponse<{
+      year: number
+      totals: {
+        income: number
+        expense: number
+        personalExpense: number
+        sharedExpense: number
+        savings: number
+        savingsRate: number
+      }
+      monthlyTrend: Array<{
+        month: number
+        income: number
+        expense: number
+        savings: number
+      }>
+      netWorthData: Array<{
+        month: number
+        amount: number
+      }>
+      expenseComposition: {
+        fixed: number
+        variable: number
+      }
+      topTags: any[]
+      topCategories: any[]
+      topSubcategories: any[]
+    }>>('/dashboard/annual', { params: { year } }),
+
+  getMultiYearComparison: (years: number[]) =>
+    apiClient.get<ApiResponse<Array<{
+      year: number
+      income: number
+      expense: number
+      savings: number
+      savingsRate: number
+    }>>>('/dashboard/annual/compare', { params: { years } }),
+
+  getCategoryBreakdown: (params?: { month?: number; year?: number }) =>
+    apiClient.get<ApiResponse<{
+      categories: Array<{
+        name: string
+        amount: number
+        percentage: number
+        icon: string | null
+        color: string | null
+      }>
+      subcategories: Array<{
+        name: string
+        parentName: string
+        amount: number
+      }>
+      totalExpense: number
+    }>>('/dashboard/category-breakdown', { params }),
 }

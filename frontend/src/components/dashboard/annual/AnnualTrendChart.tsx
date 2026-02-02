@@ -1,0 +1,70 @@
+'use client';
+
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { formatCurrency, type Currency } from '@/types/currency';
+
+interface MonthlyTrendData {
+    month: number;
+    income: number;
+    expense: number;
+    savings: number;
+}
+
+interface AnnualTrendChartProps {
+    data: MonthlyTrendData[];
+    currency: Currency;
+}
+
+const monthNames = [
+    'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+    'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+];
+
+export function AnnualTrendChart({ data, currency }: AnnualTrendChartProps) {
+    const chartData = data.map(d => ({
+        ...d,
+        name: monthNames[d.month - 1]
+    }));
+
+    return (
+        <Card className="col-span-4">
+            <CardHeader>
+                <CardTitle>Tendencia Mensual</CardTitle>
+            </CardHeader>
+            <CardContent className="pl-2">
+                <div className="h-[350px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                            <XAxis
+                                dataKey="name"
+                                stroke="#888888"
+                                fontSize={12}
+                                tickLine={false}
+                                axisLine={false}
+                            />
+                            <YAxis
+                                stroke="#888888"
+                                fontSize={12}
+                                tickLine={false}
+                                axisLine={false}
+                                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                            />
+                            <Tooltip
+                                cursor={{ fill: 'transparent' }} // Remove cursor hover background if desired
+                                formatter={(value: number) => formatCurrency(value, currency)}
+                                contentStyle={{ borderRadius: '8px' }}
+                            />
+                            <Legend wrapperStyle={{ paddingTop: '20px' }} />
+
+                            <Bar dataKey="income" name="Ingresos" fill="#22c55e" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="expense" name="Gastos" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="savings" name="Ahorro" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+            </CardContent>
+        </Card>
+    );
+}

@@ -1,4 +1,4 @@
-import { Home, CreditCard, TrendingUp, Users, Upload, HandCoins } from 'lucide-react'
+import { Home, CreditCard, TrendingUp, Users, Upload, HandCoins, CalendarRange } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 
@@ -19,6 +19,7 @@ const baseNavItems = [
     { labelKey: 'loans', icon: HandCoins, path: 'dashboard/loans', descriptionKey: 'loansDescription' },
     { labelKey: 'groups', icon: Users, path: 'dashboard/groups', descriptionKey: 'groupsDescription' },
     { labelKey: 'import', icon: Upload, path: 'dashboard/import', descriptionKey: 'importDescription' },
+    { labelKey: 'annual', icon: CalendarRange, path: 'dashboard/annual', descriptionKey: 'annualDescription' },
 ]
 
 export function useSidebarNavigation(locale: string) {

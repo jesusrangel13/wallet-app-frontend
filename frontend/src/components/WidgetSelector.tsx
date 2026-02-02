@@ -87,8 +87,8 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={t('selector.title')}>
-      <div className="space-y-4 max-w-2xl">
+    <Modal isOpen={isOpen} onClose={onClose} title={t('selector.title')} className="max-w-4xl">
+      <div className="space-y-4">
         {/* Search */}
         <div className="relative">
           <label htmlFor={searchId} className="sr-only">{t('selector.searchPlaceholder')}</label>
@@ -136,7 +136,7 @@ export const WidgetSelector = ({ isOpen, onClose }: WidgetSelectorProps) => {
         </div>
 
         {/* Widget List */}
-        <div className="max-h-[60vh] overflow-y-auto" role="region" aria-label="Available widgets" aria-busy={isLoading}>
+        <div className="max-h-[55vh] overflow-y-auto pr-1 custom-scrollbar" role="region" aria-label="Available widgets" aria-busy={isLoading}>
           {filteredWidgets.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4" role="list">
               {filteredWidgets.map((widget) => (

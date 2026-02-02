@@ -18,6 +18,7 @@ import { PageTransition } from '@/components/ui/animations'
 import { TotalBalanceWidget } from '@/components/widgets/TotalBalanceWidget'
 import { MonthlyIncomeWidget } from '@/components/widgets/MonthlyIncomeWidget'
 import { MonthlyExpensesWidget } from '@/components/widgets/MonthlyExpensesWidget'
+import { NetMonthlyExpensesWidget } from '@/components/widgets/NetMonthlyExpensesWidget'
 import { PersonalExpensesWidget } from '@/components/widgets/PersonalExpensesWidget'
 import { SharedExpensesWidget } from '@/components/widgets/SharedExpensesWidget'
 import { SavingsWidget } from '@/components/widgets/SavingsWidget'
@@ -41,6 +42,7 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
   'total-balance': TotalBalanceWidget,
   'monthly-income': MonthlyIncomeWidget,
   'monthly-expenses': MonthlyExpensesWidget,
+  'net-monthly-expenses': NetMonthlyExpensesWidget,
   'personal-expenses': PersonalExpensesWidget,
   'shared-expenses': SharedExpensesWidget,
   'savings': SavingsWidget,
@@ -60,13 +62,15 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
   'balance-trend': LazyChartWidgets.BalanceTrendWidget,
   'expenses-by-tag': LazyChartWidgets.ExpensesByTagWidget,
   'tag-trend': LazyChartWidgets.TagTrendWidget,
+  'category-breakdown-list': LazyChartWidgets.CategoryBreakdownWidget,
 }
 
 // Widget names map for Error Boundary display
 const WIDGET_NAMES: Record<string, string> = {
   'total-balance': 'Saldo Total',
   'monthly-income': 'Ingresos Mensuales',
-  'monthly-expenses': 'Gastos Mensuales',
+  'monthly-expenses': 'Gastos Totales',
+  'net-monthly-expenses': 'Mis Gastos Mensuales',
   'personal-expenses': 'Gastos Personales',
   'shared-expenses': 'Gastos Compartidos',
   'savings': 'Ahorros',
@@ -85,6 +89,7 @@ const WIDGET_NAMES: Record<string, string> = {
   'expenses-by-tag': 'Gastos por Etiqueta',
   'top-tags': 'Etiquetas Principales',
   'tag-trend': 'Tendencia de Etiquetas',
+  'category-breakdown-list': 'Desglose de Categorías (Lista)',
 }
 
 export default function DashboardPage() {
@@ -159,59 +164,59 @@ export default function DashboardPage() {
 
           {/* Dashboard Grid with Widgets */}
           <DashboardGrid>
-          {preferences.widgets.filter((widget) => widget.type !== 'account-balances').map((widget, index) => {
-            const WidgetComponent = WIDGET_COMPONENTS[widget.type]
-            let layoutItem = preferences.layout.find((l) => l.i === widget.id)
+            {preferences.widgets.filter((widget) => widget.type !== 'account-balances').map((widget, index) => {
+              const WidgetComponent = WIDGET_COMPONENTS[widget.type]
+              let layoutItem = preferences.layout.find((l) => l.i === widget.id)
 
-            // Skip unknown widgets
-            if (!WidgetComponent) {
-              console.warn(`Unknown widget type: ${widget.type}`)
-              return null
-            }
-
-            // Create default layout if none exists
-            if (!layoutItem) {
-              console.warn(`No layout found for widget: ${widget.id}, using default`)
-              layoutItem = {
-                i: widget.id,
-                x: (index * 2) % 4,
-                y: Math.floor(index / 2) * 2,
-                w: 2,
-                h: 2,
-                minW: 1,
-                minH: 1,
+              // Skip unknown widgets
+              if (!WidgetComponent) {
+                console.warn(`Unknown widget type: ${widget.type}`)
+                return null
               }
-            }
 
-            return (
-              <div
-                key={widget.id}
-                data-grid={{
-                  i: layoutItem.i,
-                  x: layoutItem.x,
-                  y: layoutItem.y,
-                  w: layoutItem.w,
-                  h: layoutItem.h,
-                  minW: layoutItem.minW || 1,
-                  minH: layoutItem.minH || 1,
-                  maxW: layoutItem.maxW,
-                  maxH: layoutItem.maxH,
-                }}
-              >
-                <WidgetWrapper
-                  widgetId={widget.id}
-                  widgetName={WIDGET_NAMES[widget.type] || widget.type}
+              // Create default layout if none exists
+              if (!layoutItem) {
+                console.warn(`No layout found for widget: ${widget.id}, using default`)
+                layoutItem = {
+                  i: widget.id,
+                  x: (index * 2) % 4,
+                  y: Math.floor(index / 2) * 2,
+                  w: 2,
+                  h: 2,
+                  minW: 1,
+                  minH: 1,
+                }
+              }
+
+              return (
+                <div
+                  key={widget.id}
+                  data-grid={{
+                    i: layoutItem.i,
+                    x: layoutItem.x,
+                    y: layoutItem.y,
+                    w: layoutItem.w,
+                    h: layoutItem.h,
+                    minW: layoutItem.minW || 1,
+                    minH: layoutItem.minH || 1,
+                    maxW: layoutItem.maxW,
+                    maxH: layoutItem.maxH,
+                  }}
                 >
-                  <WidgetComponent
-                    settings={widget.settings}
-                    gridWidth={layoutItem.w}
-                    gridHeight={layoutItem.h}
-                  />
-                </WidgetWrapper>
-              </div>
-            )
-          })}
-        </DashboardGrid>
+                  <WidgetWrapper
+                    widgetId={widget.id}
+                    widgetName={WIDGET_NAMES[widget.type] || widget.type}
+                  >
+                    <WidgetComponent
+                      settings={widget.settings}
+                      gridWidth={layoutItem.w}
+                      gridHeight={layoutItem.h}
+                    />
+                  </WidgetWrapper>
+                </div>
+              )
+            })}
+          </DashboardGrid>
 
           {/* Empty state */}
           {preferences.widgets.length === 0 && (

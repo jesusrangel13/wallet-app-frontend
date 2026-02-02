@@ -13,6 +13,8 @@
   "loansDescription": "Manage loans and debts",
   "groupsDescription": "Manage shared expenses",
   "importDescription": "Import financial data",
+  "annual": "Annual View",
+  "annualDescription": "Yearly financial overview",
   "settingsDescription": "Application settings",
   "toggleMenu": "Toggle menu",
   "toggleSidebar": "Collapse/Expand sidebar",
@@ -29,7 +31,8 @@
     "expense": "Expense",
     "income": "Income",
     "transfer": "Transfer",
-    "shared": "Shared Expense"
+    "shared": "Shared Expense",
+    "transactionCreated": "Transaction Created"
   },
   "moreMenu": {
     "title": "More",
