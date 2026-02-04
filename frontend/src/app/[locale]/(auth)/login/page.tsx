@@ -44,7 +44,18 @@ export default function LoginPage() {
 
       setAuth(user, token)
       toast.success(t('success'))
-      router.push(`/${locale}/dashboard`)
+
+      // Check onboarding status
+      const { hasCompletedOnboarding } = useAuthStore.getState()
+
+      // If user logs in on a new device, hasCompletedOnboarding is likely false (default),
+      // unless we synced it to backend (which we haven't in this phase).
+      // So they will be sent to onboarding.
+      if (!hasCompletedOnboarding) {
+        router.push(`/${locale}/onboarding`)
+      } else {
+        router.push(`/${locale}/dashboard`)
+      }
     } catch (error) {
       handleError(error)
     } finally {
