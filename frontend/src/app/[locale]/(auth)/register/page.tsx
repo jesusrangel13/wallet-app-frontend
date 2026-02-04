@@ -55,7 +55,7 @@ export default function RegisterPage() {
       fire()
       // Delay redirect slightly to show confetti
       setTimeout(() => {
-        router.push(`/${locale}/dashboard`)
+        router.push(`/${locale}/onboarding`) // Redirect to onboarding
       }, 1000)
     } catch (error) {
       handleError(error)

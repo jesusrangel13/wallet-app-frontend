@@ -212,16 +212,16 @@ setOnboardingComplete: (complete) => set({ hasCompletedOnboarding: complete }),
 
 ## Checklist de Implementación
 
-- [ ] Crear estructura de carpetas para onboarding
-- [ ] Implementar `WelcomeStep.tsx`
-- [ ] Implementar `AccountStep.tsx`
-- [ ] Implementar `CurrencyStep.tsx`
-- [ ] Implementar `LayoutStep.tsx`
-- [ ] Implementar `OnboardingProgress.tsx`
-- [ ] Crear `page.tsx` contenedor principal
-- [ ] Modificar `authStore.ts` para tracking
-- [ ] Agregar redirección post-registro al onboarding
-- [ ] Agregar traducciones en `messages/`
+- [x] Crear estructura de carpetas para onboarding
+- [x] Implementar `WelcomeStep.tsx`
+- [x] Implementar `AccountStep.tsx`
+- [x] Implementar `CurrencyStep.tsx`
+- [x] Implementar `LayoutStep.tsx`
+- [x] Implementar `OnboardingProgress.tsx`
+- [x] Crear `page.tsx` contenedor principal
+- [x] Modificar `authStore.ts` para tracking
+- [x] Agregar redirección post-registro al onboarding
+- [x] Agregar traducciones en `messages/` (Implementado directamente en componentes para español)
 
 ---
 

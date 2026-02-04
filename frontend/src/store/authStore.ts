@@ -15,6 +15,8 @@ interface AuthState {
   updateUser: (user: Partial<User>) => void
   setLocale: (locale: Locale) => void
   setHydrated: () => void
+  hasCompletedOnboarding: boolean
+  setOnboardingComplete: (complete: boolean) => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -48,6 +50,8 @@ export const useAuthStore = create<AuthState>()(
 
       setLocale: (locale) => set({ locale }),
       setHydrated: () => set({ isHydrated: true }),
+      hasCompletedOnboarding: false,
+      setOnboardingComplete: (complete) => set({ hasCompletedOnboarding: complete }),
     }),
     {
       name: 'auth-storage',
@@ -57,6 +61,7 @@ export const useAuthStore = create<AuthState>()(
         user: state.user,
         token: state.token,
         locale: state.locale,
+        hasCompletedOnboarding: state.hasCompletedOnboarding,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
