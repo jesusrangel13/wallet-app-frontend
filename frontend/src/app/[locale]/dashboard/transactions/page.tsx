@@ -386,6 +386,7 @@ export default function TransactionsPage() {
           paidByUserId: sharedExpenseData.paidByUserId, // Include who paid
           amount: data.amount,
           description: data.description || 'Shared expense',
+          categoryId: data.categoryId, // Fix: Inherit category from transaction
           date: data.date || new Date().toISOString(), // Use transaction date
           splitType: sharedExpenseData.splitType,
           participants: sharedExpenseData.participants.map(p => ({
@@ -451,6 +452,7 @@ export default function TransactionsPage() {
           const sharedExpensePayload = {
             amount: data.amount,
             description: data.description || 'Shared expense',
+            categoryId: data.categoryId, // Fix: Update category
             date: data.date || new Date().toISOString(), // Use transaction date
             splitType: sharedExpenseData.splitType,
             participants: sharedExpenseData.participants.map(p => ({
@@ -471,6 +473,7 @@ export default function TransactionsPage() {
             paidByUserId: sharedExpenseData.paidByUserId,
             amount: data.amount,
             description: data.description || 'Shared expense',
+            categoryId: data.categoryId, // Fix: Inherit category
             date: data.date || new Date().toISOString(), // Use transaction date
             splitType: sharedExpenseData.splitType,
             participants: sharedExpenseData.participants.map(p => ({

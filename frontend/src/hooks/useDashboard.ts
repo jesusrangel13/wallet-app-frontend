@@ -51,13 +51,13 @@ interface DashboardSummary {
  * Hook para obtener todo el resumen del dashboard en una sola llamada
  * Esto reemplaza 5+ llamadas separadas por 1 sola llamada
  */
-export function useDashboardSummary() {
+export function useDashboardSummary(params?: { month?: number; year?: number }) {
   return useQuery({
-    queryKey: ['dashboard-summary'],
+    queryKey: ['dashboard-summary', params],
     queryFn: async () => {
       const response = await axios.get<ApiResponse<DashboardSummary>>(
         `${API_URL}/dashboard/summary`,
-        { headers: getAuthHeaders() }
+        { params, headers: getAuthHeaders() }
       )
       return response.data.data
     },

@@ -32,6 +32,7 @@ export interface SharedExpenseData {
   paidByUserId: string
   splitType: SplitType
   participants: Participant[]
+  categoryId?: string
 }
 
 export default function SharedExpenseForm({

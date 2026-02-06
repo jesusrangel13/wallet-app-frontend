@@ -203,7 +203,17 @@ export default function TransactionFormModal({
   const handleFormSubmit = async (data: TransactionFormData) => {
     setIsSaving(true)
     try {
-      await onSubmit(data, sharedExpenseData)
+      // Inject categoryId from transaction into shared expense data if available
+      // This ensures shared expenses inherit the category from the parent transaction
+      let finalSharedData = sharedExpenseData
+      if (sharedExpenseData && data.categoryId) {
+        finalSharedData = {
+          ...sharedExpenseData,
+          categoryId: data.categoryId
+        }
+      }
+
+      await onSubmit(data, finalSharedData)
       setShowSuccess(true)
       // Close handled by onComplete in SuccessAnimation
     } catch (error) {
