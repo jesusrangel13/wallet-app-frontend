@@ -18,6 +18,33 @@ interface DashboardSummary {
   groupBalances: any
   accountBalances: any
   timestamp: string
+  heroBalance?: {
+    totalBalance: number
+    previousBalance: number
+    changeAmount: number
+    changePercent: number
+    currency: 'CLP' | 'USD' | 'EUR'
+    period: string
+  }
+  expenseSummary?: {
+    personal: number
+    shared: number
+    myTotalExpenses: number
+    income: number
+    totalExpenses: number
+    savings: number
+  }
+  insights?: Array<{
+    id: string
+    type: 'positive' | 'warning' | 'tip' | 'achievement'
+    title: string
+    description: string
+    isAi?: boolean
+    action?: {
+      label: string
+      href: string
+    }
+  }>
 }
 
 /**
