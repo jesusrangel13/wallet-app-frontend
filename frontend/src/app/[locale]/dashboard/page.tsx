@@ -31,6 +31,9 @@ import { RecentTransactionsWidget } from '@/components/widgets/RecentTransaction
 import { BalancesWidget } from '@/components/BalancesWidget'
 import { FixedAccountBalancesWidget } from '@/components/FixedAccountBalancesWidget'
 import { TopTagsWidget } from '@/components/widgets/TopTagsWidget'
+import { HeroBalanceWidget } from '@/components/widgets/HeroBalanceWidget'
+import { SmartInsightsWidget } from '@/components/widgets/SmartInsightsWidget'
+import { useDashboardSummary } from '@/hooks/useDashboard'
 
 // Import lazy-loaded chart widgets - these use recharts (~200KB)
 // They are loaded on-demand to reduce initial bundle size
@@ -95,6 +98,8 @@ const WIDGET_NAMES: Record<string, string> = {
 export default function DashboardPage() {
   const t = useTranslations('dashboard')
   const { preferences, setPreferences, isLoading, setIsLoading } = useDashboardStore()
+  const { data: dashboardData, isLoading: isDataLoading } = useDashboardSummary()
+
 
   // Load dashboard preferences on mount
   useEffect(() => {
@@ -118,7 +123,7 @@ export default function DashboardPage() {
 
   // Show loading state
   // Show loading state
-  if (isLoading || !preferences) {
+  if (isLoading || !preferences || isDataLoading) {
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
@@ -127,6 +132,12 @@ export default function DashboardPage() {
             <Skeleton className="h-4 w-64" />
           </div>
           <Skeleton className="h-10 w-32" />
+        </div>
+
+        {/* Hero Section Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Skeleton className="h-64 lg:col-span-2 rounded-xl" />
+          <Skeleton className="h-64 rounded-xl" />
         </div>
 
         {/* Fixed Account Balances Skeleton */}
@@ -157,6 +168,22 @@ export default function DashboardPage() {
               <p className="text-gray-600 dark:text-gray-400 mt-1">{t('subtitle')}</p>
             </div>
             <MonthSelector />
+          </div>
+
+          {/* Hero Section (Phase 4) */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <HeroBalanceWidget
+                totalBalance={dashboardData?.heroBalance?.totalBalance || 0}
+                currency={(dashboardData?.heroBalance?.currency as any) || 'CLP'}
+                changePercent={dashboardData?.heroBalance?.changePercent || 0}
+                changeAmount={dashboardData?.heroBalance?.changeAmount || 0}
+                period={dashboardData?.heroBalance?.period || 'vs. mes anterior'}
+              />
+            </div>
+            <div className="lg:col-span-1">
+              <SmartInsightsWidget insights={dashboardData?.insights || []} />
+            </div>
           </div>
 
           {/* Fixed Account Balances Widget - Always at top, full width */}
