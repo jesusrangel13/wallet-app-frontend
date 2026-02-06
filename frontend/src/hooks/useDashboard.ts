@@ -26,6 +26,14 @@ interface DashboardSummary {
     currency: 'CLP' | 'USD' | 'EUR'
     period: string
   }
+  expenseSummary?: {
+    personal: number
+    shared: number
+    myTotalExpenses: number
+    income: number
+    totalExpenses: number
+    savings: number
+  }
   insights?: Array<{
     id: string
     type: 'positive' | 'warning' | 'tip' | 'achievement'

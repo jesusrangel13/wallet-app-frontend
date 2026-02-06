@@ -170,21 +170,27 @@ export default function DashboardPage() {
             <MonthSelector />
           </div>
 
-          {/* Hero Section (Phase 4) */}
+          {/* Hero Section (Command Center) */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <HeroBalanceWidget
                 totalBalance={dashboardData?.heroBalance?.totalBalance || 0}
-                currency={(dashboardData?.heroBalance?.currency as any) || 'CLP'}
+                currency={((dashboardData?.heroBalance?.currency as any) || 'CLP')}
                 changePercent={dashboardData?.heroBalance?.changePercent || 0}
                 changeAmount={dashboardData?.heroBalance?.changeAmount || 0}
                 period={dashboardData?.heroBalance?.period || 'vs. mes anterior'}
+                monthlyIncome={dashboardData?.expenseSummary?.income || 0}
+                monthlyExpenses={dashboardData?.expenseSummary?.totalExpenses || 0}
+                monthlySavings={dashboardData?.expenseSummary?.savings || 0}
+                personalExpenses={dashboardData?.expenseSummary?.personal || 0}
+                sharedExpenses={dashboardData?.expenseSummary?.shared || 0}
               />
             </div>
             <div className="lg:col-span-1">
               <SmartInsightsWidget insights={dashboardData?.insights || []} />
             </div>
           </div>
+
 
           {/* Fixed Account Balances Widget - Always at top, full width */}
           <FixedAccountBalancesWidget />

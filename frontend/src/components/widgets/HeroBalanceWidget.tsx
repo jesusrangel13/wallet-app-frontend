@@ -1,11 +1,11 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { TrendingUp, TrendingDown, Minus, Eye, EyeOff } from 'lucide-react'
+import { TrendingUp, TrendingDown, Minus, Eye, EyeOff, ArrowUpCircle, ArrowDownCircle, Wallet } from 'lucide-react'
 import { useState } from 'react'
 import { AnimatedCurrency } from '@/components/ui/animations/AnimatedCurrency'
 import { Card } from '@/components/ui/Card'
-import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts'
+import { AreaChart, Area, ResponsiveContainer } from 'recharts'
 
 interface HeroBalanceWidgetProps {
     totalBalance: number
@@ -13,13 +13,17 @@ interface HeroBalanceWidgetProps {
     changePercent: number
     changeAmount: number
     period: string // "vs. mes anterior"
+    monthlyIncome?: number
+    monthlyExpenses?: number
+    monthlySavings?: number
+    personalExpenses?: number
+    sharedExpenses?: number
 }
 
 // Generate some dummy data for the sparkline if not provided
-// In a real scenario, this would come from props
 const generateSparklineData = () => {
-    return Array.from({ length: 7 }).map((_, i) => ({
-        value: Math.random() * 100 + 50
+    return Array.from({ length: 15 }).map((_, i) => ({
+        value: 50 + Math.random() * 50 + (i * 2) // Slight upward trend
     }))
 }
 
@@ -28,95 +32,36 @@ export function HeroBalanceWidget({
     currency,
     changePercent,
     changeAmount,
-    period
+    period,
+    monthlyIncome = 0,
+    monthlyExpenses = 0,
+    monthlySavings = 0,
+    personalExpenses = 0,
+    sharedExpenses = 0
 }: HeroBalanceWidgetProps) {
     const [isHidden, setIsHidden] = useState(false)
+    const [isBreakdownView, setIsBreakdownView] = useState(false)
     const [data] = useState(generateSparklineData())
 
     const isPositive = changePercent > 0
     const isNegative = changePercent < 0
 
     const TrendIcon = isPositive ? TrendingUp : isNegative ? TrendingDown : Minus
-    const trendColor = isPositive ? 'text-green-500' : isNegative ? 'text-red-500' : 'text-gray-500'
-    const trendBg = isPositive ? 'bg-green-50' : isNegative ? 'bg-red-50' : 'bg-gray-50'
-    const sparklineColor = isPositive ? '#22c55e' : isNegative ? '#ef4444' : '#6b7280'
+    const trendColor = isPositive ? 'text-emerald-500' : isNegative ? 'text-rose-500' : 'text-gray-500'
+    const trendBg = isPositive ? 'bg-emerald-500/10' : isNegative ? 'bg-rose-500/10' : 'bg-gray-500/10'
+    const sparklineColor = isPositive ? '#10b981' : isNegative ? '#f43f5e' : '#6b7280' // emerald-500 vs rose-500
 
     return (
-        <Card variant="gradient" className="p-6 md:p-8 relative overflow-hidden dark:from-gray-900 dark:to-gray-800 border-none shadow-xl">
-            {/* Background decoration */}
-            <div className="absolute top-0 right-0 p-8 opacity-5 dark:opacity-10 pointer-events-none">
-                <TrendingUp className="w-32 h-32 dark:text-white" />
-            </div>
-
-            {/* Header con toggle de visibilidad */}
-            <div className="flex items-center justify-between mb-2 relative z-10">
-                <span className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Balance Total
-                </span>
-                <button
-                    onClick={() => setIsHidden(!isHidden)}
-                    className="p-2 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors"
-                    aria-label={isHidden ? 'Mostrar balance' : 'Ocultar balance'}
-                >
-                    {isHidden ? (
-                        <EyeOff className="w-5 h-5 text-gray-400 dark:text-gray-500" />
-                    ) : (
-                        <Eye className="w-5 h-5 text-gray-400 dark:text-gray-500" />
-                    )}
-                </button>
-            </div>
-
-            {/* Balance Principal */}
-            <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-4 relative z-10"
-            >
-                {isHidden ? (
-                    <div className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white tracking-tight font-numeric">
-                        ••••••
-                    </div>
-                ) : (
-                    <div className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white tracking-tight font-numeric">
-                        <AnimatedCurrency
-                            amount={totalBalance}
-                            currency={currency}
-                            duration={1.5}
-                        />
-                    </div>
-                )}
-            </motion.div>
-
-            <div className="flex items-end justify-between relative z-10">
-                {/* Cambio vs período anterior */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="flex flex-col gap-1"
-                >
-                    <div className="flex items-center gap-3">
-                        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${trendBg} dark:bg-opacity-20`}>
-                            <TrendIcon className={`w-4 h-4 ${trendColor}`} />
-                            <span className={`text-sm font-semibold ${trendColor}`}>
-                                {isPositive ? '+' : ''}{changePercent.toFixed(1)}%
-                            </span>
-                        </div>
-                        {!isHidden && (
-                            <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">
-                                {isPositive ? '+' : ''}<AnimatedCurrency amount={changeAmount} currency={currency} /> {period}
-                            </span>
-                        )}
-                    </div>
-                </motion.div>
-
-                {/* Mini Sparkline */}
-                <div className="w-24 h-12">
+        <Card variant="default" className="p-0 overflow-hidden border-none shadow-xl bg-white dark:bg-gray-900 h-full flex flex-col">
+            {/* Main Content Area */}
+            <div className="p-6 md:p-8 flex-1 relative">
+                {/* Background Sparkline (Subtle) */}
+                <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none translate-y-8">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={data}>
                             <defs>
-                                <linearGradient id="colorSpark" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor={sparklineColor} stopOpacity={0.3} />
+                                <linearGradient id="colorSparkHero" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor={sparklineColor} stopOpacity={1} />
                                     <stop offset="95%" stopColor={sparklineColor} stopOpacity={0} />
                                 </linearGradient>
                             </defs>
@@ -124,14 +69,210 @@ export function HeroBalanceWidget({
                                 type="monotone"
                                 dataKey="value"
                                 stroke={sparklineColor}
-                                fillOpacity={1}
-                                fill="url(#colorSpark)"
-                                strokeWidth={2}
+                                strokeWidth={4} // Thicker line for background effect
+                                fill="url(#colorSparkHero)"
                             />
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
+
+                {/* Header */}
+                <div className="flex items-center justify-between mb-2 relative z-10">
+                    <span className="text-sm font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                        Patrimonio Total
+                    </span>
+                    <button
+                        onClick={() => setIsHidden(!isHidden)}
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors text-gray-400"
+                        aria-label={isHidden ? 'Mostrar balance' : 'Ocultar balance'}
+                    >
+                        {isHidden ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                </div>
+
+                {/* Big Balance */}
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-6 relative z-10"
+                >
+                    {isHidden ? (
+                        <div className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white tracking-tighter">
+                            ••••••
+                        </div>
+                    ) : (
+                        <div className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white tracking-tighter">
+                            <AnimatedCurrency
+                                amount={totalBalance}
+                                currency={currency}
+                                duration={1.2}
+                            />
+                        </div>
+                    )}
+                </motion.div>
+
+                {/* Trend Badge */}
+                <div className="relative z-10 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
+                    <TrendIcon className={`w-4 h-4 ${trendColor}`} />
+                    <span className={`text-sm font-bold ${trendColor}`}>
+                        {Math.abs(changePercent).toFixed(1)}%
+                    </span>
+                    {!isHidden && (
+                        <span className="text-sm text-gray-400 dark:text-gray-500">
+                            {isPositive ? '+' : '-'}<AnimatedCurrency amount={Math.abs(changeAmount)} currency={currency} /> {period}
+                        </span>
+                    )}
+                </div>
             </div>
+
+            {/* Footer Summary - Command Center Carousel */}
+            <div className="border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 backdrop-blur-sm relative min-h-[100px]">
+                {/* Carousel Content */}
+                <div
+                    className={`grid h-full cursor-pointer transition-colors hover:bg-white/40 dark:hover:bg-gray-800/40 relative z-10 ${!isBreakdownView
+                            ? 'grid-cols-2 md:grid-cols-4' // Primary: 2x2 on mobile, 4 cols on desktop
+                            : 'grid-cols-3' // Secondary: 3 cols always
+                        }`}
+                    onClick={() => setIsBreakdownView(!isBreakdownView)}
+                >
+                    {/* View 1: Standard (Income | Total Exp | My Exp | Savings) */}
+                    {!isBreakdownView && (
+                        <>
+                            {/* Income */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
+                                className="p-4 md:px-6 md:py-5 border-r border-gray-100 dark:border-gray-800 border-b md:border-b-0 flex flex-col gap-1 items-start"
+                            >
+                                <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 mb-0.5">
+                                    <ArrowUpCircle className="w-4 h-4" />
+                                    <span className="text-xs font-bold uppercase tracking-wide">Ingresos</span>
+                                </div>
+                                {isHidden ? (
+                                    <span className="text-lg font-bold text-gray-900 dark:text-white">•••</span>
+                                ) : (
+                                    <span className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+                                        <AnimatedCurrency amount={monthlyIncome} currency={currency} />
+                                    </span>
+                                )}
+                            </motion.div>
+
+                            {/* Total Expenses */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+                                className="p-4 md:px-6 md:py-5 border-r md:border-r border-gray-100 dark:border-gray-800 border-b md:border-b-0 flex flex-col gap-1 items-start"
+                            >
+                                <div className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400 mb-0.5">
+                                    <ArrowDownCircle className="w-4 h-4" />
+                                    <span className="text-xs font-bold uppercase tracking-wide">Gastos Tot.</span>
+                                </div>
+                                {isHidden ? (
+                                    <span className="text-lg font-bold text-gray-900 dark:text-white">•••</span>
+                                ) : (
+                                    <span className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+                                        <AnimatedCurrency amount={monthlyExpenses} currency={currency} />
+                                    </span>
+                                )}
+                            </motion.div>
+
+                            {/* My Monthly Expenses - NEW */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+                                className="p-4 md:px-6 md:py-5 border-r border-gray-100 dark:border-gray-800 flex flex-col gap-1 items-start relative group"
+                            >
+                                <div className="flex items-center gap-1.5 text-orange-600 dark:text-orange-400 mb-0.5">
+                                    <ArrowDownCircle className="w-4 h-4" />
+                                    <span className="text-xs font-bold uppercase tracking-wide">Mis Gastos</span>
+                                </div>
+                                {isHidden ? (
+                                    <span className="text-lg font-bold text-gray-900 dark:text-white">•••</span>
+                                ) : (
+                                    <span className="text-lg md:text-xl font-bold text-gray-900 dark:text-white group-hover:scale-105 transition-transform">
+                                        <AnimatedCurrency amount={personalExpenses + sharedExpenses} currency={currency} />
+                                    </span>
+                                )}
+                                {/* Hint badge */}
+                                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block">
+                                    <span className="text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-bold">Ver detalle</span>
+                                </div>
+                            </motion.div>
+
+                            {/* Savings */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                                className="p-4 md:px-6 md:py-5 flex flex-col gap-1 items-start"
+                            >
+                                <div className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400 mb-0.5">
+                                    <Wallet className="w-4 h-4" />
+                                    <span className="text-xs font-bold uppercase tracking-wide">Ahorro</span>
+                                </div>
+                                {isHidden ? (
+                                    <span className="text-lg font-bold text-gray-900 dark:text-white">•••</span>
+                                ) : (
+                                    <span className={`text-lg md:text-xl font-bold ${monthlySavings >= 0 ? 'text-gray-900 dark:text-white' : 'text-rose-500'}`}>
+                                        <AnimatedCurrency amount={monthlySavings} currency={currency} />
+                                    </span>
+                                )}
+                            </motion.div>
+                        </>
+                    )}
+
+                    {/* View 2: Breakdown (Personal | Shared | Total) */}
+                    {isBreakdownView && (
+                        <>
+                            {/* Personal */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
+                                className="p-4 md:px-6 md:py-5 border-r border-gray-100 dark:border-gray-800 flex flex-col gap-1 items-start"
+                            >
+                                <div className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 mb-0.5">
+                                    <span className="text-xs font-bold uppercase tracking-wide">Personales</span>
+                                </div>
+                                {isHidden ? (
+                                    <span className="text-lg font-bold text-gray-900 dark:text-white">•••</span>
+                                ) : (
+                                    <span className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+                                        <AnimatedCurrency amount={personalExpenses || 0} currency={currency} />
+                                    </span>
+                                )}
+                            </motion.div>
+
+                            {/* Shared */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+                                className="p-4 md:px-6 md:py-5 border-r border-gray-100 dark:border-gray-800 flex flex-col gap-1 items-start"
+                            >
+                                <div className="flex items-center gap-1.5 text-purple-600 dark:text-purple-400 mb-0.5">
+                                    <span className="text-xs font-bold uppercase tracking-wide">Compartidos</span>
+                                </div>
+                                {isHidden ? (
+                                    <span className="text-lg font-bold text-gray-900 dark:text-white">•••</span>
+                                ) : (
+                                    <span className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+                                        <AnimatedCurrency amount={sharedExpenses || 0} currency={currency} />
+                                    </span>
+                                )}
+                            </motion.div>
+
+                            {/* Back/Total Context */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                                className="p-4 md:px-6 md:py-5 flex flex-col gap-1 items-start group content-center justify-center items-center"
+                            >
+                                <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 group-hover:text-primary transition-colors">
+                                    <span className="text-xs font-bold uppercase tracking-wide">Volver al Resumen</span>
+                                </div>
+                            </motion.div>
+                        </>
+                    )}
+                </div>
+
+                {/* Carousel Indicators - Hide on Desktop if 4 columns show everything */}
+                <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-1.5 pointer-events-none md:hidden">
+                    <div className={`w-1 h-1 rounded-full transition-colors ${!isBreakdownView ? 'bg-gray-400 dark:bg-gray-500' : 'bg-gray-200 dark:bg-gray-700'}`} />
+                    <div className={`w-1 h-1 rounded-full transition-colors ${isBreakdownView ? 'bg-gray-400 dark:bg-gray-500' : 'bg-gray-200 dark:bg-gray-700'}`} />
+                </div>
+            </div>
+
         </Card>
     )
 }
