@@ -7,10 +7,22 @@ import { WelcomeStep } from './steps/WelcomeStep'
 import { AccountStep } from './steps/AccountStep'
 import { CurrencyStep } from './steps/CurrencyStep'
 import { LayoutStep } from './steps/LayoutStep'
+import { useRouter } from 'next/navigation'
+import { useAuthStore } from '@/store/authStore'
+import { useLocale, useTranslations } from 'next-intl'
 import { ThemeToggle } from '@/components/ThemeToggle'
 
 export default function OnboardingPage() {
     const [currentStep, setCurrentStep] = useState(0)
+    const router = useRouter()
+    const locale = useLocale()
+    const t = useTranslations('common')
+    const setOnboardingComplete = useAuthStore((state) => state.setOnboardingComplete)
+
+    const handleSkip = () => {
+        setOnboardingComplete(true)
+        router.push(`/${locale}/dashboard`)
+    }
 
     const steps = [
         { component: WelcomeStep, id: 'welcome' },
@@ -35,7 +47,15 @@ export default function OnboardingPage() {
                     {/* Logo could go here */}
                     {/* <span className="font-bold text-xl">FinanceApp</span> */}
                 </div>
-                <ThemeToggle />
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={handleSkip}
+                        className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                        {t('actions.skip')}
+                    </button>
+                    <ThemeToggle />
+                </div>
             </header>
 
             <main className="flex-1 flex flex-col items-center justify-center p-4 pt-20">

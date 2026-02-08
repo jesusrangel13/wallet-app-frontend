@@ -996,7 +996,7 @@ export default function TransactionsPage() {
                           currency={(transaction.account?.currency as 'CLP' | 'USD' | 'EUR') || 'CLP'}
                           category={transaction.category?.name || 'Uncategorized'}
                           categoryIcon={transaction.category?.icon || undefined}
-                          categoryColor={transaction.category?.color}
+                          categoryColor={transaction.category?.color || undefined}
                           description={transaction.description || undefined}
                           payee={transaction.payee ? transaction.payee : undefined}
                           date={new Date(transaction.date)}
