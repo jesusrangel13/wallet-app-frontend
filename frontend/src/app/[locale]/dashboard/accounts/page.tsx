@@ -23,6 +23,8 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { useGlobalErrorHandler } from '@/hooks/useGlobalErrorHandler'
 import { AccountsPageSkeleton } from '@/components/ui/PageSkeletons'
 import { PageTransition } from '@/components/ui/animations'
+import { AccountsViewVariants } from '@/components/accounts/AccountsViewVariants'
+
 
 const accountSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -64,6 +66,7 @@ export default function AccountsPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [deletingAccount, setDeletingAccount] = useState<Account | null>(null)
   const [transactionCount, setTransactionCount] = useState(0)
+
 
   const {
     register,
@@ -238,7 +241,7 @@ export default function AccountsPage() {
         </div>
 
         {/* Accounts Display - With localized loading */}
-        <div className="relative">
+        <div className="relative space-y-6">
           {/* Refetching overlay */}
           {isRefetching && (
             <LoadingOverlay message={tLoading('updating')} />
@@ -259,7 +262,7 @@ export default function AccountsPage() {
               </CardContent>
             </Card>
           ) : (
-            <AccountsCardView
+            <AccountsViewVariants
               accounts={accounts}
               onNavigate={(id) => router.push(`/dashboard/accounts/${id}`)}
             />
