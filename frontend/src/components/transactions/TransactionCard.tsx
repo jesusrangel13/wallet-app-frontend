@@ -141,7 +141,9 @@ export function TransactionCard({
                     {description || category}
                 </p>
                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                    {formatDistanceToNow(new Date(date), { addSuffix: true, locale: es })}
+                    {date && !isNaN(new Date(date).getTime())
+                        ? formatDistanceToNow(new Date(date), { addSuffix: true, locale: es })
+                        : 'Fecha desconocida'}
                 </p>
             </div>
 
