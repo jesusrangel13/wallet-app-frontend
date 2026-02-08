@@ -25,6 +25,7 @@ interface TransactionFiltersProps {
   onFilterChange: (filters: TransactionFilters) => void
   accounts: Account[]
   categories: MergedCategory[]
+  extraActions?: React.ReactNode
 }
 
 export default function TransactionFiltersComponent({
@@ -32,6 +33,7 @@ export default function TransactionFiltersComponent({
   onFilterChange,
   accounts,
   categories,
+  extraActions
 }: TransactionFiltersProps) {
   const t = useTranslations('filters')
   const translateCategory = useCategoryTranslation()
@@ -513,6 +515,9 @@ export default function TransactionFiltersComponent({
             </div>
           )}
         </div>
+
+        {/* Extra Actions Slot */}
+        {extraActions}
 
         {/* Clear All */}
         {hasActiveFilters && (
