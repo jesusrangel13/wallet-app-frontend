@@ -17,6 +17,7 @@ import { EmojiPicker } from '@/components/ui/EmojiPicker'
 import { Trash2, Edit2, Plus, Sparkles, ChevronDown, Loader2 } from 'lucide-react'
 import { LoadingSpinner, SkeletonCard } from '@/components/ui/Loading'
 import { useGlobalErrorHandler } from '@/hooks/useGlobalErrorHandler'
+import { EmptyState } from '@/components/ui/EmptyState'
 
 const EMOJIS = [
   '🍽️', '🚗', '🛒', '🎮', '🏠', '💊', '✈️', '📚', '👔', '💰',
@@ -45,6 +46,7 @@ interface CategoryItem {
 
 export default function CategoriesPage() {
   const t = useTranslations('settings.categoriesPage')
+  const tCommon = useTranslations('common')
   const tLoading = useTranslations('loading')
   const translateCategory = useCategoryTranslation()
   const queryClient = useQueryClient()
@@ -462,20 +464,13 @@ export default function CategoriesPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="text-center py-12 text-muted-foreground">
-            <Sparkles className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-            <p className="text-lg font-medium mb-1">No hay categorías para este tipo</p>
-            <p className="text-sm mb-4">
-              Crea tu primera categoría personalizada para organizarte mejor
-            </p>
-            <Button
-              onClick={() => openNewCategoryModal()}
-              className="bg-green-600 hover:bg-green-700 text-white mx-auto"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Crear Categoría
-            </Button>
-          </div>
+          <EmptyState
+            type="categories"
+            title={tCommon('empty.categories.title')}
+            description={tCommon('empty.categories.description')}
+            actionLabel={t('newCategory')}
+            onAction={() => openNewCategoryModal()}
+          />
         )}
       </div>
 

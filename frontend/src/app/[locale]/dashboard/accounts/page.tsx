@@ -24,6 +24,7 @@ import { useGlobalErrorHandler } from '@/hooks/useGlobalErrorHandler'
 import { AccountsPageSkeleton } from '@/components/ui/PageSkeletons'
 import { PageTransition } from '@/components/ui/animations'
 import { AccountsViewVariants } from '@/components/accounts/AccountsViewVariants'
+import { EmptyState } from '@/components/ui/EmptyState'
 
 
 const accountSchema = z.object({
@@ -249,18 +250,13 @@ export default function AccountsPage() {
 
           {/* Accounts content */}
           {accounts.length === 0 ? (
-            <Card>
-              <CardContent className="py-12">
-                <div className="text-center">
-                  <Wallet className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-                  <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">No accounts yet</p>
-                  <Button onClick={handleAddNew}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create your first account
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <EmptyState
+              type="accounts"
+              title={tCommon('empty.accounts.title')}
+              description={tCommon('empty.accounts.description')}
+              actionLabel={t('new')}
+              onAction={handleAddNew}
+            />
           ) : (
             <AccountsViewVariants
               accounts={accounts}

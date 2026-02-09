@@ -34,6 +34,7 @@ import { TransactionCard } from '@/components/transactions/TransactionCard'
 import { TimelineConnector, TimelineVariant } from '@/components/transactions/TimelineConnector'
 import { TimelineStyleSelector } from '@/components/transactions/TimelineStyleSelector'
 import { MonthSelectorVariants, SelectorVariant } from '@/components/transactions/MonthSelectorVariants'
+import { EmptyState } from '@/components/ui/EmptyState'
 
 const transactionSchema = z.object({
   accountId: z.string().min(1, 'Account is required'),
@@ -930,13 +931,27 @@ export default function TransactionsPage() {
             {isRefreshingList && transactions.length > 0 ? (
               <TransactionListSkeleton itemCount={5} />
             ) : transactions.length === 0 ? (
-              <Card>
-                <CardContent>
-                  <p className="text-center text-gray-500 py-8">
-                    No transactions found.
-                  </p>
-                </CardContent>
-              </Card>
+              (() => {
+                const isFiltering =
+                  filters.search ||
+                  filters.type !== 'ALL' ||
+                  filters.accountId ||
+                  filters.categoryId ||
+                  filters.startDate ||
+                  filters.endDate ||
+                  filters.minAmount ||
+                  filters.maxAmount;
+
+                return (
+                  <EmptyState
+                    type={isFiltering ? 'search' : 'transactions'}
+                    title={isFiltering ? tCommon('empty.noResults') : tCommon('empty.transactions.title')}
+                    description={isFiltering ? tCommon('empty.noResults') : tCommon('empty.transactions.description')}
+                    actionLabel={isFiltering ? undefined : t('newTransaction')}
+                    onAction={() => setIsModalOpen(true)}
+                  />
+                )
+              })()
             ) : (
               <GroupedVirtuoso
                 ref={virtuosoRef}

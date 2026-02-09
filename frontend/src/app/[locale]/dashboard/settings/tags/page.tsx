@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
 import { LoadingPage, LoadingSpinner } from '@/components/ui/Loading'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { EmptyState } from '@/components/ui/EmptyState'
 
 const COLOR_PALETTE = [
   '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
@@ -21,6 +22,7 @@ const COLOR_PALETTE = [
 
 export default function TagsSettingsPage() {
   const t = useTranslations('settings.tagsPage')
+  const tCommon = useTranslations('common')
   const tLoading = useTranslations('loading')
   const [tags, setTags] = useState<Tag[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -200,20 +202,13 @@ export default function TagsSettingsPage() {
 
         {tags.length === 0 && (
           <div className="col-span-full">
-            <Card>
-              <CardContent className="py-16 text-center">
-                <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-10 h-10 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">{t('noTags')}</h3>
-                <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
-                  {t('noTagsDescription')}
-                </p>
-                <Button onClick={handleAddNew}>{t('createFirstTag')}</Button>
-              </CardContent>
-            </Card>
+            <EmptyState
+              type="tags"
+              title={tCommon('empty.tags.title')}
+              description={tCommon('empty.tags.description')}
+              actionLabel={t('createFirstTag')}
+              onAction={handleAddNew}
+            />
           </div>
         )}
       </div>
@@ -267,8 +262,8 @@ export default function TagsSettingsPage() {
                           setShowColorPicker(false)
                         }}
                         className={`w-10 h-10 rounded-full transition-all ${formData.color === color
-                            ? 'ring-2 ring-blue-500 ring-offset-2 scale-110'
-                            : 'hover:scale-110'
+                          ? 'ring-2 ring-blue-500 ring-offset-2 scale-110'
+                          : 'hover:scale-110'
                           }`}
                         style={{ backgroundColor: color }}
                         title={color}

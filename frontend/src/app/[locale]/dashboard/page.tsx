@@ -34,6 +34,7 @@ import { TopTagsWidget } from '@/components/widgets/TopTagsWidget'
 import { HeroBalanceWidget } from '@/components/widgets/HeroBalanceWidget'
 import { SmartInsightsWidget } from '@/components/widgets/SmartInsightsWidget'
 import { useDashboardSummary } from '@/hooks/useDashboard'
+import { EmptyState } from '@/components/ui/EmptyState'
 
 // Import lazy-loaded chart widgets - these use recharts (~200KB)
 // They are loaded on-demand to reduce initial bundle size
@@ -98,6 +99,7 @@ const WIDGET_NAMES: Record<string, string> = {
 // Internal component to use the context
 const DashboardContent = () => {
   const t = useTranslations('dashboard')
+  const tCommon = useTranslations('common')
   const { preferences, setPreferences, isLoading, setIsLoading } = useDashboardStore()
   const { month, year, setMonthYear } = useSelectedMonth() // Now accessing context correctly
   const { data: dashboardData, isLoading: isDataLoading } = useDashboardSummary({ month, year }) // Accessing backend with 0-based month (Backend handles Date constructor correctly)
@@ -255,10 +257,13 @@ const DashboardContent = () => {
 
         {/* Empty state */}
         {preferences.widgets.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 mb-4">{t('noWidgets')}</p>
+          <EmptyState
+            type="widgets"
+            title={tCommon('empty.widgets.title')}
+            description={tCommon('empty.widgets.description')}
+          >
             <AddWidgetButton />
-          </div>
+          </EmptyState>
         )}
       </div>
     </PageTransition>

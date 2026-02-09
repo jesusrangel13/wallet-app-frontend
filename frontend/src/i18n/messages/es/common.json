@@ -84,6 +84,40 @@
     "close": "Cerrar",
     "confirm": "Confirmar",
     "view": "Ver",
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "skip": "Omitir"
+  },
+  "empty": {
+    "noData": "No hay datos disponibles",
+    "noResults": "No se encontraron resultados",
+    "noItems": "No hay elementos aún",
+    "tags": {
+      "title": "No hay etiquetas todavía",
+      "description": "Las etiquetas te ayudan a organizar y filtrar tus transacciones. Crea tu primera etiqueta para comenzar."
+    },
+    "transactions": {
+      "title": "Tu historial comienza aquí",
+      "description": "Registra tu primera transacción y comienza a tener control total de tus finanzas."
+    },
+    "accounts": {
+      "title": "Organiza tu dinero",
+      "description": "Agrega tus cuentas bancarias, tarjetas y efectivo para tener una vista completa."
+    },
+    "groups": {
+      "title": "Mejor juntos",
+      "description": "Crea un grupo para dividir gastos con amigos, familia o compañeros de trabajo."
+    },
+    "loans": {
+      "title": "Control de préstamos",
+      "description": "Registra lo que prestas y lo que te deben. Nunca más olvides un préstamo."
+    },
+    "widgets": {
+      "title": "Personaliza tu dashboard",
+      "description": "Arrastra widgets aquí para crear tu panel de control personalizado."
+    },
+    "categories": {
+      "title": "Organiza tus gastos",
+      "description": "Crea categorías para entender mejor a dónde va tu dinero."
+    }
   }
 }

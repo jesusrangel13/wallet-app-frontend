@@ -84,6 +84,40 @@
     "close": "Close",
     "confirm": "Confirm",
     "view": "View",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "skip": "Skip"
+  },
+  "empty": {
+    "noData": "No data available",
+    "noResults": "No results found",
+    "noItems": "No items yet",
+    "tags": {
+      "title": "No tags yet",
+      "description": "Tags help you organize and filter your transactions. Create your first tag to get started."
+    },
+    "transactions": {
+      "title": "Your history starts here",
+      "description": "Log your first transaction and start taking full control of your finances."
+    },
+    "accounts": {
+      "title": "Organize your money",
+      "description": "Add your bank accounts, cards, and cash to get a complete view."
+    },
+    "groups": {
+      "title": "Better together",
+      "description": "Create a group to split expenses with friends, family, or coworkers."
+    },
+    "loans": {
+      "title": "Loan tracking",
+      "description": "Track what you lend and what you owe. Never forget a loan again."
+    },
+    "widgets": {
+      "title": "Customize your dashboard",
+      "description": "Drag widgets here to create your personalized dashboard."
+    },
+    "categories": {
+      "title": "Organize your expenses",
+      "description": "Create categories to better understand where your money goes."
+    }
   }
 }

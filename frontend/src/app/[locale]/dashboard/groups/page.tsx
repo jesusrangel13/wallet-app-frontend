@@ -19,6 +19,7 @@ import { Tooltip } from '@/components/ui/Tooltip'
 import { GroupsPageSkeleton } from '@/components/ui/PageSkeletons'
 import { useGroups, useCreateGroup, useUpdateGroup, useDeleteGroup, useLeaveGroup, useAddMember, useRemoveMember, useUpdateDefaultSplit } from '@/hooks/useGroups'
 import { PageTransition } from '@/components/ui/animations'
+import { EmptyState } from '@/components/ui/EmptyState'
 import { Users } from 'lucide-react'
 
 const GROUP_COVER_IMAGES = [
@@ -503,20 +504,16 @@ export default function GroupsPage() {
           </Button>
         </div>
 
-        {/* Groups Grid - Diseño Compacto (Virtualizado) */}
         <div style={{ height: 'calc(100vh - 200px)', width: '100%' }}>
           {groups.length === 0 ? (
             <div className="col-span-full">
-              <Card>
-                <CardContent className="py-16 text-center">
-                  <div className="text-6xl mb-4">👨‍👩‍👧‍👦</div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No groups yet</h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-6">
-                    Create your first group to start sharing expenses with friends and family
-                  </p>
-                  <Button onClick={handleAddNew}>Create Your First Group</Button>
-                </CardContent>
-              </Card>
+              <EmptyState
+                type="groups"
+                title={tCommon('empty.groups.title')}
+                description={tCommon('empty.groups.description')}
+                actionLabel={t('new')}
+                onAction={handleAddNew}
+              />
             </div>
           ) : (
             <VirtuosoGrid
