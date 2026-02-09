@@ -10,7 +10,7 @@ import { AddWidgetButton } from '@/components/AddWidgetButton'
 import { toast } from 'sonner'
 import { LoadingPage } from '@/components/ui/Loading'
 import { SelectedMonthProvider, useSelectedMonth } from '@/contexts/SelectedMonthContext'
-import { MonthSelector } from '@/components/MonthSelector'
+import { DashboardMonthSelector } from '@/components/DashboardMonthSelector'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { PageTransition } from '@/components/ui/animations'
 
@@ -99,7 +99,7 @@ const WIDGET_NAMES: Record<string, string> = {
 const DashboardContent = () => {
   const t = useTranslations('dashboard')
   const { preferences, setPreferences, isLoading, setIsLoading } = useDashboardStore()
-  const { month, year } = useSelectedMonth() // Now accessing context correctly
+  const { month, year, setMonthYear } = useSelectedMonth() // Now accessing context correctly
   const { data: dashboardData, isLoading: isDataLoading } = useDashboardSummary({ month, year }) // Accessing backend with 0-based month (Backend handles Date constructor correctly)
 
   // Load dashboard preferences on mount
@@ -166,7 +166,10 @@ const DashboardContent = () => {
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('title')}</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-1">{t('subtitle')}</p>
           </div>
-          <MonthSelector />
+          <DashboardMonthSelector
+            currentDate={new Date(year, month)}
+            onDateChange={(date) => setMonthYear(date.getMonth(), date.getFullYear())}
+          />
         </div>
 
         {/* Hero Section (Command Center) */}

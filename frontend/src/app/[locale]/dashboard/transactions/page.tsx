@@ -30,6 +30,10 @@ import { LoadingBar } from '@/components/ui/LoadingBar'
 import { TransactionListSkeleton } from '@/components/ui/TransactionListSkeleton'
 import { PageTransition } from '@/components/ui/animations'
 import { TrendingUp } from 'lucide-react'
+import { TransactionCard } from '@/components/transactions/TransactionCard'
+import { TimelineConnector, TimelineVariant } from '@/components/transactions/TimelineConnector'
+import { TimelineStyleSelector } from '@/components/transactions/TimelineStyleSelector'
+import { MonthSelectorVariants, SelectorVariant } from '@/components/transactions/MonthSelectorVariants'
 
 const transactionSchema = z.object({
   accountId: z.string().min(1, 'Account is required'),
@@ -122,6 +126,13 @@ export default function TransactionsPage() {
   // Month/Year selector
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+
+  // Derived date for the new selector component
+  const currentDate = new Date(selectedYear, selectedMonth, 1)
+
+  const handleDateChange = (date: Date) => {
+    updateMonthFilter(date.getMonth(), date.getFullYear())
+  }
 
   // Filters
   const [filters, setFilters] = useState<TransactionFilters>({
@@ -775,114 +786,48 @@ export default function TransactionsPage() {
       <LoadingBar isLoading={isRefreshingList} />
 
       <PageTransition>
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <TrendingUp className="h-8 w-8 text-green-600" />
-                {t('title')}
-              </h1>
-              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">
-                {t('subtitle')}
-              </p>
-            </div>
-            <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
-              {/* Export Menu */}
-              <div className="relative flex-1 sm:flex-initial">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowExportMenu(!showExportMenu)}
-                  disabled={transactions.length === 0}
-                  className="w-full sm:w-auto"
-                  title="Export transactions"
-                >
-                  <svg className="w-4 h-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="max-w-screen-2xl mx-auto">
+
+          <div className="flex flex-col gap-6 mb-6">
+            {/* Header Row: Title & Actions */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {t('title')}
+                </h1>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {t('subtitle')}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 w-full md:w-auto self-end md:self-auto">
+                <Button onClick={handleAddNew} className="w-full md:w-auto">
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                      d="M12 4v16m8-8H4"
                     />
                   </svg>
-                  <span className="hidden sm:inline">{tCommon('actions.export')}</span>
+                  {tCommon('actions.add')}
                 </Button>
-                {showExportMenu && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-card rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10">
-                    <button
-                      onClick={() => handleExport('csv')}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
-                    >
-                      <span>📄</span> Export as CSV
-                    </button>
-                    <button
-                      onClick={() => handleExport('json')}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
-                    >
-                      <span>📋</span> Export as JSON
-                    </button>
-                    <button
-                      onClick={() => handleExport('excel')}
-                      className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
-                    >
-                      <span>📊</span> Export as Excel
-                    </button>
-                  </div>
-                )}
               </div>
-              <Button onClick={handleAddNew} className="flex-1 sm:flex-initial" title="New transaction">
-                <svg className="w-4 h-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                <span className="hidden sm:inline">{t('new')}</span>
-                <span className="sm:hidden">{tCommon('actions.add')}</span>
-              </Button>
             </div>
-          </div>
 
-          {/* Month/Year Selector - Revolut Style */}
-          <div className="flex items-center justify-center gap-6 py-2">
-            <button
-              onClick={() => {
-                const newMonth = selectedMonth === 0 ? 11 : selectedMonth - 1
-                const newYear = selectedMonth === 0 ? selectedYear - 1 : selectedYear
-                updateMonthFilter(newMonth, newYear)
-              }}
-              className="p-2 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Previous month"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-
-            <button
-              onClick={() => {
-                // TODO: Could open a month/year picker modal for quick navigation
-              }}
-              className="text-xl font-semibold text-foreground hover:text-primary transition-colors cursor-pointer min-w-[200px] text-center"
-            >
-              {monthNames[selectedMonth]} {selectedYear}
-            </button>
-
-            <button
-              onClick={() => {
-                const newMonth = selectedMonth === 11 ? 0 : selectedMonth + 1
-                const newYear = selectedMonth === 11 ? selectedYear + 1 : selectedYear
-                updateMonthFilter(newMonth, newYear)
-              }}
-              className="p-2 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Next month"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+            {/* Timeline Selector */}
+            <div className="w-full">
+              <MonthSelectorVariants
+                variant="B"
+                currentDate={currentDate}
+                onDateChange={handleDateChange}
+              />
+            </div>
           </div>
 
           {/* Filters */}
@@ -891,83 +836,90 @@ export default function TransactionsPage() {
             onFilterChange={setFilters}
             accounts={accounts}
             categories={categories}
-          />
-
-          {/* Select All Button */}
-          {transactions.length > 0 && (
-            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-background rounded-lg border border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  checked={selectAll}
-                  onChange={handleSelectAll}
-                  className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer bg-white dark:bg-gray-800"
-                />
-                <button
-                  onClick={handleSelectAll}
-                  className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+            extraActions={
+              <div className="relative">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowExportMenu(!showExportMenu)}
+                  className="h-9 px-3 text-xs" // Smaller size to fit toolbar
                 >
-                  {selectAll ? 'Deseleccionar todas' : 'Seleccionar todas'}
-                </button>
-                {selectedTransactionIds.size > 0 && (
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    ({selectedTransactionIds.size} de {transactions.length} seleccionadas)
-                  </span>
+                  <TrendingUp className="w-3.5 h-3.5 mr-2" />
+                  {tCommon('actions.export')}
+                </Button>
+                {showExportMenu && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setShowExportMenu(false)}
+                    />
+                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20 py-1">
+                      <button
+                        onClick={() => handleExport('csv')}
+                        className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        CSV
+                      </button>
+                      <button
+                        onClick={() => handleExport('json')}
+                        className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        JSON
+                      </button>
+                      <button
+                        onClick={() => handleExport('excel')}
+                        className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        Excel
+                      </button>
+                    </div>
+                  </>
                 )}
               </div>
-              {selectedTransactionIds.size > 0 && (
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedTransactionIds(new Set())
-                      setSelectAll(false)
-                    }}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={() => setShowBulkDeleteConfirm(true)}
-                    disabled={isBulkDeleting}
-                    className="bg-red-600 hover:bg-red-700 text-white"
-                  >
-                    {isBulkDeleting ? tLoading('deleting') : 'Eliminar'}
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
+            }
+          />
 
-          {/* Bulk Delete Action Bar */}
+          {/* Select All Button - Removed in favor of contextual bar */}
           {selectedTransactionIds.size > 0 && (
-            <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-card border-t border-gray-200 dark:border-gray-700 shadow-lg z-40">
-              <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">
-                    {selectedTransactionIds.size} transaction{selectedTransactionIds.size !== 1 ? 's' : ''} selected
-                  </span>
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-2xl rounded-full px-6 py-3 z-50 flex items-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+
+              {/* Selection Info & Select All Toggle */}
+              <div className="flex items-center gap-3 border-r border-gray-200 dark:border-gray-700 pr-6">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={selectAll}
+                    onChange={handleSelectAll}
+                    id="floating-select-all"
+                    className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer"
+                  />
+                  <label htmlFor="floating-select-all" className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer whitespace-nowrap">
+                    {selectedTransactionIds.size} seleccionadas
+                  </label>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setSelectedTransactionIds(new Set())
-                      setSelectAll(false)
-                    }}
-                    disabled={isBulkDeleting}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={() => setShowBulkDeleteConfirm(true)}
-                    disabled={isBulkDeleting}
-                    className="bg-red-600 hover:bg-red-700 text-white"
-                  >
-                    {isBulkDeleting ? tLoading('deleting') : 'Delete Selected'}
-                  </Button>
-                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedTransactionIds(new Set())
+                    setSelectAll(false)
+                  }}
+                  disabled={isBulkDeleting}
+                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => setShowBulkDeleteConfirm(true)}
+                  disabled={isBulkDeleting}
+                  className="rounded-full bg-red-600 hover:bg-red-700 text-white shadow-sm"
+                >
+                  {isBulkDeleting ? tLoading('deleting') : 'Eliminar'}
+                </Button>
               </div>
             </div>
           )}
@@ -993,154 +945,65 @@ export default function TransactionsPage() {
                 groupContent={(index) => {
                   const group = groupedTransactions[index]
                   return (
-                    <div className="pt-6 pb-2 bg-background z-10 sticky top-0">
-                      <DateGroupHeader
-                        date={group.date}
-                        totalIncome={group.totalIncome}
-                        totalExpense={group.totalExpense}
-                        currency={group.currency}
-                      />
-                    </div>
+                    <DateGroupHeader
+                      date={group.date}
+                      totalIncome={group.totalIncome}
+                      totalExpense={group.totalExpense}
+                      currency={group.currency}
+                    />
                   )
                 }}
                 itemContent={(index) => {
                   const transaction = flatTransactions[index];
                   if (!transaction) return null;
 
+                  // Determine if first/last in group by comparing dates with neighbors
+                  const currentDate = new Date(transaction.date).toDateString()
+                  const prevDate = index > 0 ? new Date(flatTransactions[index - 1].date).toDateString() : null
+                  const nextDate = index < flatTransactions.length - 1 ? new Date(flatTransactions[index + 1].date).toDateString() : null
+
+                  // In a grouped list sorted by date desc, items within a day group share the same date string
+                  // But we need to handle the case where "first in group" means first item rendered for that date header
+                  const isFirst = currentDate !== prevDate
+                  const isLast = currentDate !== nextDate
+
                   return (
-                    <div className="pb-2">
-                      <Card className={`transition-colors ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700' : ''}`}>
-                        <CardContent className="py-4">
-                          <div className="flex items-start justify-between">
-                            {/* Left Section: Checkbox + Category Icon + Details */}
-                            <div className="flex items-start gap-3 flex-1">
-                              <input
-                                type="checkbox"
-                                checked={selectedTransactionIds.has(transaction.id)}
-                                onChange={() => handleSelectTransaction(transaction.id)}
-                                className="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer mt-1 bg-white dark:bg-gray-800"
-                              />
+                    <div className={`flex items-stretch transition-colors group ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-card hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
 
-                              {/* Category Circle Icon */}
-                              <div
-                                className="flex items-center justify-center w-10 h-10 rounded-full text-lg flex-shrink-0"
-                                style={{
-                                  backgroundColor: transaction.category?.color || '#E5E7EB',
-                                  color: transaction.category?.icon ? 'inherit' : 'transparent'
-                                }}
-                              >
-                                {transaction.category?.icon || '📌'}
-                              </div>
+                      {/* Selection Checkbox */}
+                      <div className={`flex items-center pl-4 pr-2 transition-opacity duration-200 ${selectedTransactionIds.size > 0 ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                        <input
+                          type="checkbox"
+                          checked={selectedTransactionIds.has(transaction.id)}
+                          onChange={() => handleSelectTransaction(transaction.id)}
+                          className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer bg-white dark:bg-gray-800"
+                        />
+                      </div>
 
-                              {/* Content */}
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-baseline gap-2">
-                                  <p className="font-semibold text-gray-900 dark:text-white">
-                                    {transaction.category?.name || 'Uncategorized'}
-                                  </p>
-                                </div>
+                      {/* Timeline Line & Dot */}
+                      <TimelineConnector
+                        type={transaction.type}
+                        isFirst={false} // Force continuous line
+                        isLast={false}  // Force continuous line
+                      />
 
-                                {transaction.description && (
-                                  <p className="text-sm text-gray-600 dark:text-gray-400 truncate">{transaction.description}</p>
-                                )}
-
-                                {/* Shared Expense Indicator - unified display */}
-                                <SharedExpenseIndicator transaction={transaction} variant="compact" className="mt-2" />
-
-                                {/* Show payee only for non-shared transactions (shared ones show it in the indicator) */}
-                                {!transaction.sharedExpenseId && transaction.payee && (
-                                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">→ {transaction.payee}</p>
-                                )}
-
-                                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                  <span>{transaction.account?.name}</span>
-                                  {transaction.toAccount && (
-                                    <>
-                                      <span>→</span>
-                                      <span>{transaction.toAccount.name}</span>
-                                    </>
-                                  )}
-                                </div>
-
-                                {transaction.tags && transaction.tags.length > 0 && (
-                                  <div className="flex flex-wrap gap-1 mt-2">
-                                    {transaction.tags.map((t) => (
-                                      <span
-                                        key={t.id}
-                                        className="inline-block px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded text-xs"
-                                      >
-                                        {t.tag.name}
-                                      </span>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Right Section: Amount + Date + Actions */}
-                            <div className="flex flex-col items-end gap-2 ml-2 md:ml-4 md:gap-3 flex-shrink-0">
-                              <div className="text-right truncate">
-                                <p
-                                  className={`text-sm md:text-lg font-bold whitespace-nowrap ${getTransactionTypeColor(
-                                    transaction.type
-                                  )}`}
-                                >
-                                  {transaction.type === 'EXPENSE' && '-'}
-                                  {transaction.type === 'INCOME' && '+'}
-                                  {formatCurrency(
-                                    Number(transaction.amount),
-                                    transaction.account?.currency || 'CLP'
-                                  )}
-                                </p>
-                              </div>
-
-                              <div className="flex gap-1.5 md:gap-2">
-                                {/* Mobile: Icon-only buttons */}
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleEdit(transaction)}
-                                  className="md:hidden px-2.5 py-1.5"
-                                  title="Edit transaction"
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                  </svg>
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleDelete(transaction.id)}
-                                  className="md:hidden px-2.5 py-1.5 text-red-600 hover:text-red-700"
-                                  title="Delete transaction"
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                  </svg>
-                                </Button>
-
-                                {/* Desktop: Text buttons */}
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleEdit(transaction)}
-                                  className="hidden md:inline-flex"
-                                >
-                                  {tCommon('actions.edit')}
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleDelete(transaction.id)}
-                                  className="hidden md:inline-flex text-red-600 hover:text-red-700"
-                                >
-                                  {tCommon('actions.delete')}
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
+                      {/* Transaction Content */}
+                      <div className="flex-1 min-w-0 py-1 pr-4">
+                        <TransactionCard
+                          id={transaction.id}
+                          type={transaction.type}
+                          amount={Number(transaction.amount)}
+                          currency={(transaction.account?.currency as 'CLP' | 'USD' | 'EUR') || 'CLP'}
+                          category={transaction.category?.name || 'Uncategorized'}
+                          categoryIcon={transaction.category?.icon || undefined}
+                          categoryColor={transaction.category?.color || undefined}
+                          description={transaction.description || undefined}
+                          payee={transaction.payee ? transaction.payee : undefined}
+                          date={new Date(transaction.date)}
+                          isShared={!!transaction.sharedExpenseId}
+                          onEdit={() => handleEdit(transaction)}
+                        />
+                      </div>
                     </div>
                   )
                 }}

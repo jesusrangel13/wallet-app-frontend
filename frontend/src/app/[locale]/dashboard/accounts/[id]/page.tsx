@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { LoadingPage, LoadingSpinner } from '@/components/ui/Loading'
 import { Skeleton } from '@/components/ui/Skeleton'
-import { ArrowLeft, Edit, Trash2, Wallet, CreditCard, TrendingUp } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Wallet, CreditCard, TrendingUp, MoreHorizontal } from 'lucide-react'
 import { getAccountIcon } from '@/utils/accountIcons'
 import { toast } from 'sonner'
 import DeleteAccountModal from '@/components/DeleteAccountModal'
@@ -21,18 +21,19 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { DateGroupHeader } from '@/components/DateGroupHeader'
+import { TransactionCard } from '@/components/transactions/TransactionCard'
+import { TimelineConnector } from '@/components/transactions/TimelineConnector'
 import TransactionFormModal from '@/components/TransactionFormModal'
 import { exportToCSV, exportToJSON, exportToExcel } from '@/lib/exportTransactions'
 import { SharedExpenseIndicator } from '@/components/SharedExpenseIndicator'
+import { AccountHeroCard } from '@/components/accounts/AccountHeroCard'
 import dynamic from 'next/dynamic'
 
-// Lazy load the chart component to reduce initial bundle size
-// recharts adds ~200KB to the bundle
-const LazyBalanceChart = dynamic(
-  () => import('@/components/charts/AccountBalanceChart').then(mod => ({ default: mod.AccountBalanceChart })),
+const LazyDailySpendingChart = dynamic(
+  () => import('@/components/charts/DailySpendingChart').then(mod => ({ default: mod.DailySpendingChart })),
   {
     loading: () => (
-      <div className="flex items-center justify-center h-[400px]">
+      <div className="flex items-center justify-center h-[300px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     ),
@@ -83,7 +84,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
   const [balanceHistory, setBalanceHistory] = useState<BalanceHistoryData | null>(null)
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<TabType>('balance')
+  // Removed activeTab - using continuous scroll layout
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [transactionCount, setTransactionCount] = useState(0)
@@ -96,6 +97,9 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
   const [isLoadingTransactions, setIsLoadingTransactions] = useState(false)
   const [hasLoadedBalance, setHasLoadedBalance] = useState(false)
   const [hasLoadedTransactions, setHasLoadedTransactions] = useState(false)
+  const [selectAll, setSelectAll] = useState(false)
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false)
+  const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false)
 
   const {
     register,
@@ -109,6 +113,22 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
   })
 
   const selectedType = watch('type')
+
+  /* Metrics and Grouping */
+  const currentMonthMetrics = useMemo(() => {
+    const now = new Date()
+    const currentMonth = now.getMonth()
+    const currentYear = now.getFullYear()
+
+    return transactions.reduce((acc: any, t: any) => {
+      const d = new Date(t.date)
+      if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
+        if (t.type === 'INCOME') acc.income += Number(t.amount)
+        if (t.type === 'EXPENSE') acc.expense += Number(t.amount)
+      }
+      return acc
+    }, { income: 0, expense: 0 })
+  }, [transactions])
 
   // Load data once on mount
   useEffect(() => {
@@ -132,11 +152,8 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
         setIsLoading(false)
       }
 
-      // Load both balance history and transactions in parallel
-      Promise.all([
-        loadBalanceHistory(),
-        loadTransactions()
-      ])
+      // Load transactions only
+      loadTransactions()
     }
 
     loadInitialData()
@@ -191,10 +208,10 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
   const refreshData = async () => {
     await Promise.all([
       loadAccountData(),
-      loadBalanceHistory(true),
       loadTransactions(true)
     ])
   }
+
 
   const handleEdit = () => {
     if (!account) return
@@ -211,6 +228,47 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
       billingDay: account.billingDay || undefined,
     })
     setIsEditModalOpen(true)
+  }
+
+  const handleSelectTransaction = (id: string) => {
+    const newSelected = new Set(selectedTransactionIds)
+    if (newSelected.has(id)) {
+      newSelected.delete(id)
+    } else {
+      newSelected.add(id)
+    }
+    setSelectedTransactionIds(newSelected)
+    setSelectAll(newSelected.size === transactions.length && transactions.length > 0)
+  }
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedTransactionIds(new Set())
+      setSelectAll(false)
+    } else {
+      const allIds = new Set(transactions.map(t => t.id))
+      setSelectedTransactionIds(allIds)
+      setSelectAll(true)
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (selectedTransactionIds.size === 0) return
+
+    try {
+      setIsBulkDeleting(true)
+      const transactionIds = Array.from(selectedTransactionIds)
+      const result = await transactionAPI.bulkDelete(transactionIds) // Assumes API supports this, derived from transactions page usage
+      toast.success('Transactions deleted successfully')
+      await loadTransactions(true)
+      setSelectedTransactionIds(new Set())
+      setSelectAll(false)
+      setShowBulkDeleteConfirm(false)
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to delete transactions')
+    } finally {
+      setIsBulkDeleting(false)
+    }
   }
 
   const onSubmitEdit = async (data: AccountFormData) => {
@@ -256,45 +314,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
     }
   }
 
-  const handleEditTransaction = (transaction: Transaction) => {
-    setEditingTransaction(transaction)
-    setIsTransactionModalOpen(true)
-  }
 
-  const handleDeleteTransaction = async (transactionId: string) => {
-    if (!confirm('Are you sure you want to delete this transaction?')) return
-
-    try {
-      await transactionAPI.delete(transactionId)
-      toast.success('Transaction deleted successfully')
-      await refreshData()
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to delete transaction')
-    }
-  }
-
-  const handleSelectTransaction = (transactionId: string) => {
-    const newSelected = new Set(selectedTransactionIds)
-    if (newSelected.has(transactionId)) {
-      newSelected.delete(transactionId)
-    } else {
-      newSelected.add(transactionId)
-    }
-    setSelectedTransactionIds(newSelected)
-  }
-
-  const handleBulkDelete = async () => {
-    if (!confirm(`Are you sure you want to delete ${selectedTransactionIds.size} transactions?`)) return
-
-    try {
-      await transactionAPI.bulkDelete(Array.from(selectedTransactionIds))
-      toast.success('Transactions deleted successfully')
-      setSelectedTransactionIds(new Set())
-      await refreshData()
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to delete transactions')
-    }
-  }
 
   const handleExport = (format: 'csv' | 'json' | 'excel') => {
     const timestamp = new Date().toISOString().split('T')[0]
@@ -433,437 +453,274 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
           <Skeleton className="h-64 rounded-lg" />
           <Skeleton className="h-32 rounded-lg" />
           <Skeleton className="h-32 rounded-lg" />
+          {/* Select All Button - Floating Bar */}
+          {selectedTransactionIds.size > 0 && (
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-2xl rounded-full px-6 py-3 z-50 flex items-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+              <div className="flex items-center gap-3 border-r border-gray-200 dark:border-gray-700 pr-6">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={selectAll}
+                    onChange={handleSelectAll}
+                    id="floating-select-all"
+                    className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer"
+                  />
+                  <label htmlFor="floating-select-all" className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer whitespace-nowrap">
+                    {selectedTransactionIds.size} seleccionadas
+                  </label>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedTransactionIds(new Set())
+                    setSelectAll(false)
+                  }}
+                  disabled={isBulkDeleting}
+                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => setShowBulkDeleteConfirm(true)}
+                  disabled={isBulkDeleting}
+                  className="rounded-full bg-red-600 hover:bg-red-700 text-white shadow-sm"
+                >
+                  {isBulkDeleting ? 'Eliminando...' : 'Eliminar'}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Bulk Delete Confirmation Modal */}
+          <Modal
+            isOpen={showBulkDeleteConfirm}
+            onClose={() => setShowBulkDeleteConfirm(false)}
+            title="Eliminar transacciones"
+          >
+            <div className="space-y-4">
+              <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-sm text-red-900 dark:text-red-200">
+                  ¿Estás seguro de que deseas eliminar {selectedTransactionIds.size} transacción{selectedTransactionIds.size !== 1 ? 'es' : ''}?
+                </p>
+                <p className="text-xs text-red-700 dark:text-red-400 mt-2">
+                  Esta acción no se puede deshacer.
+                </p>
+              </div>
+              <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowBulkDeleteConfirm(false)}
+                  disabled={isBulkDeleting}
+                  className="flex-1"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleBulkDelete}
+                  disabled={isBulkDeleting}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                >
+                  {isBulkDeleting ? 'Eliminando...' : 'Eliminar'}
+                </Button>
+              </div>
+            </div>
+          </Modal>
+
         </div>
       </div>
     )
   }
 
+
+
   const groupedTransactions = groupTransactionsByDate(transactions)
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="space-y-4">
-        {/* Back button - always on top on mobile */}
+    <div className="space-y-8">
+      {/* Top Toolbar */}
+      <div className="flex items-center justify-between">
         <Button
-          variant="outline"
+          variant="ghost"
           size="sm"
           onClick={() => router.push('/dashboard/accounts')}
-          className="w-auto"
+          className="text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
+          Back to Accounts
         </Button>
 
-        {/* Account info and action buttons */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div
-              className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: account.color }}
-            >
-              {(() => {
-                const IconComponent = getAccountIcon(account.type)
-                return <IconComponent className="w-6 h-6 text-white" />
-              })()}
-            </div>
-            <div className="min-w-0">
-              <h1 className="text-2xl sm:text-3xl font-bold text-foreground truncate">{account.name}</h1>
-              <div className="flex items-center gap-2 mt-1 flex-wrap">
-                <p className="text-sm sm:text-base text-muted-foreground capitalize">{account.type.toLowerCase()} Account</p>
-                {account.accountNumber && (
-                  <>
-                    <span className="text-muted-foreground">•</span>
-                    <p className="text-xs sm:text-sm text-muted-foreground">#{account.accountNumber}</p>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Action buttons - responsive */}
-          <div className="flex gap-2 w-full sm:w-auto">
-            {/* Mobile: Icon-only buttons */}
-            <Button
-              variant="outline"
-              onClick={handleEdit}
-              className="md:hidden flex-1 px-3"
-              title="Edit account"
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleDeleteClick}
-              className="md:hidden flex-1 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
-              title="Delete account"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-
-            {/* Desktop: Text buttons */}
-            <Button variant="outline" onClick={handleEdit} className="hidden md:inline-flex">
-              <Edit className="h-4 w-4 mr-2" />
-              Edit
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleDeleteClick}
-              className="hidden md:inline-flex text-red-600 hover:text-red-700 hover:bg-red-50"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Card Grid with Color Accents */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Current Balance Card */}
-        <div
-          className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-muted/20 dark:to-muted/5 p-2.5 shadow-sm border-l-4"
-          style={{ borderLeftColor: account.color }}
-        >
-          <div className="flex items-start justify-between mb-1">
-            <Wallet className="w-3.5 h-3.5 text-muted-foreground" />
-          </div>
-          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-0.5">
-            Current Balance
-          </p>
-          <p className="text-xl font-bold text-foreground tabular-nums">
-            {formatCurrency(Number(account.balance), account.currency as Currency)}
-          </p>
-        </div>
-
-        {/* Credit Limit & Used cards (if CREDIT type) */}
-        {account.type === 'CREDIT' && account.creditLimit && (
-          <>
-            <div
-              className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-muted/20 dark:to-muted/5 p-2.5 shadow-sm border-l-4 border-blue-400"
-            >
-              <div className="flex items-start justify-between mb-1">
-                <CreditCard className="w-3.5 h-3.5 text-muted-foreground" />
-              </div>
-              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-0.5">
-                Credit Limit
-              </p>
-              <p className="text-xl font-bold text-foreground tabular-nums">
-                {formatCurrency(Number(account.creditLimit), account.currency as Currency)}
-              </p>
-            </div>
-
-            <div
-              className="relative overflow-hidden rounded-lg bg-gradient-to-br from-red-50 to-white dark:from-red-900/10 dark:to-background p-2.5 shadow-sm border-l-4 border-red-400"
-            >
-              <div className="flex items-start justify-between mb-1">
-                <TrendingUp className="w-3.5 h-3.5 text-red-400" />
-              </div>
-              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-0.5">
-                Used
-              </p>
-              <p className="text-xl font-bold text-red-600 tabular-nums">
-                {formatCurrency(Number(account.creditLimit) - Number(account.balance), account.currency as Currency)}
-              </p>
-              {/* Progress bar */}
-              <div className="mt-1 w-full h-1 bg-muted rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-red-500 rounded-full transition-all"
-                  style={{
-                    width: `${Math.min(((Number(account.creditLimit) - Number(account.balance)) / Number(account.creditLimit) * 100), 100)}%`
-                  }}
-                />
-              </div>
-              <p className="text-[10px] text-muted-foreground mt-0.5">
-                {((Number(account.creditLimit) - Number(account.balance)) / Number(account.creditLimit) * 100).toFixed(1)}% utilization
-              </p>
-            </div>
-          </>
-        )}
-
-        {/* Currency */}
-        {!(account.type === 'CREDIT' && account.creditLimit) && (
-          <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-muted/20 dark:to-muted/5 p-2.5 shadow-sm border-l-4 border-border">
-            <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-0.5">
-              Currency
-            </p>
-            <p className="text-lg font-bold text-foreground">{account.currency}</p>
-          </div>
-        )}
-      </div>
-
-      {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
-          <button
-            onClick={() => setActiveTab('balance')}
-            className={`${activeTab === 'balance'
-              ? 'border-blue-500 text-blue-600'
-              : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+        {/* Account Actions Menu */}
+        <div className="relative">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowExportMenu(!showExportMenu)}
+            className="text-muted-foreground hover:text-foreground"
           >
-            Saldo
-          </button>
-          <button
-            onClick={() => setActiveTab('transactions')}
-            className={`${activeTab === 'transactions'
-              ? 'border-blue-500 text-blue-600'
-              : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-          >
-            Registros
-          </button>
-        </nav>
-      </div>
-
-      {/* Tab Content */}
-      {activeTab === 'balance' && (
-        <Card>
-          <CardContent className="!p-6">
-            {isLoadingChart ? (
-              <div className="flex items-center justify-center h-[400px]">
-                <LoadingSpinner />
-              </div>
-            ) : balanceHistory && balanceHistory.history.length > 0 ? (
-              <LazyBalanceChart
-                data={filteredBalanceData}
-                currency={account.currency as Currency}
-                previousMonthBalance={balanceHistory.previousMonthBalance}
-                percentageChange={balanceHistory.percentageChange}
-              />
-            ) : (
-              <div className="text-center py-12 text-muted-foreground">
-                No data available for this month
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {activeTab === 'transactions' && (
-        <div className="space-y-4">
-          {/* Transaction Actions */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {selectedTransactionIds.size > 0 && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleBulkDelete}
-                  className="text-red-600 hover:text-red-700"
-                >
-                  Delete Selected ({selectedTransactionIds.size})
-                </Button>
-              )}
-            </div>
-            <div className="relative">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowExportMenu(!showExportMenu)}
+            <MoreHorizontal className="h-5 w-5" />
+          </Button>
+          {showExportMenu && (
+            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 rounded-lg shadow-lg z-50 border border-gray-200 dark:border-gray-700 py-1">
+              <button
+                onClick={() => {
+                  handleEdit()
+                  setShowExportMenu(false)
+                }}
+                className="w-full text-left px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-3"
               >
-                Export
-              </Button>
-              {showExportMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
-                  <div className="py-1">
-                    <button
-                      onClick={() => handleExport('csv')}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      Export as CSV
-                    </button>
-                    <button
-                      onClick={() => handleExport('json')}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      Export as JSON
-                    </button>
-                    <button
-                      onClick={() => handleExport('excel')}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      Export as Excel
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Transactions List */}
-          {isLoadingTransactions ? (
-            <Card>
-              <CardContent className="py-12">
-                <div className="flex items-center justify-center">
-                  <LoadingSpinner />
-                </div>
-              </CardContent>
-            </Card>
-          ) : transactions.length === 0 ? (
-            <Card>
-              <CardContent className="py-12">
-                <div className="text-center text-muted-foreground">
-                  No transactions for this account yet
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-6">
-              {groupedTransactions.map((group) => (
-                <div key={group.date}>
-                  <DateGroupHeader
-                    date={group.date}
-                    totalIncome={group.totalIncome}
-                    totalExpense={group.totalExpense}
-                    currency={group.currency}
-                  />
-                  <div className="space-y-2 mt-2">
-                    {group.transactions.map((transaction) => (
-                      <Card
-                        key={transaction.id}
-                        className={`transition-colors ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-800' : ''}`}
-                      >
-                        <CardContent className="py-4">
-                          <div className="flex items-start justify-between">
-                            {/* Left Section: Checkbox + Category Icon + Details */}
-                            <div className="flex items-start gap-3 flex-1">
-                              <input
-                                type="checkbox"
-                                checked={selectedTransactionIds.has(transaction.id)}
-                                onChange={() => handleSelectTransaction(transaction.id)}
-                                className="w-5 h-5 rounded border-input dark:border-gray-600 bg-background text-blue-600 focus:ring-blue-500 cursor-pointer mt-1"
-                              />
-
-                              {/* Category Circle Icon */}
-                              <div
-                                className="flex items-center justify-center w-10 h-10 rounded-full text-lg flex-shrink-0"
-                                style={{
-                                  backgroundColor: transaction.category?.color || '#E5E7EB',
-                                  color: transaction.category?.icon ? 'inherit' : 'transparent'
-                                }}
-                              >
-                                {transaction.category?.icon || '📌'}
-                              </div>
-
-                              {/* Content */}
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-baseline gap-2">
-                                  <p className="font-semibold text-foreground">
-                                    {transaction.category?.name || 'Uncategorized'}
-                                  </p>
-                                </div>
-
-                                {transaction.description && (
-                                  <p className="text-sm text-muted-foreground truncate">{transaction.description}</p>
-                                )}
-
-                                {/* Shared Expense Indicator - unified display */}
-                                <SharedExpenseIndicator transaction={transaction} variant="compact" className="mt-2" />
-
-                                {/* Show payee only for non-shared transactions (shared ones show it in the indicator) */}
-                                {!transaction.sharedExpenseId && transaction.payee && (
-                                  <p className="text-xs text-muted-foreground mt-1">→ {transaction.payee}</p>
-                                )}
-
-                                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                                  <span>{transaction.account?.name}</span>
-                                  {transaction.toAccount && (
-                                    <>
-                                      <span>→</span>
-                                      <span>{transaction.toAccount.name}</span>
-                                    </>
-                                  )}
-                                </div>
-
-                                {transaction.tags && transaction.tags.length > 0 && (
-                                  <div className="flex flex-wrap gap-1 mt-2">
-                                    {transaction.tags.map((t) => (
-                                      <span
-                                        key={t.id}
-                                        className="inline-block px-1.5 py-0.5 bg-muted text-muted-foreground rounded text-xs"
-                                      >
-                                        {t.tag.name}
-                                      </span>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Right Section: Amount + Actions */}
-                            <div className="flex flex-col items-end gap-2 ml-2 md:ml-4 md:gap-3 flex-shrink-0">
-                              <div className="text-right truncate">
-                                <p
-                                  className={`text-sm md:text-lg font-bold whitespace-nowrap ${transaction.type === 'INCOME' ? 'text-green-600' :
-                                    transaction.type === 'EXPENSE' ? 'text-red-600' :
-                                      'text-blue-600'
-                                    }`}
-                                >
-                                  {transaction.type === 'EXPENSE' && '-'}
-                                  {transaction.type === 'INCOME' && '+'}
-                                  {formatCurrency(
-                                    Number(transaction.amount),
-                                    transaction.account?.currency as Currency || account.currency as Currency
-                                  )}
-                                </p>
-                              </div>
-
-                              <div className="flex gap-1.5 md:gap-2">
-                                {/* Mobile: Icon-only buttons */}
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleEditTransaction(transaction)}
-                                  className="md:hidden px-2.5 py-1.5"
-                                  title="Edit transaction"
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                  </svg>
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleDeleteTransaction(transaction.id)}
-                                  className="md:hidden px-2.5 py-1.5 text-red-600 hover:text-red-700"
-                                  title="Delete transaction"
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                  </svg>
-                                </Button>
-
-                                {/* Desktop: Text buttons */}
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleEditTransaction(transaction)}
-                                  className="hidden md:inline-flex"
-                                >
-                                  Edit
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleDeleteTransaction(transaction.id)}
-                                  className="hidden md:inline-flex text-red-600 hover:text-red-700"
-                                >
-                                  Delete
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              ))}
+                <Edit className="h-4 w-4" />
+                <span>Edit Account</span>
+              </button>
+              <button
+                onClick={() => {
+                  handleExport('csv')
+                  setShowExportMenu(false)
+                }}
+                className="w-full text-left px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-3"
+              >
+                <TrendingUp className="h-4 w-4" />
+                <span>Export Transactions</span>
+              </button>
+              <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+              <button
+                onClick={() => {
+                  handleDeleteClick()
+                  setShowExportMenu(false)
+                }}
+                className="w-full text-left px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-3"
+              >
+                <Trash2 className="h-4 w-4" />
+                <span>Delete Account</span>
+              </button>
             </div>
           )}
         </div>
-      )}
+      </div>
+
+      {/* Hero Card Section */}
+      <AccountHeroCard account={account} monthlyMetrics={currentMonthMetrics} />
+
+      {/* Daily Activity Chart Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">Actividad Diaria</CardTitle>
+        </CardHeader>
+        <CardContent className="!p-6">
+          {isLoadingTransactions ? (
+            <div className="flex items-center justify-center h-[300px]">
+              <LoadingSpinner />
+            </div>
+          ) : groupedTransactions.length > 0 ? (
+            <LazyDailySpendingChart
+              data={[...groupedTransactions].reverse().map(g => ({
+                date: g.date,
+                income: g.totalIncome,
+                expense: g.totalExpense
+              }))}
+              currency={account.currency as Currency}
+            />
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              No activity for this month
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Transactions Section */}
+      <div className="space-y-4">
+        {/* Transaction Header */}
+        <h2 className="text-lg font-semibold">Transacciones Recientes</h2>
+
+        {/* Transactions List */}
+        {isLoadingTransactions ? (
+          <Card>
+            <CardContent className="py-12">
+              <div className="flex items-center justify-center">
+                <LoadingSpinner />
+              </div>
+            </CardContent>
+          </Card>
+        ) : transactions.length === 0 ? (
+          <Card>
+            <CardContent className="py-12">
+              <div className="text-center text-muted-foreground">
+                No transactions for this account yet
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-6">
+            {groupedTransactions.map((group) => (
+              <div key={group.date}>
+                <DateGroupHeader
+                  date={group.date}
+                  totalIncome={group.totalIncome}
+                  totalExpense={group.totalExpense}
+                  currency={group.currency}
+                />
+                <div className="space-y-0 mt-2">
+                  {group.transactions.map((transaction, index, array) => {
+                    // Timeline logic
+                    const isFirst = index === 0
+                    const isLast = index === array.length - 1
+
+                    return (
+                      <div
+                        key={transaction.id}
+                        className={`flex items-stretch transition-colors group ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-card hover:bg-gray-50 dark:hover:bg-gray-800'}`}
+                      >
+                        {/* Selection Checkbox */}
+                        <div className={`flex items-center pl-4 pr-2 transition-opacity duration-200 ${selectedTransactionIds.size > 0 ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                          <input
+                            type="checkbox"
+                            checked={selectedTransactionIds.has(transaction.id)}
+                            onChange={() => handleSelectTransaction(transaction.id)}
+                            className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer bg-white dark:bg-gray-800"
+                          />
+                        </div>
+
+                        {/* Timeline Line & Dot */}
+                        <TimelineConnector
+                          type={transaction.type}
+                          isFirst={false} // Force continuous line like in transactions page
+                          isLast={false}  // Force continuous line like in transactions page
+                        />
+
+                        {/* Transaction Content */}
+                        <div className="flex-1 min-w-0 py-1 pr-4">
+                          <TransactionCard
+                            id={transaction.id}
+                            type={transaction.type}
+                            amount={Number(transaction.amount)}
+                            currency={(transaction.account?.currency as Currency) || 'CLP'}
+                            category={transaction.category?.name || 'Uncategorized'}
+                            categoryIcon={transaction.category?.icon || undefined}
+                            categoryColor={transaction.category?.color || undefined}
+                            description={transaction.description}
+                            payee={transaction.payee}
+                            date={new Date(transaction.date)} // Fix: Wrap in new Date() to ensure valid object
+                            isShared={!!transaction.sharedExpenseId}
+                            onEdit={() => {
+                              setEditingTransaction(transaction)
+                              setIsTransactionModalOpen(true)
+                            }}
+                          />
+
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Edit Account Modal */}
       <Modal
@@ -991,30 +848,113 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
       </Modal>
 
       {/* Delete Account Modal */}
-      {account && (
-        <DeleteAccountModal
-          isOpen={isDeleteModalOpen}
-          onClose={() => setIsDeleteModalOpen(false)}
-          onConfirm={handleDeleteConfirm}
-          account={account}
-          transactionCount={transactionCount}
-          accounts={accounts}
-        />
-      )}
+      {
+        account && (
+          <DeleteAccountModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            onConfirm={handleDeleteConfirm}
+            account={account}
+            transactionCount={transactionCount}
+            accounts={accounts}
+          />
+        )
+      }
 
       {/* Transaction Form Modal */}
-      {isTransactionModalOpen && (
-        <TransactionFormModal
-          isOpen={isTransactionModalOpen}
-          onClose={() => {
-            setIsTransactionModalOpen(false)
-            setEditingTransaction(null)
-          }}
-          onSubmit={handleTransactionSubmit}
-          accounts={accounts}
-          editingTransaction={editingTransaction}
-        />
-      )}
-    </div>
+      {
+        isTransactionModalOpen && (
+          <TransactionFormModal
+            isOpen={isTransactionModalOpen}
+            onClose={() => {
+              setIsTransactionModalOpen(false)
+              setEditingTransaction(null)
+            }}
+            onSubmit={handleTransactionSubmit}
+            accounts={accounts}
+            editingTransaction={editingTransaction}
+          />
+        )
+      }
+      {/* Select All Button - Floating Bar */}
+      {
+        selectedTransactionIds.size > 0 && (
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-2xl rounded-full px-6 py-3 z-50 flex items-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <div className="flex items-center gap-3 border-r border-gray-200 dark:border-gray-700 pr-6">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={selectAll}
+                  onChange={handleSelectAll}
+                  id="floating-select-all"
+                  className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer"
+                />
+                <label htmlFor="floating-select-all" className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer whitespace-nowrap">
+                  {selectedTransactionIds.size} seleccionadas
+                </label>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSelectedTransactionIds(new Set())
+                  setSelectAll(false)
+                }}
+                disabled={isBulkDeleting}
+                className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                Cancelar
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => setShowBulkDeleteConfirm(true)}
+                disabled={isBulkDeleting}
+                className="rounded-full bg-red-600 hover:bg-red-700 text-white shadow-sm"
+              >
+                {isBulkDeleting ? 'Eliminando...' : 'Eliminar'}
+              </Button>
+            </div>
+          </div>
+        )
+      }
+
+      {/* Bulk Delete Confirmation Modal */}
+      <Modal
+        isOpen={showBulkDeleteConfirm}
+        onClose={() => setShowBulkDeleteConfirm(false)}
+        title="Eliminar transacciones"
+      >
+        <div className="space-y-4">
+          <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
+            <p className="text-sm text-red-900 dark:text-red-200">
+              ¿Estás seguro de que deseas eliminar {selectedTransactionIds.size} transacción{selectedTransactionIds.size !== 1 ? 'es' : ''}?
+            </p>
+            <p className="text-xs text-red-700 dark:text-red-400 mt-2">
+              Esta acción no se puede deshacer.
+            </p>
+          </div>
+          <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <Button
+              variant="outline"
+              onClick={() => setShowBulkDeleteConfirm(false)}
+              disabled={isBulkDeleting}
+              className="flex-1"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleBulkDelete}
+              disabled={isBulkDeleting}
+              className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+            >
+              {isBulkDeleting ? 'Eliminando...' : 'Eliminar'}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+    </div >
   )
 }

@@ -27,11 +27,12 @@ export function DashboardLayoutContent({ children, isCollapsed }: DashboardLayou
   const isMainDashboard = pathname === '/dashboard' || /^\/[a-z]{2}\/dashboard$/.test(pathname || '')
 
   // Fixed Floating Layout margins
+  // Fixed Floating Layout margins
   // Sidebar has ml-4 (1rem) + width
   // Collapsed: w-20 (5rem) -> Total 6rem (ml-24)
   // Expanded: w-72 (18rem) -> Total 19rem (ml-[19rem])
-  // Adding a bit more spacing for content: ml-28 (7rem) and ml-[20rem]
-  const marginClass = collapsed ? 'md:ml-28' : 'md:ml-[20rem]'
+  // Adding more spacing for content: ml-32 (8rem) and ml-[22rem]
+  const marginClass = collapsed ? 'md:ml-32' : 'md:ml-[22rem]'
 
   return (
     <div className={`flex flex-col flex-1 w-full transition-all duration-300 ${marginClass}`}>{/* Content takes remaining width */}
