@@ -1,2 +1,11 @@
-NIXPACKS_NODE_VERSION=20
-NIXPACKS_NPM_VERSION=10
+[phases.setup]
+nixPkgs = ["nodejs_22", "npm-9_x"]
+
+[phases.install]
+cmds = ["npm install"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "npm start"
