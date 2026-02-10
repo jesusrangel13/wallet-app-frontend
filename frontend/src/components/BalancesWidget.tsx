@@ -131,7 +131,7 @@ export const BalancesWidget = () => {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
+        <CardTitle className="text-metric-label flex items-center gap-2">
           <Wallet className="h-4 w-4" />
           Mis Balances
         </CardTitle>
@@ -186,7 +186,7 @@ export const BalancesWidget = () => {
                       </div>
                       <div className="flex items-center justify-between text-xs gap-4 flex-wrap">
                         {hasPeopleWhoOweMe && (
-                          <span className="text-green-600 font-medium">
+                          <span className="text-income font-medium">
                             Te deben: {formatCurrency(groupBalance.othersOweMe, 'CLP')}
                           </span>
                         )}
@@ -194,7 +194,7 @@ export const BalancesWidget = () => {
                           <span className="text-gray-400 dark:text-gray-500">|</span>
                         )}
                         {hasPeopleIOweTo && (
-                          <span className="text-red-600 font-medium">
+                          <span className="text-expense font-medium">
                             Debes: {formatCurrency(groupBalance.iOweOthers, 'CLP')}
                           </span>
                         )}
@@ -211,7 +211,7 @@ export const BalancesWidget = () => {
                         {/* Left: Te deben */}
                         {hasPeopleWhoOweMe && (
                           <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
-                            <p className="text-xs font-semibold text-green-700 dark:text-green-400 mb-3">Te deben</p>
+                            <p className="text-xs font-semibold text-income mb-3">Te deben</p>
                             <div className="space-y-2.5">
                               {groupBalance.peopleWhoOweMe.map((person) => {
                                 const personKey = `${groupBalance.group.id}-${person.user.id}`;
@@ -228,7 +228,7 @@ export const BalancesWidget = () => {
                                         </div>
                                         <span className="text-sm font-medium text-gray-900 dark:text-white truncate">{person.user.name}</span>
                                       </div>
-                                      <span className="text-sm font-bold text-green-600 dark:text-green-400">{formatCurrency(person.amount, 'CLP')}</span>
+                                      <span className="text-sm font-bold text-income">{formatCurrency(person.amount, 'CLP')}</span>
                                     </div>
 
                                     {/* Inline progress bar */}
@@ -299,7 +299,7 @@ export const BalancesWidget = () => {
                                         </div>
                                         <span className="text-sm font-medium text-gray-900 dark:text-white truncate">{person.user.name}</span>
                                       </div>
-                                      <span className="text-sm font-bold text-red-600 dark:text-red-400">{formatCurrency(person.amount, 'CLP')}</span>
+                                      <span className="text-sm font-bold text-expense">{formatCurrency(person.amount, 'CLP')}</span>
                                     </div>
 
                                     {/* Inline progress bar */}

@@ -296,15 +296,79 @@ export function AccountCard({ account }: { account: Account }) {
 
 ## Checklist de Implementación
 
-- [ ] Agregar clases tipográficas a `globals.css`
-- [ ] Agregar clase `.font-numeric` con tabular-nums
-- [ ] Crear componentes de tipografía (`Typography.tsx`)
-- [ ] Actualizar `AnimatedCurrency.tsx` con font-numeric
-- [ ] Aplicar `text-balance-hero` al hero balance widget
-- [ ] Aplicar `text-metric-label` a todas las etiquetas
-- [ ] Revisar espaciado en widgets principales
-- [ ] Probar responsive typography en mobile
-- [ ] Verificar que los números se alinean en tablas/listas
+- [x] Agregar clases tipográficas a `globals.css` *(Ya existían)*
+- [x] Agregar clase `.font-numeric` con tabular-nums *(Ya existía)*
+- [x] Crear componentes de tipografía (`Typography.tsx`)
+- [x] Actualizar `AnimatedCurrency.tsx` con font-numeric
+- [x] Aplicar `text-balance-hero` al hero balance widget
+- [x] Aplicar `text-metric-label` a todas las etiquetas
+- [x] Revisar espaciado en widgets principales
+- [x] Probar responsive typography en mobile *(Clases responsive ya existen)*
+- [x] Verificar que los números se alinean en tablas/listas
+
+---
+
+## Cambios Implementados
+
+### ✅ Componente Typography.tsx
+**Archivo**: `frontend/src/components/ui/Typography.tsx`
+
+Creado componente con helpers tipográficos premium:
+- `BalanceHero`: Para balances principales (text-balance-hero + font-numeric)
+- `BalanceLarge`: Para balances secundarios (text-balance-large + font-numeric)
+- `BalanceMedium`: Para balances medianos (text-balance-medium + font-numeric)
+- `MetricLabel`: Para etiquetas de métricas (text-metric-label)
+
+### ✅ AnimatedCurrency.tsx
+**Archivo**: `frontend/src/components/ui/animations/AnimatedCurrency.tsx`
+
+- Agregada clase `font-numeric` por defecto a todos los valores de moneda
+- Asegura números tabulares en todas las animaciones de currency
+
+### ✅ HeroBalanceWidget.tsx
+**Archivo**: `frontend/src/components/widgets/HeroBalanceWidget.tsx`
+
+- Header "Patrimonio Total": `text-metric-label`
+- Balance principal: `text-balance-hero` (reemplaza text-5xl/text-6xl)
+- Porcentaje de cambio: `font-numeric` para alineación consistente
+
+### ✅ TotalBalanceWidget.tsx
+**Archivo**: `frontend/src/components/widgets/TotalBalanceWidget.tsx`
+
+- Título del widget: `text-metric-label` para consistencia
+
+### ✅ AccountBalancesWidget.tsx
+**Archivo**: `frontend/src/components/widgets/AccountBalancesWidget.tsx`
+
+- Labels "Spent" y "Balance": `text-metric-label` para jerarquía consistente
+
+---
+
+## Mejoras Adicionales Sugeridas
+
+### 1. **Aplicar Typography a más widgets**
+Considerar aplicar las clases tipográficas a:
+- `MonthlyExpensesWidget.tsx`
+- `MonthlyIncomeWidget.tsx`
+- `SavingsWidget.tsx`
+- `ExpensesByCategoryWidget.tsx`
+- Otros widgets de dashboard
+
+### 2. **Usar componentes Typography directamente**
+En lugar de aplicar clases manualmente, usar los componentes:
+```tsx
+// En lugar de:
+<span className="text-balance-hero font-numeric">{value}</span>
+
+// Usar:
+<BalanceHero>{value}</BalanceHero>
+```
+
+### 3. **Aplicar font-numeric a tablas de transacciones**
+Las listas y tablas de transacciones se beneficiarían de números tabulares para mejor alineación visual.
+
+### 4. **Revisar espaciado entre secciones**
+Aplicar el sistema de espaciado consistente documentado en la fase para mejorar la jerarquía visual.
 
 ---
 

@@ -130,7 +130,7 @@ export function AccountBalanceChart({
             </motion.h2>
 
             {!hoveredBalance && (
-              <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-sm font-medium ${isPositive ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'}`}>
+              <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-sm font-medium ${isPositive ? 'bg-income-subtle text-income' : 'bg-expense-subtle text-expense'}`}>
                 <PercentageIcon className="w-3.5 h-3.5" />
                 <span>{Math.abs(percentageChange).toFixed(1)}%</span>
               </div>

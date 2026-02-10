@@ -125,13 +125,13 @@ export function MultiYearComparisonModal({ isOpen, onClose, currentYear, currenc
                                 {item.isRate ? (
                                     <div className="flex flex-col items-end">
                                         <span className="font-bold">{item.value}</span>
-                                        <span className={`text-xs ${isGood ? 'text-green-600' : 'text-red-600'}`}>
+                                        <span className={`text-xs ${isGood ? 'text-income' : 'text-expense'}`}>
                                             {item.diffValue} vs {previous.year}
                                         </span>
                                     </div>
                                 ) : (
                                     <div className="flex flex-col items-end">
-                                        <span className={`text-xs ${isGood ? 'text-green-600' : 'text-red-600'} font-medium`}>
+                                        <span className={`text-xs ${isGood ? 'text-income' : 'text-expense'} font-medium`}>
                                             {item.percent && item.percent > 0 ? '+' : ''}{item.percent?.toFixed(1)}%
                                         </span>
                                         <span className="text-xs text-muted-foreground">
@@ -315,7 +315,7 @@ export function MultiYearComparisonModal({ isOpen, onClose, currentYear, currenc
                                                     </div>
                                                     <div className="flex justify-between">
                                                         <span className="text-muted-foreground">Gastos</span>
-                                                        <span className="font-medium text-red-600">-{formatCurrency(d.expense, currency)}</span>
+                                                        <span className="font-medium text-expense">-{formatCurrency(d.expense, currency)}</span>
                                                     </div>
                                                     <div className="pt-2 mt-2 border-t border-dashed flex justify-between">
                                                         <span className="font-medium">Ahorro</span>

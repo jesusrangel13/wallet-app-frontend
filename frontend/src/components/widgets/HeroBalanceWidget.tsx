@@ -78,7 +78,7 @@ export function HeroBalanceWidget({
 
                 {/* Header */}
                 <div className="flex items-center justify-between mb-2 relative z-10">
-                    <span className="text-sm font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                    <span className="text-metric-label">
                         Patrimonio Total
                     </span>
                     <button
@@ -97,11 +97,11 @@ export function HeroBalanceWidget({
                     className="mb-6 relative z-10"
                 >
                     {isHidden ? (
-                        <div className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white tracking-tighter">
+                        <div className="text-balance-hero text-gray-900 dark:text-white">
                             ••••••
                         </div>
                     ) : (
-                        <div className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white tracking-tighter">
+                        <div className="text-balance-hero text-gray-900 dark:text-white">
                             <AnimatedCurrency
                                 amount={totalBalance}
                                 currency={currency}
@@ -114,7 +114,7 @@ export function HeroBalanceWidget({
                 {/* Trend Badge */}
                 <div className="relative z-10 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
                     <TrendIcon className={`w-4 h-4 ${trendColor}`} />
-                    <span className={`text-sm font-bold ${trendColor}`}>
+                    <span className={`text-sm font-bold font-numeric ${trendColor}`}>
                         {Math.abs(changePercent).toFixed(1)}%
                     </span>
                     {!isHidden && (
@@ -130,8 +130,8 @@ export function HeroBalanceWidget({
                 {/* Carousel Content */}
                 <div
                     className={`grid h-full cursor-pointer transition-colors hover:bg-white/40 dark:hover:bg-gray-800/40 relative z-10 ${!isBreakdownView
-                            ? 'grid-cols-2 md:grid-cols-4' // Primary: 2x2 on mobile, 4 cols on desktop
-                            : 'grid-cols-3' // Secondary: 3 cols always
+                        ? 'grid-cols-2 md:grid-cols-4' // Primary: 2x2 on mobile, 4 cols on desktop
+                        : 'grid-cols-3' // Secondary: 3 cols always
                         }`}
                     onClick={() => setIsBreakdownView(!isBreakdownView)}
                 >

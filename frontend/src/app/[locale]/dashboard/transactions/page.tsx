@@ -566,9 +566,9 @@ export default function TransactionsPage() {
   const getTransactionTypeColor = (type: TransactionType) => {
     switch (type) {
       case 'EXPENSE':
-        return 'text-red-600'
+        return 'text-expense'
       case 'INCOME':
-        return 'text-green-600'
+        return 'text-income'
       case 'TRANSFER':
         return 'text-blue-600'
     }
@@ -629,7 +629,7 @@ export default function TransactionsPage() {
             {/* Header Row: Title & Actions */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <h1 className="section-header">
                   {t('title')}
                 </h1>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">

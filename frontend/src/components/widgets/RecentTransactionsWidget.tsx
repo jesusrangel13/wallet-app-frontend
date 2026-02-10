@@ -66,7 +66,7 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+        <CardTitle className="text-metric-label flex items-center gap-2">
           <TrendingUp className="h-4 w-4" />
           Recent Transactions
         </CardTitle>
@@ -106,9 +106,9 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
                 <div className="text-right">
                   <p
                     className={`font-semibold ${transaction.type === 'EXPENSE'
-                      ? 'text-red-600 dark:text-red-500'
+                      ? 'text-expense'
                       : transaction.type === 'INCOME'
-                        ? 'text-green-600 dark:text-green-500'
+                        ? 'text-income'
                         : 'text-blue-600 dark:text-blue-500'
                       }`}
                   >

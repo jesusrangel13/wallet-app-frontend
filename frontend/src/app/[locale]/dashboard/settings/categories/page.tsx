@@ -295,7 +295,7 @@ export default function CategoriesPage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-foreground">Mis Categorías</h1>
+        <h1 className="page-title">{t('title')}</h1>
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
             <SkeletonCard key={i} />
@@ -309,7 +309,7 @@ export default function CategoriesPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-foreground">{t('title')}</h1>
+        <h1 className="page-title">{t('title')}</h1>
         <p className="text-muted-foreground mt-1">
           {t('description')}
         </p>

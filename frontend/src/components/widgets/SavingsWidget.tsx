@@ -25,7 +25,7 @@ export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetPr
   const savingsRate = data?.savingsRate ?? 0
 
   const isPositive = savings >= 0
-  const colorClass = isPositive ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'
+  const colorClass = isPositive ? 'text-income' : 'text-expense'
   const bgClass = isPositive ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'
   const borderClass = isPositive ? 'border-green-100 dark:border-green-800' : 'border-red-100 dark:border-red-800'
   const TrendIcon = isPositive ? TrendingUp : TrendingDown
@@ -37,13 +37,13 @@ export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetPr
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
+        <CardTitle className="text-metric-label flex items-center gap-2">
           <PiggyBank className={`h-4 w-4 ${colorClass}`} />
           {t('label')}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={`${fontSizes.value} font-bold ${colorClass}`}>
+        <div className="text-balance-large font-bold text-income">
           <AnimatedCurrency amount={savings} currency="CLP" />
         </div>
         <div className="flex items-center gap-1 mt-1">

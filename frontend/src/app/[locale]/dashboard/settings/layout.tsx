@@ -65,7 +65,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
     <div className="h-full">
       {/* Header with Title */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
+        <h1 className="page-title flex items-center gap-2">
           <Settings className="h-8 w-8 text-blue-600" />
           {t('title')}
         </h1>

@@ -120,7 +120,7 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
       {loan.payments.length > 0 && (
         <div className="p-4 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-800 rounded-b-xl flex justify-between items-center text-sm">
           <span className="font-medium text-muted-foreground">Total Recaudado</span>
-          <span className="font-bold text-green-600">{formatCurrency(loan.paidAmount, currency)}</span>
+          <span className="font-bold text-income">{formatCurrency(loan.paidAmount, currency)}</span>
         </div>
       )}
     </Card>
@@ -197,7 +197,7 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
               {/* TOP: Balance & Progress */}
               <div className="flex flex-col items-center text-center gap-2">
                 <p className="text-muted-foreground dark:text-gray-400 text-xs font-medium uppercase tracking-wider">{loan.status === 'PAID' ? 'Préstamo Saldado' : 'Saldo Pendiente'}</p>
-                <div className="text-5xl font-bold tracking-tight"><AnimatedCurrency amount={pendingAmount} currency={currency} /></div>
+                <div className="text-balance-hero tracking-tight"><AnimatedCurrency amount={pendingAmount} currency={currency} /></div>
                 <span className="bg-gray-100 dark:bg-white/10 px-2 py-1 rounded text-[10px] font-semibold mt-1">{loan.status === 'ACTIVE' ? 'ACTIVO' : loan.status === 'PAID' ? 'PAGADO' : 'CANCELADO'}</span>
               </div>
 
@@ -302,7 +302,7 @@ export default function LoanDetailPage({ params }: { params: Promise<{ id: strin
                   <p className="text-muted-foreground dark:text-slate-400 text-sm font-medium uppercase tracking-wider mb-2">
                     {loan.status === 'PAID' ? 'Préstamo Saldado' : 'Saldo Pendiente'}
                   </p>
-                  <div className="text-6xl font-bold tracking-tight mb-6 text-slate-900 dark:text-white">
+                  <div className="text-balance-hero tracking-tight mb-6 text-slate-900 dark:text-white">
                     <AnimatedCurrency amount={pendingAmount} currency={currency} />
                   </div>
 

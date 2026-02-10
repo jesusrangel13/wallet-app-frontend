@@ -92,7 +92,7 @@ export const MarkAsPaidButtonStyled = ({
 
     if (type === 'paid') {
       return (
-        <span className="inline-flex items-center gap-1.5 text-xs text-green-600">
+        <span className="inline-flex items-center gap-1.5 text-xs text-income">
           <CheckCircle2 className="h-3.5 w-3.5" />
           Pagado
         </span>
@@ -101,16 +101,15 @@ export const MarkAsPaidButtonStyled = ({
 
     const isDebtor = type === 'debtor';
     const colorClasses = isDebtor
-      ? 'bg-green-50 text-green-600 border-green-200 hover:bg-green-100'
+      ? 'bg-income-subtle text-income border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-800/40'
       : 'bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100';
 
     return (
       <button
         onClick={handleMarkAsPaid}
         disabled={loading}
-        className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border transition-all ${colorClasses} ${
-          loading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-sm'
-        }`}
+        className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border transition-all ${colorClasses} ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-sm'
+          }`}
       >
         {loading ? (
           <>
@@ -157,9 +156,8 @@ export const MarkAsPaidButtonStyled = ({
       <button
         onClick={handleMarkAsPaid}
         disabled={loading}
-        className={`inline-flex items-center px-4 py-1.5 text-xs font-medium rounded-full transition-all ${colorClasses} ${
-          loading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md'
-        }`}
+        className={`inline-flex items-center px-4 py-1.5 text-xs font-medium rounded-full transition-all ${colorClasses} ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md'
+          }`}
       >
         {loading ? (
           <>
@@ -219,9 +217,8 @@ export const MarkAsPaidButtonStyled = ({
         <button
           onClick={handleMarkAsPaid}
           disabled={loading}
-          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${colorClasses} ${
-            loading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md hover:scale-110'
-          }`}
+          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${colorClasses} ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md hover:scale-110'
+            }`}
         >
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -244,8 +241,8 @@ export const MarkAsPaidButtonStyled = ({
   const renderButton = designStyle === 'minimal'
     ? renderMinimalStyle
     : designStyle === 'pill'
-    ? renderPillStyle
-    : renderIconOnlyStyle;
+      ? renderPillStyle
+      : renderIconOnlyStyle;
 
   // CASO 1: Viewing your own row as the debtor (not paid yet)
   if (isDebtor && !participantIsPayer && !isPaid) {

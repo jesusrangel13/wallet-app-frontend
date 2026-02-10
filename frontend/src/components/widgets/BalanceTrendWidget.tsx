@@ -85,7 +85,7 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+        <CardTitle className="text-metric-label flex items-center gap-2">
           <Wallet className="h-4 w-4" />
           Balance Trend
         </CardTitle>
@@ -98,7 +98,7 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
               <p className={`${valueFontSize} font-bold text-foreground ${dimensions.isSmall ? 'mb-1' : 'mb-2'} leading-tight`}>
                 <AnimatedCurrency amount={currentBalance} currency="CLP" />
               </p>
-              <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full ${isPositive ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400'}`}>
+              <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full ${isPositive ? 'bg-income-subtle text-income' : 'bg-expense-subtle text-expense'}`}>
                 {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                 <span className={`${badgeFontSize} font-semibold`}>
                   <AnimatedCounter value={changePercentage} decimals={1} />% {t('sinceStart')}
@@ -108,7 +108,7 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
               <div className="flex items-center justify-center gap-3 mt-2 text-xs text-muted-foreground">
                 <span>{t('initial')}: <span className="font-semibold"><AnimatedCurrency amount={initialBalance} currency="CLP" /></span></span>
                 <span className="text-muted-foreground/50">|</span>
-                <span className={isPositive ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'}>
+                <span className={isPositive ? 'text-income' : 'text-expense'}>
                   {t('change')}: <span className="font-semibold">{isPositive ? '+' : ''}<AnimatedCurrency amount={change} currency="CLP" /></span>
                 </span>
               </div>

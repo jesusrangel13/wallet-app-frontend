@@ -490,7 +490,7 @@ export default function GroupsPage() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <h1 className="page-title flex items-center gap-2">
               <Users className="h-8 w-8 text-indigo-600" />
               {t('title')}
             </h1>

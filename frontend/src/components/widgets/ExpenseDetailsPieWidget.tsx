@@ -69,7 +69,7 @@ export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: Expen
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+        <CardTitle className="text-metric-label flex items-center gap-2">
           <PieChartIcon className="h-4 w-4" />
           {t('label')}
         </CardTitle>

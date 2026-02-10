@@ -84,8 +84,8 @@ export function TransactionCard({
     const isEmoji = !LucideIcon && iconKey
 
     const amountColor = {
-        EXPENSE: 'text-red-600',
-        INCOME: 'text-green-600',
+        EXPENSE: 'text-expense',
+        INCOME: 'text-income',
         TRANSFER: 'text-blue-600',
     }[type]
 

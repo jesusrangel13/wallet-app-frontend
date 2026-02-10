@@ -8,11 +8,11 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const cardVariants: Record<CardVariant, string> = {
-  default: 'bg-card border border-border shadow-sm',
-  elevated: 'bg-card border border-border shadow-lg hover:shadow-xl transition-shadow duration-200',
-  gradient: 'bg-gradient-to-br from-card to-muted/50 border border-border shadow-md',
-  glass: 'bg-card/80 backdrop-blur-lg border border-border/50 shadow-lg',
-  highlight: 'bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 shadow-md',
+  default: 'bg-card border-subtle shadow-sm widget-hover',
+  elevated: 'bg-card border-subtle shadow-lg hover:shadow-xl transition-all duration-200',
+  gradient: 'bg-gradient-to-br from-card to-muted/50 border-subtle shadow-md widget-hover',
+  glass: 'bg-card/80 backdrop-blur-lg border-subtle shadow-lg',
+  highlight: 'bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 shadow-md widget-hover',
 }
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
@@ -86,7 +86,7 @@ export const CardContent = forwardRef<HTMLDivElement, CardContentProps>(
     return (
       <div
         ref={ref}
-        className={cn('px-6 py-4 flex-1 flex flex-col', className)}
+        className={cn('px-6 py-6 flex-1 flex flex-col', className)}
         {...props}
       />
     )

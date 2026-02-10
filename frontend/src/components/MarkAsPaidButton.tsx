@@ -60,11 +60,10 @@ export const MarkAsPaidButton = ({
         <button
           onClick={handleMarkAsPaid}
           disabled={loading}
-          className={`p-2 rounded-lg transition-colors ${
-            isPaid
-              ? 'bg-green-50 text-green-600 hover:bg-green-100'
+          className={`p-2 rounded-lg transition-colors ${isPaid
+              ? 'bg-income-subtle text-income hover:bg-emerald-100 dark:hover:bg-emerald-800/40'
               : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
-          } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
           title={text}
         >
           {loading ? (
@@ -80,11 +79,10 @@ export const MarkAsPaidButton = ({
       <button
         onClick={handleMarkAsPaid}
         disabled={loading}
-        className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-          isPaid
+        className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isPaid
             ? 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-200'
             : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200'
-        } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
         {loading ? (
           <>
@@ -134,7 +132,7 @@ export const MarkAsPaidButton = ({
     } else {
       // Others just see the status
       return (
-        <span className="inline-flex items-center gap-1.5 text-sm text-green-600">
+        <span className="inline-flex items-center gap-1.5 text-sm text-income">
           <CheckCircle2 className="h-4 w-4" />
           {t('payment.actions.paid')}
         </span>

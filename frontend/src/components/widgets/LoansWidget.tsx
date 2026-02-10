@@ -57,7 +57,7 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
     return (
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
+          <CardTitle className="text-metric-label flex items-center gap-2">
             <HandCoins className="h-4 w-4 text-orange-600 dark:text-orange-500" />
             {t('label')}
           </CardTitle>
@@ -72,7 +72,7 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
   return (
     <Card className="relative group">
       <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
+        <CardTitle className="text-metric-label flex items-center gap-2">
           <HandCoins className="h-4 w-4 text-orange-600 dark:text-orange-500" />
           {t('label')}
         </CardTitle>

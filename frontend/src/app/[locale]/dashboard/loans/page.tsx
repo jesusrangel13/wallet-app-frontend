@@ -165,7 +165,7 @@ export default function LoansPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <h1 className="page-title flex items-center gap-2">
               <HandCoins className="h-8 w-8 text-orange-600" />
               {t('title')}
             </h1>
@@ -265,7 +265,7 @@ export default function LoansPage() {
                         </div>
                         <div className="text-right">
                           <div className="text-xs text-gray-500 mb-0.5">Pendiente</div>
-                          <div className={`text-lg font-bold ${isPaid ? 'text-green-600' : 'text-orange-600'}`}>
+                          <div className={`text-lg font-bold ${isPaid ? 'text-income' : 'text-orange-600'}`}>
                             <AnimatedCurrency amount={pendingAmount} currency={loan.currency as Currency} />
                           </div>
                         </div>
