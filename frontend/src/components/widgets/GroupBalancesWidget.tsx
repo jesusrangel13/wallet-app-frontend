@@ -72,7 +72,7 @@ export const GroupBalancesWidget = ({ gridWidth = 2, gridHeight = 2 }: GroupBala
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+        <CardTitle className="text-metric-label flex items-center gap-2">
           <DollarSign className="h-4 w-4" />
           {t('title')}
         </CardTitle>

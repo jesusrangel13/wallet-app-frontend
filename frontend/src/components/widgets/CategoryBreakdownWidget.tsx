@@ -57,8 +57,8 @@ export const CategoryBreakdownWidget = ({ gridWidth = 2, gridHeight = 2 }: Categ
     return (
         <Card className="h-full flex flex-col">
             <CardHeader className="flex-none pb-2">
-                <CardTitle className="flex items-center gap-2 text-base">
-                    <Layers className="w-5 h-5 text-gray-500" />
+                <CardTitle className="text-metric-label flex items-center gap-2">
+                    <Layers className="w-5 h-5" />
                     {t('expensesByCategory.name')}
                 </CardTitle>
             </CardHeader>

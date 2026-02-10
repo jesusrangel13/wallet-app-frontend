@@ -657,7 +657,7 @@ export default function ImportPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+          <h1 className="section-header flex items-center gap-2">
             <Upload className="h-8 w-8 text-cyan-600" />
             Import Transactions
           </h1>
@@ -678,7 +678,7 @@ export default function ImportPage() {
           {/* Account Selection */}
           <Card>
             <CardHeader>
-              <h2 className="text-lg font-semibold text-foreground">1. Select Account</h2>
+              <h2 className="section-header-sm">1. Select Account</h2>
               <p className="text-sm text-muted-foreground mt-1">Choose which account to import transactions to</p>
             </CardHeader>
             <CardContent>
@@ -700,7 +700,7 @@ export default function ImportPage() {
           {/* Download Templates */}
           <Card>
             <CardHeader>
-              <h2 className="text-lg font-semibold text-foreground">2. Download Template</h2>
+              <h2 className="section-header-sm">2. Download Template</h2>
               <p className="text-sm text-muted-foreground mt-1">Get a template file with examples and instructions</p>
             </CardHeader>
             <CardContent>
@@ -743,7 +743,7 @@ export default function ImportPage() {
           {/* File Upload */}
           <Card>
             <CardHeader>
-              <h2 className="text-lg font-semibold text-foreground">3. Upload File</h2>
+              <h2 className="section-header-sm">3. Upload File</h2>
               <p className="text-sm text-muted-foreground mt-1">Upload your completed CSV or Excel file</p>
             </CardHeader>
             <CardContent>
@@ -791,7 +791,7 @@ export default function ImportPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-foreground">Preview & Validate</h2>
+                <h2 className="section-header-sm">Preview & Validate</h2>
                 <p className="text-sm text-muted-foreground mt-1">Review transactions before importing</p>
               </div>
               <Button onClick={resetImport} variant="outline">
@@ -804,7 +804,7 @@ export default function ImportPage() {
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div className="p-4 bg-muted/50 rounded-lg">
                 <p className="text-sm text-muted-foreground">Total Rows</p>
-                <p className="text-2xl font-bold text-foreground">{parsedData.length}</p>
+                <p className="stat-value">{parsedData.length}</p>
               </div>
               <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                 <div className="flex items-center gap-2">
@@ -957,13 +957,13 @@ export default function ImportPage() {
             <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="w-10 h-10 text-green-600 dark:text-green-400" />
             </div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Import Complete!</h2>
+            <h2 className="section-header mb-2">Import Complete!</h2>
             <p className="text-muted-foreground mb-6">Your transactions have been imported successfully</p>
 
             <div className="grid grid-cols-3 gap-4 max-w-md mx-auto mb-6">
               <div className="p-4 bg-muted/50 rounded-lg">
                 <p className="text-sm text-muted-foreground">Total</p>
-                <p className="text-2xl font-bold text-foreground">{importStats.total}</p>
+                <p className="stat-value">{importStats.total}</p>
               </div>
               <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                 <p className="text-sm text-green-600 dark:text-green-300">Success</p>

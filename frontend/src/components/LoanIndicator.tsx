@@ -37,7 +37,7 @@ export function LoanIndicator({
         {/* Payment Status */}
         <span className="text-xs text-gray-600 flex items-center gap-1">
           {loan.status === 'PAID' ? (
-            <span className="text-green-600">✓ Pagado</span>
+            <span className="text-income">✓ Pagado</span>
           ) : loan.status === 'CANCELLED' ? (
             <span className="text-gray-500">✕ Cancelado</span>
           ) : (
@@ -85,7 +85,7 @@ export function LoanIndicator({
         </div>
         <div className="flex justify-between">
           <span className="text-gray-600">Ya pagado:</span>
-          <span className="font-medium text-green-600">{formatCurrency(loan.paidAmount, loan.currency as Currency)}</span>
+          <span className="font-medium text-income">{formatCurrency(loan.paidAmount, loan.currency as Currency)}</span>
         </div>
         <div className="flex justify-between pt-1 border-t border-orange-200">
           <span className="text-gray-900 font-semibold">Pendiente:</span>
@@ -112,7 +112,7 @@ export function LoanIndicator({
             </div>
           </div>
           {loan.status === 'PAID' ? (
-            <span className="text-green-600 text-lg">✓</span>
+            <span className="text-income text-lg">✓</span>
           ) : (
             <span className="text-orange-600 text-lg">⏳</span>
           )}
@@ -131,7 +131,7 @@ export function LoanIndicator({
                 <span className="text-xs text-gray-500">
                   {new Date(payment.paymentDate).toLocaleDateString('es-ES')}
                 </span>
-                <span className="font-medium text-green-600">
+                <span className="font-medium text-income">
                   {formatCurrency(payment.amount, loan.currency as Currency)}
                 </span>
               </div>

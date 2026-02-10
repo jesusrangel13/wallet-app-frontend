@@ -31,7 +31,7 @@ export const GroupsWidget = ({ gridWidth = 1, gridHeight = 1 }: GroupsWidgetProp
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+        <CardTitle className="text-metric-label flex items-center gap-2">
           <Users className="h-4 w-4" />
           {t('label')}
         </CardTitle>

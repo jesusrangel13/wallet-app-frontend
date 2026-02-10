@@ -165,8 +165,8 @@ const DashboardContent = () => {
         {/* Header with Month Selector */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('title')}</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">{t('subtitle')}</p>
+            <h1 className="page-title">{t('title')}</h1>
+            <p className="page-subtitle">{t('subtitle')}</p>
           </div>
           <DashboardMonthSelector
             currentDate={new Date(year, month)}

@@ -155,11 +155,11 @@ export function AccountHeroCard({ account, monthlyMetrics }: AccountHeroCardProp
                             {monthlyMetrics ? (
                                 <>
                                     <div className="flex items-baseline gap-2 mb-2">
-                                        <span className={`text-3xl font-bold ${(monthlyMetrics.income - monthlyMetrics.expense) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'
+                                        <span className={`text-balance-large ${(monthlyMetrics.income - monthlyMetrics.expense) >= 0 ? 'text-income' : 'text-expense'
                                             }`}>
                                             {formatCurrency(Math.abs(monthlyMetrics.income - monthlyMetrics.expense), account.currency as Currency)}
                                         </span>
-                                        <div className={`p-1 rounded-full ${(monthlyMetrics.income - monthlyMetrics.expense) >= 0 ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600' : 'bg-red-100 dark:bg-red-900/30 text-red-600'
+                                        <div className={`p-1 rounded-full ${(monthlyMetrics.income - monthlyMetrics.expense) >= 0 ? 'bg-income-subtle text-income' : 'bg-expense-subtle text-expense'
                                             }`}>
                                             {(monthlyMetrics.income - monthlyMetrics.expense) >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                                         </div>
@@ -180,7 +180,7 @@ export function AccountHeroCard({ account, monthlyMetrics }: AccountHeroCardProp
                                         </div>
                                         <div>
                                             <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Expenses</p>
-                                            <p className="font-semibold text-red-600 dark:text-red-400">{formatCurrency(monthlyMetrics.expense, account.currency as Currency)}</p>
+                                            <p className="font-semibold text-expense">{formatCurrency(monthlyMetrics.expense, account.currency as Currency)}</p>
                                         </div>
                                     </div>
                                 </>

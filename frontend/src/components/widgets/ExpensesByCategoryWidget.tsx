@@ -59,7 +59,7 @@ export const ExpensesByCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }: Expe
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
+        <CardTitle className="text-metric-label flex items-center gap-2">
           <PieChartIcon className="h-4 w-4" />
           Expenses by Category
         </CardTitle>

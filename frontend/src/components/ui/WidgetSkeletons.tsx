@@ -237,11 +237,11 @@ export const TotalBalanceWidgetSkeleton = () => (
 )
 
 export const MonthlyIncomeWidgetSkeleton = () => (
-  <MetricWidgetSkeleton icon={TrendingUp} title="Monthly Income" iconColor="text-green-600 dark:text-green-500" />
+  <MetricWidgetSkeleton icon={TrendingUp} title="Monthly Income" iconColor="text-income" />
 )
 
 export const MonthlyExpensesWidgetSkeleton = () => (
-  <MetricWidgetSkeleton icon={TrendingDown} title="Monthly Expenses" iconColor="text-red-600 dark:text-red-500" />
+  <MetricWidgetSkeleton icon={TrendingDown} title="Monthly Expenses" iconColor="text-expense" />
 )
 
 export const SavingsWidgetSkeleton = () => (

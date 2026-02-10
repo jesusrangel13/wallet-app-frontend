@@ -36,7 +36,7 @@ const CustomTooltip = ({ active, payload, label, currency }: any) => {
                 {expense > 0 && (
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                        <span className="text-red-600 dark:text-red-400 font-medium">-{formatCurrency(expense, currency)}</span>
+                        <span className="text-expense font-medium">-{formatCurrency(expense, currency)}</span>
                     </div>
                 )}
             </div>
@@ -61,7 +61,7 @@ export function DailySpendingChart({ data, currency }: DailySpendingChartProps) 
                     <p className="text-sm font-medium text-muted-foreground">Daily Activity (Last 30 Days)</p>
                     <div className="flex items-baseline gap-4">
                         <div className="flex items-center gap-2">
-                            <div className="p-1.5 rounded-full bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400">
+                            <div className="p-1.5 rounded-full bg-expense-subtle text-expense">
                                 <TrendingDown className="w-4 h-4" />
                             </div>
                             <div>

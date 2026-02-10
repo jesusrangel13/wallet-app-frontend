@@ -229,11 +229,11 @@ export default function AccountsPage() {
         {/* Header - Always visible */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <h1 className="page-title flex items-center gap-2">
               <CreditCard className="h-8 w-8 text-blue-600" />
               {t('title')}
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">{t('subtitle')}</p>
+            <p className="page-subtitle">{t('subtitle')}</p>
           </div>
           <Button onClick={handleAddNew}>
             <Plus className="h-4 w-4 mr-2" />
@@ -295,7 +295,7 @@ export default function AccountsPage() {
                 <option value="INVESTMENT">{t('types.INVESTMENT')}</option>
               </Select>
               {errors.type && (
-                <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>
+                <p className="form-error mt-1">{errors.type.message}</p>
               )}
             </div>
 
@@ -320,7 +320,7 @@ export default function AccountsPage() {
                 ))}
               </Select>
               {errors.currency && (
-                <p className="text-red-500 text-sm mt-1">{errors.currency.message}</p>
+                <p className="form-error mt-1">{errors.currency.message}</p>
               )}
             </div>
 
@@ -355,7 +355,7 @@ export default function AccountsPage() {
                 {...register('isDefault')}
                 className="w-4 h-4 text-primary border-gray-300 dark:border-gray-600 rounded focus:ring-primary bg-white dark:bg-card"
               />
-              <label htmlFor="isDefault" className="text-sm font-medium text-foreground">
+              <label htmlFor="isDefault" className="form-label">
                 Set as default account
               </label>
             </div>
@@ -367,7 +367,7 @@ export default function AccountsPage() {
                 {...register('includeInTotalBalance')}
                 className="w-4 h-4 text-primary border-gray-300 dark:border-gray-600 rounded focus:ring-primary bg-white dark:bg-card"
               />
-              <label htmlFor="includeInTotalBalance" className="text-sm font-medium text-foreground">
+              <label htmlFor="includeInTotalBalance" className="form-label">
                 Include in total balance
               </label>
             </div>

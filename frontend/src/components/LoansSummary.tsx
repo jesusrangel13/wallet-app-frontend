@@ -50,7 +50,7 @@ export function LoansSummary({ stats, currency = 'USD' }: LoansSummaryProps) {
                                     <Wallet className="w-4 h-4" />
                                     Total Prestado
                                 </p>
-                                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                                <div className="text-balance-large text-gray-900 dark:text-gray-100">
                                     {formatCurrency(stats.totalLent, currency)}
                                 </div>
                             </div>
@@ -76,7 +76,7 @@ export function LoansSummary({ stats, currency = 'USD' }: LoansSummaryProps) {
                                     <AlertCircle className="w-4 h-4" />
                                     Por Cobrar
                                 </p>
-                                <div className="text-3xl font-bold text-orange-700 dark:text-orange-300">
+                                <div className="text-balance-large text-orange-700 dark:text-orange-300">
                                     {formatCurrency(stats.totalPending, currency)}
                                 </div>
                             </div>
@@ -102,16 +102,16 @@ export function LoansSummary({ stats, currency = 'USD' }: LoansSummaryProps) {
                     <CardContent className="p-6">
                         <div className="flex justify-between items-start">
                             <div>
-                                <p className="text-sm font-medium text-green-600 dark:text-green-400 mb-1 flex items-center gap-1">
+                                <p className="text-sm font-medium text-income mb-1 flex items-center gap-1">
                                     <ArrowDownLeft className="w-4 h-4" />
                                     Recuperado
                                 </p>
-                                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                                <div className="text-balance-large text-gray-900 dark:text-gray-100">
                                     {formatCurrency(stats.totalRecovered, currency)}
                                 </div>
                             </div>
-                            <div className="p-2 bg-green-200/50 dark:bg-green-900/30 rounded-full">
-                                <Wallet className="w-5 h-5 text-green-600 dark:text-green-400" />
+                            <div className="p-2 bg-income-subtle rounded-full">
+                                <Wallet className="w-5 h-5 text-income" />
                             </div>
                         </div>
                         <div className="mt-4 w-full bg-green-200 dark:bg-green-900/30 rounded-full h-1.5">

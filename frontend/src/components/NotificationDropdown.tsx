@@ -111,7 +111,7 @@ export const NotificationDropdown = ({ onClose, onNotificationRead }: Notificati
     const iconClass = "h-5 w-5 flex-shrink-0";
     switch (type) {
       case 'PAYMENT_RECEIVED':
-        return <DollarSign className={`${iconClass} text-green-600`} />;
+        return <DollarSign className={`${iconClass} text-income`} />;
       case 'SHARED_EXPENSE_CREATED':
         return <Receipt className={`${iconClass} text-blue-600`} />;
       case 'GROUP_MEMBER_ADDED':

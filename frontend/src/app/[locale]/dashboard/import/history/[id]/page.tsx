@@ -105,7 +105,7 @@ export default function ImportDetailPage() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Import Details</h1>
+            <h1 className="section-header">Import Details</h1>
             <p className="text-sm text-gray-600 mt-1">Loading...</p>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default function ImportDetailPage() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Import not found</h1>
+            <h1 className="section-header">Import not found</h1>
           </div>
         </div>
       </div>
@@ -232,31 +232,28 @@ export default function ImportDetailPage() {
       <div className="flex gap-2 border-b border-gray-200">
         <button
           onClick={() => setFilter('all')}
-          className={`px-4 py-2 font-medium border-b-2 transition-colors ${
-            filter === 'all'
+          className={`px-4 py-2 font-medium border-b-2 transition-colors ${filter === 'all'
               ? 'border-blue-500 text-blue-600'
               : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
+            }`}
         >
           All ({importDetail.totalRows})
         </button>
         <button
           onClick={() => setFilter('success')}
-          className={`px-4 py-2 font-medium border-b-2 transition-colors ${
-            filter === 'success'
+          className={`px-4 py-2 font-medium border-b-2 transition-colors ${filter === 'success'
               ? 'border-green-500 text-green-600'
               : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
+            }`}
         >
           Successful ({importDetail.successCount})
         </button>
         <button
           onClick={() => setFilter('failed')}
-          className={`px-4 py-2 font-medium border-b-2 transition-colors ${
-            filter === 'failed'
+          className={`px-4 py-2 font-medium border-b-2 transition-colors ${filter === 'failed'
               ? 'border-red-500 text-red-600'
               : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
+            }`}
         >
           Failed ({importDetail.failedCount})
         </button>
@@ -318,11 +315,10 @@ export default function ImportDetailPage() {
                       {tx.originalDate}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
-                        tx.type === 'EXPENSE'
+                      <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${tx.type === 'EXPENSE'
                           ? 'bg-red-100 text-red-800'
                           : 'bg-green-100 text-green-800'
-                      }`}>
+                        }`}>
                         {tx.type}
                       </span>
                     </td>

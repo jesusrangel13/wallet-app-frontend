@@ -288,11 +288,11 @@ export default function RecordLoanPaymentModal({
               <div className="flex justify-between text-sm pt-1">
                 <span className="font-semibold text-gray-900 dark:text-white">{t('newPending')}:</span>
                 <div className="text-right">
-                  <span className={`font-bold ${newLoanBalance === 0 ? 'text-green-600' : 'text-gray-900 dark:text-white'}`}>
+                  <span className={`font-bold ${newLoanBalance === 0 ? 'text-income' : 'text-gray-900 dark:text-white'}`}>
                     {formatCurrency(newLoanBalance, currency)}
                   </span>
                   {newLoanBalance === 0 && selectedAmount > 0 && (
-                    <span className="text-xs text-green-600 block">{t('paidSuccess')}</span>
+                    <span className="text-xs text-income block">{t('paidSuccess')}</span>
                   )}
                 </div>
               </div>

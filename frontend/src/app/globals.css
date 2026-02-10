@@ -172,11 +172,147 @@
   /* Labels de métricas */
   .text-metric-label {
     font-size: 0.75rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-weight: 600;
+    letter-spacing: 0.025em;
     color: hsl(var(--muted-foreground));
   }
+
+  /* ========================================
+     GLOBAL TYPOGRAPHY SYSTEM - Fintech Standard
+     ======================================== */
+
+  /* Page-Level Typography */
+  .page-title {
+    @apply text-3xl font-bold text-foreground;
+  }
+
+  .page-title-large {
+    @apply text-4xl font-bold text-foreground;
+  }
+
+  .page-subtitle {
+    @apply text-muted-foreground mt-1;
+  }
+
+  /* Section Headers */
+  .section-header {
+    @apply text-xl font-semibold text-foreground;
+  }
+
+  .section-header-sm {
+    @apply text-lg font-semibold text-foreground;
+  }
+
+  .section-subheader {
+    @apply text-base font-medium text-muted-foreground;
+  }
+
+  /* Card Headers */
+  .card-title {
+    @apply text-lg font-semibold text-foreground;
+  }
+
+  .card-subtitle {
+    @apply text-sm text-muted-foreground;
+  }
+
+  /* Body Text */
+  .body-text {
+    @apply text-sm text-foreground;
+  }
+
+  .body-text-muted {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .body-text-xs {
+    @apply text-xs text-muted-foreground;
+  }
+
+  /* Form Labels */
+  .form-label {
+    @apply text-sm font-medium text-foreground;
+  }
+
+  .form-helper {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .form-error {
+    @apply text-xs text-red-500 dark:text-red-400;
+  }
+
+  /* Stat/Metric Typography */
+  .stat-value {
+    @apply text-2xl font-bold text-foreground font-numeric;
+  }
+
+  .stat-value-large {
+    @apply text-3xl font-bold text-foreground font-numeric;
+  }
+
+  .stat-label {
+    @apply text-xs font-medium text-muted-foreground uppercase tracking-wider;
+  }
+
+  /* Button Text */
+  .button-text {
+    @apply text-sm font-medium;
+  }
+
+  .button-text-lg {
+    @apply text-base font-semibold;
+  }
+
+  /* Badge/Pill Text */
+  .badge-text {
+    @apply text-xs font-medium;
+  }
+
+  /* Premium Fintech Colors - Refined Palette */
+  .text-income {
+    @apply text-emerald-600 dark:text-emerald-500;
+  }
+
+  .text-expense {
+    @apply text-rose-600 dark:text-rose-500;
+  }
+
+  .bg-income-subtle {
+    @apply bg-emerald-50 dark:bg-emerald-900/30;
+  }
+
+  .bg-expense-subtle {
+    @apply bg-rose-50 dark:bg-rose-900/30;
+  }
+
+  /* Widget Hover States - Subtle Elevation */
+  .widget-hover {
+    @apply transition-all duration-200 ease-out;
+  }
+
+  .widget-hover:hover {
+    @apply -translate-y-0.5 shadow-lg;
+  }
+
+  /* Icon Gradient Backgrounds */
+  .icon-gradient-blue {
+    @apply bg-gradient-to-br from-blue-500 to-purple-600;
+  }
+
+  .icon-gradient-green {
+    @apply bg-gradient-to-br from-emerald-500 to-teal-600;
+  }
+
+  .icon-gradient-red {
+    @apply bg-gradient-to-br from-rose-500 to-pink-600;
+  }
+
+  /* Subtle Border Enhancement */
+  .border-subtle {
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
 
   /* Focus ring premium */
   .focus-ring {
@@ -189,6 +325,7 @@
   .text-balance-hero {
     font-size: 2rem;
   }
+
   .text-balance-large {
     font-size: 1.5rem;
   }
@@ -198,6 +335,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground overflow-x-hidden;
   }
@@ -210,11 +348,13 @@
 
 /* Utility classes */
 @layer utilities {
+
   /* Hide scrollbar utility */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
@@ -225,15 +365,18 @@
       width: 0%;
       margin-left: 0%;
     }
+
     50% {
       width: 70%;
       margin-left: 15%;
     }
+
     100% {
       width: 0%;
       margin-left: 100%;
     }
   }
+
   .animate-loading-bar {
     animation: loading-bar 1.5s ease-in-out infinite;
   }

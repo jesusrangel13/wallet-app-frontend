@@ -64,7 +64,7 @@ export function SharedExpenseIndicator({
         {/* Payment Status */}
         <span className="text-xs text-gray-600 flex items-center gap-1">
           {paidCount === totalCount ? (
-            <span className="text-green-600">✓ {paidCount}/{totalCount} pagado</span>
+            <span className="text-income">✓ {paidCount}/{totalCount} pagado</span>
           ) : (
             <span className="text-amber-600">⏳ {paidCount}/{totalCount} pagado</span>
           )}
@@ -138,7 +138,7 @@ export function SharedExpenseIndicator({
           </div>
         </div>
         {paidCount === totalCount ? (
-          <span className="text-green-600 text-lg">✓</span>
+          <span className="text-income text-lg">✓</span>
         ) : (
           <span className="text-amber-600 text-lg">⏳</span>
         )}
@@ -160,7 +160,7 @@ export function SharedExpenseIndicator({
                   )}
                 />
                 <span>{participant.user.name}</span>
-                {participant.isPaid && <span className="text-green-600 text-xs">✓ Pagado</span>}
+                {participant.isPaid && <span className="text-income text-xs">✓ Pagado</span>}
               </div>
             ))}
           </div>

@@ -30,7 +30,7 @@ export const SummaryView = ({ summary, fontSizes, t }: { summary: LoansSummary, 
             </div>
             <div className="bg-muted/50 p-3 rounded-lg">
                 <p className="text-xs text-muted-foreground mb-1">{t('totalRecovered')}</p>
-                <p className="font-semibold text-green-600 dark:text-green-500">
+                <p className="font-semibold text-income">
                     <AnimatedCurrency amount={summary.totalRecovered} currency={summary.currency as Currency} />
                 </p>
             </div>
@@ -106,7 +106,7 @@ export const ProgressView = ({ summary, t }: { summary: LoansSummary, t: any }) 
             <div>
                 <div className="flex justify-between items-end mb-2">
                     <p className="text-sm font-medium text-foreground">{t('recoveryProgress')}</p>
-                    <span className="text-2xl font-bold text-green-600 dark:text-green-500">
+                    <span className="text-2xl font-bold text-income">
                         <AnimatedCounter value={percentage} decimals={0} suffix="%" />
                     </span>
                 </div>
@@ -122,7 +122,7 @@ export const ProgressView = ({ summary, t }: { summary: LoansSummary, t: any }) 
                 </div>
                 <div className="text-right">
                     <p className="text-xs text-muted-foreground">{t('totalRecovered')}</p>
-                    <p className="font-medium text-green-600 dark:text-green-500">
+                    <p className="font-medium text-income">
                         <AnimatedCurrency amount={summary.totalRecovered} currency={summary.currency as Currency} />
                     </p>
                 </div>

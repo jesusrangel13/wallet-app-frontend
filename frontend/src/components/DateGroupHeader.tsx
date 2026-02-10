@@ -70,7 +70,7 @@ export const DateGroupHeader = memo(function DateGroupHeader({
           {displayDate}
         </h3>
         <span className="text-gray-400 dark:text-gray-500 text-xs">•</span>
-        <span className={`text-sm font-medium ${netAmount >= 0 ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'}`}>
+        <span className={`text-sm font-medium ${netAmount >= 0 ? 'text-income' : 'text-gray-600 dark:text-gray-400'}`}>
           {netAmount >= 0 ? '+' : ''}{formatCurrency(Math.abs(netAmount), currency)}
         </span>
       </div>

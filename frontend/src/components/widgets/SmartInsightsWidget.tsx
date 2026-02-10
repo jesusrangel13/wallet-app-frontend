@@ -30,7 +30,7 @@ const insightStyles = {
     positive: {
         icon: TrendingUp,
         iconBg: 'bg-green-100',
-        iconColor: 'text-green-600',
+        iconColor: 'text-income',
         borderColor: 'border-l-green-500',
     },
     warning: {

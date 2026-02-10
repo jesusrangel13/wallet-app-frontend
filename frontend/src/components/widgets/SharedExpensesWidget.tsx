@@ -32,13 +32,13 @@ export const SharedExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: SharedEx
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
+        <CardTitle className="text-metric-label flex items-center gap-2">
           <Users className="h-4 w-4 text-blue-600 dark:text-blue-500" />
           {t('label')}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={`${fontSizes.value} font-bold text-blue-600 dark:text-blue-500`}>
+        <div className="text-balance-large font-bold text-blue-600 dark:text-blue-500">
           <AnimatedCurrency amount={expense} currency="CLP" />
         </div>
         <div className={`${fontSizes.label} text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1`}>
