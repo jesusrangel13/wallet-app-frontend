@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+
+
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -16,6 +18,14 @@ import TagSelector from '@/components/TagSelector'
 import SharedExpenseForm, { SharedExpenseData } from '@/components/SharedExpenseForm'
 import PayeeAutocomplete from '@/components/PayeeAutocomplete'
 import { SuccessAnimation, ShakeAnimation } from '@/components/ui/animations'
+
+const getCurrencyConfig = (currency: string) => {
+  switch (currency) {
+    case 'CLP': return { locale: 'es-CL', chunk: '.', decimal: ',' }
+    case 'EUR': return { locale: 'de-DE', chunk: '.', decimal: ',' }
+    default: return { locale: 'en-US', chunk: ',', decimal: '.' }
+  }
+}
 
 const transactionSchema = z.object({
   accountId: z.string().min(1, 'Account is required'),
@@ -83,6 +93,7 @@ export default function TransactionFormModal({
     reset,
     watch,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<TransactionFormData>({
     resolver: zodResolver(transactionSchema),
@@ -101,24 +112,23 @@ export default function TransactionFormModal({
   const selectedAccount = accounts.find((a) => a.id === selectedAccountId)
 
   const formatAmountDisplay = useCallback((value: string | number, currency: string): string => {
-    if (!value) return ''
-    const numValue = typeof value === 'string' ? parseFloat(value.replace(/,/g, '')) : value
-    if (isNaN(numValue)) return ''
+    if (!value && value !== 0) return ''
 
-    // Format based on currency
-    if (currency === 'CLP') {
-      // CLP doesn't use decimals typically
-      return new Intl.NumberFormat('es-CL', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(numValue)
-    } else {
-      // USD and EUR use decimals
-      return new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(numValue)
+    const { chunk, decimal, locale } = getCurrencyConfig(currency)
+
+    // Clean value to standard number
+    let numValue = value
+    if (typeof value === 'string') {
+      const standard = value.split(chunk).join('').split(decimal).join('.')
+      numValue = parseFloat(standard)
     }
+
+    if (isNaN(numValue as number)) return ''
+
+    return new Intl.NumberFormat(locale, {
+      minimumFractionDigits: currency === 'CLP' ? 0 : 2,
+      maximumFractionDigits: currency === 'CLP' ? 0 : 2,
+    }).format(numValue as number)
   }, [])
 
 
@@ -163,6 +173,71 @@ export default function TransactionFormModal({
     }
   }, [editingTransaction, initialData, setValue, accounts, formatAmountDisplay])
 
+  // Auto-scroll account carousel to selection
+  useEffect(() => {
+    if (selectedAccountId && isOpen) {
+      setTimeout(() => {
+        const element = document.getElementById(`account-card-${selectedAccountId}`)
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+        }
+      }, 100)
+    }
+  }, [selectedAccountId, isOpen])
+
+  // Smart Pre-fill: Auto-fill category, account, and amount based on payee
+  const watchedPayee = watch('payee')
+  useEffect(() => {
+    // Only run if:
+    // 1. We have a payee with at least 3 chars
+    // 2. Not editing an existing transaction (only for new ones)
+    // 3. Not in import mode (imports already have data)
+    if (!watchedPayee || watchedPayee.length < 3 || editingTransaction || mode === 'import') return
+
+    const timer = setTimeout(async () => {
+      try {
+        const { transactionAPI } = await import('@/services/transaction.service')
+        const response = await transactionAPI.getLastByPayee(watchedPayee)
+
+        if (response.data && response.data.data) {
+          const lastTx = response.data.data
+
+          // Auto-fill Logic:
+          // 1. Account: Only if not already selected
+          const currentAccountId = getValues('accountId')
+          if (lastTx.accountId && !currentAccountId) {
+            const accountExists = accounts.find(a => a.id === lastTx.accountId)
+            if (accountExists) {
+              setValue('accountId', lastTx.accountId, { shouldDirty: true })
+            }
+          }
+
+          // 2. Category: Only if not already selected
+          const currentCategoryId = getValues('categoryId')
+          if (lastTx.categoryId && !currentCategoryId) {
+            setValue('categoryId', lastTx.categoryId, { shouldDirty: true })
+          }
+
+          // 3. Amount: Only if current amount is 0/empty
+          const currentAmount = getValues('amount')
+          if (!currentAmount || currentAmount === 0) {
+            const amount = Number(lastTx.amount)
+            setValue('amount', amount, { shouldDirty: true })
+
+            // Format the amount display
+            const currency = accounts.find(a => a.id === (lastTx.accountId))?.currency || 'CLP'
+            setFormattedAmount(formatAmountDisplay(amount, currency))
+          }
+        }
+      } catch (error) {
+        // Silently fail if no previous transaction found or error
+        console.debug('No previous transaction found for payee', error)
+      }
+    }, 500) // 500ms debounce
+
+    return () => clearTimeout(timer)
+  }, [watchedPayee, editingTransaction, mode, setValue, accounts, formatAmountDisplay, getValues])
+
   const getAvailableToAccounts = () => {
     if (!selectedAccountId) return []
     const selectedAcc = accounts.find((a) => a.id === selectedAccountId)
@@ -175,35 +250,72 @@ export default function TransactionFormModal({
   }
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Remove existing commas to get raw number string
-    const rawValue = e.target.value.replace(/,/g, '')
+    const { value } = e.target
+    const currency = selectedAccount?.currency || 'CLP'
+    const { chunk, decimal, locale } = getCurrencyConfig(currency)
 
-    // Allow empty or just a dot/comma for typing decimals
-    if (rawValue === '' || rawValue === '.') {
-      setFormattedAmount(rawValue)
+    // 1. Remove chunks (thousands separators)
+    let raw = value.split(chunk).join('')
+
+    // 2. Replace localized decimal with standard dot
+    // If multiple decimals, take only the last one? Or reject? Let's just standard replace.
+    // Actually, ensure only one decimal exists in the raw string for safety.
+    // If user types '1,000,50' (as decimal), that's invalid.
+
+    // Allow empty
+    if (raw === '') {
+      setFormattedAmount('')
       setValue('amount', 0)
       return
     }
 
-    // Parse float
-    const numValue = parseFloat(rawValue)
-    if (!isNaN(numValue) && numValue >= 0) {
-      // Logic for "Fintech" formatting while typing:
-      // If user types '1000' -> show '1,000' immediately
-      // But preserving decimal typing is tricky.
-      // Simple strategy: exact match formatting for integers, allow decimals for typing.
-
-      if (rawValue.includes('.')) {
-        // User is typing decimals, keep raw input to avoid cursor jumps or messing up '.0'
-        setFormattedAmount(rawValue) // User manages the dot position
+    // Handle decimal typing (e.g. "10,")
+    const isDecimalInput = raw.endsWith(decimal)
+    if (isDecimalInput) {
+      // Just show the decimal char if it's the first one
+      // and if currency supports decimals (CLP usually doesn't, but let's allow typing if user insists?)
+      // Actually CLP has 0 decimals in my config, so maybe block decimal input?
+      if (currency === 'CLP') {
+        // strip it
+        raw = raw.slice(0, -1)
       } else {
-        // Integer: format with commas immediately
-        // e.g. '1000' -> '1,000'
-        const formatted = new Intl.NumberFormat('en-US').format(numValue)
-        setFormattedAmount(formatted)
+        // Let it be, update formatted state directly to show comma
+        setFormattedAmount(value)
+        return
       }
-      setValue('amount', numValue)
     }
+
+    // Standardize for parsing
+    const standard = raw.split(decimal).join('.')
+
+    // Validate number
+    if (isNaN(Number(standard))) return
+
+    const numValue = parseFloat(standard)
+
+    // Update Form State (always standard number)
+    setValue('amount', numValue)
+
+    // Update Visual State (Formatted)
+    // Avoid formatting if user is typing decimal part
+    if (raw.includes(decimal) && currency !== 'CLP') {
+      const parts = raw.split(decimal)
+      if (parts[1].length <= 2) {
+        setFormattedAmount(value) // keep typing 
+        return
+      }
+    }
+
+    // Otherwise format nicely
+    const formatted = new Intl.NumberFormat(locale, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: currency === 'CLP' ? 0 : 2 // Allow typing up to 2
+    }).format(numValue)
+
+    // If result is exactly what user typed (minus maybe some leading zeros), use it?
+    // Actually, just setFormattedAmount(formatted) works for integers nicely.
+    // e.g. type 1000 -> 1.000
+    setFormattedAmount(formatted)
   }
 
   const handleAmountBlur = () => {
@@ -313,10 +425,12 @@ export default function TransactionFormModal({
                 {selectedAccount?.currency === 'EUR' ? '€' : selectedAccount?.currency === 'USD' ? '$' : '$'}
               </span>
               <input
+                id="transaction-amount-input"
                 type="text"
                 inputMode="decimal"
                 placeholder="0"
-                className="w-full max-w-[200px] text-center bg-transparent border-none text-5xl sm:text-6xl font-bold p-0 focus:ring-0 placeholder:text-gray-200 dark:placeholder:text-gray-800 tabular-nums tracking-tighter"
+                className="w-auto min-w-[120px] max-w-full text-center bg-transparent border-none text-5xl sm:text-6xl font-bold p-0 focus:ring-0 placeholder:text-gray-200 dark:placeholder:text-gray-800 tabular-nums tracking-tighter transition-all"
+                style={{ width: `${Math.max(1, formattedAmount.length) * 0.6 + 0.5}em` }}
                 value={formattedAmount}
                 onChange={handleAmountChange}
                 onFocus={handleAmountFocus}
@@ -339,6 +453,7 @@ export default function TransactionFormModal({
                   return (
                     <button
                       key={account.id}
+                      id={`account-card-${account.id}`}
                       type="button"
                       onClick={() => setValue('accountId', account.id)}
                       className={`

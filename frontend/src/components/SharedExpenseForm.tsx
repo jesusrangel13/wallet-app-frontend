@@ -7,7 +7,6 @@ import { groupAPI } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { formatCurrency } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
-import { Select } from '@/components/ui/Select'
 
 interface Participant {
   userId: string
@@ -25,6 +24,7 @@ interface SharedExpenseFormProps {
   onChange: (data: SharedExpenseData | null) => void
   error?: string
   initialData?: SharedExpenseData
+  hideToggle?: boolean
 }
 
 export interface SharedExpenseData {
@@ -35,6 +35,26 @@ export interface SharedExpenseData {
   categoryId?: string
 }
 
+// Helper to get initials
+const getInitials = (name: string) => {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+}
+
+// Helper for avatar colors
+const AVATAR_COLORS = [
+  'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400',
+  'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400',
+  'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
+  'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400',
+  'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400',
+  'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400',
+]
+
 export default function SharedExpenseForm({
   enabled,
   onToggle,
@@ -43,9 +63,9 @@ export default function SharedExpenseForm({
   onChange,
   error,
   initialData,
+  hideToggle = false,
 }: SharedExpenseFormProps) {
   const t = useTranslations('sharedExpense')
-  const tCommon = useTranslations('common.actions')
   const { user } = useAuthStore()
   const [groups, setGroups] = useState<Group[]>([])
   const [selectedGroupId, setSelectedGroupId] = useState<string>('')
@@ -55,38 +75,23 @@ export default function SharedExpenseForm({
   const paidBySelectId = useId()
   const splitTypeGroupId = useId()
 
-  const SPLIT_TYPE_OPTIONS: { value: SplitType; label: string; description: string }[] = useMemo(() => [
-    {
-      value: 'EQUAL',
-      label: t('splitTypes.equal'),
-      description: t('splitTypes.equalDescription'),
-    },
-    {
-      value: 'PERCENTAGE',
-      label: t('splitTypes.percentage'),
-      description: t('splitTypes.percentageDescription'),
-    },
-    {
-      value: 'EXACT',
-      label: t('splitTypes.exact'),
-      description: t('splitTypes.exactDescription'),
-    },
-    {
-      value: 'SHARES',
-      label: t('splitTypes.shares'),
-      description: t('splitTypes.sharesDescription'),
-    },
+  const SPLIT_TYPE_OPTIONS: { value: SplitType; label: string; icon: string }[] = useMemo(() => [
+    { value: 'EQUAL', label: t('splitTypes.equal'), icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
+    { value: 'PERCENTAGE', label: t('splitTypes.percentage'), icon: 'M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z' },
+    { value: 'EXACT', label: t('splitTypes.exact'), icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+    { value: 'SHARES', label: t('splitTypes.shares'), icon: 'M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z' },
   ], [t])
+
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null)
   const [paidByUserId, setPaidByUserId] = useState<string>('')
   const [splitType, setSplitType] = useState<SplitType>('EQUAL')
   const [participants, setParticipants] = useState<Participant[]>([])
   const [isLoadingGroups, setIsLoadingGroups] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
-  const [showCalculationFeedback, setShowCalculationFeedback] = useState(false)
+
   const participantsRef = useRef<Participant[]>([])
 
-  // Keep ref in sync with participants state
+  // Keep ref in sync
   useEffect(() => {
     participantsRef.current = participants
   }, [participants])
@@ -95,7 +100,6 @@ export default function SharedExpenseForm({
     try {
       setIsLoadingGroups(true)
       const response = await groupAPI.getAll()
-      // El backend devuelve array directo sin paginación params
       const groupsData = Array.isArray(response.data) ? response.data : (response.data as any).data
       setGroups(groupsData)
     } catch (error) {
@@ -105,26 +109,23 @@ export default function SharedExpenseForm({
     }
   }, [])
 
-
-
   useEffect(() => {
     if (enabled) {
       loadGroups()
     }
   }, [enabled, loadGroups])
 
-  // Auto-select single group if available
+  // Auto-select single group
   useEffect(() => {
     if (enabled && !isLoadingGroups && groups.length === 1 && !selectedGroupId && !initialData) {
       setSelectedGroupId(groups[0].id)
     }
   }, [enabled, isLoadingGroups, groups, selectedGroupId, initialData])
 
-  // Load initial data when editing a shared expense
+  // Load initial data
   useEffect(() => {
     if (enabled && initialData && groups.length > 0 && !isInitialized) {
       const group = groups.find((g) => g.id === initialData.groupId)
-
       setSelectedGroupId(initialData.groupId)
       setSelectedGroup(group || null)
       setPaidByUserId(initialData.paidByUserId)
@@ -134,7 +135,6 @@ export default function SharedExpenseForm({
     }
   }, [enabled, initialData, groups, isInitialized])
 
-  // Create a stable key for participants data content to avoid loops
   const participantsContentKey = useMemo(() => {
     return JSON.stringify(participants.map(p => ({
       userId: p.userId,
@@ -146,65 +146,42 @@ export default function SharedExpenseForm({
 
   // Initial group selection effect
   useEffect(() => {
-    // Only handle new group selection (not from initial data)
     if (selectedGroupId && !initialData && !isInitialized) {
       const group = groups.find((g) => g.id === selectedGroupId)
       setSelectedGroup(group || null)
 
       if (group) {
-        // Load default split type from group settings
-        const defaultSplitType = (group.defaultSplitType || 'EQUAL') as SplitType
-        setSplitType(defaultSplitType)
+        setSplitType((group.defaultSplitType || 'EQUAL') as SplitType)
 
-        // Initialize participants from group members with default values
         const initialParticipants = group.members.map((member) => {
-          // Find default split setting for this member
-          const defaultSplit = group.defaultSplitSettings?.find(
-            (setting) => setting.userId === member.userId
-          )
-
+          const defaultSplit = group.defaultSplitSettings?.find(s => s.userId === member.userId)
           return {
             userId: member.userId,
             userName: member.user.name,
             amountOwed: 0,
-            percentage: defaultSplitType === 'PERCENTAGE' ? (defaultSplit?.percentage ? Number(defaultSplit.percentage) : 0) : undefined,
-            shares: defaultSplitType === 'SHARES' ? (defaultSplit?.shares || 1) : undefined,
+            percentage: splitType === 'PERCENTAGE' ? (defaultSplit?.percentage ? Number(defaultSplit.percentage) : 0) : undefined,
+            shares: splitType === 'SHARES' ? (defaultSplit?.shares || 1) : undefined,
           }
         })
         setParticipants(initialParticipants)
 
-        // Select payer logic - SEPARATED from dependency array
         if (group.members.length > 0) {
-          // If current payer is in new group, keep them. Otherwise default.
           const currentPayerInGroup = group.members.find(m => m.userId === paidByUserId)
           if (!currentPayerInGroup) {
             const currentUserInGroup = group.members.find((member) => member.userId === user?.id)
-            if (currentUserInGroup) {
-              setPaidByUserId(currentUserInGroup.userId)
-            } else {
-              setPaidByUserId(group.members[0].userId)
-            }
+            setPaidByUserId(currentUserInGroup ? currentUserInGroup.userId : group.members[0].userId)
           }
         }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedGroupId, groups, initialData, isInitialized]) // Removed paidByUserId and user?.id to prevent loops
+  }, [selectedGroupId, groups, initialData, isInitialized]) // Removed paidByUserId/user?.id/splitType from deps
 
-  // Memoized key to track input changes for calculations is already defined as participantsKey below
-  // We keep it but ensure calculated effects don't loop
-
-  // Create a memoized key that tracks only the input values (percentage/shares)
-  // This prevents infinite loops while still recalculating when needed
-  // CRITICAL: Do NOT include amountOwed (the OUTPUT) in the key
+  // Trigger calculation
   const participantsKey = useMemo(() => {
-    if (splitType === 'PERCENTAGE') {
-      return participants.map(p => `${p.userId}:${p.percentage || 0}`).join('|')
-    } else if (splitType === 'SHARES') {
-      return participants.map(p => `${p.userId}:${p.shares || 1}`).join('|')
-    } else {
-      return `${participants.length}`
-    }
+    if (splitType === 'PERCENTAGE') return participants.map(p => `${p.userId}:${p.percentage || 0}`).join('|')
+    if (splitType === 'SHARES') return participants.map(p => `${p.userId}:${p.shares || 1}`).join('|')
+    return `${participants.length}`
   }, [participants, splitType])
 
   const calculateSplit = useCallback(() => {
@@ -214,90 +191,46 @@ export default function SharedExpenseForm({
     let updatedParticipants = [...currentParticipants]
     let hasChanges = false
 
-    // ... calculation logic ...
-    // We need to implement the calculation logic here again because we are replacing the function
-    // But to minimize code, we'll let the existing calculateSplit handle the logic
-    // and just wrap the state update in the calling effect.
-    // However, replace_file_content replaces the block. So I must provide full implementation.
-
     switch (splitType) {
       case 'EQUAL':
         const equalAmount = totalAmount / currentParticipants.length
         updatedParticipants = currentParticipants.map((p) => {
           if (Math.abs(p.amountOwed - equalAmount) > 0.001) hasChanges = true
-          return {
-            ...p,
-            amountOwed: equalAmount,
-            percentage: undefined,
-            shares: undefined,
-          }
+          return { ...p, amountOwed: equalAmount, percentage: undefined, shares: undefined }
         })
         break
-
       case 'PERCENTAGE':
         updatedParticipants = currentParticipants.map((p) => {
           const newAmount = (totalAmount * (p.percentage || 0)) / 100
           if (Math.abs(p.amountOwed - newAmount) > 0.001) hasChanges = true
-          return {
-            ...p,
-            amountOwed: newAmount,
-          }
+          return { ...p, amountOwed: newAmount }
         })
         break
-
-      case 'EXACT':
-        // Keep manual amounts - typically no auto-calc unless ensuring sum?
-        // Let's rely on manual input for EXACT.
-        break
-
       case 'SHARES':
         const totalShares = currentParticipants.reduce((sum, p) => sum + (p.shares || 1), 0)
         updatedParticipants = currentParticipants.map((p) => {
           const newAmount = (totalAmount * (p.shares || 1)) / totalShares
           if (Math.abs(p.amountOwed - newAmount) > 0.001) hasChanges = true
-          return {
-            ...p,
-            amountOwed: newAmount,
-          }
+          return { ...p, amountOwed: newAmount }
         })
         break
     }
 
-    if (hasChanges) {
-      setParticipants(updatedParticipants)
-    }
+    if (hasChanges) setParticipants(updatedParticipants)
   }, [totalAmount, splitType])
 
-  // Recalculate amounts effect
   useEffect(() => {
     if (participants.length > 0 && totalAmount > 0) {
       calculateSplit()
-
-      if (!initialData && selectedGroupId) {
-        // Debounce feedback to not show on every micro-calc
-        const timer = setTimeout(() => {
-          setShowCalculationFeedback(true)
-          setTimeout(() => setShowCalculationFeedback(false), 2000)
-        }, 500)
-        return () => clearTimeout(timer)
-      }
     }
-  }, [splitType, totalAmount, participantsKey, calculateSplit, initialData, selectedGroupId])
+  }, [splitType, totalAmount, participantsKey, calculateSplit])
 
-  // Notify parent check
+  // Notify parent
   const prevNotifyData = useRef<string>('')
-
-  // Notify parent when data changes
   useEffect(() => {
     if (enabled && selectedGroupId && paidByUserId && participants.length > 0) {
-      const newData = {
-        groupId: selectedGroupId,
-        paidByUserId,
-        splitType,
-        participants,
-      }
+      const newData = { groupId: selectedGroupId, paidByUserId, splitType, participants }
       const newDataString = JSON.stringify(newData)
-
       if (newDataString !== prevNotifyData.current) {
         prevNotifyData.current = newDataString
         onChange(newData)
@@ -311,351 +244,237 @@ export default function SharedExpenseForm({
   }, [enabled, selectedGroupId, paidByUserId, splitType, participantsContentKey, onChange])
 
   const handleParticipantChange = (userId: string, field: string, value: number) => {
-    setParticipants((prevParticipants) => {
-      const updated = prevParticipants.map((p) => {
+    setParticipants((prev) => {
+      const updated = prev.map((p) => {
         if (p.userId === userId) {
-          const updatedParticipant = { ...p, [field]: value }
-
-          // Recalculate amountOwed based on the field being changed
-          if (field === 'percentage' && splitType === 'PERCENTAGE') {
-            updatedParticipant.amountOwed = (totalAmount * value) / 100
-          } else if (field === 'shares' && splitType === 'SHARES') {
-            // Calculate total shares to recalculate amount
-            const totalShares = prevParticipants.reduce((sum, participant) => {
-              if (participant.userId === userId) {
-                return sum + value
-              }
-              return sum + (participant.shares || 1)
-            }, 0)
-            updatedParticipant.amountOwed = (totalAmount * value) / totalShares
-          }
-
-          return updatedParticipant
+          const newP = { ...p, [field]: value }
+          if (field === 'percentage' && splitType === 'PERCENTAGE') newP.amountOwed = (totalAmount * value) / 100
+          return newP
         }
         return p
       })
 
-      // Recalculate all amounts for SHARES to redistribute correctly
+      // Recalc for shares whole group
       if (field === 'shares' && splitType === 'SHARES') {
         const totalShares = updated.reduce((sum, p) => sum + (p.shares || 1), 0)
-        return updated.map((p) => ({
-          ...p,
-          amountOwed: (totalAmount * (p.shares || 1)) / totalShares,
-        }))
+        return updated.map((p) => ({ ...p, amountOwed: (totalAmount * (p.shares || 1)) / totalShares }))
       }
-
       return updated
     })
   }
 
-  const getTotalPercentage = () => {
-    return participants.reduce((sum, p) => sum + (p.percentage || 0), 0)
-  }
+  const getSummary = () => {
+    if (!selectedGroup || !paidByUserId) return null
+    const payer = participants.find(p => p.userId === paidByUserId)
+    const currentUser = participants.find(p => p.userId === user?.id)
 
-  const getTotalAmount = () => {
-    return participants.reduce((sum, p) => sum + p.amountOwed, 0)
+    // Case 1: You paid, everyone owes you
+    if (paidByUserId === user?.id) {
+      const userOwesSelf = currentUser?.amountOwed || 0
+      const lendingTotal = totalAmount - userOwesSelf
+      return {
+        text: t('youLent', { amount: formatCurrency(lendingTotal, currency) }),
+        type: 'positive'
+      }
+    }
+
+    // Case 2: Someone else paid, you owe them
+    if (currentUser) {
+      return {
+        text: t('youOwe', { name: payer?.userName || '?', amount: formatCurrency(currentUser.amountOwed, currency) }),
+        type: 'negative'
+      }
+    }
+
+    return null
   }
 
   if (!enabled) {
+    if (hideToggle) return null;
     return (
-      <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-4">
+      <div className="rounded-xl border border-dashed border-border p-4 hover:bg-muted/30 transition-colors">
         <button
           type="button"
           onClick={() => onToggle(true)}
-          aria-label={t('addButton')}
-          className="w-full flex items-center justify-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
+          className="w-full flex items-center justify-center gap-2 text-primary font-medium"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-            />
-          </svg>
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
           {t('addButton')}
         </button>
       </div>
     )
   }
 
+  const summary = getSummary()
+
   return (
-    <div className="border border-blue-200 dark:border-blue-700 bg-blue-50/50 dark:bg-blue-500/10 rounded-lg p-4 space-y-4" role="region" aria-label={t('title')}>
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-            />
-          </svg>
-          {t('title')}
-        </h3>
-        <button
-          type="button"
-          onClick={() => onToggle(false)}
-          aria-label={t('remove')}
-          className="text-sm text-muted-foreground hover:text-foreground"
-        >
-          {t('remove')}
-        </button>
-      </div>
+    <div className={`space-y-6 ${hideToggle ? '' : 'p-4 border rounded-xl bg-card shadow-sm'}`}>
+      {!hideToggle && (
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold flex items-center gap-2">
+            <div className="p-1.5 bg-primary/10 rounded-lg text-primary">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            </div>
+            {t('title')}
+          </h3>
+          <button type="button" onClick={() => onToggle(false)} className="text-sm text-muted-foreground hover:text-destructive transition-colors">{t('remove')}</button>
+        </div>
+      )}
 
-      {/* Helpful hint */}
-      <div className="bg-blue-100 dark:bg-blue-500/20 border border-blue-300 dark:border-blue-800 rounded-lg p-3 flex items-start gap-2" role="note">
-        <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-        </svg>
-        <p className="text-xs text-blue-800 dark:text-blue-100">{t('hint')}</p>
-      </div>
-
-      {/* Select Group */}
-      <div>
-        <label htmlFor={groupSelectId} className="block text-sm font-medium text-foreground mb-1">
-          {t('groupLabel')} <span className="text-red-500" aria-hidden="true">*</span>
-          <span className="sr-only">({t('required')})</span>
-        </label>
+      {/* 1. Group Selection Cards */}
+      <div className="space-y-2">
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t('groupLabel')}</label>
         {isLoadingGroups ? (
-          <div className="animate-pulse bg-gray-200 h-10 rounded-lg" role="status" aria-label="Loading groups"></div>
+          <div className="h-20 animate-pulse bg-muted rounded-xl" />
         ) : (
-          <Select
-            id={groupSelectId}
-            value={selectedGroupId}
-            onChange={(e) => setSelectedGroupId(e.target.value)}
-            aria-required="true"
-          >
-            <option value="">{t('selectGroup')}</option>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {groups.map((group) => (
-              <option key={group.id} value={group.id}>
-                {group.name} ({t('groupMembers', { count: group.members.length })})
-              </option>
+              <button
+                key={group.id}
+                type="button"
+                onClick={() => setSelectedGroupId(group.id)}
+                className={cn(
+                  "p-3 rounded-xl border-2 text-left transition-all relative overflow-hidden group",
+                  selectedGroupId === group.id
+                    ? "border-primary bg-primary/5 shadow-sm"
+                    : "border-border hover:border-primary/50 hover:bg-muted/50"
+                )}
+              >
+                <div className="font-semibold text-sm truncate">{group.name}</div>
+                <div className="text-xs text-muted-foreground mt-1">{t('groupMembers', { count: group.members.length })}</div>
+                {selectedGroupId === group.id && (
+                  <div className="absolute top-2 right-2 text-primary">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                  </div>
+                )}
+              </button>
             ))}
-          </Select>
+          </div>
         )}
       </div>
 
-      {
-        selectedGroup && (
-          <>
-            {/* Feedback when group is selected but no amount yet */}
-            {totalAmount === 0 && (
-              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 flex items-start gap-2" role="alert">
-                <svg className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-                <p className="text-xs text-amber-800 dark:text-amber-200">{t('noAmountYet')}</p>
-              </div>
-            )}
+      {selectedGroup && (
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
 
-            {/* Feedback when calculation completes */}
-            {showCalculationFeedback && totalAmount > 0 && (
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 flex items-center gap-2 animate-pulse" role="status" aria-live="polite">
-                <svg className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <p className="text-xs text-green-800 dark:text-green-200 font-medium">
-                  {t('calculationComplete', { amount: formatCurrency(totalAmount, currency) })}
-                </p>
-              </div>
-            )}
-
-            {/* Paid By */}
-            <div>
-              <label htmlFor={paidBySelectId} className="block text-sm font-medium text-foreground mb-1">
-                {t('paidBy')} <span className="text-red-500" aria-hidden="true">*</span>
-                <span className="sr-only">({t('required')})</span>
-              </label>
-              <Select
-                id={paidBySelectId}
-                value={paidByUserId}
-                onChange={(e) => setPaidByUserId(e.target.value)}
-                aria-required="true"
-              >
-                <option value="">{t('selectWhoPaid')}</option>
-                {selectedGroup.members.map((member) => (
-                  <option key={member.userId} value={member.userId}>
-                    {member.user.name}
-                  </option>
-                ))}
-              </Select>
+          {/* 2. Paid By Avatars */}
+          <div className="space-y-2">
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t('paidBy')}</label>
+            <div className="flex flex-wrap gap-3">
+              {selectedGroup.members.map((member, idx) => (
+                <button
+                  key={member.userId}
+                  type="button"
+                  onClick={() => setPaidByUserId(member.userId)}
+                  className={cn(
+                    "flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border transition-all",
+                    paidByUserId === member.userId
+                      ? "bg-primary text-primary-foreground border-primary shadow-md"
+                      : "bg-background border-border hover:bg-muted"
+                  )}
+                >
+                  <div className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold",
+                    paidByUserId === member.userId ? "bg-white text-primary" : AVATAR_COLORS[idx % AVATAR_COLORS.length]
+                  )}>
+                    {getInitials(member.user.name)}
+                  </div>
+                  <span className="text-sm font-medium">{member.user.name.split(' ')[0]}</span>
+                </button>
+              ))}
             </div>
+          </div>
 
-            {/* Split Type */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span id={splitTypeGroupId} className="block text-sm font-medium text-foreground">
-                  {t('splitType')} <span className="text-red-500" aria-hidden="true">*</span>
-                  <span className="sr-only">({t('required')})</span>
-                </span>
-                {selectedGroup?.defaultSplitType && (
-                  <span className="text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded">
-                    {t('usingGroupDefaults')}
-                  </span>
-                )}
-              </div>
-              <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-labelledby={splitTypeGroupId}>
-                {SPLIT_TYPE_OPTIONS.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    role="radio"
-                    aria-checked={splitType === option.value}
-                    onClick={() => setSplitType(option.value)}
-                    className={cn(
-                      'p-3 border-2 rounded-lg text-left transition-all',
-                      splitType === option.value
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-card'
-                    )}
-                  >
-                    <div className="font-medium text-sm">{option.label}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">{option.description}</div>
-                  </button>
-                ))}
-              </div>
+          {/* 3. Split Type Segmented Control */}
+          <div className="space-y-2">
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t('splitType')}</label>
+            <div className="flex p-1 bg-muted rounded-lg overflow-x-auto">
+              {SPLIT_TYPE_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setSplitType(option.value)}
+                  className={cn(
+                    "flex-1 min-w-[80px] py-1.5 px-2 rounded-md text-xs font-medium transition-all flex flex-col items-center gap-1",
+                    splitType === option.value
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={option.icon} /></svg>
+                  {option.label}
+                </button>
+              ))}
             </div>
+          </div>
 
-            {/* Participants */}
-            {participants.length > 0 && (
-              <div>
-                <p className="block text-sm font-medium text-foreground mb-2" id="participants-label">
-                  {t('splitBetween', { count: participants.length })}
-                </p>
-                <div className="space-y-2 max-h-64 overflow-y-auto" role="list" aria-labelledby="participants-label">
-                  {participants.map((participant) => (
-                    <div
-                      key={participant.userId}
-                      role="listitem"
-                      className="bg-card border border-border rounded-lg p-3 flex items-center justify-between"
-                    >
-                      <div className="flex-1">
-                        <p className="font-medium text-sm">{participant.userName}</p>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        {splitType === 'PERCENTAGE' && (
-                          <div className="flex items-center gap-1">
-                            <label className="sr-only" htmlFor={`percentage-${participant.userId}`}>
-                              {t('percentageFor', { name: participant.userName })}
-                            </label>
-                            <input
-                              id={`percentage-${participant.userId}`}
-                              type="number"
-                              min="0"
-                              max="100"
-                              step="0.01"
-                              value={participant.percentage || 0}
-                              onChange={(e) =>
-                                handleParticipantChange(
-                                  participant.userId,
-                                  'percentage',
-                                  parseFloat(e.target.value) || 0
-                                )
-                              }
-                              className="w-20 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 bg-background rounded"
-                            />
-                            <span className="text-sm text-muted-foreground" aria-hidden="true">%</span>
-                          </div>
-                        )}
-
-                        {splitType === 'EXACT' && (
-                          <div className="flex items-center gap-1">
-                            <label className="sr-only" htmlFor={`exact-${participant.userId}`}>
-                              {t('amountFor', { name: participant.userName })}
-                            </label>
-                            <input
-                              id={`exact-${participant.userId}`}
-                              type="number"
-                              min="0"
-                              step="0.01"
-                              value={participant.amountOwed || 0}
-                              onChange={(e) =>
-                                handleParticipantChange(
-                                  participant.userId,
-                                  'amountOwed',
-                                  parseFloat(e.target.value) || 0
-                                )
-                              }
-                              className="w-24 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 bg-background rounded"
-                            />
-                          </div>
-                        )}
-
-                        {splitType === 'SHARES' && (
-                          <div className="flex items-center gap-1">
-                            <label className="sr-only" htmlFor={`shares-${participant.userId}`}>
-                              {t('sharesFor', { name: participant.userName })}
-                            </label>
-                            <input
-                              id={`shares-${participant.userId}`}
-                              type="number"
-                              min="1"
-                              step="1"
-                              value={participant.shares || 1}
-                              onChange={(e) =>
-                                handleParticipantChange(
-                                  participant.userId,
-                                  'shares',
-                                  parseInt(e.target.value) || 1
-                                )
-                              }
-                              className="w-16 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 bg-background rounded"
-                            />
-                            <span className="text-sm text-muted-foreground" aria-hidden="true">{t('shares')}</span>
-                          </div>
-                        )}
-
-                        <div className="text-right min-w-[80px]">
-                          <p className="text-sm font-semibold">
-                            {formatCurrency(participant.amountOwed, currency)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+          {/* 4. Participants List & Summary */}
+          {participants.length > 0 && (
+            <div className="bg-muted/30 rounded-xl p-4 border border-border/50">
+              {/* Summary Banner */}
+              {summary && (
+                <div className={cn(
+                  "mb-4 p-3 rounded-lg text-sm font-medium flex items-center gap-2",
+                  summary.type === 'positive' ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
+                )}>
+                  {summary.type === 'positive' ? (
+                    <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                  ) : (
+                    <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" /></svg>
+                  )}
+                  {summary.text}
                 </div>
+              )}
 
-                {/* Summary */}
-                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 space-y-1">
-                  {splitType === 'PERCENTAGE' && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">{t('totalPercentage')}</span>
-                      <span
-                        className={cn(
-                          'font-medium',
-                          Math.abs(getTotalPercentage() - 100) > 0.01 ? 'text-red-600' : 'text-green-600'
-                        )}
-                      >
-                        {getTotalPercentage().toFixed(2)}%
+              <div className="space-y-3">
+                {participants.map((participant, index) => (
+                  <div key={participant.userId} className="flex items-center justify-between group">
+                    <div className="flex items-center gap-3">
+                      <div className={cn(
+                        "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold",
+                        AVATAR_COLORS[index % AVATAR_COLORS.length]
+                      )}>
+                        {getInitials(participant.userName)}
+                      </div>
+                      <span className="text-sm font-medium">{participant.userName}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {/* Detail Inputs (Percentage/Shares) */}
+                      {splitType === 'PERCENTAGE' && (
+                        <div className="flex items-center gap-1">
+                          <input
+                            type="number"
+                            value={participant.percentage || 0}
+                            onChange={(e) => handleParticipantChange(participant.userId, 'percentage', parseFloat(e.target.value) || 0)}
+                            className="w-14 text-right bg-transparent border-b border-muted-foreground/30 focus:border-primary outline-none text-sm p-0"
+                          />
+                          <span className="text-xs text-muted-foreground">%</span>
+                        </div>
+                      )}
+                      {/* Amount Display */}
+                      <span className={cn(
+                        "text-sm font-mono font-medium",
+                        participant.userId === paidByUserId ? "text-green-600 dark:text-green-400" : "text-foreground"
+                      )}>
+                        {formatCurrency(participant.amountOwed, currency)}
                       </span>
                     </div>
-                  )}
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{t('totalSplit')}</span>
-                    <span
-                      className={cn(
-                        'font-medium',
-                        Math.abs(getTotalAmount() - totalAmount) > 0.01 ? 'text-red-600' : 'text-green-600'
-                      )}
-                    >
-                      {formatCurrency(getTotalAmount(), currency)}
-                    </span>
                   </div>
-                  {Math.abs(getTotalAmount() - totalAmount) > 0.01 && (
-                    <p className="text-xs text-red-600" role="alert">
-                      {t('splitMismatch')}
-                    </p>
-                  )}
-                </div>
+                ))}
               </div>
-            )}
-          </>
-        )
-      }
 
-      {error && <p className="text-red-500 text-sm" role="alert">{error}</p>}
-    </div >
+              {/* Total Mismatch Warning */}
+              {Math.abs(participants.reduce((sum, p) => sum + p.amountOwed, 0) - totalAmount) > 0.05 && (
+                <div className="mt-3 pt-2 border-t border-border flex justify-between text-xs text-destructive">
+                  <span>{t('totalSplit')}</span>
+                  <span>{formatCurrency(participants.reduce((sum, p) => sum + p.amountOwed, 0), currency)} / {formatCurrency(totalAmount, currency)}</span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {error && <p className="text-destructive text-sm" role="alert">{error}</p>}
+    </div>
   )
 }

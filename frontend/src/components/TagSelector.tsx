@@ -15,14 +15,14 @@ interface TagSelectorProps {
 }
 
 const TAG_COLORS = [
-  'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
-  'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800',
-  'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800',
-  'bg-pink-100 text-pink-800 border-pink-300 dark:bg-pink-900/30 dark:text-pink-300 dark:border-pink-800',
-  'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800',
-  'bg-indigo-100 text-indigo-800 border-indigo-300 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800',
-  'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800',
-  'bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800',
+  'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
+  'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800',
+  'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800',
+  'bg-pink-100 text-pink-800 border-pink-200 dark:bg-pink-900/30 dark:text-pink-300 dark:border-pink-800',
+  'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800',
+  'bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800',
+  'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800',
+  'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800',
 ]
 
 export default function TagSelector({
@@ -35,316 +35,307 @@ export default function TagSelector({
   const createTagMutation = useCreateTag()
   const t = useTranslations('transactions.tags')
 
-  // Asegurar que tags es un array
   const tagsList: Tag[] = Array.isArray(tags) ? tags : []
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [newTagInput, setNewTagInput] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [inputValue, setInputValue] = useState('')
+  const [isFocused, setIsFocused] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(-1) // For keyboard navigation
 
-  // Accessibility IDs
+  const inputRef = useRef<HTMLInputElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const listRef = useRef<HTMLDivElement>(null)
+
   const labelId = useId()
   const listboxId = useId()
   const errorId = useId()
-  const selectedTagsId = useId()
 
-  // Debounce search input - only trigger filtering after 300ms of inactivity
+  const selectedTags = tagsList.filter((tag) => value.includes(tag.id))
+
+  // Filter available tags based on input AND exclude already selected
+  const availableTags = tagsList.filter((tag) => {
+    if (value.includes(tag.id)) return false
+    if (!inputValue.trim()) return true
+    return tag.name.toLowerCase().includes(inputValue.toLowerCase())
+  })
+
+  // Check unique match
+  const exactMatch = tagsList.find(
+    (tag) => tag.name.toLowerCase() === inputValue.trim().toLowerCase()
+  )
+
+  // Reset active index when list changes
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(newTagInput)
-    }, 300)
+    setActiveIndex(-1)
+  }, [inputValue, isOpen])
 
-    return () => clearTimeout(timer)
-  }, [newTagInput])
-
-  // Auto-focus input when expanded
+  // Scroll active item into view
   useEffect(() => {
-    if (isExpanded && inputRef.current) {
-      inputRef.current.focus()
-    }
-  }, [isExpanded])
-
-  const handleToggleTag = (tagId: string) => {
-    if (value.includes(tagId)) {
-      onChange(value.filter((id) => id !== tagId))
-    } else {
-      onChange([...value, tagId])
-    }
-  }
-
-  const handleCreateTag = async () => {
-    if (!newTagInput.trim()) return
-
-    // Check if tag already exists (case-insensitive)
-    const existingTag = tagsList.find(
-      (tag) => tag.name.toLowerCase() === newTagInput.trim().toLowerCase()
-    )
-
-    if (existingTag) {
-      // Select existing tag instead of creating duplicate
-      onChange([...value, existingTag.id])
-      setNewTagInput('')
-      toast.info(`Tag "${existingTag.name}" already exists - selected it for you`)
-      return
-    }
-
-    try {
-      const newTag = await createTagMutation.mutateAsync({ name: newTagInput.trim() })
-      onChange([...value, newTag.id])
-      setNewTagInput('')
-      toast.success('Tag created successfully')
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to create tag')
-    }
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-
-      // Check for exact match first
-      const exactMatch = availableTags.find(
-        (tag) => tag.name.toLowerCase() === newTagInput.trim().toLowerCase()
-      )
-
-      if (exactMatch) {
-        // Select the existing tag
-        handleToggleTag(exactMatch.id)
-        setNewTagInput('')
-      } else if (availableTags.length === 1) {
-        // Only one filtered result - select it
-        handleToggleTag(availableTags[0].id)
-        setNewTagInput('')
-      } else if (newTagInput.trim()) {
-        // No match - create new tag
-        handleCreateTag()
+    if (activeIndex >= 0 && listRef.current) {
+      const activeElement = listRef.current.children[activeIndex] as HTMLElement
+      if (activeElement) {
+        activeElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
       }
     }
-  }
+  }, [activeIndex])
 
   const getTagColor = (index: number) => {
     return TAG_COLORS[index % TAG_COLORS.length]
   }
 
-  const selectedTags = tagsList.filter((tag) => value.includes(tag.id))
-  const availableTags = tagsList.filter((tag) => {
-    // Exclude already selected tags
-    if (value.includes(tag.id)) return false
+  const handleContainerClick = () => {
+    inputRef.current?.focus()
+    setIsOpen(true)
+  }
 
-    // If there's a search term, filter by name (use debounced search)
-    if (debouncedSearch.trim()) {
-      return tag.name.toLowerCase().includes(debouncedSearch.toLowerCase())
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Backspace to remove tag
+    if (e.key === 'Backspace' && !inputValue && value.length > 0) {
+      const newValue = [...value]
+      newValue.pop()
+      onChange(newValue)
+      return
     }
 
-    // Show all if no search term
-    return true
-  })
+    // Navigation
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      if (!isOpen) {
+        setIsOpen(true)
+        return
+      }
+      const maxIndex = availableTags.length + (inputValue.trim() && !exactMatch ? 0 : -1) // +1 for create option if applicable, simplistic check
+      // Let's refine max items count
+      let totalItems = availableTags.length
+      if (inputValue.trim() && !exactMatch) totalItems += 1
 
-  // Check for exact match to prevent duplicate creation
-  const exactMatch = tagsList.find(
-    (tag) => tag.name.toLowerCase() === newTagInput.trim().toLowerCase()
-  )
-  const showCreateButton = newTagInput.trim() && !exactMatch
+      setActiveIndex(prev => (prev + 1) % totalItems)
+      return
+    }
 
-  const displayLabel = label || t('label')
+    if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      if (!isOpen) {
+        setIsOpen(true)
+        return
+      }
+      let totalItems = availableTags.length
+      if (inputValue.trim() && !exactMatch) totalItems += 1
+
+      setActiveIndex(prev => (prev - 1 + totalItems) % totalItems)
+      return
+    }
+
+    if (e.key === 'Escape') {
+      setIsOpen(false)
+      inputRef.current?.blur()
+      return
+    }
+
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (!inputValue.trim() && activeIndex === -1) return
+
+      // If item selected via keyboard
+      if (activeIndex !== -1) {
+        if (activeIndex < availableTags.length) {
+          handleSelectTag(availableTags[activeIndex].id)
+        } else {
+          // It's the "Create" option
+          handleCreateNewTag()
+        }
+        return
+      }
+
+      // Default Enter behavior (first match or create)
+      if (exactMatch) {
+        if (!value.includes(exactMatch.id)) {
+          onChange([...value, exactMatch.id])
+        }
+        setInputValue('')
+      } else if (availableTags.length === 1) {
+        onChange([...value, availableTags[0].id])
+        setInputValue('')
+      } else {
+        handleCreateNewTag()
+      }
+    }
+
+    if (!isOpen && e.key.length === 1) {
+      setIsOpen(true)
+    }
+  }
+
+  const handleCreateNewTag = async () => {
+    try {
+      const newTag = await createTagMutation.mutateAsync({ name: inputValue.trim() })
+      onChange([...value, newTag.id])
+      setInputValue('')
+      setActiveIndex(-1)
+      toast.success('Tag created')
+    } catch (error: any) {
+      toast.error('Failed to create tag')
+    }
+  }
+
+  const handleSelectTag = (tagId: string) => {
+    onChange([...value, tagId])
+    setInputValue('')
+    setIsOpen(true) // Keep open for multiple selection
+    inputRef.current?.focus()
+    setActiveIndex(-1)
+  }
+
+  const handleRemoveTag = (e: React.MouseEvent, tagId: string) => {
+    e.stopPropagation()
+    onChange(value.filter(id => id !== tagId))
+    inputRef.current?.focus()
+  }
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+        setIsFocused(false)
+        setActiveIndex(-1)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   if (isLoading) {
     return (
       <div className="w-full">
-        <label className="block text-sm font-medium text-foreground mb-1">{displayLabel}</label>
-        <div className="animate-pulse bg-muted h-12 rounded-lg" role="status" aria-label="Loading tags"></div>
+        <label className="block text-sm font-medium text-foreground mb-1">{label || t('label')}</label>
+        <div className="animate-pulse bg-muted h-12 rounded-lg" />
       </div>
     )
   }
 
   return (
-    <div className="w-full space-y-2">
-      <label id={labelId} className="block text-sm font-medium text-foreground mb-1">{displayLabel}</label>
+    <div className="w-full space-y-2 relative" ref={containerRef}>
+      <label id={labelId} className="block text-sm font-medium text-foreground mb-1">
+        {label || t('label')}
+      </label>
 
-      {/* Selected Tags Display */}
+      {/* Unified Input Container */}
       <div
-        id={selectedTagsId}
-        className="min-h-[44px] p-2 border border-input rounded-lg bg-muted/30 flex flex-wrap gap-2 items-center"
-        role="list"
-        aria-label={`${selectedTags.length} selected tags`}
-      >
-        {selectedTags.length === 0 && (
-          <span className="text-sm text-muted-foreground px-2">{t('noTagsSelected')}</span>
+        onClick={handleContainerClick}
+        className={cn(
+          "min-h-[42px] w-full px-3 py-2 border rounded-lg bg-background transition-all cursor-text flex flex-wrap gap-2 items-center shadow-sm",
+          isFocused ? "ring-2 ring-primary border-primary shadow-primary/10" : "border-input hover:border-gray-400 dark:hover:border-gray-500",
+          error && "border-red-500 ring-red-200"
         )}
+      >
+        {/* Selected Tags (Chips) */}
         {selectedTags.map((tag, index) => (
           <span
             key={tag.id}
-            role="listitem"
             className={cn(
-              'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border transition-all',
+              "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-sm font-medium border animate-in zoom-in-50 duration-200",
               getTagColor(index)
             )}
           >
-            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-              <path
-                fillRule="evenodd"
-                d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z"
-                clipRule="evenodd"
-              />
-            </svg>
-            {tag.name}
+            <span className="max-w-[150px] truncate">{tag.name}</span>
             <button
               type="button"
-              onClick={() => handleToggleTag(tag.id)}
-              aria-label={`Remove tag ${tag.name}`}
-              className="ml-1 hover:bg-white/50 dark:hover:bg-black/20 rounded-full p-0.5 transition-colors"
+              onClick={(e) => handleRemoveTag(e, tag.id)}
+              className="hover:bg-black/10 dark:hover:bg-white/20 rounded-full p-0.5 transition-colors focus:outline-none focus:bg-black/20"
             >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
           </span>
         ))}
+
+        {/* Input Field */}
+        <input
+          ref={inputRef}
+          type="text"
+          value={inputValue}
+          onChange={(e) => {
+            setInputValue(e.target.value)
+            setIsOpen(true)
+          }}
+          onKeyDown={handleKeyDown}
+          onFocus={() => {
+            setIsFocused(true)
+            setIsOpen(true)
+          }}
+          placeholder={selectedTags.length === 0 ? t('searchPlaceholder') : ""}
+          className="flex-1 min-w-[120px] bg-transparent outline-none border-none focus:ring-0 focus:outline-none text-sm placeholder:text-muted-foreground h-7"
+          role="combobox"
+          aria-expanded={isOpen}
+          aria-controls={listboxId}
+          aria-activedescendant={activeIndex >= 0 ? `option-${activeIndex}` : undefined}
+          autoComplete="off"
+        />
       </div>
 
-      {/* Add Tags Button */}
-      <button
-        type="button"
-        onClick={() => setIsExpanded(!isExpanded)}
-        aria-expanded={isExpanded}
-        aria-haspopup="listbox"
-        aria-controls={isExpanded ? listboxId : undefined}
-        aria-describedby={error ? errorId : undefined}
-        className={cn(
-          'w-full px-4 py-2 border rounded-lg text-sm font-medium transition-colors flex items-center justify-between',
-          'hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-blue-500',
-          error ? 'border-red-500' : 'border-input',
-          isExpanded && 'bg-muted/50 border-blue-500 ring-2 ring-blue-500'
-        )}
-      >
-        <span className="text-foreground">
-          {isExpanded ? t('closeSelector') : t('addTags')}
-        </span>
-        <svg
-          className={cn('w-4 h-4 text-gray-400 transition-transform', isExpanded && 'rotate-180')}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-
-      {/* Available Tags Grid */}
-      {isExpanded && (
+      {/* Dropdown Menu */}
+      {isOpen && (
         <div
           id={listboxId}
-          role="listbox"
-          aria-label="Available tags"
-          aria-multiselectable="true"
-          className="border border-border rounded-lg p-3 bg-popover shadow-lg space-y-3"
+          className="absolute z-50 w-full mt-1.5 bg-popover border border-border rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-100 ring-1 ring-black/5"
         >
-          {/* Create New Tag Input */}
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <input
-                ref={inputRef}
-                type="text"
-                value={newTagInput}
-                onChange={(e) => setNewTagInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={t('searchPlaceholder')}
-                aria-label="Search or create tag"
-                className="w-full pl-9 pr-3 py-2 border border-input bg-background rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              <svg
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-            </div>
-            {showCreateButton && (
+          <div className="max-h-[220px] overflow-y-auto p-1 custom-scrollbar" ref={listRef}>
+            {/* Available Tags */}
+            {availableTags.map((tag, index) => (
               <button
+                key={tag.id}
+                id={`option-${index}`}
                 type="button"
-                onClick={handleCreateTag}
-                disabled={createTagMutation.isPending}
-                aria-busy={createTagMutation.isPending}
-                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                onClick={() => handleSelectTag(tag.id)}
+                className={cn(
+                  "w-full text-left px-3 py-2 text-sm rounded-lg transition-all flex items-center justify-between group",
+                  activeIndex === index ? "bg-primary/10 text-primary" : "hover:bg-muted text-foreground"
+                )}
               >
-                {createTagMutation.isPending ? t('creating') : `${t('create')} "${newTagInput.trim()}"`}
+                <div className="flex items-center gap-2.5">
+                  <div className={cn(
+                    "w-2 h-2 rounded-full transition-transform",
+                    getTagColor(selectedTags.length + index).split(' ')[0].replace('bg-', 'bg-').replace('100', '400'),
+                    activeIndex === index && "scale-125"
+                  )} />
+                  <span className={cn("font-medium", activeIndex === index && "font-semibold")}>{tag.name}</span>
+                </div>
+                {activeIndex === index && (
+                  <kbd className="hidden sm:inline-flex h-5 items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                    <span className="text-xs">↵</span>
+                  </kbd>
+                )}
+              </button>
+            ))}
+
+            {/* Create Option */}
+            {inputValue.trim() && !exactMatch && (
+              <button
+                id={`option-${availableTags.length}`}
+                type="button"
+                onClick={handleCreateNewTag}
+                className={cn(
+                  "w-full text-left px-3 py-2 text-sm rounded-lg transition-colors flex items-center gap-2 border-t border-dashed border-border mt-1",
+                  activeIndex === availableTags.length ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" : "hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                )}
+              >
+                <div className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400">
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
+                </div>
+                <span className="font-medium">Create &quot;{inputValue.trim()}&quot;</span>
               </button>
             )}
-          </div>
 
-          {/* Available Tags */}
-          {availableTags.length > 0 && (
-            <div>
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
-                {t('availableTags')}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {availableTags.map((tag, index) => (
-                  <button
-                    key={tag.id}
-                    type="button"
-                    role="option"
-                    aria-selected="false"
-                    aria-label={`Add tag ${tag.name}`}
-                    onClick={() => handleToggleTag(tag.id)}
-                    className={cn(
-                      'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all',
-                      'hover:shadow-md',
-                      getTagColor(selectedTags.length + index)
-                    )}
-                  >
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path
-                        fillRule="evenodd"
-                        d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    {tag.name}
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 4v16m8-8H4"
-                      />
-                    </svg>
-                  </button>
-                ))}
+            {/* Empty State */}
+            {availableTags.length === 0 && !inputValue.trim() && (
+              <div className="px-3 py-6 text-center text-sm text-muted-foreground">
+                <p className="italic">{t('noTagsYet')}</p>
               </div>
-            </div>
-          )}
-
-          {tagsList.length === 0 ? (
-            <p className="text-sm text-muted-foreground italic text-center py-2">
-              {t('noTagsYet')}
-            </p>
-          ) : (
-            availableTags.length === 0 &&
-            newTagInput.trim() && (
-              <p className="text-sm text-muted-foreground italic text-center py-2">
-                {t('noMatchFound', { search: newTagInput.trim() })}
-              </p>
-            )
-          )}
+            )}
+          </div>
         </div>
       )}
 
-      {error && <p id={errorId} className="text-red-500 text-sm mt-1" role="alert">{error}</p>}
+      {error && <p id={errorId} className="text-red-500 text-sm mt-1 animate-in slide-in-from-top-1" role="alert">{error}</p>}
     </div>
   )
 }

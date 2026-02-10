@@ -16,6 +16,7 @@ interface DateTimePickerProps {
   includeTime?: boolean
   placeholder?: string
   className?: string
+  maxDate?: Date
 }
 
 export function DateTimePicker({
@@ -26,6 +27,7 @@ export function DateTimePicker({
   includeTime = false,
   placeholder = 'Select date...',
   className,
+  maxDate,
 }: DateTimePickerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(() => {
@@ -46,7 +48,7 @@ export function DateTimePicker({
   })
 
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const buttonRef = useRef<HTMLButtonElement>(null)
+  const buttonRef = useRef<HTMLDivElement>(null)
   const dropdownId = useId()
   const labelId = useId()
   const errorId = useId()
@@ -170,17 +172,24 @@ export function DateTimePicker({
       )}
 
       <div className="relative">
-        <button
+        <div
           ref={buttonRef}
-          type="button"
+          tabIndex={0}
+          role="button"
           onClick={() => setIsOpen(!isOpen)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setIsOpen(!isOpen)
+            }
+          }}
           aria-expanded={isOpen}
           aria-haspopup="dialog"
           aria-controls={isOpen ? dropdownId : undefined}
           aria-labelledby={label ? labelId : undefined}
           aria-describedby={error ? errorId : undefined}
           className={cn(
-            'w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-left flex items-center justify-between',
+            'w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-left flex items-center justify-between cursor-pointer',
             error ? 'border-red-500' : 'border-input',
             !selectedDate && 'text-muted-foreground'
           )}
@@ -202,7 +211,7 @@ export function DateTimePicker({
               <X className="w-4 h-4 text-muted-foreground hover:text-foreground" aria-hidden="true" />
             </button>
           )}
-        </button>
+        </div>
 
         {isOpen && (
           <div
@@ -218,6 +227,7 @@ export function DateTimePicker({
               selected={selectedDate}
               onSelect={handleDateSelect}
               className="daypicker-custom"
+              disabled={maxDate ? { after: maxDate } : undefined}
               modifiersClassNames={{
                 selected: 'bg-blue-600 text-white hover:bg-blue-700',
                 today: 'font-bold text-blue-600',
@@ -248,13 +258,15 @@ export function DateTimePicker({
               >
                 Yesterday
               </button>
-              <button
-                type="button"
-                onClick={() => handleQuickSelect(1)}
-                className="px-3 py-1.5 text-sm bg-muted hover:bg-muted/80 rounded transition-colors"
-              >
-                Tomorrow
-              </button>
+              {(!maxDate || addDays(new Date(), 1) <= maxDate) && (
+                <button
+                  type="button"
+                  onClick={() => handleQuickSelect(1)}
+                  className="px-3 py-1.5 text-sm bg-muted hover:bg-muted/80 rounded transition-colors"
+                >
+                  Tomorrow
+                </button>
+              )}
               <button
                 type="button"
                 onClick={handleClear}

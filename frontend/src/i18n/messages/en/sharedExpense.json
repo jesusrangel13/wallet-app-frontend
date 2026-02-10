@@ -12,6 +12,12 @@
   "selectWhoPaid": "Select who paid...",
   "splitType": "Split Type",
   "usingGroupDefaults": "Using group defaults",
+  "enable": "Enable shared expense",
+  "participants": "Participants",
+  "remaining": "Remaining",
+  "settleUp": "Settle up",
+  "youLent": "You lent {amount}",
+  "youOwe": "You owe {amount} to {name}",
   "splitTypes": {
     "equal": "Equal Split",
     "equalDescription": "Split equally between all participants",

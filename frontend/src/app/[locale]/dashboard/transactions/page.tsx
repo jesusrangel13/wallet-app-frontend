@@ -10,14 +10,10 @@ import { Transaction, Account, TransactionType, CreateTransactionForm, MergedCat
 import { transactionAPI, accountAPI, categoryAPI, sharedExpenseAPI } from '@/lib/api'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
-import CategorySelector from '@/components/CategorySelector'
-import TagSelector from '@/components/TagSelector'
-import SharedExpenseForm, { SharedExpenseData } from '@/components/SharedExpenseForm'
-import PayeeAutocomplete from '@/components/PayeeAutocomplete'
+import TransactionFormModal, { TransactionFormData } from '@/components/TransactionFormModal'
+import { SharedExpenseData } from '@/components/SharedExpenseForm'
 import TransactionFiltersComponent, { TransactionFilters } from '@/components/TransactionFilters'
-import { formatCurrency } from '@/lib/utils'
 import { exportToCSV, exportToJSON, exportToExcel } from '@/lib/exportTransactions'
 import { PaymentStatusBadge } from '@/components/PaymentStatusBadge'
 import { LoadingSpinner } from '@/components/ui/Loading'
@@ -36,32 +32,7 @@ import { TimelineStyleSelector } from '@/components/transactions/TimelineStyleSe
 import { MonthSelectorVariants, SelectorVariant } from '@/components/transactions/MonthSelectorVariants'
 import { EmptyState } from '@/components/ui/EmptyState'
 
-const transactionSchema = z.object({
-  accountId: z.string().min(1, 'Account is required'),
-  type: z.enum(['EXPENSE', 'INCOME', 'TRANSFER']),
-  amount: z.coerce.number().positive('Amount must be positive'),
-  categoryId: z.string().optional(),
-  description: z.string().optional(),
-  date: z.string().optional(),
-  payee: z.string().optional(),
-  payer: z.string().optional(),
-  toAccountId: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-}).refine(
-  (data) => {
-    // If type is TRANSFER, toAccountId is required
-    if (data.type === 'TRANSFER') {
-      return data.toAccountId && data.toAccountId.length > 0
-    }
-    return true
-  },
-  {
-    message: 'Destination account is required for transfers',
-    path: ['toAccountId'],
-  }
-)
-
-type TransactionFormData = z.infer<typeof transactionSchema>
+// transactionSchema and TransactionFormData moved to TransactionFormModal
 
 // Helper function to group transactions by date
 const groupTransactionsByDate = (transactions: Transaction[]) => {
@@ -104,11 +75,8 @@ export default function TransactionsPage() {
   const [isRefreshingList, setIsRefreshingList] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null)
-  const [isSharedExpense, setIsSharedExpense] = useState(false)
   const [sharedExpenseData, setSharedExpenseData] = useState<SharedExpenseData | null>(null)
   const [showExportMenu, setShowExportMenu] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-  const [formattedAmount, setFormattedAmount] = useState('')
   const [selectedTransactionIds, setSelectedTransactionIds] = useState<Set<string>>(new Set())
   const [selectAll, setSelectAll] = useState(false)
   const [isBulkDeleting, setIsBulkDeleting] = useState(false)
@@ -148,27 +116,6 @@ export default function TransactionsPage() {
     sortBy: 'date',
     sortOrder: 'desc',
   })
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<TransactionFormData>({
-    resolver: zodResolver(transactionSchema),
-    defaultValues: {
-      type: 'EXPENSE',
-      tags: [],
-    },
-  })
-
-  const selectedType = watch('type')
-  const selectedAccountId = watch('accountId')
-  const selectedTags = watch('tags') || []
-  const selectedAmount = watch('amount') || 0
-  const selectedAccount = accounts.find((a) => a.id === selectedAccountId)
 
   // Use ref to avoid recreating loadTransactions on every filter change
   const filtersRef = useRef(filters)
@@ -382,30 +329,26 @@ export default function TransactionsPage() {
     }
   }, [])
 
-  const onSubmit = async (data: TransactionFormData) => {
-    if (isSaving) return // Prevent multiple submissions
-
+  const onSubmit = async (data: TransactionFormData, sharedData?: SharedExpenseData | null) => {
     try {
-      setIsSaving(true)
-
       let sharedExpenseId: string | undefined = undefined
 
       // If this is a shared expense for a NEW transaction, create the shared expense first
-      if (isSharedExpense && sharedExpenseData && !editingTransaction) {
+      if (sharedData && !editingTransaction) {
         const sharedExpensePayload = {
           transactionId: '', // Will be updated after transaction creation
-          groupId: sharedExpenseData.groupId,
-          paidByUserId: sharedExpenseData.paidByUserId, // Include who paid
+          groupId: sharedData.groupId,
+          paidByUserId: sharedData.paidByUserId, // Include who paid
           amount: data.amount,
           description: data.description || 'Shared expense',
           categoryId: data.categoryId, // Fix: Inherit category from transaction
           date: data.date || new Date().toISOString(), // Use transaction date
-          splitType: sharedExpenseData.splitType,
-          participants: sharedExpenseData.participants.map(p => ({
+          splitType: sharedData.splitType,
+          participants: sharedData.participants.map((p: any) => ({
             userId: p.userId,
             amountOwed: p.amountOwed,
-            percentage: sharedExpenseData.splitType === 'PERCENTAGE' ? p.percentage : undefined,
-            shares: sharedExpenseData.splitType === 'SHARES' ? p.shares : undefined,
+            percentage: sharedData.splitType === 'PERCENTAGE' ? p.percentage : undefined,
+            shares: sharedData.splitType === 'SHARES' ? p.shares : undefined,
           })),
         }
 
@@ -415,7 +358,7 @@ export default function TransactionsPage() {
         // Only create a Transaction if the current user is the one who paid
         // If someone else paid, the Transaction should only be created when marking as "paid"
         const currentUserId = user?.id
-        if (sharedExpenseData.paidByUserId === currentUserId) {
+        if (sharedData.paidByUserId === currentUserId) {
           // Current user paid - create the transaction to affect their balance
           const payload: CreateTransactionForm = {
             ...data,
@@ -423,76 +366,79 @@ export default function TransactionsPage() {
             sharedExpenseId: sharedExpenseId
           }
           await transactionAPI.create(payload)
-          toast.success('Shared expense created successfully')
+          // toast.success('Shared expense created successfully') - Modal handles success UI
         } else {
           // Someone else paid - don't create transaction yet
-          // Balance will be affected when marking as "paid"
           toast.success('Shared expense created successfully. Mark as paid when you settle your portion.')
         }
 
         loadTransactions(1) // Reset to page 1 to properly reset pagination state
-        setIsModalOpen(false)
-        reset()
-        setEditingTransaction(null)
-        setIsSharedExpense(false)
-        setSharedExpenseData(null)
-        return // Exit early to avoid creating duplicate transaction
+        return // Exit early
       }
 
       // Build payload with explicit sharedExpenseId handling
+      // Sanitize payload to remove extra fields like sharedGroup or notes
       const payload: CreateTransactionForm = {
-        ...data,
+        accountId: data.accountId!, // Validated by schema
+        type: data.type,
+        amount: data.amount,
+        categoryId: data.categoryId,
+        description: data.description,
+        payee: data.payee,
+        payer: data.payer,
+        toAccountId: data.toAccountId,
+        tags: data.tags,
         date: data.date || new Date().toISOString(),
+        // sharedExpenseId will be handled below
       }
 
       // Handle sharedExpenseId explicitly
-      if (isSharedExpense && sharedExpenseId) {
+      if (sharedExpenseId) {
         // New shared expense created
         payload.sharedExpenseId = sharedExpenseId
-      } else if (isSharedExpense && editingTransaction?.sharedExpenseId) {
+      } else if (sharedData && editingTransaction?.sharedExpenseId) {
         // Existing shared expense being kept
         payload.sharedExpenseId = editingTransaction.sharedExpenseId
-      } else if (!isSharedExpense && editingTransaction?.sharedExpenseId) {
+      } else if (!sharedData && editingTransaction?.sharedExpenseId) {
         // User is removing shared expense from transaction
         payload.sharedExpenseId = null as any
       }
-      // If not shared expense and no previous shared expense, don't include field
 
       if (editingTransaction) {
         // If editing a shared expense, update the shared expense as well
-        if (isSharedExpense && sharedExpenseData && editingTransaction.sharedExpenseId) {
+        if (sharedData && editingTransaction.sharedExpenseId) {
           const sharedExpensePayload = {
             amount: data.amount,
             description: data.description || 'Shared expense',
             categoryId: data.categoryId, // Fix: Update category
             date: data.date || new Date().toISOString(), // Use transaction date
-            splitType: sharedExpenseData.splitType,
-            participants: sharedExpenseData.participants.map(p => ({
+            splitType: sharedData.splitType,
+            participants: sharedData.participants.map((p: any) => ({
               userId: p.userId,
               amountOwed: p.amountOwed,
-              percentage: sharedExpenseData.splitType === 'PERCENTAGE' ? p.percentage : undefined,
-              shares: sharedExpenseData.splitType === 'SHARES' ? p.shares : undefined,
+              percentage: sharedData.splitType === 'PERCENTAGE' ? p.percentage : undefined,
+              shares: sharedData.splitType === 'SHARES' ? p.shares : undefined,
             })),
-            paidByUserId: sharedExpenseData.paidByUserId,
+            paidByUserId: sharedData.paidByUserId,
           }
 
           await sharedExpenseAPI.update(editingTransaction.sharedExpenseId, sharedExpensePayload)
-        } else if (isSharedExpense && sharedExpenseData && !editingTransaction.sharedExpenseId) {
+        } else if (sharedData && !editingTransaction.sharedExpenseId) {
           // Converting normal transaction to shared expense
           const sharedExpensePayload = {
             transactionId: editingTransaction.id,
-            groupId: sharedExpenseData.groupId,
-            paidByUserId: sharedExpenseData.paidByUserId,
+            groupId: sharedData.groupId,
+            paidByUserId: sharedData.paidByUserId,
             amount: data.amount,
             description: data.description || 'Shared expense',
             categoryId: data.categoryId, // Fix: Inherit category
             date: data.date || new Date().toISOString(), // Use transaction date
-            splitType: sharedExpenseData.splitType,
-            participants: sharedExpenseData.participants.map(p => ({
+            splitType: sharedData.splitType,
+            participants: sharedData.participants.map((p: any) => ({
               userId: p.userId,
               amountOwed: p.amountOwed,
-              percentage: sharedExpenseData.splitType === 'PERCENTAGE' ? p.percentage : undefined,
-              shares: sharedExpenseData.splitType === 'SHARES' ? p.shares : undefined,
+              percentage: sharedData.splitType === 'PERCENTAGE' ? p.percentage : undefined,
+              shares: sharedData.splitType === 'SHARES' ? p.shares : undefined,
             })),
           }
 
@@ -502,35 +448,20 @@ export default function TransactionsPage() {
 
         const editedId = editingTransaction.id
         await transactionAPI.update(editedId, payload)
-        toast.success('Transaction updated successfully')
-
-        // Close modal immediately after successful update
-        setIsModalOpen(false)
-        reset()
-        setEditingTransaction(null)
-        setIsSharedExpense(false)
-        setSharedExpenseData(null)
+        // toast.success('Transaction updated successfully') - Modal handles success UI
 
         // Reload all current pages and scroll to edited transaction
         await reloadCurrentPages(editedId)
       } else {
         await transactionAPI.create(payload)
-        toast.success('Transaction created successfully')
-
-        // Close modal and reset state
-        setIsModalOpen(false)
-        reset()
-        setEditingTransaction(null)
-        setIsSharedExpense(false)
-        setSharedExpenseData(null)
+        // toast.success('Transaction created successfully') - Modal handles success UI
 
         // Reset to page 1 for new transactions
         loadTransactions(1)
       }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to save transaction')
-    } finally {
-      setIsSaving(false)
+      throw error // Re-throw so modal knows it failed
     }
   }
 
@@ -589,20 +520,6 @@ export default function TransactionsPage() {
 
   const handleEdit = async (transaction: Transaction) => {
     setEditingTransaction(transaction)
-    const amount = Number(transaction.amount)
-    reset({
-      accountId: transaction.accountId,
-      type: transaction.type,
-      amount: amount,
-      categoryId: transaction.categoryId || undefined,
-      description: transaction.description || '',
-      date: transaction.date ? new Date(transaction.date).toISOString().slice(0, 16) : '',
-      payee: transaction.payee || '',
-      payer: transaction.payer || '',
-      toAccountId: transaction.toAccountId || undefined,
-      tags: transaction.tags?.map((t) => t.tagId) || [],
-    })
-    setFormattedAmount(formatAmountDisplay(amount, transaction.account?.currency || 'CLP'))
 
     // If this is a shared expense, load the shared expense data BEFORE opening modal
     if (transaction.sharedExpenseId) {
@@ -613,7 +530,7 @@ export default function TransactionsPage() {
           groupId: sharedExpense.groupId,
           paidByUserId: sharedExpense.paidByUserId,
           splitType: sharedExpense.splitType,
-          participants: sharedExpense.participants.map(p => ({
+          participants: sharedExpense.participants.map((p: any) => ({
             userId: p.userId,
             userName: p.user.name,
             amountOwed: p.amountOwed,
@@ -621,16 +538,13 @@ export default function TransactionsPage() {
             shares: p.shares,
           })),
         })
-        setIsSharedExpense(true)
         setIsModalOpen(true)
       } catch (error: any) {
         toast.error('Failed to load shared expense details')
-        setIsSharedExpense(false)
         setSharedExpenseData(null)
         setIsModalOpen(true)
       }
     } else {
-      setIsSharedExpense(false)
       setSharedExpenseData(null)
       setIsModalOpen(true)
     }
@@ -638,27 +552,17 @@ export default function TransactionsPage() {
 
   const handleAddNew = () => {
     setEditingTransaction(null)
-    setIsSharedExpense(false)
     setSharedExpenseData(null)
-    setFormattedAmount('')
-    reset({
-      type: 'EXPENSE',
-      tags: [],
-    })
     setIsModalOpen(true)
   }
 
-  const getAvailableToAccounts = () => {
-    if (!selectedAccountId) return []
-    const selectedAccount = accounts.find((a) => a.id === selectedAccountId)
-    if (!selectedAccount) return []
-
-    // Only show accounts with the same currency
-    return accounts.filter(
-      (a) => a.id !== selectedAccountId && a.currency === selectedAccount.currency
-    )
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setEditingTransaction(null)
+    setSharedExpenseData(null)
   }
 
+  // Helper functions used by modal now removed as they are internal to modal or not needed
   const getTransactionTypeColor = (type: TransactionType) => {
     switch (type) {
       case 'EXPENSE':
@@ -667,74 +571,6 @@ export default function TransactionsPage() {
         return 'text-green-600'
       case 'TRANSFER':
         return 'text-blue-600'
-    }
-  }
-
-  const formatAmountDisplay = (value: string | number, currency: string): string => {
-    if (!value) return ''
-    const numValue = typeof value === 'string' ? parseFloat(value.replace(/,/g, '')) : value
-    if (isNaN(numValue)) return ''
-
-    // Format based on currency
-    if (currency === 'CLP') {
-      // CLP doesn't use decimals typically
-      return new Intl.NumberFormat('es-CL', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(numValue)
-    } else {
-      // USD and EUR use decimals
-      return new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(numValue)
-    }
-  }
-
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value.replace(/,/g, '') // Remove commas for parsing
-
-    // Allow empty or just a dot
-    if (rawValue === '' || rawValue === '.') {
-      setFormattedAmount(rawValue)
-      setValue('amount', 0)
-      return
-    }
-
-    // Allow valid numbers with optional decimal
-    const numValue = parseFloat(rawValue)
-    if (!isNaN(numValue) && numValue >= 0) {
-      setFormattedAmount(rawValue) // Keep raw input while typing
-      setValue('amount', numValue)
-    }
-  }
-
-  const handleAmountBlur = () => {
-    const amount = watch('amount')
-    if (amount && amount > 0 && selectedAccount) {
-      setFormattedAmount(formatAmountDisplay(amount, selectedAccount.currency))
-    } else if (!amount || amount === 0) {
-      setFormattedAmount('')
-    }
-  }
-
-  const handleAmountFocus = () => {
-    const amount = watch('amount')
-    if (amount && amount > 0) {
-      setFormattedAmount(amount.toString())
-    } else {
-      setFormattedAmount('')
-    }
-  }
-
-  const getTransactionTypeIcon = (type: TransactionType) => {
-    switch (type) {
-      case 'EXPENSE':
-        return '↓'
-      case 'INCOME':
-        return '↑'
-      case 'TRANSFER':
-        return '→'
     }
   }
 
@@ -1048,237 +884,18 @@ export default function TransactionsPage() {
             </div>
           )}
 
-          {/* Transaction Modal */}
-          <Modal
-            isOpen={isModalOpen}
-            onClose={() => {
-              setIsModalOpen(false)
-              setEditingTransaction(null)
-              setIsSharedExpense(false)
-              setSharedExpenseData(null)
-              reset()
-            }}
-            title={editingTransaction ? t('edit') : t('new')}
-          >
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {/* Transaction Type - Tabs */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {t('fields.type')} <span className="text-red-500">*</span>
-                </label>
-                <div className="grid grid-cols-3 gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-                  <button
-                    type="button"
-                    onClick={() => setValue('type', 'EXPENSE')}
-                    className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'EXPENSE'
-                      ? 'bg-red-500 text-white shadow-md'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                      }`}
-                  >
-                    <div className="flex flex-col items-center gap-1">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                      </svg>
-                      <span>Expense</span>
-                    </div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setValue('type', 'INCOME')}
-                    className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'INCOME'
-                      ? 'bg-green-500 text-white shadow-md'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                      }`}
-                  >
-                    <div className="flex flex-col items-center gap-1">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                      </svg>
-                      <span>Income</span>
-                    </div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setValue('type', 'TRANSFER')}
-                    className={`py-3 px-4 rounded-md text-sm font-medium transition-all ${selectedType === 'TRANSFER'
-                      ? 'bg-blue-400 text-white shadow-md'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                      }`}
-                  >
-                    <div className="flex flex-col items-center gap-1">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                      </svg>
-                      <span>Transfer</span>
-                    </div>
-                  </button>
-                </div>
-                {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>}
-              </div>
-
-              {/* Account */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  {t('fields.account')} <span className="text-red-500">*</span>
-                </label>
-                <select
-                  {...register('accountId')}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
-                >
-                  <option value="">{t('placeholders.selectAccount')}</option>
-                  {accounts.map((account) => (
-                    <option key={account.id} value={account.id}>
-                      {account.name} ({account.currency})
-                    </option>
-                  ))}
-                </select>
-                {errors.accountId && (
-                  <p className="text-red-500 text-sm mt-1">{errors.accountId.message}</p>
-                )}
-              </div>
-
-              {/* To Account (for transfers) */}
-              {selectedType === 'TRANSFER' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {t('fields.toAccount')} <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    {...register('toAccountId')}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
-                  >
-                    <option value="">{t('placeholders.selectDestination')}</option>
-                    {getAvailableToAccounts().map((account) => (
-                      <option key={account.id} value={account.id}>
-                        {account.name} ({account.currency})
-                      </option>
-                    ))}
-                  </select>
-                  {errors.toAccountId && (
-                    <p className="text-red-500 text-sm mt-1">{errors.toAccountId.message}</p>
-                  )}
-                </div>
-              )}
-
-              {/* Amount */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  {t('fields.amount')} <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 font-semibold">
-                    {selectedAccount
-                      ? selectedAccount.currency === 'CLP'
-                        ? '$'
-                        : selectedAccount.currency === 'USD'
-                          ? 'US$'
-                          : '€'
-                      : '$'}
-                  </span>
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    placeholder="0.00"
-                    className={`w-full pl-12 pr-3 py-2 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary ${errors.amount ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                      }`}
-                    value={formattedAmount}
-                    onChange={handleAmountChange}
-                    onFocus={handleAmountFocus}
-                    onBlur={handleAmountBlur}
-                    required
-                  />
-                </div>
-                {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount.message}</p>}
-              </div>
-
-              {/* Category */}
-              <CategorySelector
-                value={watch('categoryId')}
-                onChange={(categoryId) => setValue('categoryId', categoryId)}
-                type={selectedType}
-                error={errors.categoryId?.message}
-              />
-
-              {/* Payee (quien recibe el pago) */}
-              {selectedType !== 'TRANSFER' && (
-                <PayeeAutocomplete
-                  label={t('fields.payee')}
-                  value={watch('payee') || ''}
-                  onChange={(value) => setValue('payee', value)}
-                  error={errors.payee?.message}
-                  placeholder={t('placeholders.payee')}
-                />
-              )}
-
-              {/* Description */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('fields.description')}</label>
-                <textarea
-                  {...register('description')}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
-                  placeholder={t('placeholders.description')}
-                />
-                {errors.description && (
-                  <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
-                )}
-              </div>
-
-              {/* Date */}
-              <Input
-                label={t('fields.dateTime')}
-                type="datetime-local"
-                error={errors.date?.message}
-                {...register('date')}
-              />
-
-              {/* Tags */}
-              <TagSelector
-                value={selectedTags}
-                onChange={(tags) => setValue('tags', tags)}
-                error={errors.tags?.message}
-              />
-
-              {/* Shared Expense */}
-              {selectedType === 'EXPENSE' && (
-                <SharedExpenseForm
-                  enabled={isSharedExpense}
-                  onToggle={setIsSharedExpense}
-                  totalAmount={selectedAmount}
-                  currency={selectedAccount?.currency || 'CLP'}
-                  onChange={setSharedExpenseData}
-                  initialData={sharedExpenseData || undefined}
-                />
-              )}
-
-              <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <Button type="submit" className="flex-1" disabled={isSaving}>
-                  {isSaving ? (
-                    <span className="inline-flex items-center gap-2">
-                      <LoadingSpinner size="sm" className="text-current" />
-                      {tLoading('saving')}
-                    </span>
-                  ) : (
-                    <span>{editingTransaction ? tCommon('actions.update') : tCommon('actions.create')}</span>
-                  )}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setIsModalOpen(false)
-                    setEditingTransaction(null)
-                    setIsSharedExpense(false)
-                    setSharedExpenseData(null)
-                    reset()
-                  }}
-                  disabled={isSaving}
-                >
-                  {tCommon('actions.cancel')}
-                </Button>
-              </div>
-            </form>
-          </Modal>
+          {/* Transaction Modal - Now replaced by Fintech Pro Component */}
+          {isModalOpen && (
+            <TransactionFormModal
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              onSubmit={onSubmit}
+              accounts={accounts}
+              editingTransaction={editingTransaction}
+              initialSharedExpenseData={sharedExpenseData}
+              mode={editingTransaction ? 'edit' : 'create'}
+            />
+          )}
 
           {/* Bulk Delete Confirmation Modal */}
           <Modal

@@ -12,6 +12,12 @@
   "selectWhoPaid": "Selecciona quién pagó...",
   "splitType": "Tipo de División",
   "usingGroupDefaults": "Usando valores predeterminados del grupo",
+  "enable": "Habilitar gasto compartido",
+  "participants": "Participantes",
+  "remaining": "Faltante",
+  "settleUp": "Saldar deuda",
+  "youLent": "Tú prestaste {amount}",
+  "youOwe": "Debes {amount} a {name}",
   "splitTypes": {
     "equal": "División Igual",
     "equalDescription": "Dividir igualmente entre todos los participantes",

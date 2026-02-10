@@ -60,4 +60,7 @@ export const transactionAPI = {
 
   getUniquePayees: (search?: string) =>
     apiClient.get<ApiResponse<string[]>>('/transactions/payees', { params: search ? { search } : {} }),
+
+  getLastByPayee: (payee: string) =>
+    apiClient.get<ApiResponse<Transaction>>('/transactions/last-by-payee', { params: { payee } }),
 }

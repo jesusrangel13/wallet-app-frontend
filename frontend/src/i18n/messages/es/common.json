@@ -74,6 +74,7 @@
     "delete": "Eliminar",
     "cancel": "Cancelar",
     "save": "Guardar",
+    "saving": "Guardando...",
     "create": "Crear",
     "update": "Actualizar",
     "export": "Exportar",
