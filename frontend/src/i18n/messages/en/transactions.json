@@ -29,12 +29,6 @@
     "tags": "Tags",
     "notes": "Notes"
   },
-  "placeholders": {
-    "selectAccount": "Select an account",
-    "selectDestination": "Select destination account",
-    "payee": "Payee name",
-    "description": "Add a description (optional)"
-  },
   "columns": {
     "date": "Date",
     "description": "Description",
@@ -57,6 +51,7 @@
   },
   "category": {
     "placeholder": "Select a category...",
+    "searchPlaceholder": "Search category...",
     "backToCategories": "Back to categories",
     "noCategories": "No categories available. Create your first category to get started."
   },
@@ -79,5 +74,11 @@
     "created": "Transaction created successfully",
     "updated": "Transaction updated successfully",
     "deleted": "Transaction deleted successfully"
+  },
+  "successCreate": "Transaction Saved!",
+  "successUpdate": "Transaction Updated!",
+  "shared": {
+    "label": "Shared Expense",
+    "subtitle": "Split this expense with a group"
   }
 }

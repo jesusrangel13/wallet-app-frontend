@@ -61,6 +61,7 @@
   },
   "category": {
     "placeholder": "Selecciona una categoría...",
+    "searchPlaceholder": "Buscar categoría...",
     "backToCategories": "Volver a categorías",
     "noCategories": "No hay categorías disponibles. Crea tu primera categoría para empezar."
   },
@@ -73,5 +74,11 @@
     "created": "Transacción creada exitosamente",
     "updated": "Transacción actualizada exitosamente",
     "deleted": "Transacción eliminada exitosamente"
+  },
+  "successCreate": "¡Transacción Guardada!",
+  "successUpdate": "¡Transacción Actualizada!",
+  "shared": {
+    "label": "Gasto Compartido",
+    "subtitle": "Dividir este gasto con un grupo"
   }
 }

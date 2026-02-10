@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useMemo, useId } from 'react'
-import { MergedCategory, TransactionType } from '@/types'
+import { TransactionType, MergedCategory } from '@/types'
 import { useMergedCategories } from '@/hooks/useCategories'
 import { useCategoryTranslation } from '@/hooks/useCategoryTranslation'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { CategorySelectorGrid } from './category-selector/CategorySelectorGrid'
 
 interface CategorySelectorProps {
   value?: string
@@ -26,14 +27,17 @@ export default function CategorySelector({
 }: CategorySelectorProps) {
   const { categories, isLoading } = useMergedCategories(type)
   const translateCategory = useCategoryTranslation()
-  const [selectedMainCategory, setSelectedMainCategory] = useState<string>('')
   const [isExpanded, setIsExpanded] = useState(false)
   const t = useTranslations('transactions.category')
   const labelId = useId()
   const listboxId = useId()
   const errorId = useId()
 
-  // Find a category by ID in the nested structure
+  const mainCategories = useMemo(() => {
+    return categories.filter(cat => !cat.parentId)
+  }, [categories])
+
+  // Helper to find category data for display
   const findCategoryById = (cats: MergedCategory[], id: string): MergedCategory | null => {
     for (const cat of cats) {
       if (cat.id === id) return cat
@@ -45,35 +49,7 @@ export default function CategorySelector({
     return null
   }
 
-  // Get main categories (those without parents)
-  const mainCategories = useMemo(() => {
-    return categories.filter(cat => !cat.parentId)
-  }, [categories])
-
-  // Get subcategories for selected main category
-  const selectedMainCategoryData = selectedMainCategory
-    ? findCategoryById(categories, selectedMainCategory)
-    : null
-
   const selectedCategoryData = value ? findCategoryById(categories, value) : null
-
-  const handleMainCategoryClick = (categoryId: string) => {
-    const category = findCategoryById(categories, categoryId)
-    if (!category?.subcategories || category.subcategories.length === 0) {
-      // No subcategories, select directly
-      onChange(categoryId)
-      setSelectedMainCategory(categoryId)
-      setIsExpanded(false)
-    } else {
-      // Has subcategories, expand to show them
-      setSelectedMainCategory(categoryId)
-    }
-  }
-
-  const handleSubcategoryClick = (categoryId: string) => {
-    onChange(categoryId)
-    setIsExpanded(false)
-  }
 
   if (isLoading) {
     return (
@@ -99,185 +75,83 @@ export default function CategorySelector({
       )}
 
       {/* Selected Category Display / Trigger */}
-      <button
-        type="button"
-        onClick={() => setIsExpanded(!isExpanded)}
-        aria-expanded={isExpanded}
-        aria-haspopup="listbox"
-        aria-controls={isExpanded ? listboxId : undefined}
-        aria-labelledby={label ? labelId : undefined}
-        aria-describedby={error ? errorId : undefined}
-        className={cn(
-          'w-full px-4 py-3 border rounded-lg text-left flex items-center justify-between transition-colors bg-background text-foreground',
-          'hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-blue-500',
-          error ? 'border-red-500' : 'border-input',
-          isExpanded && 'ring-2 ring-blue-500 border-blue-500'
-        )}
-      >
-        {selectedCategoryData ? (
-          <div className="flex items-center gap-2">
-            <span
-              className="flex items-center justify-center w-8 h-8 rounded-lg text-lg"
-              style={{ backgroundColor: (selectedCategoryData.color || '#3b82f6') + '20' }}
-            >
-              {selectedCategoryData.icon || '📁'}
-            </span>
-            <div className="flex flex-col">
-              <span className="font-medium text-foreground">{translateCategory(selectedCategoryData)}</span>
-              {selectedCategoryData.source !== 'TEMPLATE' && (
-                <span className="text-xs text-muted-foreground">
-                  {selectedCategoryData.source === 'CUSTOM' ? '(Custom)' : '(Override)'}
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setIsExpanded(!isExpanded)}
+          aria-expanded={isExpanded}
+          aria-haspopup="dialog"
+          aria-controls={isExpanded ? listboxId : undefined}
+          aria-labelledby={label ? labelId : undefined}
+          aria-describedby={error ? errorId : undefined}
+          className={cn(
+            'w-full p-2 border rounded-xl text-left flex items-center justify-between transition-all duration-200 group bg-background',
+            'hover:bg-muted/30 hover:border-primary/50',
+            error ? 'border-destructive ring-1 ring-destructive/20' : 'border-input',
+            isExpanded && 'ring-2 ring-primary/20 border-primary shadow-sm'
+          )}
+        >
+          {selectedCategoryData ? (
+            <div className="flex items-center gap-3 w-full overflow-hidden">
+              <div
+                className="flex items-center justify-center w-10 h-10 rounded-lg text-xl shadow-sm transition-transform group-hover:scale-105 flex-shrink-0"
+                style={{ backgroundColor: (selectedCategoryData.color || '#3b82f6') + '20' }}
+              >
+                {selectedCategoryData.icon || '📁'}
+              </div>
+              <div className="flex flex-col min-w-0 flex-1">
+                <span className="font-semibold text-sm truncate text-foreground">{translateCategory(selectedCategoryData)}</span>
+                <span className="text-xs text-muted-foreground truncate opacity-80">
+                  {selectedCategoryData.source !== 'TEMPLATE'
+                    ? (selectedCategoryData.source === 'CUSTOM' ? 'Personalizado' : 'Modificado')
+                    : t('placeholder').replace('Select a category...', 'Categoría General')}
                 </span>
-              )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 w-full">
+              <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 011 12V7a4 4 0 014-4z" /></svg>
+              </div>
+              <span className="text-muted-foreground text-sm font-medium">{t('placeholder')}</span>
+            </div>
+          )}
+          <div className="pl-2">
+            <svg
+              className={cn('w-4 h-4 text-muted-foreground transition-transform duration-200', isExpanded && 'rotate-180')}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </button>
+
+        {/* Popover Content */}
+        {isExpanded && (
+          <div
+            id={listboxId}
+            className="absolute z-50 w-full mt-2 border border-border rounded-xl bg-popover shadow-xl shadow-black/5 overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top"
+          >
+            <div className="bg-popover">
+              <CategorySelectorGrid
+                value={value}
+                onChange={(val) => {
+                  if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(10);
+                  onChange(val);
+                  setIsExpanded(false);
+                }}
+                categories={mainCategories}
+                type={type}
+                onClose={() => setIsExpanded(false)}
+              />
             </div>
           </div>
-        ) : (
-          <span className="text-muted-foreground">{t('placeholder')}</span>
         )}
-        <svg
-          className={cn('w-5 h-5 text-gray-400 transition-transform', isExpanded && 'rotate-180')}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+      </div>
 
-      {/* Category Grid - Expanded View */}
-      {isExpanded && (
-        <div
-          id={listboxId}
-          role="listbox"
-          aria-label={label || 'Category selection'}
-          className="border border-border rounded-lg p-3 bg-popover shadow-lg"
-        >
-          {/* Main Categories Grid */}
-          {!selectedMainCategory && (
-            <div className="grid grid-cols-3 gap-2">
-              {mainCategories.map((category) => {
-                const hasSubcategories = category.subcategories && category.subcategories.length > 0
-                const categoryName = translateCategory(category)
-                return (
-                  <button
-                    key={category.id}
-                    type="button"
-                    role="option"
-                    aria-selected={value === category.id}
-                    aria-label={`${categoryName}${hasSubcategories ? ', has subcategories' : ''}`}
-                    onClick={() => handleMainCategoryClick(category.id)}
-                    className={cn(
-                      'flex flex-col items-center gap-2 p-3 rounded-lg transition-all',
-                      'border-2',
-                      value === category.id
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-transparent hover:border-border hover:bg-muted/50'
-                    )}
-                    style={{
-                      backgroundColor: value === category.id ? undefined : (category.color || '#3b82f6') + '10',
-                    }}
-                  >
-                    <span className="text-2xl" aria-hidden="true">{category.icon || '📁'}</span>
-                    <span className="text-xs font-medium text-foreground text-center leading-tight">
-                      {categoryName}
-                    </span>
-                    {hasSubcategories && (
-                      <span className="text-xs text-gray-500" aria-hidden="true">→</span>
-                    )}
-                    {category.source !== 'TEMPLATE' && (
-                      <span className="text-xs text-gray-500" aria-hidden="true">
-                        {category.source === 'CUSTOM' ? '✨' : '✏️'}
-                      </span>
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-          )}
-
-          {/* Subcategories Grid */}
-          {selectedMainCategory && selectedMainCategoryData?.subcategories && (
-            <div className="space-y-3">
-              {/* Back Button */}
-              <button
-                type="button"
-                onClick={() => setSelectedMainCategory('')}
-                aria-label={t('backToCategories')}
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-                {t('backToCategories')}
-              </button>
-
-              {/* Selected Main Category Display */}
-              <div className="flex items-center gap-2 pb-2 border-b">
-                <span
-                  className="flex items-center justify-center w-8 h-8 rounded-lg text-lg"
-                  style={{ backgroundColor: (selectedMainCategoryData.color || '#3b82f6') + '20' }}
-                  aria-hidden="true"
-                >
-                  {selectedMainCategoryData.icon || '📁'}
-                </span>
-                <span className="font-semibold text-foreground">{translateCategory(selectedMainCategoryData)}</span>
-              </div>
-
-              {/* Subcategories Grid */}
-              <div className="grid grid-cols-3 gap-2" role="group" aria-label={`Subcategories of ${translateCategory(selectedMainCategoryData)}`}>
-                {selectedMainCategoryData.subcategories.map((subcategory) => {
-                  const subcategoryName = translateCategory(subcategory)
-                  return (
-                    <button
-                      key={subcategory.id}
-                      type="button"
-                      role="option"
-                      aria-selected={value === subcategory.id}
-                      aria-label={subcategoryName}
-                      onClick={() => handleSubcategoryClick(subcategory.id)}
-                      className={cn(
-                        'flex flex-col items-center gap-2 p-3 rounded-lg transition-all',
-                        'hover:shadow-md border-2',
-                        value === subcategory.id
-                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                          : 'border-transparent hover:border-border hover:bg-muted/50'
-                      )}
-                      style={{
-                        backgroundColor:
-                          value === subcategory.id ? undefined : (subcategory.color || '#3b82f6') + '10',
-                      }}
-                    >
-                      <span className="text-2xl" aria-hidden="true">{subcategory.icon || '📁'}</span>
-                      <span className="text-xs font-medium text-foreground text-center leading-tight">
-                        {subcategoryName}
-                      </span>
-                      {subcategory.source !== 'TEMPLATE' && (
-                        <span className="text-xs text-gray-500" aria-hidden="true">
-                          {subcategory.source === 'CUSTOM' ? '✨' : '✏️'}
-                        </span>
-                      )}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-
-          {mainCategories.length === 0 && (
-            <p className="text-sm text-muted-foreground italic text-center py-4">
-              {t('noCategories')}
-            </p>
-          )}
-        </div>
-      )}
-
-      {error && <p id={errorId} className="text-red-500 text-sm mt-1" role="alert">{error}</p>}
+      {error && <p id={errorId} className="text-destructive text-sm mt-1 animate-in slide-in-from-top-1" role="alert">{error}</p>}
     </div>
   )
 }
