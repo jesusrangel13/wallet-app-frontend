@@ -173,7 +173,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                           </div>
                         </div>
                         <div className="flex items-baseline justify-between">
-                          <span className="text-[9px] text-muted-foreground uppercase tracking-wide">{t('spent')}</span>
+                          <span className="text-metric-label">{t('spent')}</span>
                           <p className="font-semibold text-sm text-foreground tabular-nums">
                             <AnimatedCurrency amount={spent} currency={account.currency as Currency} />
                           </p>
@@ -199,7 +199,7 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
                           </div>
                         </div>
                         <div className="text-left mt-0.5">
-                          <p className="text-[9px] text-muted-foreground uppercase tracking-wide mb-0.5">{t('balance')}</p>
+                          <p className="text-metric-label mb-0.5">{t('balance')}</p>
                           <p className="font-semibold text-base text-foreground tabular-nums">
                             <AnimatedCurrency amount={account.balance} currency={account.currency as Currency} />
                           </p>

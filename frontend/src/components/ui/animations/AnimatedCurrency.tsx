@@ -52,7 +52,7 @@ export const AnimatedCurrency = ({
       prefix={config.symbol}
       suffix=""
       separator={config.separator}
-      className={className}
+      className={`font-numeric ${className}`}
     />
   )
 }
