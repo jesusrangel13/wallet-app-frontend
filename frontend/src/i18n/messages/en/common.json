@@ -85,7 +85,8 @@
     "confirm": "Confirm",
     "view": "View",
     "loading": "Loading...",
-    "skip": "Skip"
+    "skip": "Skip",
+    "viewDetails": "View details"
   },
   "empty": {
     "noData": "No data available",
@@ -119,5 +120,14 @@
       "title": "Organize your expenses",
       "description": "Create categories to better understand where your money goes."
     }
-  }
+  },
+  "status": {
+    "all": "All",
+    "active": "Active",
+    "paid": "Paid",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "pending": "Pending"
+  },
+  "payments": "Payments"
 }

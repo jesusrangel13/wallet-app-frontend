@@ -52,7 +52,7 @@ export default function OnboardingPage() {
                         onClick={handleSkip}
                         className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                     >
-                        {t('actions.skip')}
+                        {locale === 'es' ? 'Omitir' : 'Skip'}
                     </button>
                     <ThemeToggle />
                 </div>

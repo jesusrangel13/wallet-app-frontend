@@ -14,5 +14,13 @@
   "infoPoint2": "The money will enter your account (will affect your balance)",
   "infoPoint3": "The loan status will be automatically updated",
   "recording": "Recording...",
-  "recordButton": "Record Payment"
+  "recordButton": "Record Payment",
+  "selectAccount": "Select account",
+  "notes": "Notes",
+  "notesPlaceholder": "Optional",
+  "currentPending": "Current pending",
+  "lessPayment": "Less payment",
+  "newPending": "New pending",
+  "paidSuccess": "Paid! 🎉",
+  "noAccounts": "No {currency} accounts available"
 }

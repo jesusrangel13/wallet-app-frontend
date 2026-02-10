@@ -14,5 +14,13 @@
   "infoPoint2": "El dinero entrará a tu cuenta (afectará tu balance)",
   "infoPoint3": "El estado del préstamo se actualizará automáticamente",
   "recording": "Registrando...",
-  "recordButton": "Registrar Pago"
+  "recordButton": "Registrar Pago",
+  "selectAccount": "Seleccionar cuenta",
+  "notes": "Notas",
+  "notesPlaceholder": "Opcional",
+  "currentPending": "Pendiente actual",
+  "lessPayment": "Menos pago",
+  "newPending": "Nuevo pendiente",
+  "paidSuccess": "¡Pagado! 🎉",
+  "noAccounts": "No tienes cuentas en {currency} disponibles"
 }

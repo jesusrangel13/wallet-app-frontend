@@ -85,7 +85,8 @@
     "confirm": "Confirmar",
     "view": "Ver",
     "loading": "Cargando...",
-    "skip": "Omitir"
+    "skip": "Omitir",
+    "viewDetails": "Ver detalles"
   },
   "empty": {
     "noData": "No hay datos disponibles",
@@ -119,5 +120,14 @@
       "title": "Organiza tus gastos",
       "description": "Crea categorías para entender mejor a dónde va tu dinero."
     }
-  }
+  },
+  "status": {
+    "all": "Todos",
+    "active": "Activos",
+    "paid": "Pagados",
+    "completed": "Completados",
+    "cancelled": "Cancelados",
+    "pending": "Pendiente"
+  },
+  "payments": "Pagos"
 }

@@ -12,5 +12,6 @@
   "borrower": "Borrower",
   "amount": "Amount",
   "remaining": "Remaining",
-  "paid": "Paid"
+  "paid": "Paid",
+  "recordPaymentBtn": "Register Payment"
 }

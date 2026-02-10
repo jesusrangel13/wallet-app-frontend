@@ -12,5 +12,6 @@
   "borrower": "Prestatario",
   "amount": "Monto",
   "remaining": "Pendiente",
-  "paid": "Pagado"
+  "paid": "Pagado",
+  "recordPaymentBtn": "Registrar Pago"
 }
