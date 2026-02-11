@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { useTranslations } from 'next-intl'
+import { useQueryClient } from '@tanstack/react-query'
 import { useDashboardStore } from '@/store/dashboardStore'
 import { dashboardPreferenceAPI } from '@/lib/api'
 import { DashboardGrid } from '@/components/DashboardGrid'
@@ -13,6 +14,7 @@ import { SelectedMonthProvider, useSelectedMonth } from '@/contexts/SelectedMont
 import { DashboardMonthSelector } from '@/components/DashboardMonthSelector'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { PageTransition } from '@/components/ui/animations'
+import { PullToRefresh } from '@/components/PullToRefresh'
 
 // Import light widgets directly - these don't use heavy libraries
 import { TotalBalanceWidget } from '@/components/widgets/TotalBalanceWidget'
@@ -100,9 +102,16 @@ const WIDGET_NAMES: Record<string, string> = {
 const DashboardContent = () => {
   const t = useTranslations('dashboard')
   const tCommon = useTranslations('common')
+  const queryClient = useQueryClient()
   const { preferences, setPreferences, isLoading, setIsLoading } = useDashboardStore()
   const { month, year, setMonthYear } = useSelectedMonth() // Now accessing context correctly
   const { data: dashboardData, isLoading: isDataLoading } = useDashboardSummary({ month, year }) // Accessing backend with 0-based month (Backend handles Date constructor correctly)
+
+  // Handle pull-to-refresh
+  const handleRefresh = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] })
+    await queryClient.invalidateQueries({ queryKey: ['account-balances'] })
+  }
 
   // Load dashboard preferences on mount
   useEffect(() => {
@@ -161,138 +170,140 @@ const DashboardContent = () => {
 
   return (
     <PageTransition>
-      <div className="space-y-6">
-        {/* Header with Month Selector */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="page-title">{t('title')}</h1>
-            <p className="page-subtitle">{t('subtitle')}</p>
+      <PullToRefresh onRefresh={handleRefresh}>
+        <div className="space-y-6">
+          {/* Header with Month Selector */}
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="page-title">{t('title')}</h1>
+              <p className="page-subtitle">{t('subtitle')}</p>
+            </div>
+            <DashboardMonthSelector
+              currentDate={new Date(year, month)}
+              onDateChange={(date) => setMonthYear(date.getMonth(), date.getFullYear())}
+            />
           </div>
-          <DashboardMonthSelector
-            currentDate={new Date(year, month)}
-            onDateChange={(date) => setMonthYear(date.getMonth(), date.getFullYear())}
-          />
-        </div>
 
-        {/* Show skeletons for widgets when changing months */}
-        {isDataLoading ? (
-          <>
-            {/* Hero Section Skeleton */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Skeleton className="h-64 lg:col-span-2 rounded-xl" />
-              <Skeleton className="h-64 rounded-xl" />
-            </div>
-
-            {/* Fixed Account Balances Skeleton */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[1, 2, 3].map(i => (
-                <Skeleton key={i} className="h-32 w-full rounded-xl" />
-              ))}
-            </div>
-
-            {/* Dashboard Grid Skeleton */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3, 4, 5, 6].map(i => (
-                <Skeleton key={i} className="h-64 w-full rounded-xl" />
-              ))}
-            </div>
-          </>
-        ) : (
-          <>
-            {/* Hero Section (Command Center) */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <HeroBalanceWidget
-                  totalBalance={dashboardData?.heroBalance?.totalBalance || 0}
-                  currency={((dashboardData?.heroBalance?.currency as any) || 'CLP')}
-                  changePercent={dashboardData?.heroBalance?.changePercent || 0}
-                  changeAmount={dashboardData?.heroBalance?.changeAmount || 0}
-                  period={dashboardData?.heroBalance?.period || 'vs. mes anterior'}
-                  monthlyIncome={dashboardData?.expenseSummary?.income || 0}
-                  monthlyExpenses={dashboardData?.expenseSummary?.totalExpenses || 0}
-                  monthlySavings={dashboardData?.expenseSummary?.savings || 0}
-                  personalExpenses={dashboardData?.expenseSummary?.personal || 0}
-                  sharedExpenses={dashboardData?.expenseSummary?.shared || 0}
-                />
+          {/* Show skeletons for widgets when changing months */}
+          {isDataLoading ? (
+            <>
+              {/* Hero Section Skeleton */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <Skeleton className="h-64 lg:col-span-2 rounded-xl" />
+                <Skeleton className="h-64 rounded-xl" />
               </div>
-              <div className="lg:col-span-1">
-                <SmartInsightsWidget insights={dashboardData?.insights || []} />
+
+              {/* Fixed Account Balances Skeleton */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[1, 2, 3].map(i => (
+                  <Skeleton key={i} className="h-32 w-full rounded-xl" />
+                ))}
               </div>
-            </div>
+
+              {/* Dashboard Grid Skeleton */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map(i => (
+                  <Skeleton key={i} className="h-64 w-full rounded-xl" />
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Hero Section (Command Center) */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                  <HeroBalanceWidget
+                    totalBalance={dashboardData?.heroBalance?.totalBalance || 0}
+                    currency={((dashboardData?.heroBalance?.currency as any) || 'CLP')}
+                    changePercent={dashboardData?.heroBalance?.changePercent || 0}
+                    changeAmount={dashboardData?.heroBalance?.changeAmount || 0}
+                    period={dashboardData?.heroBalance?.period || 'vs. mes anterior'}
+                    monthlyIncome={dashboardData?.expenseSummary?.income || 0}
+                    monthlyExpenses={dashboardData?.expenseSummary?.totalExpenses || 0}
+                    monthlySavings={dashboardData?.expenseSummary?.savings || 0}
+                    personalExpenses={dashboardData?.expenseSummary?.personal || 0}
+                    sharedExpenses={dashboardData?.expenseSummary?.shared || 0}
+                  />
+                </div>
+                <div className="lg:col-span-1">
+                  <SmartInsightsWidget insights={dashboardData?.insights || []} />
+                </div>
+              </div>
 
 
-            {/* Fixed Account Balances Widget - Always at top, full width */}
-            <FixedAccountBalancesWidget />
+              {/* Fixed Account Balances Widget - Always at top, full width */}
+              <FixedAccountBalancesWidget />
 
-            {/* Dashboard Grid with Widgets */}
-            <DashboardGrid>
-              {preferences.widgets.filter((widget) => widget.type !== 'account-balances').map((widget, index) => {
-                const WidgetComponent = WIDGET_COMPONENTS[widget.type]
-                let layoutItem = preferences.layout.find((l) => l.i === widget.id)
+              {/* Dashboard Grid with Widgets */}
+              <DashboardGrid>
+                {preferences.widgets.filter((widget) => widget.type !== 'account-balances').map((widget, index) => {
+                  const WidgetComponent = WIDGET_COMPONENTS[widget.type]
+                  let layoutItem = preferences.layout.find((l) => l.i === widget.id)
 
-                // Skip unknown widgets
-                if (!WidgetComponent) {
-                  console.warn(`Unknown widget type: ${widget.type}`)
-                  return null
-                }
-
-                // Create default layout if none exists
-                if (!layoutItem) {
-                  console.warn(`No layout found for widget: ${widget.id}, using default`)
-                  layoutItem = {
-                    i: widget.id,
-                    x: (index * 2) % 4,
-                    y: Math.floor(index / 2) * 2,
-                    w: 2,
-                    h: 2,
-                    minW: 1,
-                    minH: 1,
+                  // Skip unknown widgets
+                  if (!WidgetComponent) {
+                    console.warn(`Unknown widget type: ${widget.type}`)
+                    return null
                   }
-                }
 
-                return (
-                  <div
-                    key={widget.id}
-                    data-grid={{
-                      i: layoutItem.i,
-                      x: layoutItem.x,
-                      y: layoutItem.y,
-                      w: layoutItem.w,
-                      h: layoutItem.h,
-                      minW: layoutItem.minW || 1,
-                      minH: layoutItem.minH || 1,
-                      maxW: layoutItem.maxW,
-                      maxH: layoutItem.maxH,
-                    }}
-                  >
-                    <WidgetWrapper
-                      widgetId={widget.id}
-                      widgetName={WIDGET_NAMES[widget.type] || widget.type}
+                  // Create default layout if none exists
+                  if (!layoutItem) {
+                    console.warn(`No layout found for widget: ${widget.id}, using default`)
+                    layoutItem = {
+                      i: widget.id,
+                      x: (index * 2) % 4,
+                      y: Math.floor(index / 2) * 2,
+                      w: 2,
+                      h: 2,
+                      minW: 1,
+                      minH: 1,
+                    }
+                  }
+
+                  return (
+                    <div
+                      key={widget.id}
+                      data-grid={{
+                        i: layoutItem.i,
+                        x: layoutItem.x,
+                        y: layoutItem.y,
+                        w: layoutItem.w,
+                        h: layoutItem.h,
+                        minW: layoutItem.minW || 1,
+                        minH: layoutItem.minH || 1,
+                        maxW: layoutItem.maxW,
+                        maxH: layoutItem.maxH,
+                      }}
                     >
-                      <WidgetComponent
-                        settings={widget.settings}
-                        gridWidth={layoutItem.w}
-                        gridHeight={layoutItem.h}
-                      />
-                    </WidgetWrapper>
-                  </div>
-                )
-              })}
-            </DashboardGrid>
+                      <WidgetWrapper
+                        widgetId={widget.id}
+                        widgetName={WIDGET_NAMES[widget.type] || widget.type}
+                      >
+                        <WidgetComponent
+                          settings={widget.settings}
+                          gridWidth={layoutItem.w}
+                          gridHeight={layoutItem.h}
+                        />
+                      </WidgetWrapper>
+                    </div>
+                  )
+                })}
+              </DashboardGrid>
 
-            {/* Empty state */}
-            {preferences.widgets.length === 0 && (
-              <EmptyState
-                type="widgets"
-                title={tCommon('empty.widgets.title')}
-                description={tCommon('empty.widgets.description')}
-              >
-                <AddWidgetButton />
-              </EmptyState>
-            )}
-          </>
-        )}
-      </div>
+              {/* Empty state */}
+              {preferences.widgets.length === 0 && (
+                <EmptyState
+                  type="widgets"
+                  title={tCommon('empty.widgets.title')}
+                  description={tCommon('empty.widgets.description')}
+                >
+                  <AddWidgetButton />
+                </EmptyState>
+              )}
+            </>
+          )}
+        </div>
+      </PullToRefresh>
     </PageTransition>
   )
 }

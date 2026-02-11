@@ -107,40 +107,40 @@ export function TransactionCard({
             animate={{ opacity: 1, y: 0 }}
             title="Ver detalles"
             whileHover={{ backgroundColor: 'var(--hover-bg, rgba(0,0,0,0.02))' }}
-            className="flex items-center gap-4 p-4 cursor-pointer group hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-lg transition-colors"
+            className="flex items-center gap-3 md:gap-4 p-5 md:p-4 cursor-pointer group hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-lg transition-colors"
             onClick={onEdit}
         >
             {/* Icono de categoría con color */}
             <div
-                className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                className="w-14 h-14 md:w-12 md:h-12 rounded-full flex items-center justify-center flex-shrink-0"
                 style={{ backgroundColor: `${categoryColor}15` }}
             >
                 {LucideIcon ? (
                     <LucideIcon
-                        className="w-6 h-6"
+                        className="w-7 h-7 md:w-6 md:h-6"
                         style={{ color: categoryColor }}
                     />
                 ) : (
-                    <span className="text-xl leading-none">{isEmoji ? iconKey : <ShoppingBag className="w-6 h-6" style={{ color: categoryColor }} />}</span>
+                    <span className="text-2xl md:text-xl leading-none">{isEmoji ? iconKey : <ShoppingBag className="w-7 h-7 md:w-6 md:h-6" style={{ color: categoryColor }} />}</span>
                 )}
             </div>
 
             {/* Info principal */}
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                    <p className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                    <p className="text-base md:text-base font-medium text-gray-900 dark:text-gray-100 truncate">
                         {payee || category}
                     </p>
                     {isShared && (
-                        <span className="px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 rounded-full">
+                        <span className="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 rounded-full flex-shrink-0">
                             Compartido
                         </span>
                     )}
                 </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                <p className="text-sm md:text-sm text-gray-500 dark:text-gray-400 truncate">
                     {description || category}
                 </p>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                <p className="text-sm md:text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                     {date && !isNaN(new Date(date).getTime())
                         ? formatDistanceToNow(new Date(date), { addSuffix: true, locale: es })
                         : 'Fecha desconocida'}
@@ -149,7 +149,7 @@ export function TransactionCard({
 
             {/* Monto */}
             <div className="text-right flex-shrink-0">
-                <p className={`font-semibold ${amountColor}`}>
+                <p className={`text-lg md:text-base font-semibold ${amountColor}`}>
                     {amountPrefix}{formattedAmount}
                 </p>
             </div>

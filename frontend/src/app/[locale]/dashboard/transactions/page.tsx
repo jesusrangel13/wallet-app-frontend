@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
+import { useQueryClient } from '@tanstack/react-query'
 import { Transaction, Account, TransactionType, CreateTransactionForm, MergedCategory } from '@/types'
 import { transactionAPI, accountAPI, categoryAPI, sharedExpenseAPI } from '@/lib/api'
 import { Button } from '@/components/ui/Button'
@@ -30,6 +31,7 @@ import { TimelineConnector, TimelineVariant } from '@/components/transactions/Ti
 import { TimelineStyleSelector } from '@/components/transactions/TimelineStyleSelector'
 import { MonthSelectorVariants, SelectorVariant } from '@/components/transactions/MonthSelectorVariants'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { PullToRefresh } from '@/components/PullToRefresh'
 
 // Chart removed by user request
 
@@ -66,6 +68,7 @@ const groupTransactionsByDate = (transactions: Transaction[]) => {
 
 export default function TransactionsPage() {
   const { user } = useAuthStore()
+  const queryClient = useQueryClient()
   const t = useTranslations('transactions')
   const tCommon = useTranslations('common')
   const tLoading = useTranslations('loading')
@@ -237,6 +240,13 @@ export default function TransactionsPage() {
     }
   }, [currentPage])
 
+  // Handle pull-to-refresh
+  const handleRefresh = async () => {
+    await loadTransactions(1)
+    await queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] })
+    await queryClient.invalidateQueries({ queryKey: ['account-balances'] })
+  }
+
   useEffect(() => {
     const loadInitialData = async () => {
       try {
@@ -367,6 +377,9 @@ export default function TransactionsPage() {
             sharedExpenseId: sharedExpenseId
           }
           await transactionAPI.create(payload)
+          // Invalidate dashboard and account caches to force refresh
+          queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] })
+          queryClient.invalidateQueries({ queryKey: ['account-balances'] })
           // toast.success('Shared expense created successfully') - Modal handles success UI
         } else {
           // Someone else paid - don't create transaction yet
@@ -449,12 +462,18 @@ export default function TransactionsPage() {
 
         const editedId = editingTransaction.id
         await transactionAPI.update(editedId, payload)
+        // Invalidate dashboard and account caches to force refresh
+        queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] })
+        queryClient.invalidateQueries({ queryKey: ['account-balances'] })
         // toast.success('Transaction updated successfully') - Modal handles success UI
 
         // Reload all current pages and scroll to edited transaction
         await reloadCurrentPages(editedId)
       } else {
         await transactionAPI.create(payload)
+        // Invalidate dashboard and account caches to force refresh
+        queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] })
+        queryClient.invalidateQueries({ queryKey: ['account-balances'] })
         // toast.success('Transaction created successfully') - Modal handles success UI
 
         // Reset to page 1 for new transactions
@@ -472,6 +491,9 @@ export default function TransactionsPage() {
     try {
       await transactionAPI.delete(id)
       toast.success('Transaction deleted successfully')
+      // Invalidate dashboard and account caches to force refresh
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] })
+      queryClient.invalidateQueries({ queryKey: ['account-balances'] })
       loadTransactions(1) // Reset to page 1 to properly reset pagination state
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to delete transaction')
@@ -624,317 +646,319 @@ export default function TransactionsPage() {
       <LoadingBar isLoading={isRefreshingList} />
 
       <PageTransition>
-        <div className="max-w-screen-2xl mx-auto">
+        <PullToRefresh onRefresh={handleRefresh}>
+          <div className="max-w-screen-2xl mx-auto">
 
-          <div className="flex flex-col gap-6 mb-6">
-            {/* Header Row: Title & Actions */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div>
-                <h1 className="section-header">
-                  {t('title')}
-                </h1>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  {t('subtitle')}
-                </p>
-              </div>
+            <div className="flex flex-col gap-6 mb-6">
+              {/* Header Row: Title & Actions */}
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                  <h1 className="section-header">
+                    {t('title')}
+                  </h1>
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    {t('subtitle')}
+                  </p>
+                </div>
 
-              <div className="flex items-center gap-3 w-full md:w-auto self-end md:self-auto">
-                <Button onClick={handleAddNew} className="w-full md:w-auto">
-                  <svg
-                    className="w-5 h-5 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 4v16m8-8H4"
-                    />
-                  </svg>
-                  {tCommon('actions.add')}
-                </Button>
-              </div>
-            </div>
-
-            {/* Timeline Selector */}
-            <div className="w-full">
-              <MonthSelectorVariants
-                variant="B"
-                currentDate={currentDate}
-                onDateChange={handleDateChange}
-              />
-            </div>
-          </div>
-
-          {/* Daily Spending Trend Chart - Removed by user request */}
-
-          {/* Filters */}
-          <TransactionFiltersComponent
-            filters={filters}
-            onFilterChange={setFilters}
-            accounts={accounts}
-            categories={categories}
-            extraActions={
-              <div className="relative">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowExportMenu(!showExportMenu)}
-                  className="h-9 px-3 text-xs" // Smaller size to fit toolbar
-                >
-                  <TrendingUp className="w-3.5 h-3.5 mr-2" />
-                  {tCommon('actions.export')}
-                </Button>
-                {showExportMenu && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setShowExportMenu(false)}
-                    />
-                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20 py-1">
-                      <button
-                        onClick={() => handleExport('csv')}
-                        className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        CSV
-                      </button>
-                      <button
-                        onClick={() => handleExport('json')}
-                        className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        JSON
-                      </button>
-                      <button
-                        onClick={() => handleExport('excel')}
-                        className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        Excel
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            }
-          />
-
-          {/* Select All Button - Removed in favor of contextual bar */}
-          {selectedTransactionIds.size > 0 && (
-            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-2xl rounded-full px-6 py-3 z-50 flex items-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-
-              {/* Selection Info & Select All Toggle */}
-              <div className="flex items-center gap-3 border-r border-gray-200 dark:border-gray-700 pr-6">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={selectAll}
-                    onChange={handleSelectAll}
-                    id="floating-select-all"
-                    className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer"
-                  />
-                  <label htmlFor="floating-select-all" className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer whitespace-nowrap">
-                    {selectedTransactionIds.size} seleccionadas
-                  </label>
+                <div className="flex items-center gap-3 w-full md:w-auto self-end md:self-auto">
+                  <Button onClick={handleAddNew} className="w-full md:w-auto">
+                    <svg
+                      className="w-5 h-5 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    {tCommon('actions.add')}
+                  </Button>
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setSelectedTransactionIds(new Set())
-                    setSelectAll(false)
-                  }}
-                  disabled={isBulkDeleting}
-                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => setShowBulkDeleteConfirm(true)}
-                  disabled={isBulkDeleting}
-                  className="rounded-full bg-red-600 hover:bg-red-700 text-white shadow-sm"
-                >
-                  {isBulkDeleting ? tLoading('deleting') : 'Eliminar'}
-                </Button>
+              {/* Timeline Selector */}
+              <div className="w-full">
+                <MonthSelectorVariants
+                  variant="B"
+                  currentDate={currentDate}
+                  onDateChange={handleDateChange}
+                />
               </div>
             </div>
-          )}
 
-          {/* Transactions List - Grouped by Date */}
-          <div className={`space-y-6 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} h-[calc(100vh-200px)]`}>
-            {/* Show partial skeleton when refreshing with existing data */}
-            {isRefreshingList && transactions.length > 0 ? (
-              <TransactionListSkeleton itemCount={5} />
-            ) : transactions.length === 0 ? (
-              (() => {
-                const isFiltering =
-                  filters.search ||
-                  filters.type !== 'ALL' ||
-                  filters.accountId ||
-                  filters.categoryId ||
-                  filters.startDate ||
-                  filters.endDate ||
-                  filters.minAmount ||
-                  filters.maxAmount;
+            {/* Daily Spending Trend Chart - Removed by user request */}
 
-                return (
-                  <EmptyState
-                    type={isFiltering ? 'search' : 'transactions'}
-                    title={isFiltering ? tCommon('empty.noResults') : tCommon('empty.transactions.title')}
-                    description={isFiltering ? tCommon('empty.noResults') : tCommon('empty.transactions.description')}
-                    actionLabel={isFiltering ? undefined : t('newTransaction')}
-                    onAction={() => setIsModalOpen(true)}
-                  />
-                )
-              })()
-            ) : (
-              <GroupedVirtuoso
-                ref={virtuosoRef}
-                useWindowScroll
-                groupCounts={groupCounts}
-                groupContent={(index) => {
-                  const group = groupedTransactions[index]
+            {/* Filters */}
+            <TransactionFiltersComponent
+              filters={filters}
+              onFilterChange={setFilters}
+              accounts={accounts}
+              categories={categories}
+              extraActions={
+                <div className="relative">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowExportMenu(!showExportMenu)}
+                    className="h-9 px-3 text-xs" // Smaller size to fit toolbar
+                  >
+                    <TrendingUp className="w-3.5 h-3.5 mr-2" />
+                    {tCommon('actions.export')}
+                  </Button>
+                  {showExportMenu && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-10"
+                        onClick={() => setShowExportMenu(false)}
+                      />
+                      <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20 py-1">
+                        <button
+                          onClick={() => handleExport('csv')}
+                          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        >
+                          CSV
+                        </button>
+                        <button
+                          onClick={() => handleExport('json')}
+                          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        >
+                          JSON
+                        </button>
+                        <button
+                          onClick={() => handleExport('excel')}
+                          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        >
+                          Excel
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              }
+            />
+
+            {/* Select All Button - Removed in favor of contextual bar */}
+            {selectedTransactionIds.size > 0 && (
+              <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-2xl rounded-full px-6 py-3 z-50 flex items-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+
+                {/* Selection Info & Select All Toggle */}
+                <div className="flex items-center gap-3 border-r border-gray-200 dark:border-gray-700 pr-6">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={selectAll}
+                      onChange={handleSelectAll}
+                      id="floating-select-all"
+                      className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer"
+                    />
+                    <label htmlFor="floating-select-all" className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer whitespace-nowrap">
+                      {selectedTransactionIds.size} seleccionadas
+                    </label>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedTransactionIds(new Set())
+                      setSelectAll(false)
+                    }}
+                    disabled={isBulkDeleting}
+                    className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => setShowBulkDeleteConfirm(true)}
+                    disabled={isBulkDeleting}
+                    className="rounded-full bg-red-600 hover:bg-red-700 text-white shadow-sm"
+                  >
+                    {isBulkDeleting ? tLoading('deleting') : 'Eliminar'}
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Transactions List - Grouped by Date */}
+            <div className={`space-y-6 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} h-[calc(100vh-200px)]`}>
+              {/* Show partial skeleton when refreshing with existing data */}
+              {isRefreshingList && transactions.length > 0 ? (
+                <TransactionListSkeleton itemCount={5} />
+              ) : transactions.length === 0 ? (
+                (() => {
+                  const isFiltering =
+                    filters.search ||
+                    filters.type !== 'ALL' ||
+                    filters.accountId ||
+                    filters.categoryId ||
+                    filters.startDate ||
+                    filters.endDate ||
+                    filters.minAmount ||
+                    filters.maxAmount;
+
                   return (
-                    <DateGroupHeader
-                      date={group.date}
-                      totalIncome={group.totalIncome}
-                      totalExpense={group.totalExpense}
-                      currency={group.currency}
+                    <EmptyState
+                      type={isFiltering ? 'search' : 'transactions'}
+                      title={isFiltering ? tCommon('empty.noResults') : tCommon('empty.transactions.title')}
+                      description={isFiltering ? tCommon('empty.noResults') : tCommon('empty.transactions.description')}
+                      actionLabel={isFiltering ? undefined : t('newTransaction')}
+                      onAction={() => setIsModalOpen(true)}
                     />
                   )
-                }}
-                itemContent={(index) => {
-                  const transaction = flatTransactions[index];
-                  if (!transaction) return null;
-
-                  // Determine if first/last in group by comparing dates with neighbors
-                  const currentDate = new Date(transaction.date).toDateString()
-                  const prevDate = index > 0 ? new Date(flatTransactions[index - 1].date).toDateString() : null
-                  const nextDate = index < flatTransactions.length - 1 ? new Date(flatTransactions[index + 1].date).toDateString() : null
-
-                  // In a grouped list sorted by date desc, items within a day group share the same date string
-                  // But we need to handle the case where "first in group" means first item rendered for that date header
-                  const isFirst = currentDate !== prevDate
-                  const isLast = currentDate !== nextDate
-
-                  return (
-                    <div className={`flex items-stretch transition-colors group ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-card hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
-
-                      {/* Selection Checkbox */}
-                      <div className={`flex items-center pl-4 pr-2 transition-opacity duration-200 ${selectedTransactionIds.size > 0 ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-                        <input
-                          type="checkbox"
-                          checked={selectedTransactionIds.has(transaction.id)}
-                          onChange={() => handleSelectTransaction(transaction.id)}
-                          className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer bg-white dark:bg-gray-800"
-                        />
-                      </div>
-
-                      {/* Timeline Line & Dot */}
-                      <TimelineConnector
-                        type={transaction.type}
-                        isFirst={false} // Force continuous line
-                        isLast={false}  // Force continuous line
+                })()
+              ) : (
+                <GroupedVirtuoso
+                  ref={virtuosoRef}
+                  useWindowScroll
+                  groupCounts={groupCounts}
+                  groupContent={(index) => {
+                    const group = groupedTransactions[index]
+                    return (
+                      <DateGroupHeader
+                        date={group.date}
+                        totalIncome={group.totalIncome}
+                        totalExpense={group.totalExpense}
+                        currency={group.currency}
                       />
+                    )
+                  }}
+                  itemContent={(index) => {
+                    const transaction = flatTransactions[index];
+                    if (!transaction) return null;
 
-                      {/* Transaction Content */}
-                      <div className="flex-1 min-w-0 py-1 pr-4">
-                        <TransactionCard
-                          id={transaction.id}
+                    // Determine if first/last in group by comparing dates with neighbors
+                    const currentDate = new Date(transaction.date).toDateString()
+                    const prevDate = index > 0 ? new Date(flatTransactions[index - 1].date).toDateString() : null
+                    const nextDate = index < flatTransactions.length - 1 ? new Date(flatTransactions[index + 1].date).toDateString() : null
+
+                    // In a grouped list sorted by date desc, items within a day group share the same date string
+                    // But we need to handle the case where "first in group" means first item rendered for that date header
+                    const isFirst = currentDate !== prevDate
+                    const isLast = currentDate !== nextDate
+
+                    return (
+                      <div className={`flex items-stretch transition-colors group ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-card hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
+
+                        {/* Selection Checkbox */}
+                        <div className={`flex items-center pl-4 pr-2 transition-opacity duration-200 ${selectedTransactionIds.size > 0 ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                          <input
+                            type="checkbox"
+                            checked={selectedTransactionIds.has(transaction.id)}
+                            onChange={() => handleSelectTransaction(transaction.id)}
+                            className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer bg-white dark:bg-gray-800"
+                          />
+                        </div>
+
+                        {/* Timeline Line & Dot */}
+                        <TimelineConnector
                           type={transaction.type}
-                          amount={Number(transaction.amount)}
-                          currency={(transaction.account?.currency as 'CLP' | 'USD' | 'EUR') || 'CLP'}
-                          category={transaction.category?.name || 'Uncategorized'}
-                          categoryIcon={transaction.category?.icon || undefined}
-                          categoryColor={transaction.category?.color || undefined}
-                          description={transaction.description || undefined}
-                          payee={transaction.payee ? transaction.payee : undefined}
-                          date={new Date(transaction.date)}
-                          isShared={!!transaction.sharedExpenseId}
-                          onEdit={() => handleEdit(transaction)}
+                          isFirst={false} // Force continuous line
+                          isLast={false}  // Force continuous line
                         />
+
+                        {/* Transaction Content */}
+                        <div className="flex-1 min-w-0 py-1 pr-4">
+                          <TransactionCard
+                            id={transaction.id}
+                            type={transaction.type}
+                            amount={Number(transaction.amount)}
+                            currency={(transaction.account?.currency as 'CLP' | 'USD' | 'EUR') || 'CLP'}
+                            category={transaction.category?.name || 'Uncategorized'}
+                            categoryIcon={transaction.category?.icon || undefined}
+                            categoryColor={transaction.category?.color || undefined}
+                            description={transaction.description || undefined}
+                            payee={transaction.payee ? transaction.payee : undefined}
+                            date={new Date(transaction.date)}
+                            isShared={!!transaction.sharedExpenseId}
+                            onEdit={() => handleEdit(transaction)}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  )
-                }}
-                endReached={() => {
-                  if (hasMore && !isLoadingMore && !isRefreshingList) {
-                    loadTransactions(currentPage + 1, true)
-                  }
-                }}
-                components={{
-                  Footer: () => (
-                    isLoadingMore ? (
-                      <div className="pt-2">
-                        <TransactionListSkeleton itemCount={3} />
-                      </div>
-                    ) : null
-                  )
-                }}
+                    )
+                  }}
+                  endReached={() => {
+                    if (hasMore && !isLoadingMore && !isRefreshingList) {
+                      loadTransactions(currentPage + 1, true)
+                    }
+                  }}
+                  components={{
+                    Footer: () => (
+                      isLoadingMore ? (
+                        <div className="pt-2">
+                          <TransactionListSkeleton itemCount={3} />
+                        </div>
+                      ) : null
+                    )
+                  }}
+                />
+              )}
+            </div>
+
+
+            {/* End of list indicator */}
+            {!hasMore && transactions.length > 0 && (
+              <div className="text-center py-6 text-sm text-gray-500 dark:text-gray-400">
+                Has llegado al final de la lista
+              </div>
+            )}
+
+            {/* Transaction Modal - Now replaced by Fintech Pro Component */}
+            {isModalOpen && (
+              <TransactionFormModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onSubmit={onSubmit}
+                accounts={accounts}
+                editingTransaction={editingTransaction}
+                initialSharedExpenseData={sharedExpenseData}
+                mode={editingTransaction ? 'edit' : 'create'}
               />
             )}
+
+            {/* Bulk Delete Confirmation Modal */}
+            <Modal
+              isOpen={showBulkDeleteConfirm}
+              onClose={() => setShowBulkDeleteConfirm(false)}
+              title={t('delete')}
+            >
+              <div className="space-y-4">
+                <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
+                  <p className="text-sm text-red-900 dark:text-red-200">
+                    Are you sure you want to delete {selectedTransactionIds.size} transaction{selectedTransactionIds.size !== 1 ? 's' : ''}?
+                  </p>
+                  <p className="text-xs text-red-700 dark:text-red-400 mt-2">
+                    This action cannot be undone.
+                  </p>
+                </div>
+                <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowBulkDeleteConfirm(false)}
+                    disabled={isBulkDeleting}
+                    className="flex-1"
+                  >
+                    {tCommon('actions.cancel')}
+                  </Button>
+                  <Button
+                    onClick={handleBulkDelete}
+                    disabled={isBulkDeleting}
+                    className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    {isBulkDeleting ? tLoading('deleting') : tCommon('actions.delete')}
+                  </Button>
+                </div>
+              </div>
+            </Modal>
           </div>
-
-
-          {/* End of list indicator */}
-          {!hasMore && transactions.length > 0 && (
-            <div className="text-center py-6 text-sm text-gray-500 dark:text-gray-400">
-              Has llegado al final de la lista
-            </div>
-          )}
-
-          {/* Transaction Modal - Now replaced by Fintech Pro Component */}
-          {isModalOpen && (
-            <TransactionFormModal
-              isOpen={isModalOpen}
-              onClose={handleCloseModal}
-              onSubmit={onSubmit}
-              accounts={accounts}
-              editingTransaction={editingTransaction}
-              initialSharedExpenseData={sharedExpenseData}
-              mode={editingTransaction ? 'edit' : 'create'}
-            />
-          )}
-
-          {/* Bulk Delete Confirmation Modal */}
-          <Modal
-            isOpen={showBulkDeleteConfirm}
-            onClose={() => setShowBulkDeleteConfirm(false)}
-            title={t('delete')}
-          >
-            <div className="space-y-4">
-              <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
-                <p className="text-sm text-red-900 dark:text-red-200">
-                  Are you sure you want to delete {selectedTransactionIds.size} transaction{selectedTransactionIds.size !== 1 ? 's' : ''}?
-                </p>
-                <p className="text-xs text-red-700 dark:text-red-400 mt-2">
-                  This action cannot be undone.
-                </p>
-              </div>
-              <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowBulkDeleteConfirm(false)}
-                  disabled={isBulkDeleting}
-                  className="flex-1"
-                >
-                  {tCommon('actions.cancel')}
-                </Button>
-                <Button
-                  onClick={handleBulkDelete}
-                  disabled={isBulkDeleting}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
-                >
-                  {isBulkDeleting ? tLoading('deleting') : tCommon('actions.delete')}
-                </Button>
-              </div>
-            </div>
-          </Modal>
-        </div>
+        </PullToRefresh>
       </PageTransition >
     </>
   )
