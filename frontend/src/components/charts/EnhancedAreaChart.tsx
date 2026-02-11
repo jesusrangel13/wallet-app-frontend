@@ -32,7 +32,7 @@ interface EnhancedAreaChartProps {
     isLoading?: boolean
     showComparison?: boolean
     showForecast?: boolean
-    showForecast?: boolean
+
     hideHeader?: boolean
     defaultRange?: string
 }
