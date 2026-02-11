@@ -539,7 +539,7 @@ export default function TransactionFormModal({
           </div>
 
           {/* Advanced: Shared Expense Toggle */}
-          {selectedType === 'EXPENSE' && !editingTransaction && mode !== 'import' && (
+          {selectedType === 'EXPENSE' && mode !== 'import' && (
             <div className="pt-2 animate-in slide-in-from-bottom-2 fade-in duration-500 delay-500 fill-mode-backwards">
               <button
                 type="button"

@@ -347,9 +347,9 @@ export default function TransactionsPage() {
           splitType: sharedData.splitType,
           participants: sharedData.participants.map((p: any) => ({
             userId: p.userId,
-            amountOwed: p.amountOwed,
-            percentage: sharedData.splitType === 'PERCENTAGE' ? p.percentage : undefined,
-            shares: sharedData.splitType === 'SHARES' ? p.shares : undefined,
+            amountOwed: Number(p.amountOwed),
+            percentage: sharedData.splitType === 'PERCENTAGE' && p.percentage != null ? Number(p.percentage) : undefined,
+            shares: sharedData.splitType === 'SHARES' && p.shares != null ? Number(p.shares) : undefined,
           })),
         }
 
@@ -416,9 +416,9 @@ export default function TransactionsPage() {
             splitType: sharedData.splitType,
             participants: sharedData.participants.map((p: any) => ({
               userId: p.userId,
-              amountOwed: p.amountOwed,
-              percentage: sharedData.splitType === 'PERCENTAGE' ? p.percentage : undefined,
-              shares: sharedData.splitType === 'SHARES' ? p.shares : undefined,
+              amountOwed: Number(p.amountOwed),
+              percentage: sharedData.splitType === 'PERCENTAGE' && p.percentage != null ? Number(p.percentage) : undefined,
+              shares: sharedData.splitType === 'SHARES' && p.shares != null ? Number(p.shares) : undefined,
             })),
             paidByUserId: sharedData.paidByUserId,
           }
@@ -437,9 +437,9 @@ export default function TransactionsPage() {
             splitType: sharedData.splitType,
             participants: sharedData.participants.map((p: any) => ({
               userId: p.userId,
-              amountOwed: p.amountOwed,
-              percentage: sharedData.splitType === 'PERCENTAGE' ? p.percentage : undefined,
-              shares: sharedData.splitType === 'SHARES' ? p.shares : undefined,
+              amountOwed: Number(p.amountOwed),
+              percentage: sharedData.splitType === 'PERCENTAGE' && p.percentage != null ? Number(p.percentage) : undefined,
+              shares: sharedData.splitType === 'SHARES' && p.shares != null ? Number(p.shares) : undefined,
             })),
           }
 
