@@ -900,62 +900,63 @@ export default function TransactionsPage() {
                 />
               )}
             </div>
+          </PullToRefresh>
 
 
-            {/* End of list indicator */}
-            {!hasMore && transactions.length > 0 && (
-              <div className="text-center py-6 text-sm text-gray-500 dark:text-gray-400">
-                Has llegado al final de la lista
+          {/* End of list indicator */}
+          {!hasMore && transactions.length > 0 && (
+            <div className="text-center py-6 text-sm text-gray-500 dark:text-gray-400">
+              Has llegado al final de la lista
+            </div>
+          )}
+
+          {/* Transaction Modal - Now replaced by Fintech Pro Component */}
+          {isModalOpen && (
+            <TransactionFormModal
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              onSubmit={onSubmit}
+              accounts={accounts}
+              editingTransaction={editingTransaction}
+              initialSharedExpenseData={sharedExpenseData}
+              mode={editingTransaction ? 'edit' : 'create'}
+            />
+          )}
+
+          {/* Bulk Delete Confirmation Modal */}
+          <Modal
+            isOpen={showBulkDeleteConfirm}
+            onClose={() => setShowBulkDeleteConfirm(false)}
+            title={t('delete')}
+          >
+            <div className="space-y-4">
+              <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-sm text-red-900 dark:text-red-200">
+                  Are you sure you want to delete {selectedTransactionIds.size} transaction{selectedTransactionIds.size !== 1 ? 's' : ''}?
+                </p>
+                <p className="text-xs text-red-700 dark:text-red-400 mt-2">
+                  This action cannot be undone.
+                </p>
               </div>
-            )}
-
-            {/* Transaction Modal - Now replaced by Fintech Pro Component */}
-            {isModalOpen && (
-              <TransactionFormModal
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                onSubmit={onSubmit}
-                accounts={accounts}
-                editingTransaction={editingTransaction}
-                initialSharedExpenseData={sharedExpenseData}
-                mode={editingTransaction ? 'edit' : 'create'}
-              />
-            )}
-
-            {/* Bulk Delete Confirmation Modal */}
-            <Modal
-              isOpen={showBulkDeleteConfirm}
-              onClose={() => setShowBulkDeleteConfirm(false)}
-              title={t('delete')}
-            >
-              <div className="space-y-4">
-                <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
-                  <p className="text-sm text-red-900 dark:text-red-200">
-                    Are you sure you want to delete {selectedTransactionIds.size} transaction{selectedTransactionIds.size !== 1 ? 's' : ''}?
-                  </p>
-                  <p className="text-xs text-red-700 dark:text-red-400 mt-2">
-                    This action cannot be undone.
-                  </p>
-                </div>
-                <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowBulkDeleteConfirm(false)}
-                    disabled={isBulkDeleting}
-                    className="flex-1"
-                  >
-                    {tCommon('actions.cancel')}
-                  </Button>
-                  <Button
-                    onClick={handleBulkDelete}
-                    disabled={isBulkDeleting}
-                    className="flex-1 bg-red-600 hover:bg-red-700 text-white"
-                  >
-                    {isBulkDeleting ? tLoading('deleting') : tCommon('actions.delete')}
-                  </Button>
-                </div>
+              <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowBulkDeleteConfirm(false)}
+                  disabled={isBulkDeleting}
+                  className="flex-1"
+                >
+                  {tCommon('actions.cancel')}
+                </Button>
+                <Button
+                  onClick={handleBulkDelete}
+                  disabled={isBulkDeleting}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                >
+                  {isBulkDeleting ? tLoading('deleting') : tCommon('actions.delete')}
+                </Button>
               </div>
-            </Modal>
+            </div>
+          </Modal>
         </div>
       </PageTransition >
     </>
