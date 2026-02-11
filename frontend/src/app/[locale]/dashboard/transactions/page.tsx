@@ -31,7 +31,7 @@ import { TimelineConnector, TimelineVariant } from '@/components/transactions/Ti
 import { TimelineStyleSelector } from '@/components/transactions/TimelineStyleSelector'
 import { MonthSelectorVariants, SelectorVariant } from '@/components/transactions/MonthSelectorVariants'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { CustomPullToRefresh } from '@/components/CustomPullToRefresh'
+import { PullToRefresh } from '@/components/PullToRefresh'
 
 // Chart removed by user request
 
@@ -646,149 +646,149 @@ export default function TransactionsPage() {
       <LoadingBar isLoading={isRefreshingList} />
 
       <PageTransition>
-        <CustomPullToRefresh onRefresh={handleRefresh}>
-          <div className="max-w-screen-2xl mx-auto">
+        <div className="max-w-screen-2xl mx-auto">
 
-            <div className="flex flex-col gap-6 mb-6">
-              {/* Header Row: Title & Actions */}
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                  <h1 className="section-header">
-                    {t('title')}
-                  </h1>
-                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    {t('subtitle')}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-3 w-full md:w-auto self-end md:self-auto">
-                  <Button onClick={handleAddNew} className="w-full md:w-auto">
-                    <svg
-                      className="w-5 h-5 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 4v16m8-8H4"
-                      />
-                    </svg>
-                    {tCommon('actions.add')}
-                  </Button>
-                </div>
+          <div className="flex flex-col gap-6 mb-6">
+            {/* Header Row: Title & Actions */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <h1 className="section-header">
+                  {t('title')}
+                </h1>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {t('subtitle')}
+                </p>
               </div>
 
-              {/* Timeline Selector */}
-              <div className="w-full">
-                <MonthSelectorVariants
-                  variant="B"
-                  currentDate={currentDate}
-                  onDateChange={handleDateChange}
-                />
+              <div className="flex items-center gap-3 w-full md:w-auto self-end md:self-auto">
+                <Button onClick={handleAddNew} className="w-full md:w-auto">
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  {tCommon('actions.add')}
+                </Button>
               </div>
             </div>
 
-            {/* Daily Spending Trend Chart - Removed by user request */}
+            {/* Timeline Selector */}
+            <div className="w-full">
+              <MonthSelectorVariants
+                variant="B"
+                currentDate={currentDate}
+                onDateChange={handleDateChange}
+              />
+            </div>
+          </div>
 
-            {/* Filters */}
-            <TransactionFiltersComponent
-              filters={filters}
-              onFilterChange={setFilters}
-              accounts={accounts}
-              categories={categories}
-              extraActions={
-                <div className="relative">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowExportMenu(!showExportMenu)}
-                    className="h-9 px-3 text-xs" // Smaller size to fit toolbar
-                  >
-                    <TrendingUp className="w-3.5 h-3.5 mr-2" />
-                    {tCommon('actions.export')}
-                  </Button>
-                  {showExportMenu && (
-                    <>
-                      <div
-                        className="fixed inset-0 z-10"
-                        onClick={() => setShowExportMenu(false)}
-                      />
-                      <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20 py-1">
-                        <button
-                          onClick={() => handleExport('csv')}
-                          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        >
-                          CSV
-                        </button>
-                        <button
-                          onClick={() => handleExport('json')}
-                          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        >
-                          JSON
-                        </button>
-                        <button
-                          onClick={() => handleExport('excel')}
-                          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        >
-                          Excel
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
-              }
-            />
+          {/* Daily Spending Trend Chart - Removed by user request */}
 
-            {/* Select All Button - Removed in favor of contextual bar */}
-            {selectedTransactionIds.size > 0 && (
-              <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-2xl rounded-full px-6 py-3 z-50 flex items-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-
-                {/* Selection Info & Select All Toggle */}
-                <div className="flex items-center gap-3 border-r border-gray-200 dark:border-gray-700 pr-6">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={selectAll}
-                      onChange={handleSelectAll}
-                      id="floating-select-all"
-                      className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer"
+          {/* Filters */}
+          <TransactionFiltersComponent
+            filters={filters}
+            onFilterChange={setFilters}
+            accounts={accounts}
+            categories={categories}
+            extraActions={
+              <div className="relative">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowExportMenu(!showExportMenu)}
+                  className="h-9 px-3 text-xs" // Smaller size to fit toolbar
+                >
+                  <TrendingUp className="w-3.5 h-3.5 mr-2" />
+                  {tCommon('actions.export')}
+                </Button>
+                {showExportMenu && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setShowExportMenu(false)}
                     />
-                    <label htmlFor="floating-select-all" className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer whitespace-nowrap">
-                      {selectedTransactionIds.size} seleccionadas
-                    </label>
-                  </div>
-                </div>
+                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20 py-1">
+                      <button
+                        onClick={() => handleExport('csv')}
+                        className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        CSV
+                      </button>
+                      <button
+                        onClick={() => handleExport('json')}
+                        className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        JSON
+                      </button>
+                      <button
+                        onClick={() => handleExport('excel')}
+                        className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        Excel
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            }
+          />
 
-                {/* Actions */}
+          {/* Select All Button - Removed in favor of contextual bar */}
+          {selectedTransactionIds.size > 0 && (
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-2xl rounded-full px-6 py-3 z-50 flex items-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+
+              {/* Selection Info & Select All Toggle */}
+              <div className="flex items-center gap-3 border-r border-gray-200 dark:border-gray-700 pr-6">
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedTransactionIds(new Set())
-                      setSelectAll(false)
-                    }}
-                    disabled={isBulkDeleting}
-                    className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={() => setShowBulkDeleteConfirm(true)}
-                    disabled={isBulkDeleting}
-                    className="rounded-full bg-red-600 hover:bg-red-700 text-white shadow-sm"
-                  >
-                    {isBulkDeleting ? tLoading('deleting') : 'Eliminar'}
-                  </Button>
+                  <input
+                    type="checkbox"
+                    checked={selectAll}
+                    onChange={handleSelectAll}
+                    id="floating-select-all"
+                    className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer"
+                  />
+                  <label htmlFor="floating-select-all" className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer whitespace-nowrap">
+                    {selectedTransactionIds.size} seleccionadas
+                  </label>
                 </div>
               </div>
-            )}
 
-            {/* Transactions List - Grouped by Date */}
-            <div className={`space-y-6 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} h-[calc(100vh-200px)]`}>
+              {/* Actions */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedTransactionIds(new Set())
+                    setSelectAll(false)
+                  }}
+                  disabled={isBulkDeleting}
+                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => setShowBulkDeleteConfirm(true)}
+                  disabled={isBulkDeleting}
+                  className="rounded-full bg-red-600 hover:bg-red-700 text-white shadow-sm"
+                >
+                  {isBulkDeleting ? tLoading('deleting') : 'Eliminar'}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Transactions List - Grouped by Date */}
+          <PullToRefresh onRefresh={handleRefresh}>
+            <div className={`space-y-6 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} h-[calc(100vh-200px)] overflow-auto`}>
               {/* Show partial skeleton when refreshing with existing data */}
               {isRefreshingList && transactions.length > 0 ? (
                 <TransactionListSkeleton itemCount={5} />
@@ -817,7 +817,6 @@ export default function TransactionsPage() {
               ) : (
                 <GroupedVirtuoso
                   ref={virtuosoRef}
-                  useWindowScroll
                   groupCounts={groupCounts}
                   groupContent={(index) => {
                     const group = groupedTransactions[index]
@@ -901,64 +900,64 @@ export default function TransactionsPage() {
                 />
               )}
             </div>
+          </PullToRefresh>
 
 
-            {/* End of list indicator */}
-            {!hasMore && transactions.length > 0 && (
-              <div className="text-center py-6 text-sm text-gray-500 dark:text-gray-400">
-                Has llegado al final de la lista
+          {/* End of list indicator */}
+          {!hasMore && transactions.length > 0 && (
+            <div className="text-center py-6 text-sm text-gray-500 dark:text-gray-400">
+              Has llegado al final de la lista
+            </div>
+          )}
+
+          {/* Transaction Modal - Now replaced by Fintech Pro Component */}
+          {isModalOpen && (
+            <TransactionFormModal
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              onSubmit={onSubmit}
+              accounts={accounts}
+              editingTransaction={editingTransaction}
+              initialSharedExpenseData={sharedExpenseData}
+              mode={editingTransaction ? 'edit' : 'create'}
+            />
+          )}
+
+          {/* Bulk Delete Confirmation Modal */}
+          <Modal
+            isOpen={showBulkDeleteConfirm}
+            onClose={() => setShowBulkDeleteConfirm(false)}
+            title={t('delete')}
+          >
+            <div className="space-y-4">
+              <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-sm text-red-900 dark:text-red-200">
+                  Are you sure you want to delete {selectedTransactionIds.size} transaction{selectedTransactionIds.size !== 1 ? 's' : ''}?
+                </p>
+                <p className="text-xs text-red-700 dark:text-red-400 mt-2">
+                  This action cannot be undone.
+                </p>
               </div>
-            )}
-
-            {/* Transaction Modal - Now replaced by Fintech Pro Component */}
-            {isModalOpen && (
-              <TransactionFormModal
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                onSubmit={onSubmit}
-                accounts={accounts}
-                editingTransaction={editingTransaction}
-                initialSharedExpenseData={sharedExpenseData}
-                mode={editingTransaction ? 'edit' : 'create'}
-              />
-            )}
-
-            {/* Bulk Delete Confirmation Modal */}
-            <Modal
-              isOpen={showBulkDeleteConfirm}
-              onClose={() => setShowBulkDeleteConfirm(false)}
-              title={t('delete')}
-            >
-              <div className="space-y-4">
-                <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
-                  <p className="text-sm text-red-900 dark:text-red-200">
-                    Are you sure you want to delete {selectedTransactionIds.size} transaction{selectedTransactionIds.size !== 1 ? 's' : ''}?
-                  </p>
-                  <p className="text-xs text-red-700 dark:text-red-400 mt-2">
-                    This action cannot be undone.
-                  </p>
-                </div>
-                <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowBulkDeleteConfirm(false)}
-                    disabled={isBulkDeleting}
-                    className="flex-1"
-                  >
-                    {tCommon('actions.cancel')}
-                  </Button>
-                  <Button
-                    onClick={handleBulkDelete}
-                    disabled={isBulkDeleting}
-                    className="flex-1 bg-red-600 hover:bg-red-700 text-white"
-                  >
-                    {isBulkDeleting ? tLoading('deleting') : tCommon('actions.delete')}
-                  </Button>
-                </div>
+              <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowBulkDeleteConfirm(false)}
+                  disabled={isBulkDeleting}
+                  className="flex-1"
+                >
+                  {tCommon('actions.cancel')}
+                </Button>
+                <Button
+                  onClick={handleBulkDelete}
+                  disabled={isBulkDeleting}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                >
+                  {isBulkDeleting ? tLoading('deleting') : tCommon('actions.delete')}
+                </Button>
               </div>
-            </Modal>
-          </div>
-        </CustomPullToRefresh>
+            </div>
+          </Modal>
+        </div>
       </PageTransition >
     </>
   )
