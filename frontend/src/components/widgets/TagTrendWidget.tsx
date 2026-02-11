@@ -9,6 +9,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 import { useTagTrend } from '@/hooks/useDashboard'
 import { TagTrendWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
+import { CustomTooltip } from '@/components/charts/CustomTooltip'
 
 interface TagTrendData {
   tagId: string
