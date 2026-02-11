@@ -31,7 +31,7 @@ export function AccountsViewVariants({
                         ...account,
                         creditLimit: account.creditLimit || account.creditLimit // Handles null/undefined implicit
                     }}
-                    variant="grid"
+                    variant="glass"
                     onClick={() => onNavigate(account.id)}
                 />
             ))}

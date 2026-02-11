@@ -145,9 +145,9 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
               <div key={account.id} className="snap-start">
                 <AccountCard
                   account={account}
-                  variant="grid"
+                  variant="glass"
                   onClick={() => router.push(`/dashboard/accounts/${account.id}`)}
-                  className="w-80 h-44"
+                  className="w-80 h-48"
                 />
               </div>
             ))}

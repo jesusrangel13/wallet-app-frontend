@@ -8,7 +8,6 @@ import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
 import { Transaction, Account, TransactionType, CreateTransactionForm, MergedCategory } from '@/types'
 import { transactionAPI, accountAPI, categoryAPI, sharedExpenseAPI } from '@/lib/api'
-import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import TransactionFormModal, { TransactionFormData } from '@/components/TransactionFormModal'
@@ -31,16 +30,8 @@ import { TimelineConnector, TimelineVariant } from '@/components/transactions/Ti
 import { TimelineStyleSelector } from '@/components/transactions/TimelineStyleSelector'
 import { MonthSelectorVariants, SelectorVariant } from '@/components/transactions/MonthSelectorVariants'
 import { EmptyState } from '@/components/ui/EmptyState'
-import dynamic from 'next/dynamic'
-import { Skeleton } from '@/components/ui/Skeleton'
 
-const LazyDailySpendingChart = dynamic(
-  () => import('@/components/charts/DailySpendingChart').then(mod => ({ default: mod.DailySpendingChart })),
-  {
-    loading: () => <Skeleton className="h-[300px] w-full rounded-xl" />,
-    ssr: false,
-  }
-)
+// Chart removed by user request
 
 // transactionSchema and TransactionFormData moved to TransactionFormModal
 
@@ -677,26 +668,7 @@ export default function TransactionsPage() {
             </div>
           </div>
 
-          {/* Daily Spending Trend Chart */}
-          {transactions.length > 0 && (
-            <div className="mb-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold">Tendencia de Gastos</CardTitle>
-                </CardHeader>
-                <CardContent className="!p-6">
-                  <LazyDailySpendingChart
-                    data={[...groupedTransactions].reverse().map(g => ({
-                      date: g.date,
-                      income: g.totalIncome,
-                      expense: g.totalExpense
-                    }))}
-                    currency={(accounts.find(a => a.id === filters.accountId)?.currency as any) || 'CLP'}
-                  />
-                </CardContent>
-              </Card>
-            </div>
-          )}
+          {/* Daily Spending Trend Chart - Removed by user request */}
 
           {/* Filters */}
           <TransactionFiltersComponent
