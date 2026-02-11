@@ -36,6 +36,20 @@ export function AnnualTrendChart({ data, currency }: AnnualTrendChartProps) {
                 <div className="h-[350px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                            <defs>
+                                <linearGradient id="annualIncomeGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#22c55e" stopOpacity={0.8} />
+                                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0.3} />
+                                </linearGradient>
+                                <linearGradient id="annualExpenseGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
+                                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0.3} />
+                                </linearGradient>
+                                <linearGradient id="annualSavingsGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+                                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.3} />
+                                </linearGradient>
+                            </defs>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} />
                             <XAxis
                                 dataKey="name"
@@ -58,9 +72,9 @@ export function AnnualTrendChart({ data, currency }: AnnualTrendChartProps) {
                             />
                             <Legend wrapperStyle={{ paddingTop: '20px' }} />
 
-                            <Bar dataKey="income" name="Ingresos" fill="#22c55e" radius={[4, 4, 0, 0]} />
-                            <Bar dataKey="expense" name="Gastos" fill="#ef4444" radius={[4, 4, 0, 0]} />
-                            <Bar dataKey="savings" name="Ahorro" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="income" name="Ingresos" fill="url(#annualIncomeGradient)" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="expense" name="Gastos" fill="url(#annualExpenseGradient)" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="savings" name="Ahorro" fill="url(#annualSavingsGradient)" radius={[4, 4, 0, 0]} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

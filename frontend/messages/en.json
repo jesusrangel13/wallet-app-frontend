@@ -351,6 +351,7 @@
       "noExpensesThisMonth": "No expenses this month"
     },
     "expensesByParentCategory": {
+      "title": "Expenses by Category",
       "name": "Expenses by Category",
       "description": "Expense distribution by parent category",
       "label": "Expenses by Category",
@@ -366,6 +367,7 @@
       "noExpensesThisMonth": "No expenses this month"
     },
     "balanceTrend": {
+      "title": "Balance Trend",
       "name": "Balance Trend",
       "description": "Your balance over the last 30 days",
       "last30Days": "Last 30 days",

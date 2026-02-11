@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslations } from 'next-intl'
 import { Account } from '@/types'
+import { AccountCard } from '@/components/widgets/AccountCard'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -448,42 +449,16 @@ export default function TransactionFormModal({
             <div className="space-y-2 animate-in slide-in-from-bottom-2 fade-in duration-500 delay-100 fill-mode-backwards">
               <label className="text-sm font-medium text-foreground ml-1">{t('fields.account')}</label>
               <div className="flex overflow-x-auto pb-4 gap-3 snap-x no-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                {accounts.map((account) => {
-                  const isSelected = selectedAccountId === account.id;
-                  return (
-                    <button
-                      key={account.id}
-                      id={`account-card-${account.id}`}
-                      type="button"
-                      onClick={() => setValue('accountId', account.id)}
-                      className={`
-                        relative p-3 rounded-xl border-2 text-left transition-all duration-200 group overflow-hidden flex-shrink-0 w-36 sm:w-40 snap-start
-                        ${isSelected
-                          ? 'border-primary bg-primary/5 shadow-sm ring-1 ring-primary/20'
-                          : 'border-border hover:border-primary/50 hover:bg-muted/50'
-                        }
-                      `}
-                    >
-                      <div className="flex flex-col gap-1 z-10 relative">
-                        <span className={`text-xs font-semibold uppercase tracking-wider ${isSelected ? 'text-primary' : 'text-muted-foreground group-hover:text-primary/80'}`}>
-                          {account.currency}
-                        </span>
-                        <span className="font-semibold text-sm truncate leading-tight" title={account.name}>
-                          {account.name}
-                        </span>
-                        <span className="text-xs text-muted-foreground mt-0.5 font-mono">
-                          {formatAmountDisplay(account.balance, account.currency)}
-                        </span>
-                      </div>
-
-                      {isSelected && (
-                        <div className="absolute top-2 right-2 text-primary animate-in zoom-in duration-200">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
+                {accounts.map((account) => (
+                  <AccountCard
+                    key={account.id}
+                    account={account}
+                    variant="compact"
+                    isSelected={selectedAccountId === account.id}
+                    onClick={() => setValue('accountId', account.id)}
+                    className="snap-start"
+                  />
+                ))}
               </div>
               {errors.accountId && <p className="text-destructive text-sm mt-1 animate-pulse">{errors.accountId.message}</p>}
             </div>

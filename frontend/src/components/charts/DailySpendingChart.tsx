@@ -1,10 +1,9 @@
 'use client'
 
-import { useState } from 'react'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
-import { formatCurrency, type Currency } from '@/types/currency'
-import { motion } from 'framer-motion'
+import { EnhancedBarChart } from './EnhancedBarChart'
+import { type Currency } from '@/types/currency'
 import { TrendingDown, TrendingUp } from 'lucide-react'
+import { formatCurrency } from '@/types/currency'
 
 interface DailyDataPoint {
     date: string
@@ -17,55 +16,61 @@ interface DailySpendingChartProps {
     currency: Currency
 }
 
-const CustomTooltip = ({ active, payload, label, currency }: any) => {
-    if (active && payload && payload.length) {
-        const income = payload.find((p: any) => p.dataKey === 'income')?.value || 0
-        const expense = payload.find((p: any) => p.dataKey === 'expense')?.value || 0
-
-        return (
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-lg shadow-xl text-xs">
-                <p className="font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    {new Date(label).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}
-                </p>
-                {income > 0 && (
-                    <div className="flex items-center gap-2 mb-1">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                        <span className="text-emerald-600 dark:text-emerald-400 font-medium">+{formatCurrency(income, currency)}</span>
-                    </div>
-                )}
-                {expense > 0 && (
-                    <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                        <span className="text-expense font-medium">-{formatCurrency(expense, currency)}</span>
-                    </div>
-                )}
-            </div>
-        )
-    }
-    return null
-}
-
 export function DailySpendingChart({ data, currency }: DailySpendingChartProps) {
-    const [hoveredData, setHoveredData] = useState<DailyDataPoint | null>(null)
-
     // Calculate totals for the period
     const totalIncome = data.reduce((sum, item) => sum + item.income, 0)
     const totalExpense = data.reduce((sum, item) => sum + item.expense, 0)
-    const net = totalIncome - totalExpense
+
+    // Map data to EnhancedBarChart format
+    // EnhancedBarChart expects { date, value, category?, color? }
+    // But EnhancedBarChart is currently designed for single value per bar usually?
+    // Let's check EnhancedBarChart props. 
+    // It seems EnhancedBarChart takes `data` and renders `value` key.
+    // DailySpendingChart shows BOTH income and expense per day.
+    // EnhancedBarChart might not support grouped bars (Income AND Expense side-by-side) out of the box if it only looks for `value`.
+    // Let's re-read EnhancedBarChart.
+
+    // Wait, if EnhancedBarChart doesn't support dual bars, I might need to adjust it or keep DailySpendingChart as a wrapper that uses
+    // a "Stacked" or "Grouped" version if available, OR just use EnhancedBarChart for "Net" or "Expense" only?
+    // The original chart showed both.
+
+    // Let's map it to render "Expense" vs "Income" if possible, or maybe just render "Expense" since it's "Spending Chart"?
+    // "Daily Activity" implies both.
+    // If EnhancedBarChart is strictly single-series, I might need to update EnhancedBarChart to support multiple keys OR
+    // just use it for "Net" or "Expense".
+    // However, the previous chart showed both.
+
+    // Alternative: Use 2 bar charts? No.
+    // Let's see if I can make EnhancedBarChart flexible or if I should just update this file to use the new STYLES (gradients) but keep custom implementation if EnhancedBarChart is too simple.
+    // BUT the goal is to use the "Premium" component. 
+
+    // Let's look at EnhancedBarChart again. 
+    // It renders: <Bar dataKey="value" ... />
+
+    // If I want two bars, I need to update EnhancedBarChart or use a different one.
+    // Actually, `CashFlowChart` has a "bar-comparison" variant that shows Income vs Expense.
+    // Maybe I should use `CashFlowChart` here? 
+    // `CashFlowChart` variant='bar-comparison' shows Income vs Expense.
+    // It takes `data: { date, income, expense }`. 
+    // THIS IS A BETTER FIT. 
+
+    // So I will replace DailySpendingChart content with a wrapper around CashFlowChart variant="bar-comparison"
+    // OR just import CashFlowChart directly in the page.
+    // But to keep the component interface `DailySpendingChart` for the page, I'll wrap it.
 
     return (
         <div className="w-full space-y-6">
             {/* Header Stats */}
             <div className="flex items-end justify-between px-2">
                 <div className="space-y-1">
-                    <p className="text-sm font-medium text-muted-foreground">Daily Activity (Last 30 Days)</p>
+                    <p className="text-sm font-medium text-muted-foreground">Actividad Diaria (Últimos 30 días)</p>
                     <div className="flex items-baseline gap-4">
                         <div className="flex items-center gap-2">
-                            <div className="p-1.5 rounded-full bg-expense-subtle text-expense">
+                            <div className="p-1.5 rounded-full bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400">
                                 <TrendingDown className="w-4 h-4" />
                             </div>
                             <div>
-                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Spent</p>
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Gastos</p>
                                 <p className="text-xl font-bold text-slate-900 dark:text-white">{formatCurrency(totalExpense, currency)}</p>
                             </div>
                         </div>
@@ -74,7 +79,7 @@ export function DailySpendingChart({ data, currency }: DailySpendingChartProps) 
                                 <TrendingUp className="w-4 h-4" />
                             </div>
                             <div>
-                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Earned</p>
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Ingresos</p>
                                 <p className="text-xl font-bold text-slate-900 dark:text-white">{formatCurrency(totalIncome, currency)}</p>
                             </div>
                         </div>
@@ -83,28 +88,23 @@ export function DailySpendingChart({ data, currency }: DailySpendingChartProps) 
             </div>
 
             <div className="h-[300px] w-full mt-4">
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={data} margin={{ top: 10, right: 0, left: -20, bottom: 0 }} barGap={2}>
-                        <XAxis
-                            dataKey="date"
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fontSize: 11, fill: '#6b7280' }}
-                            tickFormatter={(value, index) => {
-                                const date = new Date(value)
-                                // Show tick every 3-5 days depending on data density? 
-                                // For now, let Recharts handle it or force every 5th
-                                return index % 5 === 0 ? `${date.getDate()} ${date.toLocaleString('default', { month: 'short' })}` : ''
-                            }}
-                            dy={10}
-                        />
-                        <Tooltip content={<CustomTooltip currency={currency} />} cursor={{ fill: 'transparent' }} />
-
-                        <Bar dataKey="income" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={40} stackId="a" />
-                        <Bar dataKey="expense" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={40} stackId="b" />
-                    </BarChart>
-                </ResponsiveContainer>
+                {/* We can use CashFlowChart here as it supports income/expense bars */}
+                <CashFlowChartWrapper data={data} currency={currency} />
             </div>
         </div>
+    )
+}
+
+// Internal wrapper to avoid circular deps if any, or just strictly typing
+import { CashFlowChart } from './CashFlowChart'
+
+function CashFlowChartWrapper({ data, currency }: { data: any[], currency: Currency }) {
+    return (
+        <CashFlowChart
+            data={data}
+            variant="bar-comparison"
+            height={300}
+            currency={currency}
+        />
     )
 }

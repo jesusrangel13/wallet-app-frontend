@@ -1,16 +1,13 @@
-'use client'
-
 import { useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
-import { TrendingUp, TrendingDown, DollarSign } from 'lucide-react'
-import { formatCurrency } from '@/types/currency'
+import { TrendingUp, TrendingDown, DollarSign, BarChart2, Activity, Layers, ArrowUpDown } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { useCashFlow } from '@/hooks/useDashboard'
 import { CashFlowWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
 import { AnimatedCurrency } from '@/components/ui/animations'
+import { CashFlowChart, CashFlowVariant } from '@/components/charts/CashFlowChart'
 
 interface CashFlowData {
   month: string
@@ -30,7 +27,7 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
   const { month, year } = useSelectedMonth()
   const { data, isLoading } = useCashFlow(6, { month, year })
 
-  // Memoize expensive calculations - prevents recalculating on every render
+  // Memoize expensive calculations
   const statistics = useMemo(() => {
     if (!data || data.length === 0) {
       return { avgIncome: 0, avgExpense: 0, avgBalance: 0 }
@@ -43,13 +40,22 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
     return { avgIncome, avgExpense, avgBalance }
   }, [data])
 
-  // Memoize chart configuration
+  // Transform data for CashFlowChart
+  const chartData = useMemo(() => {
+    if (!data) return []
+    return data.map((d: CashFlowData) => ({
+      month: d.month,
+      income: d.income,
+      expense: d.expense,
+      net: d.income - d.expense
+    }))
+  }, [data])
+
   const chartConfig = useMemo(() => ({
-    chartHeight: calculateChartHeight(dimensions.contentHeight),
+    chartHeight: calculateChartHeight(dimensions.contentHeight, { hasLegend: true }),
     cardPadding: dimensions.isSmall ? 'p-1.5' : 'p-2',
     cardFontSize: dimensions.isSmall ? 'text-[10px]' : 'text-xs',
     valueFontSize: dimensions.isSmall ? 'text-sm' : 'text-base',
-    xAxisFontSize: dimensions.isSmall ? 8 : 10,
   }), [dimensions])
 
   if (isLoading) {
@@ -57,7 +63,7 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
   }
 
   const { avgIncome, avgExpense, avgBalance } = statistics
-  const { chartHeight, cardPadding, cardFontSize, valueFontSize, xAxisFontSize } = chartConfig
+  const { chartHeight, cardPadding, cardFontSize, valueFontSize } = chartConfig
 
   return (
     <Card>
@@ -70,7 +76,7 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
       <CardContent>
         {data && data.length > 0 ? (
           <div className="space-y-3">
-            {/* Summary cards - Responsive sizing */}
+            {/* Summary cards */}
             <div className="grid grid-cols-3 gap-2">
               <div className={`bg-green-50 dark:bg-green-900/20 rounded-lg ${cardPadding} border border-green-100 dark:border-green-800`}>
                 <div className="flex items-center gap-1.5 mb-0.5">
@@ -101,28 +107,13 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
               </div>
             </div>
 
-            {/* Dynamic height bar chart */}
-            <ResponsiveContainer width="100%" height={chartHeight}>
-              <BarChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 15 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="month" tick={{ fontSize: xAxisFontSize }} tickLine={false} />
-                <YAxis hide />
-                <Tooltip
-                  formatter={(value) => formatCurrency(Number(value), 'CLP')}
-                  contentStyle={{
-                    backgroundColor: 'var(--tooltip-bg, #fff)',
-                    border: '1px solid var(--tooltip-border, #e5e7eb)',
-                    borderRadius: '6px',
-                    color: 'var(--tooltip-text, #111827)',
-                  }}
-                  itemStyle={{ color: 'var(--tooltip-text, #111827)' }}
-                  labelStyle={{ color: 'var(--tooltip-text, #111827)', fontWeight: 600 }}
-                  cursor={{ fill: 'var(--chart-cursor, rgba(156, 163, 175, 0.3))' }}
-                />
-                <Bar dataKey="income" fill="#10b981" name={t('income')} radius={[4, 4, 0, 0]} />
-                <Bar dataKey="expense" fill="#ef4444" name={t('expenses')} radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            {/* CashFlow Chart - Diverging Variant */}
+            <CashFlowChart
+              data={chartData}
+              variant="diverging"
+              height={chartHeight}
+              currency="CLP"
+            />
           </div>
         ) : (
           <div className="flex items-center justify-center h-[240px] text-gray-500 dark:text-gray-400">

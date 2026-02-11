@@ -12,7 +12,7 @@ export const FixedAccountBalancesWidget = () => {
       if (containerRef.current) {
         const parentWidth = containerRef.current.parentElement?.offsetWidth || 1200
         // Subtract the horizontal padding (16px on each side = 32px total)
-        setMaxWidth(parentWidth - 32)
+        setMaxWidth(parentWidth)
       }
     }
 
@@ -22,10 +22,10 @@ export const FixedAccountBalancesWidget = () => {
   }, [])
 
   return (
-    <div ref={containerRef} className="mb-6 w-full overflow-hidden px-4">
+    <div ref={containerRef} className="mb-6 w-full overflow-hidden">
       {/* Premium style container with max width */}
       <div
-        className="bg-gradient-to-r from-gray-50 to-white dark:from-card dark:to-card border border-gray-200 dark:border-border shadow-lg dark:shadow-none rounded-lg overflow-hidden"
+        className="w-full overflow-hidden"
         style={{ maxWidth: `${maxWidth}px` }}
       >
         <AccountBalancesWidget />

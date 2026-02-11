@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { useWidgetDimensions, calculateMaxListItems } from '@/hooks/useWidgetDimensions'
 import { RecentTransactionsWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
 import { AnimatedCurrency } from '@/components/ui/animations'
+import { TransactionCard } from '@/components/transactions/TransactionCard'
 
 interface RecentTransaction {
   id: string
@@ -75,60 +76,20 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
         <div className="space-y-3">
           {transactions.length > 0 ? (
             transactions.slice(0, maxItems).map((transaction) => (
-              <div
-                key={transaction.id}
-                className="flex items-center justify-between p-3 bg-muted/40 rounded-lg hover:bg-muted/60 transition-colors"
-              >
-                <div className="flex items-center gap-3 flex-1">
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-semibold"
-                    style={{ backgroundColor: transaction.category?.color || '#6b7280' }}
-                  >
-                    {transaction.category?.icon || '📊'}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="font-medium text-foreground">
-                        {transaction.description || transaction.category?.name || 'Transaction'}
-                      </p>
-                      {transaction.sharedExpenseId && (
-                        <span className="inline-flex items-center gap-1 text-xs bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 px-1.5 py-0.5 rounded-full border border-purple-200 dark:border-purple-800">
-                          👥
-                        </span>
-                      )}
-                    </div>
-                    {transaction.payee && (
-                      <p className="text-xs text-muted-foreground">→ {transaction.payee}</p>
-                    )}
-                    <p className="text-xs text-muted-foreground">{transaction.account?.name || 'Account'}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p
-                    className={`font-semibold ${transaction.type === 'EXPENSE'
-                      ? 'text-expense'
-                      : transaction.type === 'INCOME'
-                        ? 'text-income'
-                        : 'text-blue-600 dark:text-blue-500'
-                      }`}
-                  >
-                    {transaction.type === 'EXPENSE'
-                      ? '-'
-                      : transaction.type === 'INCOME'
-                        ? '+'
-                        : ''}
-                    <AnimatedCurrency
-                      amount={transaction.amount}
-                      currency={(transaction.account?.currency as Currency) || 'CLP'}
-                    />
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(transaction.date).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                    })}
-                  </p>
-                </div>
+              <div key={transaction.id}>
+                <TransactionCard
+                  id={transaction.id}
+                  type={transaction.type}
+                  amount={transaction.amount}
+                  currency={(transaction.account?.currency as Currency) || 'CLP'}
+                  category={transaction.category?.name || 'Uncategorized'}
+                  categoryIcon={transaction.category?.icon || undefined}
+                  categoryColor={transaction.category?.color || undefined}
+                  description={transaction.description}
+                  payee={transaction.payee}
+                  date={new Date(transaction.date)}
+                  isShared={!!transaction.sharedExpenseId}
+                />
               </div>
             ))
           ) : (

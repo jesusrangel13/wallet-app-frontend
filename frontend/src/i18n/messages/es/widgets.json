@@ -105,6 +105,7 @@
   },
   "expensesByParentCategory": {
     "name": "Gastos por Categoría",
+    "title": "Gastos por Categoría",
     "description": "Distribución de gastos por categoría padre",
     "label": "Gastos por Categoría",
     "amount": "Monto",
@@ -120,6 +121,7 @@
   },
   "balanceTrend": {
     "name": "Tendencia de Saldo",
+    "title": "Tendencia de Saldo",
     "description": "Tu saldo durante los últimos 30 días",
     "last30Days": "Últimos 30 días",
     "label": "Tendencia de Saldo",

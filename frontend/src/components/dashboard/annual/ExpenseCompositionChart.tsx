@@ -32,6 +32,16 @@ export function ExpenseCompositionChart({ data, currency }: ExpenseCompositionCh
                     <div className="flex-1 w-full h-full min-h-0">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
+                                <defs>
+                                    <linearGradient id="fixedExpenseGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.9} />
+                                        <stop offset="100%" stopColor="#f59e0b" stopOpacity={0.4} />
+                                    </linearGradient>
+                                    <linearGradient id="variableExpenseGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.9} />
+                                        <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.4} />
+                                    </linearGradient>
+                                </defs>
                                 <Pie
                                     data={chartData}
                                     cx="50%"
@@ -42,7 +52,11 @@ export function ExpenseCompositionChart({ data, currency }: ExpenseCompositionCh
                                     dataKey="value"
                                 >
                                     {chartData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={entry.name === 'Gastos Fijos' ? 'url(#fixedExpenseGradient)' : 'url(#variableExpenseGradient)'}
+                                            stroke="none"
+                                        />
                                     ))}
                                 </Pie>
                                 <Tooltip
