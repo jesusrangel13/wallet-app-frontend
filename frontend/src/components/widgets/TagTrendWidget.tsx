@@ -9,6 +9,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 import { useTagTrend } from '@/hooks/useDashboard'
 import { TagTrendWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
+import { CustomTooltip } from '@/components/charts/CustomTooltip'
 
 interface TagTrendData {
   tagId: string
@@ -133,16 +134,12 @@ export const TagTrendWidget = ({
                 tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
               />
               <Tooltip
-                contentStyle={{
-                  backgroundColor: 'var(--tooltip-bg, #fff)',
-                  border: '1px solid var(--tooltip-border, #e5e7eb)',
-                  borderRadius: '6px',
-                  fontSize: '12px',
-                  color: 'var(--tooltip-text, #111827)',
-                }}
-                itemStyle={{ color: 'var(--tooltip-text, #111827)' }}
-                labelStyle={{ color: 'var(--tooltip-text, #111827)', fontWeight: 600 }}
-                formatter={(value: number) => formatCurrency(value, 'CLP')}
+                content={
+                  <CustomTooltip
+                    currency="CLP"
+                  />
+                }
+                cursor={{ stroke: '#9ca3af', strokeWidth: 1, strokeDasharray: '5 5' }}
               />
               <Legend
                 wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }}

@@ -41,6 +41,14 @@ const LazyDailySpendingChart = dynamic(
   }
 )
 
+const LazyBalanceHistoryChart = dynamic(
+  () => import('@/components/charts/BalanceHistoryChart').then(mod => ({ default: mod.BalanceHistoryChart })),
+  {
+    loading: () => <Skeleton className="h-[300px] w-full rounded-xl" />,
+    ssr: false,
+  }
+)
+
 // Account schema for editing
 const accountSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -603,6 +611,19 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
 
       {/* Hero Card Section */}
       <AccountHeroCard account={account} monthlyMetrics={currentMonthMetrics} />
+
+      {/* Balance History Chart Section */}
+      {filteredBalanceData.length > 0 && (
+        <Card>
+          <CardContent className="!p-6">
+            <LazyBalanceHistoryChart
+              data={filteredBalanceData.filter(d => d.balance !== null) as { date: string; balance: number }[]}
+              currency={account.currency as Currency}
+              className="w-full"
+            />
+          </CardContent>
+        </Card>
+      )}
 
       {/* Daily Activity Chart Section */}
       <Card>

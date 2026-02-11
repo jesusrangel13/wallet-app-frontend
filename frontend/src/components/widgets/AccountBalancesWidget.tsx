@@ -6,12 +6,10 @@ import { useTranslations } from 'next-intl'
 import { useAccountBalances } from '@/hooks/useDashboard'
 import { useCreateAccount } from '@/hooks/useAccounts'
 import { Plus } from 'lucide-react'
-import { getAccountIcon } from '@/utils/accountIcons'
-import { Card, CardContent } from '@/components/ui/Card'
 import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
-import { ColorPicker } from '@/components/ui/ColorPicker'
+
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -20,6 +18,7 @@ import { useRouter } from 'next/navigation'
 import type { CreateAccountForm, AccountType } from '@/types'
 import { AccountBalancesWidgetSkeleton } from '@/components/ui/WidgetSkeletons'
 import { AnimatedCurrency } from '@/components/ui/animations'
+import { AccountCard, AccountCardVariant } from './AccountCard'
 
 // Validation schema
 const accountSchema = z.object({
@@ -130,114 +129,57 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
   }
 
   return (
-    <Card className="h-[140px]">
-      <CardContent className="h-full flex items-center !p-0">
-        {accounts.length > 0 ? (
-          <div className="relative w-full h-full flex items-center px-4">
-            {/* Carousel container */}
-            <div
-              ref={scrollContainerRef}
-              className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory w-full"
-              style={{
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none',
-              }}
-            >
-              {accounts.map((account: AccountBalance) => {
-                // Calculate spent and percentage for credit cards
-                const isCreditCard = account.type === 'CREDIT' && account.creditLimit
-                const spent = isCreditCard ? account.creditLimit! - account.balance : 0
-                const percentageUsed = isCreditCard ? (spent / account.creditLimit!) * 100 : 0
+    <div className="w-full">
+      {accounts.length > 0 ? (
+        <div className="relative w-full flex-1 flex items-center pb-2">
+          {/* Carousel container */}
+          <div
+            ref={scrollContainerRef}
+            className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory w-full py-2" // Added gap-4 and py-2 for shadow room
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
+          >
+            {accounts.map((account: AccountBalance) => (
+              <div key={account.id} className="snap-start">
+                <AccountCard
+                  account={account}
+                  variant="glass"
+                  onClick={() => router.push(`/dashboard/accounts/${account.id}`)}
+                  className="w-80 h-48"
+                />
+              </div>
+            ))}
 
-                // Get icon component for this account type
-                const IconComponent = getAccountIcon(account.type as AccountType)
-
-                return (
-                  <button
-                    key={account.id}
-                    onClick={() => router.push(`/dashboard/accounts/${account.id}`)}
-                    className="min-w-[230px] flex-shrink-0 px-3 py-4 bg-muted/10 border border-border rounded-lg hover:bg-muted/30 transition-colors snap-start cursor-pointer text-left relative overflow-hidden"
-                  >
-                    <div
-                      className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg"
-                      style={{ backgroundColor: account.color }}
-                    />
-                    {isCreditCard ? (
-                      <div className="flex flex-col gap-1 pl-2">
-                        <div className="flex items-center gap-1.5">
-                          <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-                            <IconComponent className="w-3 h-3" style={{ color: account.color }} />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <h3 className="font-medium text-xs text-foreground truncate">{account.name}</h3>
-                          </div>
-                        </div>
-                        <div className="flex items-baseline justify-between">
-                          <span className="text-metric-label">{t('spent')}</span>
-                          <p className="font-semibold text-sm text-foreground tabular-nums">
-                            <AnimatedCurrency amount={spent} currency={account.currency as Currency} />
-                          </p>
-                        </div>
-                        <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-amber-500 rounded-full transition-all duration-300"
-                            style={{ width: `${Math.min(Math.max(percentageUsed, 0), 100)}%` }}
-                          />
-                        </div>
-                        <p className="text-[9px] text-muted-foreground truncate">
-                          {t('available')}: <span className="font-medium text-foreground"><AnimatedCurrency amount={account.balance} currency={account.currency as Currency} /></span>
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col gap-1 pl-2">
-                        <div className="flex items-center gap-1.5">
-                          <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-                            <IconComponent className="w-3 h-3" style={{ color: account.color }} />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="font-medium text-xs text-foreground truncate">{account.name}</p>
-                          </div>
-                        </div>
-                        <div className="text-left mt-0.5">
-                          <p className="text-metric-label mb-0.5">{t('balance')}</p>
-                          <p className="font-semibold text-base text-foreground tabular-nums">
-                            <AnimatedCurrency amount={account.balance} currency={account.currency as Currency} />
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </button>
-                )
-              })}
-
-              {/* Add Account Card */}
-              <button
-                onClick={handleAddAccount}
-                className="min-w-[230px] flex-shrink-0 px-3 py-4 border-2 border-dashed border-muted-foreground/20 rounded-lg hover:border-primary hover:bg-primary/5 transition-all snap-start flex flex-col items-center justify-center gap-2"
-              >
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Plus className="w-5 h-5 text-primary" />
-                </div>
-                <span className="text-xs font-medium text-muted-foreground">{t('addAccount')}</span>
-              </button>
-            </div>
-
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full w-full px-4">
-            <p className="text-muted-foreground text-center text-xs mb-4">
-              {t('noAccountsYet')}
-            </p>
+            {/* Add Account Card (Styled to match variants roughly or just simple) */}
             <button
               onClick={handleAddAccount}
-              className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover transition-colors text-sm font-medium"
+              className="min-w-[100px] flex-shrink-0 px-3 py-4 border-2 border-dashed border-muted-foreground/20 rounded-xl hover:border-primary hover:bg-primary/5 transition-all snap-start flex flex-col items-center justify-center gap-2"
+              style={{ height: '160px' }}
             >
-              {t('addAccountButton')}
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Plus className="w-5 h-5 text-primary" />
+              </div>
+              <span className="text-xs font-medium text-muted-foreground">{t('addAccount')}</span>
             </button>
           </div>
-        )}
 
-      </CardContent>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center h-full w-full px-4">
+          <p className="text-muted-foreground text-center text-xs mb-4">
+            {t('noAccountsYet')}
+          </p>
+          <button
+            onClick={handleAddAccount}
+            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover transition-colors text-sm font-medium"
+          >
+            {t('addAccountButton')}
+          </button>
+        </div>
+      )}
+
 
       {/* Add Account Modal */}
       <Modal
@@ -398,6 +340,6 @@ export const AccountBalancesWidget = ({ gridWidth = 4, gridHeight = 1 }: Account
           </div>
         </form>
       </Modal>
-    </Card>
+    </div>
   )
 }

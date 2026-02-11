@@ -105,6 +105,7 @@
   },
   "expensesByParentCategory": {
     "name": "Expenses by Category",
+    "title": "Expenses by Category",
     "description": "Expense distribution by parent category",
     "label": "Expenses by Category",
     "amount": "Amount",
@@ -120,6 +121,7 @@
   },
   "balanceTrend": {
     "name": "Balance Trend",
+    "title": "Balance Trend",
     "description": "Your balance over the last 30 days",
     "last30Days": "Last 30 days",
     "label": "Balance Trend",
