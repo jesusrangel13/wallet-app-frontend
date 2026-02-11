@@ -7,7 +7,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslations } from 'next-intl'
-import { Account } from '@/types'
+import { Account, Group } from '@/types'
+import { groupAPI } from '@/lib/api'
 import { AccountCard } from '@/components/widgets/AccountCard'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
@@ -87,6 +88,7 @@ export default function TransactionFormModal({
   const [isSaving, setIsSaving] = useState(false)
   const [formattedAmount, setFormattedAmount] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
+  const [availableGroups, setAvailableGroups] = useState<Group[]>([])
 
   const {
     register,
@@ -151,6 +153,22 @@ export default function TransactionFormModal({
       // For now, let's rely on handleClose to reset state for new opens
     }
   }, [initialData, initialSharedExpenseData, setValue])
+
+  // Pre-fetch groups when modal opens for faster shared expense loading
+  useEffect(() => {
+    if (isOpen) {
+      const fetchGroups = async () => {
+        try {
+          const response = await groupAPI.getAll()
+          const groupsData = Array.isArray(response.data) ? response.data : (response.data as any).data
+          setAvailableGroups(groupsData)
+        } catch (error) {
+          console.error('Failed to pre-fetch groups:', error)
+        }
+      }
+      fetchGroups()
+    }
+  }, [isOpen])
 
   // Initialize form from editingTransaction when not using initialData
   useEffect(() => {
@@ -572,6 +590,7 @@ export default function TransactionFormModal({
                     currency={selectedAccount?.currency || 'CLP'}
                     onChange={setSharedExpenseData}
                     hideToggle={true} // New prop needed or just css hide
+                    availableGroups={availableGroups}
                   />
                 </div>
               )}

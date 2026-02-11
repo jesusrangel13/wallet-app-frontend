@@ -25,6 +25,7 @@ interface SharedExpenseFormProps {
   error?: string
   initialData?: SharedExpenseData
   hideToggle?: boolean
+  availableGroups?: Group[] // Optional pre-fetched groups
 }
 
 export interface SharedExpenseData {
@@ -64,6 +65,7 @@ export default function SharedExpenseForm({
   error,
   initialData,
   hideToggle = false,
+  availableGroups,
 }: SharedExpenseFormProps) {
   const t = useTranslations('sharedExpense')
   const { user } = useAuthStore()
@@ -88,6 +90,7 @@ export default function SharedExpenseForm({
   const [participants, setParticipants] = useState<Participant[]>([])
   const [isLoadingGroups, setIsLoadingGroups] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
+  const [isFullyInitialized, setIsFullyInitialized] = useState(false)
 
   const participantsRef = useRef<Participant[]>([])
 
@@ -97,6 +100,13 @@ export default function SharedExpenseForm({
   }, [participants])
 
   const loadGroups = useCallback(async () => {
+    // Use pre-fetched groups if available
+    if (availableGroups && availableGroups.length > 0) {
+      setGroups(availableGroups)
+      setIsLoadingGroups(false)
+      return
+    }
+
     try {
       setIsLoadingGroups(true)
       const response = await groupAPI.getAll()
@@ -107,7 +117,7 @@ export default function SharedExpenseForm({
     } finally {
       setIsLoadingGroups(false)
     }
-  }, [])
+  }, [availableGroups])
 
   useEffect(() => {
     if (enabled) {
@@ -147,6 +157,7 @@ export default function SharedExpenseForm({
   // Initial group selection effect
   useEffect(() => {
     if (selectedGroupId && !initialData && !isInitialized) {
+      setIsFullyInitialized(false) // Reset when starting initialization
       const group = groups.find((g) => g.id === selectedGroupId)
       setSelectedGroup(group || null)
 
@@ -222,8 +233,12 @@ export default function SharedExpenseForm({
   useEffect(() => {
     if (participants.length > 0 && totalAmount > 0) {
       calculateSplit()
+      // Mark as fully initialized after first calculation
+      if (!isFullyInitialized && selectedGroup) {
+        setTimeout(() => setIsFullyInitialized(true), 50)
+      }
     }
-  }, [splitType, totalAmount, participantsKey, calculateSplit])
+  }, [splitType, totalAmount, participantsKey, calculateSplit, isFullyInitialized, selectedGroup])
 
   // Notify parent
   const prevNotifyData = useRef<string>('')
@@ -354,124 +369,168 @@ export default function SharedExpenseForm({
       </div>
 
       {selectedGroup && (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-
-          {/* 2. Paid By Avatars */}
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t('paidBy')}</label>
-            <div className="flex flex-wrap gap-3">
-              {selectedGroup.members.map((member, idx) => (
-                <button
-                  key={member.userId}
-                  type="button"
-                  onClick={() => setPaidByUserId(member.userId)}
-                  className={cn(
-                    "flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border transition-all",
-                    paidByUserId === member.userId
-                      ? "bg-primary text-primary-foreground border-primary shadow-md"
-                      : "bg-background border-border hover:bg-muted"
-                  )}
-                >
-                  <div className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold",
-                    paidByUserId === member.userId ? "bg-white text-primary" : AVATAR_COLORS[idx % AVATAR_COLORS.length]
-                  )}>
-                    {getInitials(member.user.name)}
-                  </div>
-                  <span className="text-sm font-medium">{member.user.name.split(' ')[0]}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* 3. Split Type Segmented Control */}
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t('splitType')}</label>
-            <div className="flex p-1 bg-muted rounded-lg overflow-x-auto">
-              {SPLIT_TYPE_OPTIONS.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setSplitType(option.value)}
-                  className={cn(
-                    "flex-1 min-w-[80px] py-1.5 px-2 rounded-md text-xs font-medium transition-all flex flex-col items-center gap-1",
-                    splitType === option.value
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={option.icon} /></svg>
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* 4. Participants List & Summary */}
-          {participants.length > 0 && (
-            <div className="bg-muted/30 rounded-xl p-4 border border-border/50">
-              {/* Summary Banner */}
-              {summary && (
-                <div className={cn(
-                  "mb-4 p-3 rounded-lg text-sm font-medium flex items-center gap-2",
-                  summary.type === 'positive' ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
-                )}>
-                  {summary.type === 'positive' ? (
-                    <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                  ) : (
-                    <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" /></svg>
-                  )}
-                  {summary.text}
+        <>
+          {!isFullyInitialized ? (
+            // Loading skeleton while initializing
+            <div className="space-y-6 animate-pulse">
+              <div className="space-y-2">
+                <div className="h-3 w-20 bg-muted rounded"></div>
+                <div className="flex gap-3">
+                  <div className="h-10 w-24 bg-muted rounded-full"></div>
+                  <div className="h-10 w-24 bg-muted rounded-full"></div>
                 </div>
-              )}
+              </div>
+              <div className="space-y-2">
+                <div className="h-3 w-24 bg-muted rounded"></div>
+                <div className="h-12 bg-muted rounded-lg"></div>
+              </div>
+              <div className="h-32 bg-muted/30 rounded-xl"></div>
+            </div>
+          ) : (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
 
-              <div className="space-y-3">
-                {participants.map((participant, index) => (
-                  <div key={participant.userId} className="flex items-center justify-between group">
-                    <div className="flex items-center gap-3">
+              {/* 2. Paid By Avatars */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t('paidBy')}</label>
+                <div className="flex flex-wrap gap-3">
+                  {selectedGroup.members.map((member, idx) => (
+                    <button
+                      key={member.userId}
+                      type="button"
+                      onClick={() => setPaidByUserId(member.userId)}
+                      className={cn(
+                        "flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border transition-all",
+                        paidByUserId === member.userId
+                          ? "bg-primary text-primary-foreground border-primary shadow-md"
+                          : "bg-background border-border hover:bg-muted"
+                      )}
+                    >
                       <div className={cn(
                         "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold",
-                        AVATAR_COLORS[index % AVATAR_COLORS.length]
+                        paidByUserId === member.userId ? "bg-white text-primary" : AVATAR_COLORS[idx % AVATAR_COLORS.length]
                       )}>
-                        {getInitials(participant.userName)}
+                        {getInitials(member.user.name)}
                       </div>
-                      <span className="text-sm font-medium">{participant.userName}</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      {/* Detail Inputs (Percentage/Shares) */}
-                      {splitType === 'PERCENTAGE' && (
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="number"
-                            value={participant.percentage || 0}
-                            onChange={(e) => handleParticipantChange(participant.userId, 'percentage', parseFloat(e.target.value) || 0)}
-                            className="w-14 text-right bg-transparent border-b border-muted-foreground/30 focus:border-primary outline-none text-sm p-0"
-                          />
-                          <span className="text-xs text-muted-foreground">%</span>
-                        </div>
-                      )}
-                      {/* Amount Display */}
-                      <span className={cn(
-                        "text-sm font-mono font-medium",
-                        participant.userId === paidByUserId ? "text-green-600 dark:text-green-400" : "text-foreground"
-                      )}>
-                        {formatCurrency(participant.amountOwed, currency)}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                      <span className="text-sm font-medium">{member.user.name.split(' ')[0]}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              {/* Total Mismatch Warning */}
-              {Math.abs(participants.reduce((sum, p) => sum + p.amountOwed, 0) - totalAmount) > 0.05 && (
-                <div className="mt-3 pt-2 border-t border-border flex justify-between text-xs text-destructive">
-                  <span>{t('totalSplit')}</span>
-                  <span>{formatCurrency(participants.reduce((sum, p) => sum + p.amountOwed, 0), currency)} / {formatCurrency(totalAmount, currency)}</span>
+              {/* 3. Split Type Segmented Control */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t('splitType')}</label>
+                <div className="flex p-1 bg-muted rounded-lg overflow-x-auto">
+                  {SPLIT_TYPE_OPTIONS.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => setSplitType(option.value)}
+                      className={cn(
+                        "flex-1 min-w-[80px] py-1.5 px-2 rounded-md text-xs font-medium transition-all flex flex-col items-center gap-1",
+                        splitType === option.value
+                          ? "bg-background text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={option.icon} /></svg>
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 4. Participants List & Summary */}
+              {participants.length > 0 && (
+                <div className="bg-muted/30 rounded-xl p-4 border border-border/50">
+                  {/* Summary Banner */}
+                  {summary && (
+                    <div className={cn(
+                      "mb-4 p-3 rounded-lg text-sm font-medium flex items-center gap-2",
+                      summary.type === 'positive' ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
+                    )}>
+                      {summary.type === 'positive' ? (
+                        <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                      ) : (
+                        <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" /></svg>
+                      )}
+                      {summary.text}
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    {participants.map((participant, index) => (
+                      <div key={participant.userId} className="flex items-center justify-between group">
+                        <div className="flex items-center gap-3">
+                          <div className={cn(
+                            "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold",
+                            AVATAR_COLORS[index % AVATAR_COLORS.length]
+                          )}>
+                            {getInitials(participant.userName)}
+                          </div>
+                          <span className="text-sm font-medium">{participant.userName}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          {/* Detail Inputs (Percentage/Shares/Exact) */}
+                          {splitType === 'PERCENTAGE' && (
+                            <div className="flex items-center gap-1">
+                              <input
+                                type="number"
+                                value={participant.percentage || 0}
+                                onChange={(e) => handleParticipantChange(participant.userId, 'percentage', parseFloat(e.target.value) || 0)}
+                                className="w-16 text-right rounded-md border border-input bg-background px-2 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                              />
+                              <span className="text-xs text-muted-foreground">%</span>
+                            </div>
+                          )}
+                          {splitType === 'SHARES' && (
+                            <div className="flex items-center gap-1">
+                              <input
+                                type="number"
+                                min="1"
+                                value={participant.shares || 1}
+                                onChange={(e) => handleParticipantChange(participant.userId, 'shares', parseInt(e.target.value) || 1)}
+                                className="w-16 text-right rounded-md border border-input bg-background px-2 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                              />
+                              <span className="text-xs text-muted-foreground">parts</span>
+                            </div>
+                          )}
+                          {splitType === 'EXACT' && (
+                            <div className="flex items-center gap-1">
+                              <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={participant.amountOwed || 0}
+                                onChange={(e) => handleParticipantChange(participant.userId, 'amountOwed', parseFloat(e.target.value) || 0)}
+                                className="w-20 text-right rounded-md border border-input bg-background px-2 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                              />
+                            </div>
+                          )}
+                          {/* Amount Display */}
+                          <span className={cn(
+                            "text-sm font-mono font-medium",
+                            participant.userId === paidByUserId ? "text-green-600 dark:text-green-400" : "text-foreground"
+                          )}>
+                            {formatCurrency(participant.amountOwed, currency)}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Total Mismatch Warning */}
+                  {Math.abs(participants.reduce((sum, p) => sum + p.amountOwed, 0) - totalAmount) > 0.05 && (
+                    <div className="mt-3 pt-2 border-t border-border flex justify-between text-xs text-destructive">
+                      <span>{t('totalSplit')}</span>
+                      <span>{formatCurrency(participants.reduce((sum, p) => sum + p.amountOwed, 0), currency)} / {formatCurrency(totalAmount, currency)}</span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
           )}
-        </div>
+        </>
       )}
 
       {error && <p className="text-destructive text-sm" role="alert">{error}</p>}
