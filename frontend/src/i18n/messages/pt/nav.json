@@ -16,5 +16,12 @@
   "settingsDescription": "Configurações do aplicativo",
   "toggleMenu": "Alternar menu",
   "toggleSidebar": "Recolher/Expandir barra lateral",
-  "version": "Versão 1.0.0"
+  "version": "Versão 1.0.0",
+  "moreMenu": {
+    "title": "Mais",
+    "loans": "Empréstimos",
+    "groups": "Grupos",
+    "import": "Importar",
+    "annual": "Vista anual"
+  }
 }

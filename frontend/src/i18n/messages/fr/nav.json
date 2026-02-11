@@ -16,5 +16,12 @@
   "settingsDescription": "Paramètres de l'application",
   "toggleMenu": "Basculer le menu",
   "toggleSidebar": "Réduire/Étendre la barre latérale",
-  "version": "Version 1.0.0"
+  "version": "Version 1.0.0",
+  "moreMenu": {
+    "title": "Plus",
+    "loans": "Prêts",
+    "groups": "Groupes",
+    "import": "Importer",
+    "annual": "Vue annuelle"
+  }
 }
