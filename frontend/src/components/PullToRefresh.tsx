@@ -28,7 +28,7 @@ export function PullToRefresh({ onRefresh, children }: PullToRefreshProps) {
             maxPullDownDistance={120}
             resistance={2}
         >
-            <div>{children}</div>
+            <>{children}</>
         </PullToRefreshComponent>
     )
 }
