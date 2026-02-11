@@ -260,16 +260,24 @@ export function AccountCard({ account, variant = 'grid', onClick, monthlyMetrics
                     {/* Footer: Balance */}
                     <div>
                         <p className="text-xs font-medium text-white/80 mb-0.5 uppercase tracking-wider">
-                            {isCredit ? 'Saldo Actual' : 'Saldo Disponible'}
+                            {isCredit ? 'Utilizado' : 'Saldo Disponible'}
                         </p>
                         <div className="flex items-baseline gap-2">
                             <span className="text-3xl font-bold tracking-tight text-white drop-shadow-md">
-                                {formatCurrency(Number(account.balance), account.currency as Currency)}
+                                {isCredit
+                                    ? formatCurrency(used, account.currency as Currency)
+                                    : formatCurrency(Number(account.balance), account.currency as Currency)
+                                }
                             </span>
                             <span className="text-xs font-bold bg-white/20 px-2 py-0.5 rounded text-white/90 backdrop-blur-md">
                                 {account.currency}
                             </span>
                         </div>
+                        {isCredit && (
+                            <p className="text-xs text-white/70 mt-1 font-medium">
+                                Disponible: {formatCurrency(available, account.currency as Currency)}
+                            </p>
+                        )}
                     </div>
                 </div>
             </motion.div>
