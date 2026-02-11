@@ -57,19 +57,19 @@ export function AnnualSummaryCards({ totals, currency }: AnnualSummaryCardsProps
     ];
 
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
             {cards.map((card, index) => (
                 <Card key={index}>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 sm:p-4 pb-1 sm:pb-2">
+                        <CardTitle className="text-[10px] xs:text-xs sm:text-sm font-medium text-muted-foreground uppercase tracking-wider">
                             {card.title}
                         </CardTitle>
-                        <div className={`p-2 rounded-lg ${card.bgClass}`}>
-                            <card.icon className={`h-4 w-4 ${card.iconClass}`} />
+                        <div className={`p-1.5 sm:p-2 rounded-lg ${card.bgClass}`}>
+                            <card.icon className={`h-3 w-3 sm:h-4 sm:w-4 ${card.iconClass}`} />
                         </div>
                     </CardHeader>
-                    <CardContent>
-                        <div className={`text-2xl font-bold ${card.color}`}>
+                    <CardContent className="p-3 sm:p-4 pt-0">
+                        <div className={`text-base xs:text-lg sm:text-2xl font-bold ${card.color} truncate`}>
                             {card.isPercentage
                                 ? `${card.value.toFixed(1)}%`
                                 : formatCurrency(card.value, currency)

@@ -98,22 +98,22 @@ export function AnnualView() {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold tracking-tight">Vista Anual</h2>
-                <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Vista Anual</h2>
+                <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-4 w-full sm:w-auto">
                     <button
                         onClick={() => setIsComparisonOpen(true)}
-                        className="text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80 px-4 py-2 rounded-md transition-colors"
+                        className="text-xs sm:text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80 px-3 sm:px-4 py-2 rounded-md transition-colors flex-1 sm:flex-none whitespace-nowrap"
                     >
                         Comparar años
                     </button>
-                    <div className="flex items-center gap-4 bg-card p-2 rounded-lg border shadow-sm">
-                        <button onClick={prevYear} className="p-2 hover:bg-muted rounded-full">
-                            <ChevronLeft className="w-5 h-5" />
+                    <div className="flex items-center gap-2 sm:gap-4 bg-card p-1 sm:p-2 rounded-lg border shadow-sm">
+                        <button onClick={prevYear} className="p-1 sm:p-2 hover:bg-muted rounded-full">
+                            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
-                        <span className="font-bold text-xl min-w-[3rem] text-center">{year}</span>
-                        <button onClick={nextYear} className="p-2 hover:bg-muted rounded-full">
-                            <ChevronRight className="w-5 h-5" />
+                        <span className="font-bold text-lg sm:text-xl min-w-[2.5rem] sm:min-w-[3rem] text-center">{year}</span>
+                        <button onClick={nextYear} className="p-1 sm:p-2 hover:bg-muted rounded-full">
+                            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
                     </div>
                 </div>

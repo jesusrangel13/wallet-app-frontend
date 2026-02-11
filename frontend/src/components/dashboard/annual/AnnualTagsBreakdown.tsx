@@ -53,8 +53,8 @@ export function AnnualTagsBreakdown({ tags, currency, totalExpense }: AnnualTags
     return (
         <Card className="h-full flex flex-col">
             <CardHeader className="flex-none">
-                <CardTitle className="flex items-center gap-2">
-                    <Tag className="w-5 h-5" />
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                    <Tag className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                     Top Etiquetas
                 </CardTitle>
             </CardHeader>
@@ -70,13 +70,13 @@ export function AnnualTagsBreakdown({ tags, currency, totalExpense }: AnnualTags
                                         style={{ backgroundColor: tag.color || '#94a3b8' }}
                                     />
                                     <div>
-                                        <p className="text-sm font-medium leading-none">{tag.name}</p>
-                                        <p className="text-xs text-muted-foreground mt-1">{tag.count} transacciones</p>
+                                        <p className="text-xs sm:text-sm font-medium leading-none">{tag.name}</p>
+                                        <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">{tag.count} transacciones</p>
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <div className="font-bold text-sm">{formatCurrency(tag.amount, currency)}</div>
-                                    <div className="text-xs text-muted-foreground">{percent.toFixed(1)}%</div>
+                                    <div className="font-bold text-xs sm:text-sm">{formatCurrency(tag.amount, currency)}</div>
+                                    <div className="text-[10px] sm:text-xs text-muted-foreground">{percent.toFixed(1)}%</div>
                                 </div>
                             </div>
                         );
