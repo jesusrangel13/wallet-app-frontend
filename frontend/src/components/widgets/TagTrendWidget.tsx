@@ -9,7 +9,6 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
 import { useTagTrend } from '@/hooks/useDashboard'
 import { TagTrendWidgetSkeleton } from '@/components/ui/WidgetSkeletons';
-import { CustomTooltip } from '@/components/charts/CustomTooltip'
 
 interface TagTrendData {
   tagId: string
@@ -133,12 +132,6 @@ export const TagTrendWidget = ({
                 axisLine={{ stroke: '#e5e7eb' }}
                 tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
               />
-              import {CustomTooltip} from '@/components/charts/CustomTooltip'
-
-              // ... (rest of imports)
-
-              // ...
-
               <Tooltip
                 content={
                   <CustomTooltip
