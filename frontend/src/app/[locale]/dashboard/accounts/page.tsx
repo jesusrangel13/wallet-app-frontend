@@ -227,15 +227,16 @@ export default function AccountsPage() {
     <PageTransition>
       <div className="space-y-6">
         {/* Header - Always visible */}
-        <div className="flex items-center justify-between">
+        {/* Header - Always visible */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="page-title flex items-center gap-2">
-              <CreditCard className="h-8 w-8 text-blue-600" />
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-2">
+              <CreditCard className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
               {t('title')}
             </h1>
-            <p className="page-subtitle">{t('subtitle')}</p>
+            <p className="text-sm sm:text-base text-muted-foreground mt-1">{t('subtitle')}</p>
           </div>
-          <Button onClick={handleAddNew}>
+          <Button onClick={handleAddNew} className="w-full sm:w-auto">
             <Plus className="h-4 w-4 mr-2" />
             {t('new')}
           </Button>
