@@ -39,8 +39,8 @@ export function AnnualCategoryBreakdown({ categories, subcategories, currency, t
     return (
         <Card className="h-full flex flex-col">
             <CardHeader className="flex-none">
-                <CardTitle className="flex items-center gap-2">
-                    <Layers className="w-5 h-5" />
+                <CardTitle className="text-metric-label flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-primary" />
                     Gastos por categoría
                 </CardTitle>
             </CardHeader>

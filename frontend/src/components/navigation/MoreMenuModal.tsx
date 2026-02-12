@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, HandCoins, Users, Upload, Settings } from 'lucide-react'
+import { X, HandCoins, Users, Upload, Calendar } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useRouter, useParams } from 'next/navigation'
 
@@ -21,7 +21,7 @@ const moreMenuItems: MenuItem[] = [
     { icon: HandCoins, labelKey: 'loans', color: 'bg-amber-500', path: 'dashboard/loans' },
     { icon: Users, labelKey: 'groups', color: 'bg-violet-500', path: 'dashboard/groups' },
     { icon: Upload, labelKey: 'import', color: 'bg-blue-500', path: 'dashboard/import' },
-    { icon: Settings, labelKey: 'settings', color: 'bg-gray-500', path: 'dashboard/settings' },
+    { icon: Calendar, labelKey: 'annual', color: 'bg-green-500', path: 'dashboard/annual' },
 ]
 
 export function MoreMenuModal({ isOpen, onClose }: MoreMenuModalProps) {

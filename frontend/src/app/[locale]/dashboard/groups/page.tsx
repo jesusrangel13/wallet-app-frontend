@@ -20,7 +20,7 @@ import { GroupsPageSkeleton } from '@/components/ui/PageSkeletons'
 import { useGroups, useCreateGroup, useUpdateGroup, useDeleteGroup, useLeaveGroup, useAddMember, useRemoveMember, useUpdateDefaultSplit } from '@/hooks/useGroups'
 import { PageTransition } from '@/components/ui/animations'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { Users } from 'lucide-react'
+import { Users, Plus } from 'lucide-react'
 
 const GROUP_COVER_IMAGES = [
   '🏠', '👨‍👩‍👧‍👦', '🎉', '✈️', '🏖️', '🎓', '💼', '🎮', '🍕', '🎬',
@@ -488,18 +488,17 @@ export default function GroupsPage() {
     <PageTransition>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-center">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="page-title flex items-center gap-2">
-              <Users className="h-8 w-8 text-indigo-600" />
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-2">
+              <Users className="h-6 w-6 sm:h-8 sm:w-8 text-indigo-600" />
               {t('title')}
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">{t('subtitle')}</p>
+            <p className="text-sm sm:text-base text-muted-foreground mt-1">{t('subtitle')}</p>
           </div>
-          <Button onClick={handleAddNew}>
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
+          <Button onClick={handleAddNew} className="w-full sm:w-auto">
+            <Plus className="h-4 w-4 mr-2" />
             {t('new')}
           </Button>
         </div>

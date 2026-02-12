@@ -16,5 +16,12 @@
   "settingsDescription": "Anwendungseinstellungen",
   "toggleMenu": "Menü umschalten",
   "toggleSidebar": "Seitenleiste ein-/ausblenden",
-  "version": "Version 1.0.0"
+  "version": "Version 1.0.0",
+  "moreMenu": {
+    "title": "Mehr",
+    "loans": "Kredite",
+    "groups": "Gruppen",
+    "import": "Importieren",
+    "annual": "Jahresansicht"
+  }
 }

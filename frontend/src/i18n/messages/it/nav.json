@@ -16,5 +16,12 @@
   "settingsDescription": "Impostazioni dell'applicazione",
   "toggleMenu": "Attiva/Disattiva menu",
   "toggleSidebar": "Comprimi/Espandi barra laterale",
-  "version": "Versione 1.0.0"
+  "version": "Versione 1.0.0",
+  "moreMenu": {
+    "title": "Altro",
+    "loans": "Prestiti",
+    "groups": "Gruppi",
+    "import": "Importa",
+    "annual": "Vista annuale"
+  }
 }
