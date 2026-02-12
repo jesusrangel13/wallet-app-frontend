@@ -173,15 +173,17 @@ const DashboardContent = () => {
       <PullToRefresh onRefresh={handleRefresh}>
         <div className="space-y-6">
           {/* Header with Month Selector */}
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="page-title">{t('title')}</h1>
-              <p className="page-subtitle">{t('subtitle')}</p>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('title')}</h1>
+              <p className="text-sm sm:text-base text-muted-foreground">{t('subtitle')}</p>
             </div>
-            <DashboardMonthSelector
-              currentDate={new Date(year, month)}
-              onDateChange={(date) => setMonthYear(date.getMonth(), date.getFullYear())}
-            />
+            <div className="w-full sm:w-auto">
+              <DashboardMonthSelector
+                currentDate={new Date(year, month)}
+                onDateChange={(date) => setMonthYear(date.getMonth(), date.getFullYear())}
+              />
+            </div>
           </div>
 
           {/* Show skeletons for widgets when changing months */}
