@@ -24,7 +24,7 @@ export function NetWorthChart({ data, currency }: NetWorthChartProps) {
     return (
         <Card className="h-full flex flex-col">
             <CardHeader className="flex-none p-4 pb-2">
-                <CardTitle className="text-base sm:text-lg">Evolución del Patrimonio (Net Worth)</CardTitle>
+                <CardTitle className="text-metric-label">Evolución del Patrimonio (Net Worth)</CardTitle>
                 <p className="hidden sm:block text-xs sm:text-sm text-muted-foreground">Crecimiento acumulado de ahorros en el año</p>
             </CardHeader>
             <CardContent className="flex-1 min-h-0">

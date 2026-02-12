@@ -30,7 +30,7 @@ export function AnnualTrendChart({ data, currency }: AnnualTrendChartProps) {
     return (
         <Card className="col-span-4">
             <CardHeader className="p-4 pb-2">
-                <CardTitle className="text-base sm:text-lg">Tendencia Mensual</CardTitle>
+                <CardTitle className="text-metric-label">Tendencia Mensual</CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
                 <div className="h-[350px]">

@@ -53,8 +53,8 @@ export function AnnualTagsBreakdown({ tags, currency, totalExpense }: AnnualTags
     return (
         <Card className="h-full flex flex-col">
             <CardHeader className="flex-none">
-                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                    <Tag className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                <CardTitle className="text-metric-label flex items-center gap-2">
+                    <Tag className="w-4 h-4 text-primary" />
                     Top Etiquetas
                 </CardTitle>
             </CardHeader>
