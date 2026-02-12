@@ -25,7 +25,7 @@ export function ExpenseCompositionChart({ data, currency }: ExpenseCompositionCh
         <Card className="flex flex-col h-full">
             <CardHeader className="flex-none p-4 pb-2">
                 <CardTitle className="text-base sm:text-lg">Fijos vs Variables</CardTitle>
-                <p className="text-xs sm:text-sm text-muted-foreground">Distribución del gasto anual (Necesidades vs Deseos)</p>
+                <p className="hidden sm:block text-xs sm:text-sm text-muted-foreground">Distribución del gasto anual (Necesidades vs Deseos)</p>
             </CardHeader>
             <CardContent className="flex-1 min-h-0">
                 <div className="flex flex-col lg:flex-row items-center h-full gap-4">
