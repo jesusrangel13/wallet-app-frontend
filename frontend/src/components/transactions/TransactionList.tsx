@@ -26,27 +26,69 @@ interface TransactionListProps {
 export function TransactionList({
     transactions,
     showTimeline = true,
-    onEdit
+    onEdit,
 }: TransactionListProps) {
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+
+    const toggleSelection = (id: string) => {
+        const newSet = new Set(selectedIds)
+        if (newSet.has(id)) {
+            newSet.delete(id)
+        } else {
+            newSet.add(id)
+        }
+        setSelectedIds(newSet)
+    }
+
+
+
     return (
-        <div className="divide-y divide-gray-50">
-            {transactions.map((transaction, index) => (
-                <div key={transaction.id} className="flex">
-                    {showTimeline && (
-                        <TimelineConnector
-                            type={transaction.type}
-                            isFirst={index === 0}
-                            isLast={index === transactions.length - 1}
-                        />
-                    )}
-                    <div className="flex-1">
-                        <TransactionCard
-                            {...transaction}
-                            onEdit={() => onEdit?.(transaction.id)}
-                        />
+        <div className={`
+            relative
+            space-y-0
+            pl-4 border-l border-white/10
+        `}>
+            {/* Continuous Line for Morphing Variant (Absolute) - Removed */}
+
+            {transactions.map((transaction, index) => {
+                const isSelected = selectedIds.has(transaction.id)
+
+                return (
+                    <div
+                        key={transaction.id}
+                        className={`
+                            flex group/item isolate relative
+                            pl-4
+                        `}
+                    >
+                        {/* Glass Track Highlight Background */}
+                        {isSelected && (
+                            <div className="absolute inset-0 bg-primary/5 border-l-2 border-primary z-[-1]" />
+                        )}
+
+                        {showTimeline && (
+                            <TimelineConnector
+                                type={transaction.type}
+                                isFirst={index === 0}
+                                isLast={index === transactions.length - 1}
+                                isSelected={isSelected}
+                                onToggle={() => toggleSelection(transaction.id)}
+                            />
+                        )}
+
+                        <div className="flex-1 min-w-0">
+                            <TransactionCard
+                                {...transaction}
+                                isSelected={isSelected}
+                                onToggleSelection={() => toggleSelection(transaction.id)}
+                                onEdit={() => onEdit?.(transaction.id)}
+                            />
+                        </div>
                     </div>
-                </div>
-            ))}
+                )
+            })}
         </div>
     )
 }
+
+import { useState } from 'react'

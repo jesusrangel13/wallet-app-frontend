@@ -27,8 +27,8 @@ import { TransactionListSkeleton } from '@/components/ui/TransactionListSkeleton
 import { PageTransition } from '@/components/ui/animations'
 import { TrendingUp } from 'lucide-react'
 import { TransactionCard } from '@/components/transactions/TransactionCard'
-import { TimelineConnector, TimelineVariant } from '@/components/transactions/TimelineConnector'
-import { TimelineStyleSelector } from '@/components/transactions/TimelineStyleSelector'
+import { TimelineConnector } from '@/components/transactions/TimelineConnector'
+
 import { MonthSelectorVariants, SelectorVariant } from '@/components/transactions/MonthSelectorVariants'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { PullToRefresh } from '@/components/PullToRefresh'
@@ -788,7 +788,11 @@ export default function TransactionsPage() {
 
           {/* Transactions List - Grouped by Date */}
           <PullToRefresh onRefresh={handleRefresh}>
-            <div className={`space-y-6 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} h-[calc(100vh-200px)] overflow-auto`}>
+            <div className={`
+                ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} 
+                h-[calc(100vh-200px)] overflow-auto
+                space-y-0
+            `}>
               {/* Show partial skeleton when refreshing with existing data */}
               {isRefreshingList && transactions.length > 0 ? (
                 <TransactionListSkeleton itemCount={5} />
@@ -833,38 +837,29 @@ export default function TransactionsPage() {
                     const transaction = flatTransactions[index];
                     if (!transaction) return null;
 
-                    // Determine if first/last in group by comparing dates with neighbors
-                    const currentDate = new Date(transaction.date).toDateString()
-                    const prevDate = index > 0 ? new Date(flatTransactions[index - 1].date).toDateString() : null
-                    const nextDate = index < flatTransactions.length - 1 ? new Date(flatTransactions[index + 1].date).toDateString() : null
+                    const isSelected = selectedTransactionIds.has(transaction.id)
 
-                    // In a grouped list sorted by date desc, items within a day group share the same date string
-                    // But we need to handle the case where "first in group" means first item rendered for that date header
-                    const isFirst = currentDate !== prevDate
-                    const isLast = currentDate !== nextDate
+                    // Glass variant (compact, no margins, border-b)
+                    const itemClasses = `flex items-stretch transition-all duration-300 group relative h-[80px] border-b border-gray-100 dark:border-gray-800 ${isSelected ? 'bg-primary/5' : 'hover:bg-gray-50/50 dark:hover:bg-gray-800/50'}`
 
                     return (
-                      <div className={`flex items-stretch transition-colors group ${selectedTransactionIds.has(transaction.id) ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-card hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
+                      <div className={itemClasses}>
+                        {/* Glass Track Highlight Background */}
+                        {isSelected && (
+                          <div className="absolute inset-0 bg-primary/5 border-l-2 border-primary z-[-1]" />
+                        )}
 
-                        {/* Selection Checkbox */}
-                        <div className={`flex items-center pl-4 pr-2 transition-opacity duration-200 ${selectedTransactionIds.size > 0 ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-                          <input
-                            type="checkbox"
-                            checked={selectedTransactionIds.has(transaction.id)}
-                            onChange={() => handleSelectTransaction(transaction.id)}
-                            className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary cursor-pointer bg-white dark:bg-gray-800"
-                          />
-                        </div>
-
-                        {/* Timeline Line & Dot */}
+                        {/* Timeline Line & Dot (Acts as Checkbox) */}
                         <TimelineConnector
                           type={transaction.type}
-                          isFirst={false} // Force continuous line
-                          isLast={false}  // Force continuous line
+                          isFirst={false}
+                          isLast={false}
+                          isSelected={isSelected}
+                          onToggle={() => handleSelectTransaction(transaction.id)}
                         />
 
                         {/* Transaction Content */}
-                        <div className="flex-1 min-w-0 py-1 pr-4">
+                        <div className="flex-1 min-w-0 pr-4">
                           <TransactionCard
                             id={transaction.id}
                             type={transaction.type}
@@ -878,6 +873,9 @@ export default function TransactionsPage() {
                             date={new Date(transaction.date)}
                             isShared={!!transaction.sharedExpenseId}
                             onEdit={() => handleEdit(transaction)}
+                            isSelected={isSelected}
+                            onToggleSelection={() => handleSelectTransaction(transaction.id)}
+                            className="pl-0"
                           />
                         </div>
                       </div>
@@ -959,6 +957,7 @@ export default function TransactionsPage() {
           </Modal>
         </div>
       </PageTransition >
+
     </>
   )
 }

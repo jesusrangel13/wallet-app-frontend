@@ -1,12 +1,13 @@
 'use client'
 
-export type TimelineVariant = 'classic' | 'minimal' | 'elegant' | 'neon'
+import { Check } from 'lucide-react'
 
 interface TimelineConnectorProps {
     isFirst?: boolean
     isLast?: boolean
     type: 'EXPENSE' | 'INCOME' | 'TRANSFER'
-    variant?: TimelineVariant
+    isSelected?: boolean
+    onToggle?: () => void
 }
 
 const dotColors = {
@@ -27,72 +28,53 @@ const neonShadows = {
     TRANSFER: 'shadow-[0_0_10px_rgba(96,165,250,0.7)]',
 }
 
-/* 
-  Styles definition:
-  - Classic: Current style (Gray solid line, Color filled dot, White/Dark ring)
-  - Minimal: Dashed line, Hollow ring dot (Border color, Transparent center)
-  - Elegant: Thin solid line (1px), Small dot (w-2 h-2), darker line
-  - Neon: Solid line, Glowing dot, bright colors
-*/
-
-export function TimelineConnector({ isFirst, isLast, type, variant = 'classic' }: TimelineConnectorProps) {
-    // Line Styles
+// Line Styles (Glass - Continuous solid line)
+export function TimelineConnector({ isFirst, isLast, type, isSelected, onToggle }: TimelineConnectorProps) {
     const getLineStyles = () => {
-        const base = "w-0.5 flex-1"
         const transparent = "bg-transparent"
-
-        switch (variant) {
-            case 'minimal':
-                return {
-                    top: !isFirst ? "w-0.5 flex-1 border-l-2 border-dashed border-gray-300 dark:border-gray-600 ml-[1px]" : transparent,
-                    bottom: !isLast ? "w-0.5 flex-1 border-l-2 border-dashed border-gray-300 dark:border-gray-600 ml-[1px]" : transparent
-                }
-            case 'elegant':
-                return {
-                    top: !isFirst ? "w-[1px] flex-1 bg-gray-300 dark:bg-gray-600" : transparent,
-                    bottom: !isLast ? "w-[1px] flex-1 bg-gray-300 dark:bg-gray-600" : transparent
-                }
-            case 'neon':
-                return {
-                    top: !isFirst ? "w-0.5 flex-1 bg-gray-300 dark:bg-gray-600/50" : transparent,
-                    bottom: !isLast ? "w-0.5 flex-1 bg-gray-300 dark:bg-gray-600/50" : transparent
-                }
-            default: // Classic
-                return {
-                    top: !isFirst ? "w-0.5 flex-1 bg-gray-200 dark:bg-gray-700" : transparent,
-                    bottom: !isLast ? "w-0.5 flex-1 bg-gray-200 dark:bg-gray-700" : transparent
-                }
+        return {
+            top: !isFirst ? "w-0.5 flex-1 bg-gray-200 dark:bg-gray-700" : transparent,
+            bottom: !isLast ? "w-0.5 flex-1 bg-gray-200 dark:bg-gray-700" : transparent
         }
     }
 
-    // Dot Styles
+    // Dot Styles (Glass + Morphing)
     const getDotStyles = () => {
-        const base = "rounded-full z-10 my-1 transition-all duration-300"
+        const base = "rounded-full z-10 transition-all duration-300 flex items-center justify-center p-0.5"
 
-        switch (variant) {
-            case 'minimal':
-                return `${base} w-3 h-3 bg-white dark:bg-gray-900 border-2 ${ringColors[type].replace('ring-', 'border-')}`
-            case 'elegant':
-                return `${base} w-2 h-2 ${dotColors[type]} ring-2 ring-white dark:ring-gray-900`
-            case 'neon':
-                return `${base} w-3 h-3 ${dotColors[type]} ring-0 ${neonShadows[type]}`
-            default: // Classic
-                return `${base} w-3 h-3 ${dotColors[type]} ring-4 ring-white dark:ring-gray-900`
-        }
+        return `${base} ${isSelected
+            ? 'w-5 h-5 bg-primary text-primary-foreground scale-110 ring-0'
+            : 'w-3 h-3 ' + dotColors[type] + ' ring-0 ' + neonShadows[type] + ' ring-2 ring-white dark:ring-gray-950 hover:scale-125 cursor-pointer'
+            }`
     }
 
     const lineStyles = getLineStyles()
 
     return (
-        <div className="flex flex-col items-center w-6 mr-2 self-stretch">
-            {/* Línea superior */}
+        <div className="flex flex-col items-center w-6 mr-2 self-stretch relative">
+            {/* Upper Line */}
             <div className={lineStyles.top} />
 
-            {/* Punto */}
-            <div className={getDotStyles()} />
+            {/* Dot / Checkbox */}
+            <div
+                className={getDotStyles()}
+                onClick={(e) => {
+                    e.stopPropagation()
+                    onToggle?.()
+                }}
+            >
+                {isSelected && (
+                    <Check className="w-3 h-3" strokeWidth={3} />
+                )}
+            </div>
 
-            {/* Línea inferior */}
+            {/* Lower Line */}
             <div className={lineStyles.bottom} />
-        </div>
+
+            {/* Bridge Line for Continuous Look */}
+            {!isLast && (
+                <div className="absolute -bottom-2 left-1/2 w-0.5 h-4 -translate-x-1/2 bg-gray-200 dark:bg-gray-700 z-0" />
+            )}
+        </div >
     )
 }
