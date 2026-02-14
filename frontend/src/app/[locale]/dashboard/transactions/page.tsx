@@ -790,7 +790,6 @@ export default function TransactionsPage() {
           <PullToRefresh onRefresh={handleRefresh}>
             <div className={`
                 ${selectedTransactionIds.size > 0 ? 'pb-32' : ''} 
-                h-[calc(100vh-200px)] overflow-auto
                 space-y-0
             `}>
               {/* Show partial skeleton when refreshing with existing data */}
@@ -820,6 +819,7 @@ export default function TransactionsPage() {
                 })()
               ) : (
                 <GroupedVirtuoso
+                  useWindowScroll
                   ref={virtuosoRef}
                   groupCounts={groupCounts}
                   groupContent={(index) => {
