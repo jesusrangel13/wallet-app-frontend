@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { HandCoins } from 'lucide-react'
 import { loanAPI } from '@/lib/api'
 import { LoansSummary } from '@/types'
@@ -55,35 +55,35 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
 
   if (error || !summary) {
     return (
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-metric-label flex items-center gap-2">
+      <ClairCard>
+        <div className="px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+          <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
             <HandCoins className="h-4 w-4 text-orange-600 dark:text-orange-500" />
             {t('label')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{t('errorLoading')}</p>
-        </CardContent>
-      </Card>
+          </h3>
+        </div>
+        <div className="p-6">
+          <p className="text-sm text-slate-500 dark:text-slate-400">{t('errorLoading')}</p>
+        </div>
+      </ClairCard>
     )
   }
 
   return (
-    <Card className="relative group">
-      <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-metric-label flex items-center gap-2">
+    <ClairCard className="relative group">
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+        <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
           <HandCoins className="h-4 w-4 text-orange-600 dark:text-orange-500" />
           {t('label')}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </h3>
+      </div>
+      <div className="p-6">
         {summary.totalLoans === 0 ? (
           <div className="space-y-2">
-            <p className="text-sm text-gray-500 dark:text-gray-400">{t('noLoansYet')}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{t('noLoansYet')}</p>
             <Link
               href="/dashboard/loans"
-              className="block text-sm text-primary hover:text-primary-hover underline"
+              className="block text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 underline"
             >
               {t('createLoan')} →
             </Link>
@@ -93,7 +93,7 @@ export const LoansWidget = ({ gridWidth = 1, gridHeight = 1 }: LoansWidgetProps)
             <SummaryView summary={summary} fontSizes={fontSizes} t={t} />
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }

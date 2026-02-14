@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { Wallet, TrendingUp, TrendingDown } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
@@ -32,9 +32,10 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
   const [showForecast, setShowForecast] = useState(false)
 
   // Calculate responsive sizes
-  // We need to subtract the height of the stats section (approx 100-130px) to avoid scrolling
-  const statsHeight = dimensions.isSmall ? 90 : 130
-  const chartHeight = calculateChartHeight(dimensions.contentHeight - statsHeight)
+  // Stats section height is approx 90-100px.
+  // Using calculation ensures the chart fills the remaining space allocated by the grid system.
+  // This matches CashFlowWidget behavior.
+  const chartHeight = Math.max(dimensions.contentHeight - 90, 100)
 
   const spacingClass = dimensions.isSmall ? 'gap-1' : dimensions.isLarge ? 'gap-4' : 'gap-2'
   const labelFontSize = dimensions.isSmall ? 'text-[10px]' : 'text-xs'
@@ -118,43 +119,43 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-metric-label flex items-center gap-2">
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+        <div className="flex items-center justify-between w-full">
+          <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
             <Wallet className="h-4 w-4" />
             {t('title') || 'Balance Trend'}
-          </CardTitle>
+          </h3>
           <button
             onClick={() => setShowForecast(!showForecast)}
             className={`text-[10px] px-2 py-1 rounded-full border transition-colors ${showForecast
-              ? 'bg-primary/10 border-primary text-primary'
-              : 'bg-transparent border-gray-200 dark:border-gray-700 text-muted-foreground hover:bg-gray-50 dark:hover:bg-gray-800'
+              ? 'bg-indigo-500/10 border-indigo-500 text-indigo-600 dark:text-indigo-400'
+              : 'bg-transparent border-slate-200 dark:border-white/20 text-slate-500 dark:text-slate-400 hover:bg-white/20 dark:hover:bg-white/10'
               }`}
           >
             {showForecast ? 'Hide Forecast' : 'Show Forecast'}
           </button>
         </div>
-      </CardHeader>
-      <CardContent>
+      </div>
+      <div className="p-6">
         {history && history.length > 0 ? (
           <div className={`flex flex-col items-center justify-center ${spacingClass}`}>
             <div className="text-center w-full">
-              <p className={`${labelFontSize} text-muted-foreground ${dimensions.isSmall ? 'mb-0.5' : 'mb-1.5'}`}>{t('currentBalance')}</p>
-              <p className={`${valueFontSize} font-bold text-foreground ${dimensions.isSmall ? 'mb-1' : 'mb-2'} leading-tight`}>
+              <p className={`${labelFontSize} text-slate-500 dark:text-slate-400 ${dimensions.isSmall ? 'mb-0.5' : 'mb-1.5'}`}>{t('currentBalance')}</p>
+              <p className={`${valueFontSize} font-bold text-slate-800 dark:text-white ${dimensions.isSmall ? 'mb-1' : 'mb-2'} leading-tight`}>
                 <AnimatedCurrency amount={currentBalance} currency="CLP" />
               </p>
-              <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full ${isPositive ? 'bg-income-subtle text-income' : 'bg-expense-subtle text-expense'}`}>
+              <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full ${isPositive ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'}`}>
                 {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                 <span className={`${badgeFontSize} font-semibold`}>
                   <AnimatedCounter value={changePercentage} decimals={1} />% {t('sinceStart')}
                 </span>
               </div>
               {/* Compact info line */}
-              <div className="flex items-center justify-center gap-3 mt-2 text-xs text-muted-foreground">
-                <span>{t('initial')}: <span className="font-semibold"><AnimatedCurrency amount={initialBalance} currency="CLP" /></span></span>
-                <span className="text-muted-foreground/50">|</span>
-                <span className={isPositive ? 'text-income' : 'text-expense'}>
+              <div className="flex items-center justify-center gap-3 mt-2 text-xs text-slate-500 dark:text-slate-400">
+                <span>{t('initial')}: <span className="font-semibold text-slate-700 dark:text-slate-300"><AnimatedCurrency amount={initialBalance} currency="CLP" /></span></span>
+                <span className="text-slate-300 dark:text-slate-600">|</span>
+                <span className={isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}>
                   {t('change')}: <span className="font-semibold">{isPositive ? '+' : ''}<AnimatedCurrency amount={change} currency="CLP" /></span>
                 </span>
               </div>
@@ -172,11 +173,11 @@ export const BalanceTrendWidget = ({ gridWidth = 2, gridHeight = 2 }: BalanceTre
             />
           </div>
         ) : (
-          <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
+          <div className="flex items-center justify-center h-full text-slate-500 dark:text-slate-400">
             {t('noBalanceHistory')}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }

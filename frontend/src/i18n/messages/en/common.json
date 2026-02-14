@@ -1,8 +1,8 @@
 {
   "app": {
-    "title": "Finance App - Manage Your Money",
+    "title": "Clair - Your Intelligent Financial Command Center",
     "description": "Complete financial management solution with shared expenses",
-    "name": "FinanceApp"
+    "name": "Clair"
   },
   "loading": "Loading...",
   "error": "Error",

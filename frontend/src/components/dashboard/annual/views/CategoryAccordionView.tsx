@@ -48,31 +48,20 @@ export function CategoryAccordionView({ categories, subcategoriesByParent, curre
                 const hasSubcategories = catSubcategories.length > 0;
 
                 return (
-                    <div key={i} className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden transition-all">
+                    <div key={i} className="overflow-hidden transition-all rounded-2xl">
                         {/* Category Header (Clickable) */}
                         <div
                             onClick={() => hasSubcategories && toggleCategory(cat.name)}
                             className={cn(
-                                "flex flex-col p-4 cursor-pointer hover:bg-muted/50 transition-colors relative",
-                                isExpanded && "bg-muted/30"
+                                "item-glow p-3 cursor-pointer relative flex-col items-stretch gap-2",
+                                isExpanded && "bg-white/60 dark:bg-white/10 ring-2 ring-primary/20",
+                                !hasSubcategories && "cursor-default"
                             )}
                         >
-                            {/* Progress Background */}
-                            <div
-                                className="absolute bottom-0 left-0 h-1 bg-primary/20 w-full"
-                            />
-                            <div
-                                className="absolute bottom-0 left-0 h-1 bg-primary transition-all duration-500"
-                                style={{
-                                    width: `${catPercent}%`,
-                                    backgroundColor: cat.color || undefined
-                                }}
-                            />
-
-                            <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-3">
+                            <div className="flex items-center justify-between w-full">
+                                <div className="flex items-center gap-2">
                                     <div className={cn(
-                                        "p-2 rounded-full bg-secondary transition-transform duration-200",
+                                        "w-7 h-7 flex items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 transition-transform duration-200 flex-shrink-0",
                                         isExpanded && "rotate-90"
                                     )}>
                                         {hasSubcategories ? (
@@ -81,13 +70,24 @@ export function CategoryAccordionView({ categories, subcategoriesByParent, curre
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {cat.icon && <span className="text-xl">{cat.icon}</span>}
-                                        <span className="font-semibold text-base">{cat.name}</span>
+                                        <span className="font-semibold text-sm text-slate-800 dark:text-white">{cat.name}</span>
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <div className="font-bold text-base">{formatCurrency(cat.amount, currency)}</div>
-                                    <div className="text-xs text-muted-foreground">{catPercent.toFixed(1)}% del total</div>
+                                    <div className="font-bold text-base text-slate-800 dark:text-white">{formatCurrency(cat.amount, currency)}</div>
+                                    <div className="text-xs text-slate-500 dark:text-slate-400">{catPercent.toFixed(1)}% del total</div>
                                 </div>
+                            </div>
+
+                            {/* Progress Bar within card */}
+                            <div className="h-1.5 w-full bg-slate-100 dark:bg-black/20 rounded-full overflow-hidden mt-1">
+                                <div
+                                    className="h-full rounded-full shadow-sm"
+                                    style={{
+                                        width: `${catPercent}%`,
+                                        backgroundColor: cat.color || undefined
+                                    }}
+                                />
                             </div>
                         </div>
 

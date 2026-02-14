@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl'
 import { Group, CreateGroupForm, SplitType, GroupMemberSplitDefault } from '@/types'
 import { sharedExpenseAPI } from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
-import { Card, CardHeader, CardContent } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
@@ -530,33 +530,33 @@ export default function GroupsPage() {
                 const pendingExpenses = group._count?.pendingExpenses || 0
 
                 return (
-                  <Card key={group.id} className="hover:shadow-md transition-all h-full">
-                    <CardContent className="p-4">
+                  <ClairCard key={group.id} className="hover:shadow-lg transition-all h-full group/card">
+                    <div className="p-4 h-full flex flex-col">
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="text-3xl">{group.coverImageUrl}</div>
+                        <div className="text-3xl p-2 bg-white/10 rounded-xl backdrop-blur-sm border border-white/10">{group.coverImageUrl}</div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-base font-semibold text-gray-900 dark:text-white truncate">{group.name}</h3>
+                          <h3 className="text-base font-semibold text-gray-900 dark:text-white truncate group-hover/card:text-indigo-500 transition-colors">{group.name}</h3>
                           <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                             <Tooltip content={`${memberCount} miembro${memberCount !== 1 ? 's' : ''}`} side="top">
-                              <span>{memberCount}👥</span>
+                              <span className="flex items-center gap-1 bg-white/5 px-1.5 py-0.5 rounded border border-white/5">{memberCount} 👥</span>
                             </Tooltip>
                             <Tooltip content={`${totalExpenses} gasto${totalExpenses !== 1 ? 's' : ''} total${totalExpenses !== 1 ? 'es' : ''}`} side="top">
-                              <span>{totalExpenses}📝</span>
+                              <span className="flex items-center gap-1 bg-white/5 px-1.5 py-0.5 rounded border border-white/5">{totalExpenses} 📝</span>
                             </Tooltip>
                             {pendingExpenses > 0 && (
                               <Tooltip content={`${pendingExpenses} gasto${pendingExpenses !== 1 ? 's' : ''} pendiente${pendingExpenses !== 1 ? 's' : ''}`} side="top">
-                                <span className="text-orange-600">{pendingExpenses}⏳</span>
+                                <span className="text-orange-600 dark:text-orange-400 flex items-center gap-1 bg-orange-500/10 px-1.5 py-0.5 rounded border border-orange-500/20 font-medium">{pendingExpenses} ⏳</span>
                               </Tooltip>
                             )}
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-1 mb-3">
+                      <div className="flex items-center gap-1 mb-4 flex-1 items-start">
                         {group.members.slice(0, 4).map((member) => (
                           <Tooltip key={member.id} content={member.user.name} side="top">
                             <div
-                              className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-semibold ring-2 ring-white"
+                              className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold ring-2 ring-white dark:ring-white/10 shadow-sm"
                             >
                               {member.user.name.charAt(0).toUpperCase()}
                             </div>
@@ -564,24 +564,24 @@ export default function GroupsPage() {
                         ))}
                         {group.members.length > 4 && (
                           <Tooltip content={`${group.members.length - 4} miembro${group.members.length - 4 !== 1 ? 's' : ''} más`} side="top">
-                            <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-700 dark:text-gray-200 text-xs font-semibold ring-2 ring-white dark:ring-gray-800">
+                            <div className="w-7 h-7 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center text-gray-600 dark:text-gray-300 text-xs font-semibold ring-2 ring-white dark:ring-white/10 border border-dashed border-gray-300 dark:border-gray-600">
                               +{group.members.length - 4}
                             </div>
                           </Tooltip>
                         )}
                       </div>
 
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 mt-auto pt-4 border-t border-white/10">
                         <button
                           onClick={() => handleViewGroup(group)}
-                          className="flex-1 py-1.5 px-3 text-sm bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors font-medium"
+                          className="flex-1 py-1.5 px-3 text-sm bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/20 rounded-lg transition-colors font-medium backdrop-blur-sm border border-indigo-500/10"
                         >
                           Ver
                         </button>
                         {isCreator ? (
                           <button
                             onClick={() => handleDelete(group.id, group.name)}
-                            className="py-1.5 px-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                            className="py-1.5 px-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors border border-transparent hover:border-red-500/10"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -590,7 +590,7 @@ export default function GroupsPage() {
                         ) : (
                           <button
                             onClick={() => handleLeaveGroup(group.id, group.name)}
-                            className="py-1.5 px-3 text-sm text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded-lg transition-colors"
+                            className="py-1.5 px-3 text-sm text-orange-600 dark:text-orange-400 hover:bg-orange-500/10 rounded-lg transition-colors border border-transparent hover:border-orange-500/10"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -598,8 +598,8 @@ export default function GroupsPage() {
                           </button>
                         )}
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </ClairCard>
                 )
               }}
             />

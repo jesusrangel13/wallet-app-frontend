@@ -82,11 +82,18 @@
   },
   "balances": {
     "name": "Mis Saldos",
+    "title": "Mis Balances",
     "description": "Saldos de grupo con seguimiento de pagos",
     "youOwe": "Debes",
     "owesYou": "te debe",
+    "owedToYou": "Te deben",
     "settled": "Saldado",
-    "settle": "Saldar"
+    "settle": "Saldar",
+    "noSharedExpenses": "No tienes gastos compartidos aún",
+    "createGroup": "Crear grupo",
+    "view": "Ver",
+    "totalExpenses": "Total gastos",
+    "paid": "Pagué"
   },
   "cashFlow": {
     "name": "Flujo de Caja",
@@ -155,6 +162,7 @@
   },
   "recentTransactions": {
     "name": "Transacciones Recientes",
+    "title": "Transacciones Recientes",
     "description": "Tus transacciones más recientes",
     "noTransactions": "No hay transacciones aún",
     "viewAll": "Ver Todas",

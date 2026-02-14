@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+
 import { Wallet } from 'lucide-react'
 import { formatCurrency, type Currency, CURRENCIES } from '@/types/currency'
 import { TotalBalanceWidget as BaseTotalBalanceWidget } from './TotalBalanceWidget'

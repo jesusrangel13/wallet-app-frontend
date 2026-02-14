@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useCallback } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { Tag as TagIcon } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useTranslations } from 'next-intl'
@@ -24,16 +24,16 @@ interface ExpensesByTagWidgetProps {
   gridHeight?: number
 }
 
-// Default colors for tags without a color assigned
+// Default colors for tags without a color assigned (Clair Palette)
 const DEFAULT_COLORS = [
-  '#3b82f6', // blue
-  '#8b5cf6', // purple
-  '#ec4899', // pink
-  '#f59e0b', // amber
-  '#10b981', // green
-  '#6b7280', // gray
-  '#ef4444', // red
-  '#14b8a6', // teal
+  '#8B5CF6', // Clair Violet (Primary)
+  '#06B6D4', // Flux Cyan (Secondary)
+  '#34D399', // Mint Spark (Success)
+  '#F472B6', // Soft Rose (Expense)
+  '#FBBF24', // Warm Amber (Warning)
+  '#A78BFA', // Lighter Violet
+  '#22D3EE', // Lighter Cyan
+  '#6EE7B7', // Lighter Mint
 ]
 
 export const ExpensesByTagWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesByTagWidgetProps) => {
@@ -70,14 +70,14 @@ export const ExpensesByTagWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesB
   const { chartHeight, outerRadius, labelFontSize } = chartConfig
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-metric-label flex items-center gap-2">
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+        <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
           <TagIcon className="h-4 w-4" />
           Expenses by Tag
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </h3>
+      </div>
+      <div className="p-6">
         {data.length > 0 ? (
           <ResponsiveContainer width="100%" height={chartHeight}>
             <PieChart margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
@@ -88,10 +88,12 @@ export const ExpensesByTagWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesB
                 labelLine={false}
                 label={dimensions.isSmall ? false : ({ percentage }) => `${percentage.toFixed(0)}%`}
                 outerRadius={outerRadius}
-                fill="#8884d8"
+                fill="hsl(var(--primary))"
                 dataKey="totalAmount"
                 nameKey="tagName"
                 style={{ fontSize: labelFontSize }}
+                stroke="rgba(255,255,255,0.2)"
+                strokeWidth={2}
               >
                 {data.map((entry: any, index: number) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
@@ -100,28 +102,30 @@ export const ExpensesByTagWidget = ({ gridWidth = 2, gridHeight = 2 }: ExpensesB
               <Tooltip
                 formatter={tooltipFormatter}
                 contentStyle={{
-                  backgroundColor: 'var(--tooltip-bg, #fff)',
-                  border: '1px solid var(--tooltip-border, #e5e7eb)',
-                  borderRadius: '6px',
-                  color: 'var(--tooltip-text, #111827)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255,255,255,0.5)',
+                  borderRadius: '12px',
+                  color: '#1e293b',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                 }}
-                itemStyle={{ color: 'var(--tooltip-text, #111827)' }}
-                labelStyle={{ color: 'var(--tooltip-text, #111827)', fontWeight: 600 }}
+                itemStyle={{ color: '#334155' }}
+                labelStyle={{ color: '#0f172a', fontWeight: 600 }}
               />
               <Legend
-                wrapperStyle={{ fontSize: dimensions.isSmall ? '10px' : '12px', paddingTop: '10px' }}
+                wrapperStyle={{ fontSize: dimensions.isSmall ? '10px' : '12px', paddingTop: '10px', color: '#64748b' }}
                 iconType="circle"
               />
             </PieChart>
           </ResponsiveContainer>
         ) : (
-          <div className={`flex flex-col items-center justify-center text-gray-500 dark:text-gray-400`} style={{ height: chartHeight }}>
-            <TagIcon className="h-12 w-12 mb-2 text-gray-300 dark:text-gray-600" />
+          <div className={`flex flex-col items-center justify-center text-slate-500 dark:text-slate-400`} style={{ height: chartHeight }}>
+            <TagIcon className="h-12 w-12 mb-2 text-slate-300 dark:text-slate-600" />
             <p className="text-sm">{t('noTaggedExpenses')}</p>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{t('addTagsHint')}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{t('addTagsHint')}</p>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }

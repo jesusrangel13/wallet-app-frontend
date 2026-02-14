@@ -4,30 +4,35 @@
 
 @layer base {
   :root {
+    /* CLAIR IDENTITY - Light Mode "Porcelain & Vapor" */
+
     /* Background & Foreground */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 210 20% 96%;
+    /* #F3F4F6 */
+    --foreground: 215 28% 17%;
+    /* #1F2937 */
 
     /* Card */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 215 28% 17%;
 
     /* Popover */
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 215 28% 17%;
 
-    /* Primary: Teal Profundo - Profesional pero distintivo */
-    --primary: 172 66% 40%;
+    /* Primary: Clair Violet (Intellegence) #8B5CF6 */
+    --primary: 258 89% 66%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 172 66% 35%;
+    --primary-hover: 258 89% 60%;
 
-    /* Secondary */
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary: Flux Cyan (Clarity) #06B6D4 */
+    --secondary: 189 94% 43%;
+    --secondary-foreground: 0 0% 100%;
 
     /* Muted */
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    /* #6B7280 */
 
     /* Accent */
     --accent: 210 40% 96.1%;
@@ -38,107 +43,150 @@
     --destructive-foreground: 210 40% 98%;
 
     /* Border & Input */
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 172 66% 40%;
+    --border: 220 13% 91%;
+    /* Light gray border */
+    --input: 220 13% 91%;
+    --ring: 258 89% 66%;
+    /* Match primary */
 
     /* Radius */
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+    /* Slightly more rounded for premium feel */
+
+    /* Brand Colors (Raw) */
+    --brand-violet: 258 89% 66%;
+    --brand-cyan: 189 94% 43%;
+    --brand-mint: 158 64% 52%;
+    /* #34D399 */
 
     /* Colores semánticos financieros */
-    --income: 142 76% 36%;
-    --income-light: 142 76% 95%;
-    --expense: 0 84% 60%;
-    --expense-light: 0 84% 95%;
-    --transfer: 217 91% 60%;
-    --transfer-light: 217 91% 95%;
+    --income: 189 94% 43%;
+    /* Flux Cyan for Income/Growth */
+    --income-light: 189 94% 95%;
+    --expense: 328 87% 70%;
+    /* Soft Rose #F472B6 */
+    --expense-light: 328 87% 96%;
+    --transfer: 258 89% 66%;
+    /* Violet */
+    --transfer-light: 258 89% 96%;
+    --success: 158 64% 52%;
+    /* Mint Spark */
+    --warning: 42 96% 56%;
+    /* Warm Amber */
 
     /* Acentos para highlights */
-    --accent-gold: 43 96% 56%;
-    --accent-purple: 262 83% 58%;
+    --accent-gold: 42 96% 56%;
+    --accent-purple: 258 89% 66%;
 
     /* Superficies */
     --surface-elevated: 0 0% 100%;
-    --surface-sunken: 220 14% 96%;
+    --surface-sunken: 220 14% 93%;
 
-    /* Sombras premium */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -1px rgb(0 0 0 / 0.04);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -2px rgb(0 0 0 / 0.03);
-    --shadow-glow: 0 0 20px 0 hsl(172 66% 40% / 0.15);
+    /* Glassmorphism */
+    --surface-glass: 0 0% 100%;
+    /* White base, opacity handled by tailwind classes */
+    --glass-border: 0 0% 100%;
+
+    /* Sombras premium - Violet tinted */
+    --shadow-sm: 0 1px 2px 0 rgb(139 92 246 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(139 92 246 / 0.07), 0 2px 4px -1px rgb(139 92 246 / 0.04);
+    --shadow-lg: 0 10px 15px -3px rgb(139 92 246 / 0.1), 0 4px 6px -2px rgb(139 92 246 / 0.05);
+    --shadow-glow: 0 0 20px 0 hsl(258 89% 66% / 0.25);
 
     /* Chart tooltips */
-    --tooltip-bg: #ffffff;
-    --tooltip-border: #e5e7eb;
-    --tooltip-text: #111827;
+    --tooltip-bg: 0 0% 100%;
+    --tooltip-border: 220 13% 91%;
+    --tooltip-text: 215 28% 17%;
 
     /* Chart cursor/hover highlight */
-    --chart-cursor: rgba(156, 163, 175, 0.3);
+    --chart-cursor: hsl(258 89% 66% / 0.1);
 
     /* Chart pie stroke */
     --chart-pie-stroke: #ffffff;
   }
 
-  /* Dark Mode Premium (estilo Revolut) */
+  /* Dark Mode "Deep Space & Bioluminescence" */
   .dark {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
+    /* Background & Foreground */
+    --background: 222 47% 11%;
+    /* #0F172A */
+    --foreground: 210 60% 98%;
+    /* #F8FAFC */
 
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
+    /* Card */
+    --card: 215 32% 17%;
+    /* #1E293B */
+    --card-foreground: 210 60% 98%;
 
-    --popover: 222 47% 8%;
-    --popover-foreground: 210 40% 98%;
+    /* Popover */
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 60% 98%;
 
-    /* Primary más brillante en dark mode */
-    --primary: 172 66% 50%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --primary-hover: 172 66% 55%;
+    /* Primary: Violet maintained for consistency, maybe slightly lighter/richer? */
+    --primary: 258 89% 70%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 258 89% 65%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    /* Secondary: Cyan */
+    --secondary: 189 94% 43%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    /* Muted */
+    --muted: 215 25% 27%;
+    --muted-foreground: 215 16% 65%;
+    /* #94A3B8 */
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    /* Accent */
+    --accent: 215 32% 25%;
+    --accent-foreground: 210 60% 98%;
 
+    /* Destructive */
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 172 66% 50%;
+    /* Border & Input - Subtle Glass borders */
+    --border: 215 32% 25%;
+    --input: 215 32% 25%;
+    --ring: 258 89% 70%;
 
     /* Colores semánticos en dark mode */
-    --income: 142 76% 45%;
-    --income-light: 142 50% 15%;
-    --expense: 0 84% 55%;
-    --expense-light: 0 50% 15%;
-    --transfer: 217 91% 65%;
-    --transfer-light: 217 50% 15%;
+    --income: 189 94% 43%;
+    /* Cyan Neon */
+    --income-light: 189 94% 15%;
+    --expense: 328 87% 60%;
+    /* Rose Neon */
+    --expense-light: 328 87% 15%;
+    --transfer: 258 89% 70%;
+    /* Violet Neon */
+    --transfer-light: 258 89% 15%;
+    --success: 158 64% 52%;
+    /* Mint */
 
     /* Superficies dark */
-    --surface-elevated: 222 47% 10%;
-    --surface-sunken: 222 47% 5%;
+    --surface-elevated: 215 32% 20%;
+    --surface-sunken: 222 47% 9%;
 
-    /* Sombras en dark mode */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -1px rgb(0 0 0 / 0.2);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -2px rgb(0 0 0 / 0.3);
-    --shadow-glow: 0 0 20px 0 hsl(172 66% 50% / 0.2);
+    /* Glassmorphism Dark */
+    --surface-glass: 215 32% 17%;
+    --glass-border: 215 32% 25%;
+
+    /* Sombras en dark mode - Neon Glows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -1px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.6), 0 4px 6px -2px rgb(0 0 0 / 0.4);
+    --shadow-glow: 0 0 25px 0 hsl(189 94% 43% / 0.25);
+    /* Cyan Glow */
 
     /* Chart tooltips dark */
-    --tooltip-bg: #1f2937;
-    --tooltip-border: #374151;
-    --tooltip-text: #f9fafb;
+    --tooltip-bg: 215 32% 17%;
+    --tooltip-border: 215 32% 25%;
+    --tooltip-text: 210 60% 98%;
 
     /* Chart cursor/hover highlight */
-    --chart-cursor: rgba(75, 85, 99, 0.4);
+    --chart-cursor: hsl(189 94% 43% / 0.15);
 
-    /* Chart pie stroke - gris azulado para dark mode */
-    --chart-pie-stroke: hsl(217.2 32.6% 17.5%);
+    /* Chart pie stroke - Dark Slate */
+    --chart-pie-stroke: hsl(222 47% 11%);
   }
 
   /* Tipografía para números financieros */
@@ -297,15 +345,15 @@
 
   /* Icon Gradient Backgrounds */
   .icon-gradient-blue {
-    @apply bg-gradient-to-br from-blue-500 to-purple-600;
+    @apply bg-gradient-to-br from-[hsl(var(--secondary))] to-[hsl(var(--primary))];
   }
 
   .icon-gradient-green {
-    @apply bg-gradient-to-br from-emerald-500 to-teal-600;
+    @apply bg-gradient-to-br from-[hsl(var(--success))] to-emerald-600;
   }
 
   .icon-gradient-red {
-    @apply bg-gradient-to-br from-rose-500 to-pink-600;
+    @apply bg-gradient-to-br from-[hsl(var(--expense))] to-pink-600;
   }
 
   /* Subtle Border Enhancement */
@@ -357,6 +405,55 @@
 
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Standardized Glow Effects (Soft Focus) */
+  .card-glow {
+    @apply bg-card border border-border/50 transition-all duration-300;
+    /* Light Mode: Soft Violet Diffuse Glow for Containers */
+    box-shadow: 0 4px 20px 0px rgba(139, 92, 246, 0.15);
+  }
+
+  .card-glow:hover {
+    @apply border-primary/20 -translate-y-0.5;
+    box-shadow: 0 10px 30px -5px rgba(139, 92, 246, 0.25);
+  }
+
+  .dark .card-glow {
+    @apply bg-card/40 backdrop-blur-xl border-white/5;
+    /* Dark Mode: Strong Cyan Neon Outer Glow */
+    box-shadow: 0 0 30px -5px rgba(6, 182, 212, 0.15);
+  }
+
+  .dark .card-glow:hover {
+    @apply border-primary/30 bg-card/60;
+    box-shadow: 0 0 40px -5px rgba(6, 182, 212, 0.3), 0 0 15px -3px rgba(6, 182, 212, 0.2) inset;
+  }
+
+  /* Transaction Items / Mini Cards */
+  .item-glow {
+    @apply flex items-center gap-3 p-4 rounded-2xl transition-all duration-300 border border-transparent relative overflow-hidden;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 1) 100%);
+  }
+
+  .item-glow:hover {
+    @apply -translate-y-1 border-primary/20 z-10;
+    /* Light Mode: Intense Violet Diffuse Glow */
+    box-shadow: 0 10px 40px -10px rgba(139, 92, 246, 0.3),
+      0 0 20px -5px rgba(139, 92, 246, 0.1);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 1) 100%);
+  }
+
+  .dark .item-glow {
+    @apply bg-card/40 backdrop-blur-md border-white/5;
+    background: none;
+  }
+
+  .dark .item-glow:hover {
+    @apply bg-card/60 border-cyan-500/30;
+    /* Dark Mode: Strong Cyan Neon Glow */
+    box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.4),
+      0 0 10px -2px rgba(6, 182, 212, 0.2);
   }
 
   /* Loading bar animation */

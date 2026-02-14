@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { TrendingUp } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useTranslations } from 'next-intl'
@@ -109,14 +109,14 @@ export const TagTrendWidget = ({
 
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-metric-label flex items-center gap-2">
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+        <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
           <TrendingUp className="h-4 w-4" />
           {t('label')} ({t('lastMonths', { months })})
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </h3>
+      </div>
+      <div className="p-6 flex-1 flex flex-col min-h-0">
         {data.length > 0 && tags.length > 0 ? (
           <ResponsiveContainer width="100%" height={chartHeight}>
             <LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
@@ -160,19 +160,19 @@ export const TagTrendWidget = ({
           </ResponsiveContainer>
         ) : (
           <div
-            className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400"
+            className="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400"
             style={{ height: chartHeight }}
           >
-            <TrendingUp className="h-12 w-12 mb-2 text-gray-300 dark:text-gray-600" />
+            <TrendingUp className="h-12 w-12 mb-2 text-slate-300 dark:text-slate-600" />
             <p className="text-sm">{t('noTagData')}</p>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 text-center px-4">
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 text-center px-4">
               {tagIds.length > 0
                 ? t('selectedTagsNoHistory')
                 : t('addTagsForTrends')}
             </p>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }

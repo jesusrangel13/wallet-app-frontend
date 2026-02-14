@@ -82,11 +82,18 @@
   },
   "balances": {
     "name": "My Balances",
+    "title": "My Balances",
     "description": "Group balances with payment tracking",
     "youOwe": "You owe",
     "owesYou": "owes you",
-    "settled": "Settled up",
-    "settle": "Settle"
+    "owedToYou": "Owes you",
+    "settled": "Settled",
+    "settle": "Settle",
+    "noSharedExpenses": "No shared expenses yet",
+    "createGroup": "Create group",
+    "view": "View",
+    "totalExpenses": "Total expenses",
+    "paid": "Paid"
   },
   "cashFlow": {
     "name": "Cash Flow",
@@ -155,6 +162,7 @@
   },
   "recentTransactions": {
     "name": "Recent Transactions",
+    "title": "Recent Transactions",
     "description": "Your most recent transactions",
     "noTransactions": "No transactions yet",
     "viewAll": "View All",

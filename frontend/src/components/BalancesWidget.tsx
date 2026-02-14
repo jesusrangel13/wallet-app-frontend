@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { ClairCard } from '@/components/ui/ClairCard';
 import { ChevronDown, ChevronUp, CheckCircle, Clock, Eye, Wallet } from 'lucide-react';
 import { userAPI } from '@/lib/api';
 import { toast } from 'sonner';
@@ -9,6 +9,7 @@ import { formatCurrency } from '@/types/currency';
 import Link from 'next/link';
 import { SettleBalanceModal } from './SettleBalanceModal';
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext';
+import { useTranslations } from 'next-intl';
 
 interface Expense {
   expenseId: string;
@@ -32,7 +33,7 @@ interface UserBalances {
   totalIOweOthers: number;
   netBalance: number;
   groupBalances: Array<{
-    group: { id: string; name: string; coverImageUrl?: string };
+    group: { id: string; name: string; avatarUrl?: string };
     othersOweMe: number;
     iOweOthers: number;
     netBalance: number;
@@ -43,6 +44,7 @@ interface UserBalances {
 }
 
 export const BalancesWidget = () => {
+  const t = useTranslations('widgets.balances');
   const { month, year } = useSelectedMonth();
   const [balances, setBalances] = useState<UserBalances | null>(null);
   const [loading, setLoading] = useState(true);
@@ -118,32 +120,32 @@ export const BalancesWidget = () => {
 
   if (loading) {
     return (
-      <Card>
-        <CardContent className="flex items-center justify-center py-12">
+      <ClairCard>
+        <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        </CardContent>
-      </Card>
+        </div>
+      </ClairCard>
     );
   }
 
   if (!balances) return null;
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-metric-label flex items-center gap-2">
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+        <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
           <Wallet className="h-4 w-4" />
-          Mis Balances
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
+          {t('title')}
+        </h3>
+      </div>
+      <div className="p-6 space-y-6">
         {/* Group details section */}
         <div>
           {balances.groupBalances.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500 dark:text-gray-400 text-sm mb-3">No tienes gastos compartidos aún</p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mb-3">{t('noSharedExpenses')}</p>
               <Link href="/dashboard/groups" prefetch={true} className="inline-block bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
-                Crear grupo
+                {t('createGroup')}
               </Link>
             </div>
           ) : (
@@ -175,7 +177,7 @@ export const BalancesWidget = () => {
                             className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1 font-medium"
                           >
                             <Eye className="w-3 h-3" />
-                            Ver
+                            {t('view')}
                           </Link>
                           {expandedGroups.has(groupBalance.group.id) ? (
                             <ChevronUp className="w-4 h-4 text-gray-500" />
@@ -187,7 +189,7 @@ export const BalancesWidget = () => {
                       <div className="flex items-center justify-between text-xs gap-4 flex-wrap">
                         {hasPeopleWhoOweMe && (
                           <span className="text-income font-medium">
-                            Te deben: {formatCurrency(groupBalance.othersOweMe, 'CLP')}
+                            {t('owedToYou')}: {formatCurrency(groupBalance.othersOweMe, 'CLP')}
                           </span>
                         )}
                         {hasPeopleWhoOweMe && hasPeopleIOweTo && (
@@ -195,12 +197,12 @@ export const BalancesWidget = () => {
                         )}
                         {hasPeopleIOweTo && (
                           <span className="text-expense font-medium">
-                            Debes: {formatCurrency(groupBalance.iOweOthers, 'CLP')}
+                            {t('youOwe')}: {formatCurrency(groupBalance.iOweOthers, 'CLP')}
                           </span>
                         )}
                         <span className="text-gray-400 dark:text-gray-500">|</span>
                         <span className="text-blue-600 font-medium">
-                          Total gastos: {formatCurrency(groupBalance.totalSharedExpenses || 0, 'CLP')}
+                          {t('totalExpenses')}: {formatCurrency(groupBalance.totalSharedExpenses || 0, 'CLP')}
                         </span>
                       </div>
                     </button>
@@ -211,7 +213,7 @@ export const BalancesWidget = () => {
                         {/* Left: Te deben */}
                         {hasPeopleWhoOweMe && (
                           <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
-                            <p className="text-xs font-semibold text-income mb-3">Te deben</p>
+                            <p className="text-xs font-semibold text-income mb-3">{t('owedToYou')}</p>
                             <div className="space-y-2.5">
                               {groupBalance.peopleWhoOweMe.map((person) => {
                                 const personKey = `${groupBalance.group.id}-${person.user.id}`;
@@ -243,7 +245,7 @@ export const BalancesWidget = () => {
                                         onClick={() => handleSettleBalance(groupBalance.group.id, person.user.id, person.user.name, person.amount)}
                                         className="flex-1 text-xs py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 font-medium transition-colors"
                                       >
-                                        Saldado
+                                        {t('settled')}
                                       </button>
                                       {allExpenses.length > 0 && (
                                         <button
@@ -282,7 +284,7 @@ export const BalancesWidget = () => {
                         {/* Right: Debes */}
                         {hasPeopleIOweTo && (
                           <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
-                            <p className="text-xs font-semibold text-red-700 dark:text-red-400 mb-3">Debes</p>
+                            <p className="text-xs font-semibold text-red-700 dark:text-red-400 mb-3">{t('youOwe')}</p>
                             <div className="space-y-2.5">
                               {groupBalance.peopleIOweTo.map((person) => {
                                 const personKey = `${groupBalance.group.id}-${person.user.id}`;
@@ -314,7 +316,7 @@ export const BalancesWidget = () => {
                                         onClick={() => handleSettleBalance(groupBalance.group.id, person.user.id, person.user.name, person.amount)}
                                         className="flex-1 text-xs py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 font-medium transition-colors"
                                       >
-                                        Pagué
+                                        {t('paid')}
                                       </button>
                                       {allExpenses.length > 0 && (
                                         <button
@@ -357,7 +359,7 @@ export const BalancesWidget = () => {
             </div>
           )}
         </div>
-      </CardContent>
+      </div>
 
       {settleModalData && (
         <SettleBalanceModal
@@ -370,6 +372,6 @@ export const BalancesWidget = () => {
           onSuccess={handleSettleSuccess}
         />
       )}
-    </Card>
+    </ClairCard>
   );
 };

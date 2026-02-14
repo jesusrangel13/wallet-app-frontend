@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { X, TrendingUp, TrendingDown, AlertCircle, CheckCircle2 } from 'lucide-react';
 // import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'; // Removed
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { ClairCard } from '@/components/ui/ClairCard';
 import { Button } from '@/components/ui/Button'; // Fixed casing
 // import { Checkbox } from '@/components/ui/checkbox'; // Removed
 import { dashboardAPI } from '@/services/dashboard.service';
@@ -193,13 +193,13 @@ export function MultiYearComparisonModal({ isOpen, onClose, currentYear, currenc
                         {/* Charts Column (Wide) */}
                         <div className="lg:col-span-8 space-y-6">
                             {/* Income vs Expense Chart */}
-                            <Card className="shadow-sm border-muted/60">
-                                <CardHeader className="pb-2">
+                            <ClairCard className="shadow-sm border-muted/60">
+                                <div className="px-6 py-4 border-b border-white/20 dark:border-white/10">
                                     <div className="flex items-center justify-between">
-                                        <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Flujo de Caja (Ingresos vs Gastos)</CardTitle>
+                                        <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Flujo de Caja (Ingresos vs Gastos)</div>
                                     </div>
-                                </CardHeader>
-                                <CardContent className="h-[200px] pt-4">
+                                </div>
+                                <div className="h-[200px] pt-4 p-6">
                                     {loading ? (
                                         <div className="h-full flex items-center justify-center text-sm text-muted-foreground animate-pulse">Cargando datos...</div>
                                     ) : (
@@ -238,15 +238,15 @@ export function MultiYearComparisonModal({ isOpen, onClose, currentYear, currenc
                                             </BarChart>
                                         </ResponsiveContainer>
                                     )}
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </ClairCard>
 
                             {/* Savings Chart */}
-                            <Card className="shadow-sm border-muted/60">
-                                <CardHeader className="pb-2">
-                                    <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Evolución del Ahorro</CardTitle>
-                                </CardHeader>
-                                <CardContent className="h-[160px] pt-4">
+                            <ClairCard className="shadow-sm border-muted/60">
+                                <div className="px-6 py-4 border-b border-white/20 dark:border-white/10">
+                                    <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Evolución del Ahorro</div>
+                                </div>
+                                <div className="h-[160px] pt-4 p-6">
                                     {loading ? (
                                         <div className="h-full flex items-center justify-center text-sm text-muted-foreground animate-pulse">Cargando...</div>
                                     ) : (
@@ -274,31 +274,31 @@ export function MultiYearComparisonModal({ isOpen, onClose, currentYear, currenc
                                             </BarChart>
                                         </ResponsiveContainer>
                                     )}
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </ClairCard>
                         </div>
 
                         {/* Insights & Metrics Column (Narrow) */}
                         <div className="lg:col-span-4 space-y-6">
                             {/* Key Comparison Insights */}
-                            <Card className="shadow-sm border-l-4 border-l-primary">
-                                <CardHeader className="py-4">
+                            <ClairCard className="shadow-sm border-l-4 border-l-primary">
+                                <div className="py-4 px-6 border-b border-white/20 dark:border-white/10">
                                     <div className="flex items-center gap-2">
                                         <TrendingUp className="w-4 h-4 text-primary" />
-                                        <CardTitle className="text-sm font-bold">Resumen Comparativo</CardTitle>
+                                        <div className="text-sm font-bold">Resumen Comparativo</div>
                                     </div>
-                                </CardHeader>
-                                <CardContent className="pt-0 pb-4">
+                                </div>
+                                <div className="pt-0 pb-4 p-6">
                                     {generateInsights()}
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </ClairCard>
 
                             {/* Detailed List */}
-                            <Card className="shadow-sm h-fit">
-                                <CardHeader className="py-4">
-                                    <CardTitle className="text-sm font-bold">Detalle por Año</CardTitle>
-                                </CardHeader>
-                                <CardContent className="pt-0 p-0">
+                            <ClairCard className="shadow-sm h-fit">
+                                <div className="py-4 px-6 border-b border-white/20 dark:border-white/10">
+                                    <div className="text-sm font-bold">Detalle por Año</div>
+                                </div>
+                                <div className="pt-0 p-0">
                                     <div className="divide-y">
                                         {[...data].sort((a: YearData, b: YearData) => b.year - a.year).map(d => (
                                             <div key={d.year} className="p-4 hover:bg-muted/30 transition-colors">
@@ -325,8 +325,8 @@ export function MultiYearComparisonModal({ isOpen, onClose, currentYear, currenc
                                             </div>
                                         ))}
                                     </div>
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </ClairCard>
                         </div>
                     </div>
                 </div>

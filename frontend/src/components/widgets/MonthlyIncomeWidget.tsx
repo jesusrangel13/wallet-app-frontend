@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { TrendingUp } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useTransactionStats } from '@/hooks/useTransactions'
@@ -29,19 +29,19 @@ export const MonthlyIncomeWidget = ({ gridWidth = 1, gridHeight = 1 }: MonthlyIn
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-metric-label flex items-center gap-2">
-          <TrendingUp className="h-4 w-4 text-income" />
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+        <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
+          <TrendingUp className="h-4 w-4 text-emerald-500" />
           {t('label')}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="text-balance-large font-bold text-income">
+        </h3>
+      </div>
+      <div className="p-6 flex-1 flex flex-col justify-center">
+        <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
           <AnimatedCurrency amount={income} currency="CLP" />
         </div>
-        <p className={`${fontSizes.label} text-gray-500 dark:text-gray-400 mt-1`}>{t('thisMonth')}</p>
-      </CardContent>
-    </Card>
+        <p className={`${fontSizes.label} text-slate-500 dark:text-slate-400 mt-1`}>{t('thisMonth')}</p>
+      </div>
+    </ClairCard>
   )
 }

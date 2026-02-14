@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { Wallet } from 'lucide-react'
 import { type Currency, CURRENCIES } from '@/types/currency'
 import { useTranslations } from 'next-intl'
@@ -28,33 +28,33 @@ export const TotalBalanceWidget = ({ gridWidth = 1, gridHeight = 1 }: TotalBalan
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-metric-label flex items-center gap-2">
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+        <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
           <Wallet className="h-4 w-4" />
           {t('label')}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </h3>
+      </div>
+      <div className="p-6">
         <div className="space-y-1">
           {Object.entries(totalBalance).map(([currency, amount]) => {
             const currencyCode = currency as Currency
             return (
               <div key={currency}>
-                <div className={`${fontSizes.value} font-bold text-foreground`}>
+                <div className={`${fontSizes.value} font-bold text-slate-800 dark:text-white`}>
                   <AnimatedCurrency amount={amount} currency={currencyCode} />
                 </div>
-                <p className={`${fontSizes.label} text-muted-foreground`}>{CURRENCIES[currencyCode]?.name || currency}</p>
+                <p className={`${fontSizes.label} text-slate-500 dark:text-slate-400`}>{CURRENCIES[currencyCode]?.name || currency}</p>
               </div>
             )
           })}
           {Object.keys(totalBalance).length === 0 && (
-            <div className={`${fontSizes.value} font-bold text-foreground`}>
+            <div className={`${fontSizes.value} font-bold text-slate-800 dark:text-white`}>
               <AnimatedCurrency amount={0} currency="CLP" />
             </div>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }

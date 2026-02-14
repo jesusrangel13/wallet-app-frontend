@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { Wallet, Info } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useMonthlySavings } from '@/hooks/useDashboard'
@@ -35,24 +35,24 @@ export const NetMonthlyExpensesWidget = ({ gridWidth = 1, gridHeight = 1 }: NetM
     }
 
     return (
-        <Card>
-            <CardHeader className="pb-3">
-                <CardTitle className="text-metric-label flex items-center gap-2">
-                    <Wallet className="h-4 w-4 text-orange-600 dark:text-orange-500" />
+        <ClairCard>
+            <div className="px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+                <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
+                    <Wallet className="h-4 w-4 text-orange-500" />
                     {t('label')}
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="text-balance-large font-bold text-orange-600 dark:text-orange-500">
+                </h3>
+            </div>
+            <div className="p-6 flex-1 flex flex-col justify-center">
+                <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">
                     <AnimatedCurrency amount={netExpenses} currency="CLP" />
                 </div>
-                <div className={`${fontSizes.label} text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1`}>
+                <div className={`${fontSizes.label} text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1`}>
                     {t('thisMonth')}
                     <Tooltip content={t('tooltip')} side="bottom">
-                        <Info className="h-3 w-3 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors cursor-help" />
+                        <Info className="h-3 w-3 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors cursor-help" />
                     </Tooltip>
                 </div>
-            </CardContent>
-        </Card>
+            </div>
+        </ClairCard>
     )
 }

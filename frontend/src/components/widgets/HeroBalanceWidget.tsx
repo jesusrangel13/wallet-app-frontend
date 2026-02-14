@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { TrendingUp, TrendingDown, Minus, Eye, EyeOff, ArrowUpCircle, ArrowDownCircle, Wallet } from 'lucide-react'
 import { useState } from 'react'
 import { AnimatedCurrency } from '@/components/ui/animations/AnimatedCurrency'
-import { Card } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { AreaChart, Area, ResponsiveContainer } from 'recharts'
 
 interface HeroBalanceWidgetProps {
@@ -52,25 +52,37 @@ export function HeroBalanceWidget({
     const sparklineColor = isPositive ? '#10b981' : isNegative ? '#f43f5e' : '#6b7280' // emerald-500 vs rose-500
 
     return (
-        <Card variant="default" className="p-0 overflow-hidden border-none shadow-xl bg-white dark:bg-gray-900 h-full flex flex-col">
+        <ClairCard className="h-full flex flex-col group">
+            {/* Background decorations for "Flow" feel - Handled by ClairCard now, 
+                but we can supercharge them if needed. 
+                ClairCard has default glow, let's stick to standard for consistency.
+             */}
+
+
             {/* Main Content Area */}
-            <div className="p-6 md:p-8 flex-1 relative">
-                {/* Background Sparkline (Subtle) */}
-                <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none translate-y-8">
+            <div className="p-6 md:p-8 flex-1 relative z-10">
+                {/* Background Wave Chart */}
+                <div className="absolute inset-0 opacity-40 dark:opacity-30 pointer-events-none translate-y-4 md:translate-y-8 mix-blend-multiply dark:mix-blend-screen">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={data}>
                             <defs>
-                                <linearGradient id="colorSparkHero" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor={sparklineColor} stopOpacity={1} />
-                                    <stop offset="95%" stopColor={sparklineColor} stopOpacity={0} />
+                                <linearGradient id="colorSparkHero" x1="0" y1="0" x2="1" y2="0">
+                                    <stop offset="0%" stopColor="#8B5CF6" stopOpacity={0.8} /> {/* Violet */}
+                                    <stop offset="50%" stopColor="#06B6D4" stopOpacity={0.8} /> {/* Cyan */}
+                                    <stop offset="100%" stopColor="#22D3EE" stopOpacity={0.8} /> {/* Cyan Light */}
+                                </linearGradient>
+                                <linearGradient id="fillSparkHero" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#8B5CF6" stopOpacity={0.2} />
+                                    <stop offset="100%" stopColor="#06B6D4" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
                             <Area
                                 type="monotone"
                                 dataKey="value"
-                                stroke={sparklineColor}
-                                strokeWidth={4} // Thicker line for background effect
-                                fill="url(#colorSparkHero)"
+                                stroke="url(#colorSparkHero)"
+                                strokeWidth={4}
+                                fill="url(#fillSparkHero)"
+                                animationDuration={2000}
                             />
                         </AreaChart>
                     </ResponsiveContainer>
@@ -126,10 +138,10 @@ export function HeroBalanceWidget({
             </div>
 
             {/* Footer Summary - Command Center Carousel */}
-            <div className="border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 backdrop-blur-sm relative min-h-[100px]">
+            <div className="border-t border-white/20 dark:border-white/10 bg-white/30 dark:bg-black/20 backdrop-blur-md relative min-h-[100px] z-20">
                 {/* Carousel Content */}
                 <div
-                    className={`grid h-full cursor-pointer transition-colors hover:bg-white/40 dark:hover:bg-gray-800/40 relative z-10 ${!isBreakdownView
+                    className={`grid h-full cursor-pointer transition-colors hover:bg-white/20 dark:hover:bg-white/5 relative z-10 ${!isBreakdownView
                         ? 'grid-cols-2 md:grid-cols-4' // Primary: 2x2 on mobile, 4 cols on desktop
                         : 'grid-cols-3' // Secondary: 3 cols always
                         }`}
@@ -273,6 +285,6 @@ export function HeroBalanceWidget({
                 </div>
             </div>
 
-        </Card>
+        </ClairCard>
     )
 }

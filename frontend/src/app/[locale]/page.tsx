@@ -52,10 +52,11 @@ function LandingContent({ params }: { params: Promise<{ locale: string }> }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-2">
-              <div className="p-2 bg-gradient-to-br from-primary to-primary-hover rounded-lg shadow-glow">
-                <Wallet className="h-6 w-6 text-primary-foreground" />
+              <div className="relative w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center">
+                <img src="/clair_logo.png" alt="Clair Logo" className="w-full h-full object-cover block dark:hidden" />
+                <img src="/clair_logo_darkmode.png" alt="Clair Logo" className="w-full h-full object-cover hidden dark:block" />
               </div>
-              <span className="text-xl font-bold text-foreground tracking-tight">FinanceApp</span>
+              <span className="text-xl font-bold text-foreground tracking-tight">Clair</span>
             </div>
             <div className="flex items-center gap-6">
               <div className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
@@ -301,8 +302,11 @@ function LandingContent({ params }: { params: Promise<{ locale: string }> }) {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="flex items-center gap-2 mb-6">
-                <Wallet className="h-6 w-6 text-primary" />
-                <span className="text-xl font-bold text-foreground">FinanceApp</span>
+                <div className="relative w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center">
+                  <img src="/clair_logo.png" alt="Clair Logo" className="w-full h-full object-cover block dark:hidden" />
+                  <img src="/clair_logo_darkmode.png" alt="Clair Logo" className="w-full h-full object-cover hidden dark:block" />
+                </div>
+                <span className="text-xl font-bold text-foreground">Clair</span>
               </div>
               <p className="text-muted-foreground text-sm">
                 Reimaginando la banca personal para la era digital. Simple, potente y seguro.
@@ -336,7 +340,7 @@ function LandingContent({ params }: { params: Promise<{ locale: string }> }) {
             </div>
           </div>
           <div className="border-t border-border pt-8 text-center text-sm text-muted-foreground flex justify-between items-center">
-            <p>&copy; 2026 FinanceApp. Todos los derechos reservados.</p>
+            <p>&copy; 2026 Clair. Todos los derechos reservados.</p>
             <div className="flex gap-4">
               {/* Social icons placeholder */}
               <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors cursor-pointer">X</div>

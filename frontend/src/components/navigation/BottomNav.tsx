@@ -88,17 +88,22 @@ export function BottomNav() {
 
     return (
         <>
-            {/* Bottom Navigation - Solo visible en mobile */}
+            {/* Bottom Navigation - Mobile Only */}
             <nav
-                className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border safe-area-pb"
+                className="md:hidden fixed bottom-6 left-4 right-4 z-50 
+                           bg-white/60 dark:bg-black/40 backdrop-blur-3xl 
+                           border border-white/40 dark:border-white/10
+                           ring-1 ring-white/30 dark:ring-white/5
+                           shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]
+                           rounded-[2.5rem] safe-area-pb"
                 aria-label="Navegación principal"
             >
-                <div className="flex items-center justify-around h-16 px-2">
+                <div className="flex items-center justify-around h-20 px-2">
                     {baseNavItems.map((item) => {
-                        // Botón central de agregar (FAB style)
+                        // Central Button (Quick Add) - Floating Gradient
                         if (item.isAction && item.action === 'quickAdd') {
                             return (
-                                <div key={item.labelKey} className="relative flex flex-col items-center">
+                                <div key={item.labelKey} className="relative flex flex-col items-center -mt-8">
                                     {/* Transcription Floating Bubble */}
                                     <AnimatePresence>
                                         {isVoiceActive && transcription && (
@@ -116,22 +121,14 @@ export function BottomNav() {
 
                                     <button
                                         onMouseDown={(e) => {
-                                            // PRIORITY: If processing, BLOCK EVERYTHING
                                             if (isProcessing) {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                return;
+                                                e.preventDefault(); e.stopPropagation(); return;
                                             }
-
-                                            // PRIORITY: If voice is active, any interaction STOPS it immediately
                                             if (isVoiceActive) {
-                                                e.preventDefault();
-                                                e.stopPropagation();
+                                                e.preventDefault(); e.stopPropagation();
                                                 window.dispatchEvent(new CustomEvent('trigger-voice-input', { detail: { forceStop: true } }));
                                                 return;
                                             }
-
-                                            // Start timer for long press
                                             const timer = setTimeout(() => {
                                                 window.dispatchEvent(new CustomEvent('trigger-voice-input'));
                                                 if (navigator.vibrate) navigator.vibrate(50);
@@ -144,21 +141,14 @@ export function BottomNav() {
                                             if (timer) clearTimeout(Number(timer));
                                         }}
                                         onTouchStart={(e) => {
-                                            // PRIORITY: If processing, BLOCK EVERYTHING
                                             if (isProcessing) {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                return;
+                                                e.preventDefault(); e.stopPropagation(); return;
                                             }
-
-                                            // PRIORITY: Touch also stops immediately
                                             if (isVoiceActive) {
-                                                e.preventDefault();
-                                                e.stopPropagation();
+                                                e.preventDefault(); e.stopPropagation();
                                                 window.dispatchEvent(new CustomEvent('trigger-voice-input', { detail: { forceStop: true } }));
                                                 return;
                                             }
-
                                             const timer = setTimeout(() => {
                                                 window.dispatchEvent(new CustomEvent('trigger-voice-input'));
                                                 if (navigator.vibrate) navigator.vibrate(50);
@@ -171,28 +161,29 @@ export function BottomNav() {
                                             if (timer) clearTimeout(Number(timer));
                                         }}
                                         onClick={(e) => {
-                                            // Logic handled in MouseDown/TouchStart for stopping
                                             if (isProcessing || isVoiceActive) {
                                                 e.preventDefault();
                                                 return;
                                             }
                                             handleAction(item.action);
                                         }}
-                                        className="relative -top-4 touch-none"
+                                        className="relative touch-none group"
                                         aria-label={isVoiceActive ? "Listening..." : isProcessing ? "Processing..." : t('bottomNav.add')}
                                         disabled={isProcessing}
                                     >
                                         <motion.div
                                             animate={{
-                                                scale: (isVoiceActive || isProcessing) ? 1.2 : 1,
-                                                backgroundColor: isVoiceActive
-                                                    ? 'hsl(var(--destructive))'
-                                                    : isProcessing
-                                                        ? 'hsl(var(--muted-foreground))'
-                                                        : 'hsl(var(--primary))',
-                                                boxShadow: isVoiceActive ? '0 0 20px hsl(var(--destructive))' : '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                                                scale: (isVoiceActive || isProcessing) ? 1.1 : 1,
                                             }}
-                                            className="w-14 h-14 rounded-full text-primary-foreground flex items-center justify-center shadow-lg"
+                                            whileTap={{ scale: 0.95 }}
+                                            className={`
+                                                w-16 h-16 rounded-full flex items-center justify-center shadow-xl
+                                                ${isVoiceActive
+                                                    ? 'bg-gradient-to-tr from-red-500 to-orange-500 shadow-red-500/50'
+                                                    : isProcessing
+                                                        ? 'bg-slate-200 dark:bg-slate-700'
+                                                        : 'bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 shadow-purple-500/40'}
+                                            `}
                                         >
                                             <AnimatePresence mode="wait">
                                                 {isProcessing ? (
@@ -202,7 +193,7 @@ export function BottomNav() {
                                                         animate={{ scale: 1, opacity: 1 }}
                                                         exit={{ scale: 0, opacity: 0 }}
                                                     >
-                                                        <Loader2 className="w-7 h-7 animate-spin" />
+                                                        <Loader2 className="w-8 h-8 text-white animate-spin" />
                                                     </motion.div>
                                                 ) : isVoiceActive ? (
                                                     <motion.div
@@ -211,7 +202,7 @@ export function BottomNav() {
                                                         animate={{ scale: 1, opacity: 1 }}
                                                         exit={{ scale: 0, opacity: 0 }}
                                                     >
-                                                        <Mic className="w-7 h-7 animate-pulse" />
+                                                        <Mic className="w-8 h-8 text-white animate-pulse" />
                                                     </motion.div>
                                                 ) : (
                                                     <motion.div
@@ -220,7 +211,7 @@ export function BottomNav() {
                                                         animate={{ scale: 1, opacity: 1 }}
                                                         exit={{ scale: 0, opacity: 0 }}
                                                     >
-                                                        <Plus className="w-7 h-7" />
+                                                        <Plus className="w-8 h-8 text-white" />
                                                     </motion.div>
                                                 )}
                                             </AnimatePresence>
@@ -230,22 +221,21 @@ export function BottomNav() {
                             )
                         }
 
-                        // Botón de "Más" (More menu)
+                        // More Button
                         if (item.isAction && item.action === 'more') {
                             return (
                                 <button
                                     key={item.labelKey}
                                     onClick={() => handleAction(item.action)}
-                                    className="flex flex-col items-center justify-center flex-1 py-2"
+                                    className="flex flex-col items-center justify-center w-16 h-full"
                                     aria-label={t('bottomNav.more')}
                                 >
                                     <motion.div
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="flex flex-col items-center"
+                                        whileTap={{ scale: 0.9 }}
+                                        className="flex flex-col items-center gap-1"
                                     >
-                                        <item.icon className="w-6 h-6 text-muted-foreground" />
-                                        <span className="text-xs mt-1 text-muted-foreground">
+                                        <item.icon className="w-6 h-6 text-slate-500 dark:text-slate-400" />
+                                        <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
                                             {t(`bottomNav.${item.labelKey}` as any)}
                                         </span>
                                     </motion.div>
@@ -259,31 +249,31 @@ export function BottomNav() {
                             <Link
                                 key={item.labelKey}
                                 href={`/${locale}/${item.path}`}
-                                className="flex flex-col items-center justify-center flex-1 py-2 relative"
+                                className="flex flex-col items-center justify-center w-16 h-full relative"
                                 aria-current={active ? 'page' : undefined}
                             >
                                 <motion.div
-                                    initial={false}
-                                    animate={{
-                                        scale: active ? 1.1 : 1,
-                                        color: active ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))'
-                                    }}
-                                    transition={{ duration: 0.2 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    className="flex flex-col items-center gap-1"
                                 >
-                                    <item.icon className="w-6 h-6" />
+                                    <div className="relative">
+                                        <item.icon
+                                            className={`w-6 h-6 transition-colors duration-300 ${active ? 'text-indigo-600 dark:text-cyan-400' : 'text-slate-500 dark:text-slate-400'}`}
+                                        />
+                                        {active && (
+                                            <motion.div
+                                                layoutId="activeGlow"
+                                                className="absolute inset-0 bg-indigo-500/30 dark:bg-cyan-400/30 blur-lg rounded-full"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                            />
+                                        )}
+                                    </div>
+                                    <span className={`text-[10px] font-medium transition-colors duration-300 ${active ? 'text-indigo-600 dark:text-cyan-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                                        {t(`bottomNav.${item.labelKey}` as any)}
+                                    </span>
                                 </motion.div>
-                                <span className={`text-xs mt-1 ${active ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                                    {t(`bottomNav.${item.labelKey}` as any)}
-                                </span>
-
-                                {/* Indicador activo */}
-                                {active && (
-                                    <motion.div
-                                        layoutId="bottomNavIndicator"
-                                        className="absolute -top-0.5 w-12 h-1 bg-primary rounded-full"
-                                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                                    />
-                                )}
                             </Link>
                         )
                     })}

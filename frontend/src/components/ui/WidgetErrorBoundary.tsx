@@ -1,7 +1,7 @@
 'use client'
 
 import React, { Component, ErrorInfo, ReactNode } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { AlertTriangle, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 
@@ -53,15 +53,15 @@ export class WidgetErrorBoundary extends Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-red-600 flex items-center gap-2">
+        <ClairCard>
+          <div className="px-6 py-4 border-b border-white/10 flex items-start justify-between gap-4">
+            <h3 className="text-sm font-medium text-red-600 flex items-center gap-2 flex-1">
               <AlertTriangle className="h-4 w-4" />
               Error en Widget
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center justify-center min-h-[120px] text-center">
-            <p className="text-sm text-gray-600 mb-4">
+            </h3>
+          </div>
+          <div className="px-6 py-6 flex-1 flex flex-col items-center justify-center min-h-[120px] text-center">
+            <p className="text-sm text-gray-600 mb-4 dark:text-gray-300">
               {this.props.widgetName
                 ? `No se pudo cargar "${this.props.widgetName}"`
                 : 'No se pudo cargar este widget'}
@@ -70,10 +70,10 @@ export class WidgetErrorBoundary extends Component<Props, State> {
             {/* Show error message in development */}
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className="mb-4 w-full max-w-full">
-                <summary className="text-xs text-gray-500 cursor-pointer hover:text-gray-700 mb-2">
+                <summary className="text-xs text-gray-500 cursor-pointer hover:text-gray-700 mb-2 dark:text-gray-400 dark:hover:text-gray-200">
                   Ver detalles técnicos
                 </summary>
-                <pre className="bg-red-50 p-3 rounded text-xs text-left text-red-600 overflow-x-auto max-h-32 border border-red-200 whitespace-pre-wrap break-words max-w-full">
+                <pre className="bg-red-50 dark:bg-red-900/20 p-3 rounded text-xs text-left text-red-600 dark:text-red-400 overflow-x-auto max-h-32 border border-red-200 dark:border-red-800 whitespace-pre-wrap break-words max-w-full">
                   {this.state.error.message}
                   {'\n\n'}
                   {this.state.error.stack}
@@ -90,8 +90,8 @@ export class WidgetErrorBoundary extends Component<Props, State> {
               <RefreshCw className="h-3 w-3" />
               Reintentar
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </ClairCard>
       )
     }
 

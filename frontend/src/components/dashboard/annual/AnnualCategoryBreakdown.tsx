@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { ClairCard } from '@/components/ui/ClairCard';
 import { type Currency } from '@/types/currency';
 import { Layers } from 'lucide-react';
 import { CategoryAccordionView } from './views/CategoryAccordionView';
@@ -37,14 +37,14 @@ export function AnnualCategoryBreakdown({ categories, subcategories, currency, t
     }, {} as Record<string, SubcategoryItem[]>);
 
     return (
-        <Card className="h-full flex flex-col">
-            <CardHeader className="flex-none">
-                <CardTitle className="text-metric-label flex items-center gap-2">
-                    <Layers className="w-4 h-4 text-primary" />
+        <ClairCard className="h-full flex flex-col">
+            <div className="flex-none px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+                <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
+                    <Layers className="w-4 h-4 text-indigo-500" />
                     Gastos por categoría
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="flex-1 min-h-0 overflow-hidden flex flex-col">
+                </h3>
+            </div>
+            <div className="flex-1 min-h-0 overflow-hidden flex flex-col p-6">
                 <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
                     <CategoryAccordionView
                         categories={categories}
@@ -53,7 +53,7 @@ export function AnnualCategoryBreakdown({ categories, subcategories, currency, t
                         totalExpense={totalExpense}
                     />
                 </div>
-            </CardContent>
-        </Card>
+            </div>
+        </ClairCard>
     );
 }

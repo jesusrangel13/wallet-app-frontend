@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { ClairCard } from '@/components/ui/ClairCard';
 import { formatCurrency, type Currency } from '@/types/currency';
 import { Tag } from 'lucide-react';
 
@@ -51,32 +51,46 @@ export function AnnualTagsBreakdown({ tags, currency, totalExpense }: AnnualTags
     }
 
     return (
-        <Card className="h-full flex flex-col">
-            <CardHeader className="flex-none">
-                <CardTitle className="text-metric-label flex items-center gap-2">
-                    <Tag className="w-4 h-4 text-primary" />
+        <ClairCard className="h-full flex flex-col">
+            <div className="flex-none px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+                <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
+                    <Tag className="w-4 h-4 text-indigo-500" />
                     Top Etiquetas
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="flex-1 min-h-0 overflow-hidden flex flex-col">
-                <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-4">
+                </h3>
+            </div>
+            <div className="flex-1 min-h-0 overflow-hidden flex flex-col p-6 relative">
+                <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-3 absolute inset-0 p-6">
                     {displayedTags.map((tag, i) => {
                         const percent = calculatePercent(tag.amount);
                         return (
-                            <div key={i} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                <div className="flex items-center gap-3">
-                                    <div
-                                        className="w-3 h-8 rounded-sm shrink-0"
-                                        style={{ backgroundColor: tag.color || '#94a3b8' }}
-                                    />
-                                    <div>
-                                        <p className="text-xs sm:text-sm font-medium leading-none">{tag.name}</p>
-                                        <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">{tag.count} transacciones</p>
+                            <div key={i} className="item-glow p-3">
+                                {/* Rank Badge */}
+                                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                                    {i + 1}
+                                </div>
+
+                                {/* Tag Color Pill/Bar - Adjusted for new layout */}
+                                <div
+                                    className="w-1.5 h-8 rounded-full shrink-0 mx-2"
+                                    style={{ backgroundColor: tag.color || '#94a3b8' }}
+                                />
+
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold text-slate-800 dark:text-white truncate">{tag.name}</p>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                        <span className="text-xs text-slate-500 dark:text-slate-400">
+                                            {tag.count} transacciones
+                                        </span>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                    <div className="font-bold text-xs sm:text-sm">{formatCurrency(tag.amount, currency)}</div>
-                                    <div className="text-[10px] sm:text-xs text-muted-foreground">{percent.toFixed(1)}%</div>
+
+                                <div className="text-right shrink-0">
+                                    <div className="font-bold text-sm text-slate-800 dark:text-white">
+                                        {formatCurrency(tag.amount, currency)}
+                                    </div>
+                                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                                        {percent.toFixed(1)}%
+                                    </div>
                                 </div>
                             </div>
                         );
@@ -84,11 +98,11 @@ export function AnnualTagsBreakdown({ tags, currency, totalExpense }: AnnualTags
                     {/* Sentinel element for infinite scroll */}
                     {displayLimit < tags.length && (
                         <div ref={observerTarget} className="h-4 w-full flex justify-center items-center py-4">
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-indigo-500"></div>
                         </div>
                     )}
                 </div>
-            </CardContent>
-        </Card>
+            </div>
+        </ClairCard>
     );
 }

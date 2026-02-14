@@ -44,6 +44,12 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // Brand Colors
+        brand: {
+          violet: 'hsl(var(--brand-violet))',
+          cyan: 'hsl(var(--brand-cyan))',
+          mint: 'hsl(var(--brand-mint))',
+        },
         // Colores semánticos financieros
         income: {
           DEFAULT: 'hsl(var(--income))',
@@ -57,6 +63,8 @@ const config: Config = {
           DEFAULT: 'hsl(var(--transfer))',
           light: 'hsl(var(--transfer-light))',
         },
+        success: 'hsl(var(--success))',
+        warning: 'hsl(var(--warning))',
         // Acentos premium
         gold: 'hsl(var(--accent-gold))',
         purple: 'hsl(var(--accent-purple))',
@@ -64,6 +72,7 @@ const config: Config = {
         surface: {
           elevated: 'hsl(var(--surface-elevated))',
           sunken: 'hsl(var(--surface-sunken))',
+          glass: 'hsl(var(--surface-glass))',
         },
       },
       borderRadius: {

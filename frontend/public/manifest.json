@@ -1,6 +1,6 @@
 {
-    "name": "Finance App",
-    "short_name": "Finance",
+    "name": "Clair",
+    "short_name": "Clair",
     "description": "A comprehensive finance application",
     "start_url": "/",
     "display": "standalone",

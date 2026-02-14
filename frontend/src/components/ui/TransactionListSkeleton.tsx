@@ -1,4 +1,4 @@
-import { Card, CardContent } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { Skeleton } from '@/components/ui/Skeleton'
 
 /**
@@ -30,8 +30,8 @@ export const TransactionListSkeleton = ({ itemCount = 5 }: TransactionListSkelet
 
           {/* Transaction items */}
           {Array.from({ length: groupIndex === 1 ? 3 : 2 }).map((_, i) => (
-            <Card key={i}>
-              <CardContent className="py-4">
+            <ClairCard key={i}>
+              <div className="px-6 py-4">
                 <div className="flex items-start justify-between">
                   {/* Left Section: Checkbox + Icon + Details */}
                   <div className="flex items-start gap-3 flex-1">
@@ -58,8 +58,8 @@ export const TransactionListSkeleton = ({ itemCount = 5 }: TransactionListSkelet
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </ClairCard>
           ))}
         </div>
       ))}

@@ -1,7 +1,7 @@
 import { HTMLAttributes, forwardRef } from 'react'
 import { cn } from '@/lib/utils'
 
-export type CardVariant = 'default' | 'elevated' | 'gradient' | 'glass' | 'highlight'
+export type CardVariant = 'default' | 'elevated' | 'gradient' | 'glass' | 'highlight' | 'glow'
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: CardVariant
@@ -13,6 +13,7 @@ const cardVariants: Record<CardVariant, string> = {
   gradient: 'bg-gradient-to-br from-card to-muted/50 border-subtle shadow-md widget-hover',
   glass: 'bg-card/80 backdrop-blur-lg border-subtle shadow-lg',
   highlight: 'bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 shadow-md widget-hover',
+  glow: 'card-glow',
 }
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
