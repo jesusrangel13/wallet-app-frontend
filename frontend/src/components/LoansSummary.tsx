@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { formatCurrency, Currency } from '@/types/currency'
 import { TrendingUp, Wallet, ArrowUpRight, ArrowDownLeft, AlertCircle } from 'lucide-react'
 import { motion } from 'framer-motion'
@@ -42,34 +42,34 @@ export function LoansSummary({ stats, currency = 'USD' }: LoansSummaryProps) {
         >
             {/* Total Lent (Portfolio Size) */}
             <motion.div variants={item}>
-                <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/10 border-blue-200 dark:border-blue-800">
-                    <CardContent className="p-6">
+                <ClairCard className="h-full">
+                    <div className="p-6 relative z-10">
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-1 flex items-center gap-1">
                                     <Wallet className="w-4 h-4" />
                                     Total Prestado
                                 </p>
-                                <div className="text-balance-large text-gray-900 dark:text-gray-100">
+                                <div className="text-balance-large text-slate-800 dark:text-slate-100">
                                     {formatCurrency(stats.totalLent, currency)}
                                 </div>
                             </div>
-                            <div className="p-2 bg-blue-200/50 dark:bg-blue-900/30 rounded-full">
+                            <div className="p-2 bg-blue-100/50 dark:bg-blue-900/30 rounded-full backdrop-blur-sm">
                                 <ArrowUpRight className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                             </div>
                         </div>
                         <div className="mt-4 text-xs text-blue-600/80 dark:text-blue-400/80">
                             Cartera histórica total
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </ClairCard>
             </motion.div>
 
             {/* Pending (At Risk/Receivable) - Highlighted */}
             <motion.div variants={item}>
-                <Card className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/10 border-orange-200 dark:border-orange-800 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-16 h-16 bg-orange-400/10 rounded-full -mr-8 -mt-8 blur-xl"></div>
-                    <CardContent className="p-6">
+                <ClairCard className="h-full relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/10 rounded-full -mr-10 -mt-10 blur-2xl pointer-events-none"></div>
+                    <div className="p-6 relative z-10">
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-sm font-medium text-orange-600 dark:text-orange-400 mb-1 flex items-center gap-1">
@@ -80,48 +80,48 @@ export function LoansSummary({ stats, currency = 'USD' }: LoansSummaryProps) {
                                     {formatCurrency(stats.totalPending, currency)}
                                 </div>
                             </div>
-                            <div className="p-2 bg-orange-200/50 dark:bg-orange-900/30 rounded-full">
+                            <div className="p-2 bg-orange-100/50 dark:bg-orange-900/30 rounded-full backdrop-blur-sm">
                                 <TrendingUp className="w-5 h-5 text-orange-600 dark:text-orange-400" />
                             </div>
                         </div>
                         <div className="mt-4 flex items-center gap-2">
-                            <span className="text-xs font-medium bg-orange-200 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200 px-2 py-0.5 rounded-full">
+                            <span className="text-xs font-medium bg-orange-100/80 dark:bg-orange-900/50 text-orange-800 dark:text-orange-200 px-2 py-0.5 rounded-full backdrop-blur-sm">
                                 {stats.activeCount} activos
                             </span>
                             <span className="text-xs text-orange-600/80 dark:text-orange-400/80">
                                 Pendientes de pago
                             </span>
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </ClairCard>
             </motion.div>
 
             {/* Recovered (Success) */}
             <motion.div variants={item}>
-                <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/10 border-green-200 dark:border-green-800">
-                    <CardContent className="p-6">
+                <ClairCard className="h-full">
+                    <div className="p-6 relative z-10">
                         <div className="flex justify-between items-start">
                             <div>
-                                <p className="text-sm font-medium text-income mb-1 flex items-center gap-1">
+                                <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400 mb-1 flex items-center gap-1">
                                     <ArrowDownLeft className="w-4 h-4" />
                                     Recuperado
                                 </p>
-                                <div className="text-balance-large text-gray-900 dark:text-gray-100">
+                                <div className="text-balance-large text-slate-800 dark:text-slate-100">
                                     {formatCurrency(stats.totalRecovered, currency)}
                                 </div>
                             </div>
-                            <div className="p-2 bg-income-subtle rounded-full">
-                                <Wallet className="w-5 h-5 text-income" />
+                            <div className="p-2 bg-emerald-100/50 dark:bg-emerald-900/30 rounded-full backdrop-blur-sm">
+                                <Wallet className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                             </div>
                         </div>
-                        <div className="mt-4 w-full bg-green-200 dark:bg-green-900/30 rounded-full h-1.5">
+                        <div className="mt-4 w-full bg-emerald-100/50 dark:bg-emerald-900/30 rounded-full h-1.5 overflow-hidden">
                             <div
-                                className="bg-green-500 h-1.5 rounded-full"
+                                className="bg-emerald-500 h-1.5 rounded-full"
                                 style={{ width: `${stats.totalLent > 0 ? (stats.totalRecovered / stats.totalLent) * 100 : 0}%` }}
                             ></div>
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </ClairCard>
             </motion.div>
         </motion.div>
     )

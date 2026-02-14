@@ -28,70 +28,74 @@ export function SidebarFloating() {
             id="sidebar-floating"
             className={`
                 fixed inset-y-0 left-0 z-40 my-4 ml-4
-                bg-card/80 backdrop-blur-xl
-                border border-border shadow-2xl
-                rounded-3xl
+                bg-white/5 dark:bg-black/20 backdrop-blur-2xl
+                border border-white/20 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)]
+                rounded-[2.5rem]
                 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
                 h-[calc(100vh-2rem)] overflow-hidden flex flex-col
                 ${widthClass}
                 hidden md:flex
             `}
         >
-            {/* Glossy Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
-
             {/* Header */}
-            <div className="relative flex items-center justify-between h-20 px-6 shrink-0">
+            <div className={`relative flex items-center justify-center h-24 shrink-0 transition-all duration-500 ${isCollapsed ? 'px-0' : 'px-6'}`}>
                 {!isCollapsed && (
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-bold shadow-lg shadow-primary/30">
-                            F
+                    <div className="flex flex-col items-center gap-2 animate-in fade-in zoom-in duration-300">
+                        <div className="relative w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                            <img src="/clair_logo.png" alt="Clair Logo" className="w-full h-full object-cover block dark:hidden" />
+                            <img src="/clair_logo_darkmode.png" alt="Clair Logo" className="w-full h-full object-cover hidden dark:block" />
                         </div>
-                        <div className="flex flex-col">
-                            <span className="font-bold text-foreground tracking-tight">Finance</span>
-                            <span className="text-[10px] text-muted-foreground font-medium tracking-widest uppercase">Premium</span>
-                        </div>
+                        <span className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-cyan-400 tracking-tight">Clair</span>
                     </div>
                 )}
                 {isCollapsed && (
                     <button
                         onClick={toggleCollapse}
-                        className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-bold text-xl mx-auto shadow-primary/20 hover:scale-105 transition-transform"
+                        className="relative w-10 h-10 rounded-2xl overflow-hidden flex items-center justify-center shadow-lg shadow-indigo-500/20 hover:scale-105 transition-transform"
                     >
-                        F
-                    </button>
-                )}
-
-                {!isCollapsed && (
-                    <button
-                        type="button"
-                        onClick={toggleCollapse}
-                        className="p-2 hover:bg-muted rounded-full transition-colors"
-                    >
-                        <Menu className="w-5 h-5 text-muted-foreground" />
+                        <img src="/clair_logo.png" alt="Clair Logo" className="w-full h-full object-cover block dark:hidden" />
+                        <img src="/clair_logo_darkmode.png" alt="Clair Logo" className="w-full h-full object-cover hidden dark:block" />
                     </button>
                 )}
             </div>
 
             {/* Navigation */}
-            <nav className="relative flex-1 px-4 py-2 space-y-1 overflow-y-auto scrollbar-hide">
+            <nav className="relative flex-1 px-4 py-4 space-y-3 overflow-y-auto scrollbar-hide flex flex-col items-center">
                 {navItems.map((item) => {
                     const active = isActive(item.href)
                     return (
-                        <div key={item.href}>
+                        <div key={item.href} className="w-full flex justify-center px-2">
                             {isCollapsed ? (
                                 <Tooltip content={item.label} side="right">
                                     <Link
                                         href={item.href}
                                         className={`
-                                            w-12 h-12 flex items-center justify-center rounded-2xl mx-auto mb-2
-                                            transition-all duration-300
+                                            relative flex items-center justify-center
+                                            w-12 h-12 rounded-2xl
+                                            transition-all duration-300 ease-out
+                                            group
                                             ${active
-                                                ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 scale-110'
-                                                : 'text-muted-foreground hover:bg-muted hover:scale-105'}
+                                                ? 'bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-500 text-white shadow-[0_0_25px_rgba(129,140,248,0.6)] scale-110'
+                                                : 'text-slate-600 dark:text-slate-400 hover:scale-110'}
                                         `}
                                     >
-                                        <item.icon className="w-5 h-5" />
+                                        <item.icon className={`w-5 h-5 relative z-10 transition-colors duration-300 ${!active && 'group-hover:text-indigo-600 dark:group-hover:text-cyan-400'}`} />
+
+                                        {/* Active State Background/Glow */}
+                                        {active && (
+                                            <div className="absolute inset-0 rounded-2xl bg-white/20 blur-md -z-10 animate-pulse" />
+                                        )}
+
+                                        {/* Hover State - Glass (Light) & Neon (Dark) */}
+                                        {!active && (
+                                            <>
+                                                {/* Light Mode: Glassy white background */}
+                                                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/60 dark:bg-transparent shadow-lg dark:shadow-none border border-white/40 dark:border-none -z-10" />
+
+                                                {/* Dark Mode: Neon Glow */}
+                                                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-cyan-500/10 dark:shadow-[0_0_20px_rgba(34,211,238,0.5)] -z-10 hidden dark:block" />
+                                            </>
+                                        )}
                                     </Link>
                                 </Tooltip>
                             ) : (
@@ -99,17 +103,49 @@ export function SidebarFloating() {
                                     href={item.href}
                                     className={`
                                         group relative w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl
-                                        transition-all duration-300
+                                        transition-all duration-300 ease-out overflow-hidden
                                         ${active
-                                            ? 'text-primary font-semibold bg-primary/10'
-                                            : 'text-muted-foreground hover:text-foreground hover:bg-muted'}
+                                            ? 'text-white shadow-[0_0_30px_rgba(99,102,241,0.4)] ring-1 ring-white/20'
+                                            : 'text-slate-600 dark:text-slate-400'}
                                     `}
                                 >
                                     {active && (
-                                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full" />
+                                        <>
+                                            {/* Active Indicator Bar */}
+                                            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1.5 bg-indigo-600 dark:bg-cyan-400 rounded-r-full shadow-[0_0_12px_rgba(99,102,241,0.6)] dark:shadow-[0_0_12px_cyan] z-20" />
+
+                                            {/* Gradient Background */}
+                                            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 opacity-100" />
+
+                                            {/* Glow Effect */}
+                                            <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-300 blur-xl opacity-40" />
+
+                                            {/* Shine Effect */}
+                                            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/20 to-transparent opacity-50" />
+                                        </>
                                     )}
-                                    <item.icon className={`w-5 h-5 transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`} />
-                                    <span className="tracking-wide text-sm">{item.label}</span>
+
+                                    {/* Hover Effect for Inactive */}
+                                    {!active && (
+                                        <>
+                                            {/* Light Mode: Glass Effect */}
+                                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/60 dark:bg-transparent -z-10 border border-white/50 dark:border-none shadow-sm dark:shadow-none" />
+
+                                            {/* Dark Mode: Neon Gradient/Glow */}
+                                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-cyan-500/10 to-indigo-500/10 blur-md dark:shadow-[0_0_15px_rgba(34,211,238,0.3)] -z-10 hidden dark:block" />
+                                        </>
+                                    )}
+
+                                    <item.icon className={`w-5 h-5 relative z-10 transition-transform duration-300 
+                                        ${active ? 'scale-110 drop-shadow-md' : 'group-hover:scale-110'} 
+                                        ${!active && 'group-hover:text-indigo-600 dark:group-hover:text-cyan-400 group-hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.5)] dark:group-hover:drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]'}
+                                    `} />
+
+                                    <span className={`tracking-wide text-sm relative z-10 font-medium transition-colors duration-300
+                                        ${active ? 'text-white' : 'group-hover:text-indigo-900 dark:group-hover:text-cyan-100'}
+                                    `}>
+                                        {item.label}
+                                    </span>
                                 </Link>
                             )}
                         </div>
@@ -118,15 +154,14 @@ export function SidebarFloating() {
             </nav>
 
             {/* Footer */}
-            <div className="relative p-6 shrink-0 border-t border-dashed border-border flex justify-center">
-                {isCollapsed && (
-                    <button onClick={toggleCollapse} className="p-2 hover:bg-muted rounded-xl transition-colors" aria-label="Expand">
-                        <Menu className="w-5 h-5 text-muted-foreground" />
-                    </button>
-                )}
-                {!isCollapsed && (
-                    <p className="text-xs text-muted-foreground text-center w-full">v1.0.0</p>
-                )}
+            <div className="relative p-6 shrink-0 flex flex-col items-center gap-4">
+                <button
+                    onClick={toggleCollapse}
+                    className="p-3 rounded-2xl bg-white/5 hover:bg-white/10 transition-all duration-300 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:scale-105"
+                    aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                >
+                    <Menu className="w-5 h-5" />
+                </button>
             </div>
         </aside>
     )

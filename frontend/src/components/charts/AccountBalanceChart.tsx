@@ -178,9 +178,9 @@ export function AccountBalanceChart({
           >
             <defs>
               <linearGradient id="colorBalancePremium" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.4} />
-                <stop offset="50%" stopColor="#3b82f6" stopOpacity={0.1} />
-                <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
+                <stop offset="0%" stopColor="#8B5CF6" stopOpacity={0.4} />
+                <stop offset="50%" stopColor="#8B5CF6" stopOpacity={0.1} />
+                <stop offset="100%" stopColor="#8B5CF6" stopOpacity={0} />
               </linearGradient>
             </defs>
 
@@ -189,7 +189,7 @@ export function AccountBalanceChart({
               dataKey="date"
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 11, fill: '#6b7280', opacity: 0.7 }}
+              tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))', opacity: 0.7 }}
               tickFormatter={(value, index) => {
                 // Show fewer ticks for cleaner look
                 const date = new Date(value)
@@ -208,7 +208,7 @@ export function AccountBalanceChart({
             <Tooltip
               content={() => null}
               cursor={{
-                stroke: '#3b82f6',
+                stroke: '#8B5CF6',
                 strokeWidth: 1,
                 strokeDasharray: '4 4',
                 opacity: 0.5
@@ -218,7 +218,7 @@ export function AccountBalanceChart({
             <Area
               type="monotone"
               dataKey="balance"
-              stroke="#3b82f6"
+              stroke="#8B5CF6"
               strokeWidth={3}
               fill="url(#colorBalancePremium)"
               animationDuration={1500}

@@ -78,7 +78,7 @@ export default async function LocaleLayout({
           <QueryProvider>
             <ThemeProvider>
               <NextTopLoader
-                color="#1A9B8E"
+                color="#8B5CF6"
                 initialPosition={0.08}
                 crawlSpeed={200}
                 height={4}
@@ -86,7 +86,7 @@ export default async function LocaleLayout({
                 showSpinner={false}
                 easing="ease"
                 speed={200}
-                shadow="0 0 10px #1A9B8E,0 0 5px #1A9B8E"
+                shadow="0 0 10px #8B5CF6,0 0 5px #06B6D4"
               />
               <ErrorBoundary>
                 <a

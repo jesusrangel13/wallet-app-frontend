@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { PieChart as PieChartIcon } from 'lucide-react'
 import { formatCurrency } from '@/types/currency'
 import { useTranslations } from 'next-intl'
@@ -67,15 +67,17 @@ export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: Expen
   const showLegend = dimensions.width >= 500
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-metric-label flex items-center gap-2">
-          <PieChartIcon className="h-4 w-4" />
-          {t('label')}
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">{t('thisMonth')}</p>
-      </CardHeader>
-      <CardContent>
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+        <div className="flex flex-col">
+          <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
+            <PieChartIcon className="h-4 w-4" />
+            {t('label')}
+          </h3>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{t('thisMonth')}</p>
+        </div>
+      </div>
+      <div className="p-6 flex-1 flex flex-col min-h-0">
         {data.length > 0 ? (
           <ResponsiveContainer width="100%" height={chartHeight}>
             <PieChart>
@@ -126,11 +128,11 @@ export const ExpenseDetailsPieWidget = ({ gridWidth = 2, gridHeight = 2 }: Expen
             </PieChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex items-center justify-center text-muted-foreground" style={{ height: chartHeight }}>
+          <div className="flex items-center justify-center text-slate-500 dark:text-slate-400" style={{ height: chartHeight }}>
             {t('noExpensesThisMonth')}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }

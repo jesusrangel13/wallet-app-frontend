@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { Users } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useUserStats } from '@/hooks/useUser'
@@ -29,21 +29,21 @@ export const GroupsWidget = ({ gridWidth = 1, gridHeight = 1 }: GroupsWidgetProp
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-metric-label flex items-center gap-2">
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+        <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
           <Users className="h-4 w-4" />
           {t('label')}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className={`${fontSizes.value} font-bold text-foreground`}>
+        </h3>
+      </div>
+      <div className="p-6">
+        <div className={`${fontSizes.value} font-bold text-slate-800 dark:text-white`}>
           <AnimatedCounter value={groups} decimals={0} />
         </div>
-        <p className={`${fontSizes.label} text-muted-foreground mt-1`}>
+        <p className={`${fontSizes.label} text-slate-500 dark:text-slate-400 mt-1`}>
           <AnimatedCounter value={groups} decimals={0} /> {t('groupsCount')}, <AnimatedCounter value={accounts} decimals={0} /> {t('membersCount')}
         </p>
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }

@@ -36,13 +36,19 @@ export function SidebarClassic() {
             <div className="flex items-center justify-between h-16 px-4 border-b border-border shrink-0">
                 {!isCollapsed && (
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">
-                            💰
+                        <div className="relative w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center">
+                            <img src="/clair_logo.png" alt="Clair Logo" className="w-full h-full object-cover block dark:hidden" />
+                            <img src="/clair_logo_darkmode.png" alt="Clair Logo" className="w-full h-full object-cover hidden dark:block" />
                         </div>
-                        <span className="font-bold text-foreground">FinanceApp</span>
+                        <span className="font-bold text-foreground">Clair</span>
                     </div>
                 )}
-                {isCollapsed && <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white text-sm">💰</div>}
+                {isCollapsed && (
+                    <div className="relative w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center mx-auto">
+                        <img src="/clair_logo.png" alt="Clair Logo" className="w-full h-full object-cover block dark:hidden" />
+                        <img src="/clair_logo_darkmode.png" alt="Clair Logo" className="w-full h-full object-cover hidden dark:block" />
+                    </div>
+                )}
 
                 <button
                     type="button"

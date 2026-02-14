@@ -1,24 +1,24 @@
 import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 
 /**
  * Skeleton loader for lazy-loaded widgets
  */
 const WidgetSkeleton = () => (
-  <Card>
-    <CardHeader className="pb-2">
-      <CardTitle className="text-sm font-medium text-gray-600">
-        <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
-      </CardTitle>
-    </CardHeader>
-    <CardContent>
-      <div className="space-y-2">
-        <div className="h-8 w-full bg-gray-200 rounded animate-pulse"></div>
-        <div className="h-4 w-3/4 bg-gray-200 rounded animate-pulse"></div>
+  <ClairCard>
+    <div className="px-6 py-4 border-b border-white/10 flex items-start justify-between gap-4">
+      <div className="text-sm font-medium text-gray-600 flex items-center gap-2 flex-1">
+        <div className="h-4 w-24 bg-gray-200 rounded animate-pulse dark:bg-gray-700"></div>
       </div>
-    </CardContent>
-  </Card>
+    </div>
+    <div className="px-6 py-6 flex-1 flex flex-col">
+      <div className="space-y-2">
+        <div className="h-8 w-full bg-gray-200 rounded animate-pulse dark:bg-gray-700"></div>
+        <div className="h-4 w-3/4 bg-gray-200 rounded animate-pulse dark:bg-gray-700"></div>
+      </div>
+    </div>
+  </ClairCard>
 )
 
 /**

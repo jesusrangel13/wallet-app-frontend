@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { Layers } from 'lucide-react'
 import { useSelectedMonth } from '@/contexts/SelectedMonthContext'
 import { useCategoryBreakdown } from '@/hooks/useDashboard'
@@ -26,18 +26,18 @@ export const CategoryBreakdownWidget = ({ gridWidth = 2, gridHeight = 2 }: Categ
 
     if (isLoading) {
         return (
-            <Card className="h-full">
-                <CardHeader>
+            <ClairCard className="h-full">
+                <div className="px-6 py-4 border-b border-white/20 dark:border-white/10">
                     <div className="h-6 w-32 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
-                </CardHeader>
-                <CardContent>
+                </div>
+                <div className="p-6">
                     <div className="space-y-4">
                         {[1, 2, 3, 4].map((i) => (
                             <div key={i} className="h-12 bg-gray-100 dark:bg-gray-800 rounded animate-pulse" />
                         ))}
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+            </ClairCard>
         )
     }
 
@@ -55,14 +55,14 @@ export const CategoryBreakdownWidget = ({ gridWidth = 2, gridHeight = 2 }: Categ
     }, {} as Record<string, SubcategoryItem[]>);
 
     return (
-        <Card className="h-full flex flex-col">
-            <CardHeader className="flex-none pb-2">
-                <CardTitle className="text-metric-label flex items-center gap-2">
+        <ClairCard className="h-full flex flex-col">
+            <div className="flex-none px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+                <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
                     <Layers className="w-5 h-5" />
                     {t('expensesByCategory.name')}
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="flex-1 min-h-0 overflow-y-auto pr-2 custom-scrollbar">
+                </h3>
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto pr-2 custom-scrollbar p-6 pt-4">
                 {categories.length > 0 ? (
                     <CategoryAccordionView
                         categories={categories}
@@ -71,11 +71,11 @@ export const CategoryBreakdownWidget = ({ gridWidth = 2, gridHeight = 2 }: Categ
                         totalExpense={totalExpense}
                     />
                 ) : (
-                    <div className="flex h-full items-center justify-center text-gray-500">
+                    <div className="flex h-full items-center justify-center text-slate-500 dark:text-slate-400">
                         No hay gastos este mes
                     </div>
                 )}
-            </CardContent>
-        </Card>
+            </div>
+        </ClairCard>
     )
 }

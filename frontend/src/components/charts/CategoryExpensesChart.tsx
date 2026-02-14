@@ -45,7 +45,16 @@ interface CategoryExpensesChartProps {
     isLoading?: boolean
 }
 
-const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#6366f1', '#14b8a6']
+const COLORS = [
+    '#8B5CF6', // Clair Violet
+    '#06B6D4', // Flux Cyan
+    '#34D399', // Mint Spark
+    '#F472B6', // Soft Rose
+    '#FBBF24', // Warm Amber
+    '#A78BFA', // Light Violet
+    '#22D3EE', // Light Cyan
+    '#6EE7B7'  // Light Mint
+]
 
 export function CategoryExpensesChart({
     data,
@@ -78,32 +87,32 @@ export function CategoryExpensesChart({
             <div style={{ height }} className="overflow-y-auto pr-2 custom-scrollbar">
                 <div className="space-y-3">
                     {enhancedData.map((item, index) => (
-                        <div key={index} className="group relative">
-                            <div className="flex items-center justify-between text-sm mb-1">
+                        <div key={index} className="item-glow flex-col items-stretch gap-2 mb-2 p-3">
+                            <div className="flex items-center justify-between text-sm w-full">
                                 <div className="flex items-center gap-2">
-                                    <span className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-                                    <span className="font-medium text-foreground">{item.name}</span>
+                                    <span className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: item.color }} />
+                                    <span className="font-medium text-slate-700 dark:text-slate-200">{item.name}</span>
                                 </div>
                                 <div className="text-right">
-                                    <span className="font-bold block text-foreground">
+                                    <span className="font-bold block text-slate-800 dark:text-white">
                                         {new Intl.NumberFormat('es-CL', { style: 'currency', currency }).format(item.value)}
                                     </span>
                                 </div>
                             </div>
                             {/* Progress Bar Background */}
-                            <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                            <div className="h-1.5 w-full bg-slate-100 dark:bg-black/20 rounded-full overflow-hidden">
                                 {/* Active Progress */}
                                 <motion.div
                                     initial={{ width: 0 }}
                                     animate={{ width: `${(item.value / maxValue) * 100}%` }}
                                     transition={{ duration: 0.5, delay: index * 0.05 }}
-                                    className="h-full rounded-full"
+                                    className="h-full rounded-full shadow-sm"
                                     style={{
-                                        background: `linear-gradient(90deg, ${item.color} 0%, ${item.color}80 100%)`
+                                        background: `linear-gradient(90deg, ${item.color} 0%, ${item.color} 100%)`
                                     }}
                                 />
                             </div>
-                            <div className="text-[10px] text-muted-foreground text-right mt-0.5">
+                            <div className="text-[10px] text-slate-500 dark:text-slate-400 text-right">
                                 {((item.value / enhancedData.reduce((a, b) => a + b.value, 0)) * 100).toFixed(1)}% del total
                             </div>
                         </div>
@@ -147,10 +156,18 @@ export function CategoryExpensesChart({
         return (
             <div style={{ height }} className="flex flex-col sm:flex-row items-center gap-4">
                 {/* Chart Side */}
+                {/* Chart Side */}
                 <div className="w-full sm:w-1/2 h-full min-h-[200px] relative">
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <defs>
+                                <filter id="neon-glow-pie" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
                                 {COLORS.map((color, index) => (
                                     <linearGradient key={index} id={`categoryGradient-${index}`} x1="0" y1="0" x2="0" y2="1">
                                         <stop offset="0%" stopColor={color} stopOpacity={0.9} />
@@ -164,28 +181,29 @@ export function CategoryExpensesChart({
                                 cy="50%"
                                 innerRadius={60}
                                 outerRadius={80}
-                                paddingAngle={2}
+                                paddingAngle={4}
                                 dataKey="value"
                                 onMouseEnter={(_, index) => setActiveIndex(index)}
                                 onMouseLeave={() => setActiveIndex(null)}
+                                stroke="none"
                             >
                                 {enhancedData.map((entry, index) => (
                                     <Cell
                                         key={`cell-${index}`}
                                         fill={`url(#categoryGradient-${index % COLORS.length})`}
-                                        strokeWidth={activeIndex === index ? 2 : 0}
-                                        stroke="#fff"
-                                        opacity={activeIndex === null || activeIndex === index ? 1 : 0.6}
+                                        className="filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.1)] dark:filter-[url(#neon-glow-pie)] transition-all duration-300 outline-none"
+                                        stroke="none"
+                                        opacity={activeIndex === null || activeIndex === index ? 1 : 0.4}
                                     />
                                 ))}
                             </Pie>
                             <Tooltip content={<CustomTooltip currency={currency} />} />
                             {/* Center Text */}
                             <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle">
-                                <tspan x="50%" dy="-0.5em" fontSize="24" fontWeight="bold" fill="currentColor">
+                                <tspan x="50%" dy="-0.5em" fontSize="24" fontWeight="bold" fill="currentColor" className="text-slate-800 dark:text-white drop-shadow-sm">
                                     {activeIndex !== null ? `${((enhancedData[activeIndex].value / enhancedData.reduce((a, b) => a + b.value, 0)) * 100).toFixed(0)}%` : 'Total'}
                                 </tspan>
-                                <tspan x="50%" dy="1.5em" fontSize="12" fill="#6b7280">
+                                <tspan x="50%" dy="1.5em" fontSize="12" className="fill-slate-500 dark:fill-slate-400">
                                     {activeIndex !== null ? enhancedData[activeIndex].name : 'Gastos'}
                                 </tspan>
                             </text>
@@ -198,20 +216,37 @@ export function CategoryExpensesChart({
                     {enhancedData.map((item, index) => (
                         <div
                             key={index}
-                            className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${activeIndex === index ? 'bg-muted' : 'hover:bg-muted/50'}`}
+                            className={`flex flex-col items-stretch p-3 gap-2 rounded-2xl transition-all duration-300 border border-transparent 
+                                      ${activeIndex === index
+                                    ? 'bg-white/60 dark:bg-white/10 border-slate-200/50 dark:border-white/10 shadow-lg scale-[1.02]'
+                                    : 'hover:bg-white/40 dark:hover:bg-white/5'
+                                }`}
                             onMouseEnter={() => setActiveIndex(index)}
                             onMouseLeave={() => setActiveIndex(null)}
                         >
-                            <div className="flex items-center gap-2">
-                                <div className="w-2 h-8 rounded-full" style={{ backgroundColor: item.color }} />
-                                <div className="flex flex-col">
-                                    <span className="text-xs font-medium">{item.name}</span>
-                                    <span className="text-[10px] text-muted-foreground">{((item.value / enhancedData.reduce((a, b) => a + b.value, 0)) * 100).toFixed(1)}%</span>
+                            <div className="flex items-center justify-between mb-1 w-full">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-8 rounded-full shadow-sm" style={{ backgroundColor: item.color }} />
+                                    <div className="flex flex-col">
+                                        <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{item.name}</span>
+                                        <span className="text-xs text-slate-500 dark:text-slate-400">{((item.value / enhancedData.reduce((a, b) => a + b.value, 0)) * 100).toFixed(1)}% del total</span>
+                                    </div>
                                 </div>
+                                <span className="text-sm font-bold text-slate-800 dark:text-white">
+                                    {new Intl.NumberFormat('es-CL', { notation: 'compact', style: 'currency', currency }).format(item.value)}
+                                </span>
                             </div>
-                            <span className="text-xs font-bold">
-                                {new Intl.NumberFormat('es-CL', { notation: 'compact', style: 'currency', currency }).format(item.value)}
-                            </span>
+
+                            {/* Horizontal bar within the card for comparison */}
+                            <div className="h-1 w-full bg-slate-100 dark:bg-black/20 rounded-full overflow-hidden">
+                                <div
+                                    className="h-full rounded-full"
+                                    style={{
+                                        width: `${((item.value / enhancedData.reduce((a, b) => a + b.value, 0)) * 100)}%`,
+                                        backgroundColor: item.color
+                                    }}
+                                />
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -231,8 +266,8 @@ export function CategoryExpensesChart({
                         <Radar
                             name="Gastos"
                             dataKey="value"
-                            stroke="#8b5cf6"
-                            fill="#8b5cf6"
+                            stroke="#8B5CF6"
+                            fill="#8B5CF6"
                             fillOpacity={0.5}
                         />
                         <Tooltip content={<CustomTooltip currency={currency} />} />

@@ -46,10 +46,7 @@ export const DateGroupHeader = memo(function DateGroupHeader({
 
   return (
     <div className="flex items-center pt-6 pb-2 bg-background z-10 sticky top-0 group">
-      {/* Spacer for Checkbox alignment (w-4 + pl-4 + pr-2 = approx w-[42px] or match visually) 
-            Checkbox const: pl-4 (16) + w-4 (16) + pr-2 (8) = 40px
-        */}
-      <div className="w-[40px] flex-shrink-0" />
+
 
       {/* Timeline Column */}
       <div className="flex flex-col items-center w-6 mr-2 flex-shrink-0 self-stretch">

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/Card';
 import { useTranslations } from 'next-intl';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
@@ -15,8 +14,6 @@ import { NetWorthChart } from './NetWorthChart';
 import { ExpenseCompositionChart } from './ExpenseCompositionChart';
 import { dashboardAPI } from '@/services/dashboard.service';
 import type { Currency } from '@/types/currency';
-
-// Define Interface for Annual Data Response
 interface AnnualData {
     year: number;
     totals: {
@@ -107,7 +104,7 @@ export function AnnualView() {
                     >
                         Comparar años
                     </button>
-                    <div className="flex items-center gap-2 sm:gap-4 bg-card p-1 sm:p-2 rounded-lg border shadow-sm">
+                    <div className="flex items-center gap-2 sm:gap-4 bg-white/10 backdrop-blur-md p-1 sm:p-2 rounded-lg border border-white/20 shadow-sm">
                         <button onClick={prevYear} className="p-1 sm:p-2 hover:bg-muted rounded-full">
                             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>

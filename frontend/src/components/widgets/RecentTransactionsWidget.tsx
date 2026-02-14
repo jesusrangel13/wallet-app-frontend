@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { TrendingUp } from 'lucide-react'
 import { formatCurrency, type Currency } from '@/types/currency'
 import { useMemo } from 'react'
@@ -65,15 +65,17 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-metric-label flex items-center gap-2">
-          <TrendingUp className="h-4 w-4" />
-          Recent Transactions
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
+    <ClairCard className="h-full flex flex-col">
+      <div className="px-6 py-4 flex-none border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
+            <TrendingUp className="h-4 w-4" />
+            {t('title') || 'Recent Transactions'}
+          </h3>
+        </div>
+      </div>
+      <div className="p-6 flex-1 flex flex-col min-h-0">
+        <div className="space-y-3 flex-1 overflow-y-auto min-h-0 pr-1">
           {transactions.length > 0 ? (
             transactions.slice(0, maxItems).map((transaction) => (
               <div key={transaction.id}>
@@ -93,17 +95,19 @@ export const RecentTransactionsWidget = ({ gridWidth = 2, gridHeight = 2 }: Rece
               </div>
             ))
           ) : (
-            <p className="text-muted-foreground text-center py-8">
+            <p className="text-slate-500 dark:text-slate-400 text-center py-8">
               {t('noRecentTransactions')}
             </p>
           )}
         </div>
         {transactions.length > 0 && (
-          <Link href="/dashboard/transactions" prefetch={true} className="block mt-4 w-full text-center py-2 px-4 text-sm text-primary hover:text-primary-hover hover:bg-primary/10 rounded-lg font-medium transition-colors">
-            {t('viewMoreTransactions')} →
-          </Link>
+          <div className="flex-none pt-4">
+            <Link href="/dashboard/transactions" prefetch={true} className="block w-full text-center py-2 px-4 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 hover:bg-white/30 rounded-lg font-medium transition-colors">
+              {t('viewMoreTransactions')} →
+            </Link>
+          </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }

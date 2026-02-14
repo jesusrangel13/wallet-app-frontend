@@ -1,4 +1,5 @@
-import { Card, CardContent } from '@/components/ui/Card'
+
+import { ClairCard } from '@/components/ui/ClairCard'
 import { Skeleton } from '@/components/ui/Skeleton'
 
 /**
@@ -24,8 +25,8 @@ export const AccountsPageSkeleton = () => {
       {/* Accounts Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {[1, 2, 3, 4, 5, 6].map((i) => (
-          <Card key={i}>
-            <CardContent className="pt-6">
+          <div key={i} className="relative overflow-hidden rounded-2xl border border-white/20 dark:border-white/10 bg-white/10 dark:bg-black/20 backdrop-blur-xl shadow-lg flex flex-col h-full">
+            <div className="px-6 py-6 flex-1 flex flex-col pt-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <Skeleton className="w-10 h-10 rounded-full" />
@@ -38,8 +39,8 @@ export const AccountsPageSkeleton = () => {
               </div>
               <Skeleton className="h-8 w-32 mb-1" />
               <Skeleton className="h-3 w-20" />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
     </div>
@@ -63,16 +64,16 @@ export const TransactionsPageSkeleton = () => {
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="pt-6">
+      <ClairCard>
+        <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-10 w-full" />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </ClairCard>
 
       {/* Transaction Groups */}
       {[1, 2, 3].map((group) => (
@@ -89,8 +90,8 @@ export const TransactionsPageSkeleton = () => {
           {/* Transactions */}
           <div className="space-y-2">
             {[1, 2, 3].map((i) => (
-              <Card key={i}>
-                <CardContent className="py-3">
+              <ClairCard key={i}>
+                <div className="p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <Skeleton className="w-10 h-10 rounded-full flex-shrink-0" />
@@ -104,8 +105,8 @@ export const TransactionsPageSkeleton = () => {
                       <Skeleton className="h-3 w-16 ml-auto" />
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </ClairCard>
             ))}
           </div>
         </div>
@@ -130,8 +131,8 @@ export const GroupsPageSkeleton = () => {
       {/* Groups Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <Card key={i}>
-            <CardContent className="pt-6">
+          <ClairCard key={i}>
+            <div className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <Skeleton className="h-6 w-32 mb-2" />
@@ -151,7 +152,7 @@ export const GroupsPageSkeleton = () => {
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
                 <div>
                   <Skeleton className="h-3 w-12 mb-1" />
                   <Skeleton className="h-5 w-20" />
@@ -161,8 +162,8 @@ export const GroupsPageSkeleton = () => {
                   <Skeleton className="h-5 w-16" />
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </ClairCard>
         ))}
       </div>
     </div>
@@ -185,20 +186,20 @@ export const LoansPageSkeleton = () => {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[1, 2, 3].map((i) => (
-          <Card key={i}>
-            <CardContent className="pt-6">
+          <ClairCard key={i}>
+            <div className="p-6">
               <Skeleton className="h-4 w-24 mb-2" />
               <Skeleton className="h-8 w-32" />
-            </CardContent>
-          </Card>
+            </div>
+          </ClairCard>
         ))}
       </div>
 
       {/* Loans List */}
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <Card key={i}>
-            <CardContent className="pt-6">
+          <ClairCard key={i}>
+            <div className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <Skeleton className="h-5 w-40 mb-2" />
@@ -218,12 +219,12 @@ export const LoansPageSkeleton = () => {
               </div>
 
               {/* Actions */}
-              <div className="flex gap-2 mt-4 pt-4 border-t">
+              <div className="flex gap-2 mt-4 pt-4 border-t border-white/10">
                 <Skeleton className="h-9 w-32" />
                 <Skeleton className="h-9 w-28" />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </ClairCard>
         ))}
       </div>
     </div>
@@ -244,21 +245,21 @@ export const BudgetsPageSkeleton = () => {
       </div>
 
       {/* Month Selector */}
-      <Card>
-        <CardContent className="pt-6">
+      <ClairCard>
+        <div className="p-6">
           <div className="flex items-center justify-between">
             <Skeleton className="h-8 w-8 rounded" />
             <Skeleton className="h-6 w-40" />
             <Skeleton className="h-8 w-8 rounded" />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </ClairCard>
 
       {/* Budgets Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <Card key={i}>
-            <CardContent className="pt-6">
+          <ClairCard key={i}>
+            <div className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <Skeleton className="w-10 h-10 rounded-full" />
@@ -282,8 +283,8 @@ export const BudgetsPageSkeleton = () => {
                   <Skeleton className="h-3 w-16" />
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </ClairCard>
         ))}
       </div>
     </div>
@@ -305,8 +306,8 @@ export const AccountDetailPageSkeleton = () => {
       </div>
 
       {/* Account Summary Card */}
-      <Card>
-        <CardContent className="pt-6">
+      <div className="relative overflow-hidden rounded-2xl border border-white/20 dark:border-white/10 bg-white/10 dark:bg-black/20 backdrop-blur-xl shadow-lg flex flex-col">
+        <div className="px-6 py-6 flex-1 flex flex-col pt-6">
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-center gap-4">
               <Skeleton className="w-16 h-16 rounded-full" />
@@ -326,16 +327,16 @@ export const AccountDetailPageSkeleton = () => {
               </div>
             ))}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Transactions */}
       <div>
         <Skeleton className="h-6 w-40 mb-4" />
         <div className="space-y-2">
           {[1, 2, 3, 4, 5].map((i) => (
-            <Card key={i}>
-              <CardContent className="py-3">
+            <ClairCard key={i}>
+              <div className="px-6 py-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Skeleton className="w-10 h-10 rounded-full" />
@@ -346,8 +347,8 @@ export const AccountDetailPageSkeleton = () => {
                   </div>
                   <Skeleton className="h-5 w-24" />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </ClairCard>
           ))}
         </div>
       </div>
@@ -371,8 +372,8 @@ export const AnnualViewSkeleton = () => {
       {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[1, 2, 3, 4].map((i) => (
-          <Card key={i}>
-            <CardContent className="p-6">
+          <ClairCard key={i}>
+            <div className="p-6">
               <div className="flex items-center justify-between space-y-0 pb-2">
                 <Skeleton className="h-4 w-24" />
                 <Skeleton className="h-4 w-4 rounded-full" />
@@ -381,16 +382,16 @@ export const AnnualViewSkeleton = () => {
                 <Skeleton className="h-8 w-32 mb-1" />
                 <Skeleton className="h-4 w-16" />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </ClairCard>
         ))}
       </div>
 
       {/* Charts Section */}
       <div className="grid gap-6 md:grid-cols-1">
         {/* Trend Chart */}
-        <Card>
-          <CardContent className="pt-6">
+        <ClairCard>
+          <div className="p-6">
             <div className="mb-4">
               <Skeleton className="h-6 w-48 mb-2" />
               <Skeleton className="h-4 w-64" />
@@ -400,14 +401,14 @@ export const AnnualViewSkeleton = () => {
                 <Skeleton key={i} className="flex-1 rounded-t" style={{ height: `${Math.random() * 60 + 20}%` }} />
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </ClairCard>
 
         {/* Categories Breakdown */}
         <div className="grid gap-6 md:grid-cols-2">
           {/* Top Categories */}
-          <Card>
-            <CardContent className="pt-6">
+          <ClairCard>
+            <div className="p-6">
               <Skeleton className="h-6 w-40 mb-6" />
               <div className="space-y-4">
                 {[1, 2, 3, 4, 5].map((i) => (
@@ -423,12 +424,12 @@ export const AnnualViewSkeleton = () => {
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </ClairCard>
 
           {/* Top Subcategories */}
-          <Card>
-            <CardContent className="pt-6">
+          <ClairCard>
+            <div className="p-6">
               <Skeleton className="h-6 w-40 mb-6" />
               <div className="space-y-4">
                 {[1, 2, 3, 4, 5].map((i) => (
@@ -441,8 +442,8 @@ export const AnnualViewSkeleton = () => {
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </ClairCard>
         </div>
       </div>
     </div>

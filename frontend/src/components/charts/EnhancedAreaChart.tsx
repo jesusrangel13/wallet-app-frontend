@@ -93,10 +93,10 @@ export function EnhancedAreaChart({
     }
 
     return (
-        <div className="space-y-4 w-full">
+        <div className={`w-full flex flex-col ${height === '100%' ? 'h-full' : 'space-y-4'}`}>
             {/* Header with Title, Value, and Selector */}
             {!hideHeader && (
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 flex-none">
                     <div>
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{title}</p>
                         <AnimatePresence mode="wait">
@@ -128,7 +128,10 @@ export function EnhancedAreaChart({
             )}
 
             {/* Chart Area */}
-            <div style={{ height }} className="relative">
+            <div
+                style={{ height: height === '100%' ? undefined : height }}
+                className={`relative w-full ${height === '100%' ? 'flex-1 min-h-0' : ''}`}
+            >
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
                         data={filteredData}
@@ -149,15 +152,15 @@ export function EnhancedAreaChart({
                         <CartesianGrid
                             strokeDasharray="3 3"
                             vertical={false}
-                            stroke="var(--grid-color)"
-                            strokeOpacity={0.1}
+                            stroke="hsl(var(--border))"
+                            strokeOpacity={0.5}
                         />
 
                         <XAxis
                             dataKey="date"
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
+                            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                             dy={10}
                             minTickGap={30}
                         />
@@ -165,7 +168,7 @@ export function EnhancedAreaChart({
                         <YAxis
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
+                            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                             tickFormatter={(value) =>
                                 new Intl.NumberFormat('es-CL', {
                                     notation: 'compact',

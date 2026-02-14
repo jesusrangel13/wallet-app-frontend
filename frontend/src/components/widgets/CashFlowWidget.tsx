@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { TrendingUp, TrendingDown, DollarSign, BarChart2, Activity, Layers, ArrowUpDown } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
@@ -66,42 +66,42 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
   const { chartHeight, cardPadding, cardFontSize, valueFontSize } = chartConfig
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-metric-label flex items-center gap-2">
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+        <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
           <TrendingUp className="h-4 w-4" />
           {t('name')}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </h3>
+      </div>
+      <div className="p-6">
         {data && data.length > 0 ? (
           <div className="space-y-3">
             {/* Summary cards */}
             <div className="grid grid-cols-3 gap-2">
-              <div className={`bg-green-50 dark:bg-green-900/20 rounded-lg ${cardPadding} border border-green-100 dark:border-green-800`}>
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <TrendingUp className="h-3.5 w-3.5 text-income" />
-                  <p className={`${cardFontSize} text-income font-medium`}>{t('averageIncome')}</p>
+              <div className="p-3 rounded-lg flex flex-col items-start gap-1 bg-white/40 dark:bg-white/5 border border-white/20 shadow-sm backdrop-blur-sm">
+                <div className="flex items-center gap-1.5 w-full">
+                  <TrendingUp className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <p className={`${cardFontSize} text-slate-600 dark:text-slate-300 font-medium`}>{t('averageIncome')}</p>
                 </div>
-                <p className={`${valueFontSize} font-bold text-income`}>
+                <p className={`${valueFontSize} font-bold text-emerald-700 dark:text-emerald-300`}>
                   <AnimatedCurrency amount={avgIncome} currency="CLP" />
                 </p>
               </div>
-              <div className={`bg-red-50 dark:bg-red-900/20 rounded-lg ${cardPadding} border border-red-100 dark:border-red-800`}>
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <TrendingDown className="h-3.5 w-3.5 text-expense" />
-                  <p className={`${cardFontSize} text-expense font-medium`}>{t('averageExpense')}</p>
+              <div className="p-3 rounded-lg flex flex-col items-start gap-1 bg-white/40 dark:bg-white/5 border border-white/20 shadow-sm backdrop-blur-sm">
+                <div className="flex items-center gap-1.5 w-full">
+                  <TrendingDown className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400" />
+                  <p className={`${cardFontSize} text-slate-600 dark:text-slate-300 font-medium`}>{t('averageExpense')}</p>
                 </div>
-                <p className={`${valueFontSize} font-bold text-expense`}>
+                <p className={`${valueFontSize} font-bold text-rose-700 dark:text-rose-300`}>
                   <AnimatedCurrency amount={avgExpense} currency="CLP" />
                 </p>
               </div>
-              <div className={`${avgBalance >= 0 ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-800' : 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800'} rounded-lg ${cardPadding} border`}>
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <DollarSign className={`h-3.5 w-3.5 ${avgBalance >= 0 ? 'text-blue-600 dark:text-blue-500' : 'text-expense'}`} />
-                  <p className={`${cardFontSize} font-medium ${avgBalance >= 0 ? 'text-blue-700 dark:text-blue-400' : 'text-expense'}`}>{t('netBalance')}</p>
+              <div className="p-3 rounded-lg flex flex-col items-start gap-1 bg-white/40 dark:bg-white/5 border border-white/20 shadow-sm backdrop-blur-sm">
+                <div className="flex items-center gap-1.5 w-full">
+                  <DollarSign className={`h-3.5 w-3.5 ${avgBalance >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-rose-600 dark:text-rose-400'}`} />
+                  <p className={`${cardFontSize} text-slate-600 dark:text-slate-300 font-medium`}>{t('netBalance')}</p>
                 </div>
-                <p className={`${valueFontSize} font-bold ${avgBalance >= 0 ? 'text-blue-900 dark:text-blue-300' : 'text-expense'}`}>
+                <p className={`${valueFontSize} font-bold ${avgBalance >= 0 ? 'text-blue-700 dark:text-blue-300' : 'text-rose-700 dark:text-rose-300'}`}>
                   <AnimatedCurrency amount={avgBalance} currency="CLP" />
                 </p>
               </div>
@@ -116,11 +116,11 @@ export const CashFlowWidget = ({ gridWidth = 2, gridHeight = 2 }: CashFlowWidget
             />
           </div>
         ) : (
-          <div className="flex items-center justify-center h-[240px] text-gray-500 dark:text-gray-400">
+          <div className="flex items-center justify-center h-[240px] text-slate-500 dark:text-slate-400">
             {t('noDataAvailable')}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }

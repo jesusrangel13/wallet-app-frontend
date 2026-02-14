@@ -30,10 +30,10 @@ const renderActiveShape = (props: any) => {
 
     return (
         <g>
-            <text x={cx} y={cy - 10} dy={8} textAnchor="middle" fill="#9ca3af" fontSize={12}>
+            <text x={cx} y={cy - 10} dy={8} textAnchor="middle" className="fill-muted-foreground text-xs" fontSize={12}>
                 {payload.name}
             </text>
-            <text x={cx} y={cy + 10} dy={8} textAnchor="middle" fill="#111827" className="text-xl font-bold dark:fill-white">
+            <text x={cx} y={cy + 10} dy={8} textAnchor="middle" className="text-xl font-bold fill-foreground">
                 {new Intl.NumberFormat('es-CL', {
                     style: 'currency',
                     currency: currency || 'CLP',

@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard';
 import { PieChart } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useWidgetDimensions, calculateChartHeight } from '@/hooks/useWidgetDimensions'
@@ -70,25 +70,25 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
   const { chartHeight } = chartConfig
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
+    <ClairCard className="h-full">
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-metric-label flex items-center gap-2">
-            <PieChart className="h-4 w-4" />
+          <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
+            <PieChart className="h-4 w-4 text-indigo-500" />
             {t('title') || 'Expenses by Category'}
-          </CardTitle>
+          </h3>
           <button
             onClick={() => setShowComparison(!showComparison)}
             className={`text-[10px] px-2 py-1 rounded-full border transition-colors ${showComparison
-              ? 'bg-primary/10 border-primary text-primary'
-              : 'bg-transparent border-gray-200 dark:border-gray-700 text-muted-foreground hover:bg-gray-50 dark:hover:bg-gray-800'
+              ? 'bg-indigo-500/10 border-indigo-500 text-indigo-500'
+              : 'bg-white/5 border-white/10 text-slate-500 dark:text-slate-300 hover:bg-white/10 hover:border-white/20'
               }`}
           >
             {showComparison ? 'Hide Comparison' : 'Show Comparison'}
           </button>
         </div>
-      </CardHeader>
-      <CardContent>
+      </div>
+      <div className="p-6 flex-1 min-h-0">
         {data && data.length > 0 ? (
           <CategoryExpensesChart
             data={data}
@@ -97,11 +97,11 @@ export const ExpensesByParentCategoryWidget = ({ gridWidth = 2, gridHeight = 2 }
             currency="CLP"
           />
         ) : (
-          <div className="flex items-center justify-center h-[240px] text-gray-500 dark:text-gray-400">
+          <div className="flex items-center justify-center h-[240px] text-slate-500 dark:text-slate-400">
             {t('noExpensesThisMonth')}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }

@@ -22,10 +22,11 @@ export function LoginSplit({ form, onSubmit, isLoading, t, locale }: LoginProps)
                         transition={{ duration: 0.5 }}
                     >
                         <div className="flex items-center gap-3 mb-10">
-                            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-                                <Wallet className="w-6 h-6 text-primary-foreground" />
+                            <div className="relative w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center">
+                                <img src="/clair_logo.png" alt="Clair Logo" className="w-full h-full object-cover block dark:hidden" />
+                                <img src="/clair_logo_darkmode.png" alt="Clair Logo" className="w-full h-full object-cover hidden dark:block" />
                             </div>
-                            <span className="text-2xl font-bold tracking-tight text-foreground">FinanceApp</span>
+                            <span className="text-2xl font-bold tracking-tight text-foreground">Clair</span>
                         </div>
 
                         <h1 className="text-4xl font-extrabold tracking-tight text-foreground mb-3">
@@ -73,7 +74,7 @@ export function LoginSplit({ form, onSubmit, isLoading, t, locale }: LoginProps)
                                 isLoading={isLoading}
                                 className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary-hover font-semibold text-base rounded-lg shadow-xl shadow-primary/20"
                             >
-                                Inicar Sesión
+                                Iniciar Sesión
                             </Button>
 
                             <div className="relative my-8">

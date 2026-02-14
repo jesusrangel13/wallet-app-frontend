@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { PiggyBank, TrendingUp, TrendingDown } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useWidgetDimensions, getResponsiveFontSizes } from '@/hooks/useWidgetDimensions'
@@ -35,15 +35,15 @@ export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetPr
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-metric-label flex items-center gap-2">
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+        <h3 className="text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-white">
           <PiggyBank className={`h-4 w-4 ${colorClass}`} />
           {t('label')}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="text-balance-large font-bold text-income">
+        </h3>
+      </div>
+      <div className="p-6 flex-1 flex flex-col justify-center">
+        <div className="text-3xl font-bold text-income">
           <AnimatedCurrency amount={savings} currency="CLP" />
         </div>
         <div className="flex items-center gap-1 mt-1">
@@ -51,9 +51,9 @@ export const SavingsWidget = ({ gridWidth = 1, gridHeight = 1 }: SavingsWidgetPr
             <TrendIcon className="h-3 w-3" />
             <AnimatedCounter value={savingsRate} decimals={1} suffix="%" />
           </div>
-          <p className={`${fontSizes.label} text-gray-500 dark:text-gray-400`}>{t('savingsRate')}</p>
+          <p className={`${fontSizes.label} text-slate-500 dark:text-slate-400`}>{t('savingsRate')}</p>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }

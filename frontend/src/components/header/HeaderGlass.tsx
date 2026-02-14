@@ -15,7 +15,7 @@ export function HeaderGlass() {
     const segments = pathname.split('/').filter(Boolean).slice(1) // remove locale
 
     return (
-        <header className="sticky top-0 z-30 w-full bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/40">
+        <header className="sticky top-0 z-30 w-full bg-surface-glass/70 backdrop-blur-xl supports-[backdrop-filter]:bg-surface-glass/40 border-b border-white/10 dark:border-white/5 shadow-sm">
             <div className="px-6 h-16 flex items-center justify-between">
                 {/* Breadcrumbs / Title Context */}
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">

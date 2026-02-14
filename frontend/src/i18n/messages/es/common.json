@@ -1,8 +1,8 @@
 {
   "app": {
-    "title": "Finance App - Administra tu Dinero",
+    "title": "Clair - Tu Centro de Comando Financiero Inteligente",
     "description": "Solución completa de gestión financiera con gastos compartidos",
-    "name": "FinanceApp"
+    "name": "Clair"
   },
   "loading": "Cargando...",
   "error": "Error",

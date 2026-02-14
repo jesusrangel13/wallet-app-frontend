@@ -7,7 +7,6 @@ import {
     Car,
     Home,
     Briefcase,
-    MoreVertical,
     ChevronRight,
     ShoppingCart,
     Zap,
@@ -37,8 +36,12 @@ interface TransactionCardProps {
     date: Date
     isShared?: boolean
     onEdit?: () => void
-    onDelete?: () => void
+    isSelected?: boolean
+    onToggleSelection?: () => void
+    className?: string
 }
+
+// ... (keep icon map)
 
 // Mapa de iconos por categoría
 const categoryIcons: Record<string, any> = {
@@ -65,6 +68,8 @@ const categoryIcons: Record<string, any> = {
     'savings': PiggyBank,
 }
 
+import { Check, Circle } from 'lucide-react'
+
 export function TransactionCard({
     type,
     amount,
@@ -77,11 +82,14 @@ export function TransactionCard({
     date,
     isShared,
     onEdit,
+    isSelected,
+    onToggleSelection,
+    className,
 }: TransactionCardProps) {
     // Determine the content to render as icon
     const iconKey = categoryIcon || ''
-    const LucideIcon = categoryIcons[iconKey]
-    const isEmoji = !LucideIcon && iconKey
+    const MappedIcon = categoryIcons[iconKey]
+    const isEmoji = !MappedIcon && iconKey.trim().length > 0
 
     const amountColor = {
         EXPENSE: 'text-expense',
@@ -101,61 +109,74 @@ export function TransactionCard({
         minimumFractionDigits: currency === 'CLP' ? 0 : 2,
     }).format(amount)
 
+
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            title="Ver detalles"
-            whileHover={{ backgroundColor: 'var(--hover-bg, rgba(0,0,0,0.02))' }}
-            className="flex items-center gap-3 md:gap-4 p-5 md:p-4 cursor-pointer group hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-lg transition-colors"
-            onClick={onEdit}
+            className={`
+                relative group flex items-center pr-4 transition-all duration-200
+                ${className || ''}
+                h-[80px]
+                ${isSelected ? 'bg-primary/5 border-primary/20' : ''}
+                pl-0
+                item-glow rounded-2xl
+                cursor-pointer
+            `}
+            onClick={(e) => {
+                // For Glass variant, clicking anywhere selects if in selection mode, or opens edit
+                // For now, let's keep edit as default click, unless we want selection
+                onEdit?.()
+            }}
         >
             {/* Icono de categoría con color */}
             <div
-                className="w-14 h-14 md:w-12 md:h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                className={`
+                    w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer
+                    transition-all duration-200
+                    mr-4
+                `}
                 style={{ backgroundColor: `${categoryColor}15` }}
             >
-                {LucideIcon ? (
-                    <LucideIcon
-                        className="w-7 h-7 md:w-6 md:h-6"
+                {MappedIcon ? (
+                    <MappedIcon
+                        className="w-5 h-5"
                         style={{ color: categoryColor }}
                     />
                 ) : (
-                    <span className="text-2xl md:text-xl leading-none">{isEmoji ? iconKey : <ShoppingBag className="w-7 h-7 md:w-6 md:h-6" style={{ color: categoryColor }} />}</span>
+                    <span className="text-xl leading-none">{isEmoji ? iconKey : <ShoppingBag className="w-5 h-5" style={{ color: categoryColor }} />}</span>
                 )}
             </div>
 
             {/* Info principal */}
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 flex flex-col justify-center px-1">
                 <div className="flex items-center gap-2">
-                    <p className="text-base md:text-base font-medium text-gray-900 dark:text-gray-100 truncate">
+                    <p className={`text-sm font-medium truncate leading-tight ${isSelected ? 'text-primary' : 'text-gray-900 dark:text-gray-100'}`}>
                         {payee || category}
                     </p>
                     {isShared && (
-                        <span className="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 rounded-full flex-shrink-0">
+                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 rounded-full flex-shrink-0">
                             Compartido
                         </span>
                     )}
                 </div>
-                <p className="text-sm md:text-sm text-gray-500 dark:text-gray-400 truncate">
-                    {description || category}
-                </p>
-                <p className="text-sm md:text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                    {date && !isNaN(new Date(date).getTime())
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
+                    {description || category} • {date && !isNaN(new Date(date).getTime())
                         ? formatDistanceToNow(new Date(date), { addSuffix: true, locale: es })
-                        : 'Fecha desconocida'}
+                        : ''}
                 </p>
             </div>
 
             {/* Monto */}
-            <div className="text-right flex-shrink-0">
-                <p className={`text-lg md:text-base font-semibold ${amountColor}`}>
+            <div className="text-right flex-shrink-0 flex flex-col justify-center">
+                <p className={`text-base font-semibold ${amountColor}`}>
                     {amountPrefix}{formattedAmount}
                 </p>
             </div>
 
             {/* Chevron (visible on hover) */}
-            <ChevronRight className="w-5 h-5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ChevronRight className="w-5 h-5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity ml-2" />
         </motion.div>
     )
 }

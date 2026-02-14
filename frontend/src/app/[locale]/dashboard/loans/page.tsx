@@ -226,7 +226,7 @@ export default function LoansPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   key={loan.id}
-                  className="group relative bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all cursor-pointer"
+                  className="group relative card-glow rounded-xl p-5 transition-all cursor-pointer"
                   onClick={() => router.push(`/dashboard/loans/${loan.id}`)}
                 >
                   <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">

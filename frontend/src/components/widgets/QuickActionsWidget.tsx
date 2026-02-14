@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { Wallet, TrendingUp, Users } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
@@ -22,26 +22,26 @@ export const QuickActionsWidget = ({ gridWidth = 3, gridHeight = 1 }: QuickActio
   const fontSize = dimensions.isSmall ? 'text-sm' : 'text-base'
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('name')}</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10 flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-slate-800 dark:text-white">{t('name')}</h3>
+      </div>
+      <div className="p-6">
         <div className={`grid ${buttonLayout} gap-4`}>
-          <Link href="/dashboard/accounts" prefetch={true} className={`w-full flex items-center justify-center gap-2 bg-blue-600 text-white ${buttonPadding} rounded-lg hover:bg-blue-700 transition-colors ${fontSize}`}>
+          <Link href="/dashboard/accounts" prefetch={true} className={`w-full flex items-center justify-center gap-2 bg-blue-600/90 text-white ${buttonPadding} rounded-lg hover:bg-blue-700 transition-colors shadow-sm hover:shadow-md ${fontSize}`}>
             <Wallet className={iconSize} />
             {t('newAccount')}
           </Link>
-          <Link href="/dashboard/transactions" prefetch={true} className={`w-full flex items-center justify-center gap-2 bg-green-600 text-white ${buttonPadding} rounded-lg hover:bg-green-700 transition-colors ${fontSize}`}>
+          <Link href="/dashboard/transactions" prefetch={true} className={`w-full flex items-center justify-center gap-2 bg-emerald-600/90 text-white ${buttonPadding} rounded-lg hover:bg-emerald-700 transition-colors shadow-sm hover:shadow-md ${fontSize}`}>
             <TrendingUp className={iconSize} />
             {t('newTransaction')}
           </Link>
-          <Link href="/dashboard/groups" prefetch={true} className={`w-full flex items-center justify-center gap-2 bg-purple-600 text-white ${buttonPadding} rounded-lg hover:bg-purple-700 transition-colors ${fontSize}`}>
+          <Link href="/dashboard/groups" prefetch={true} className={`w-full flex items-center justify-center gap-2 bg-purple-600/90 text-white ${buttonPadding} rounded-lg hover:bg-purple-700 transition-colors shadow-sm hover:shadow-md ${fontSize}`}>
             <Users className={iconSize} />
             {t('newLoan')}
           </Link>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }

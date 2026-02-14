@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { ClairCard } from '@/components/ui/ClairCard'
 import { Skeleton } from '@/components/ui/Skeleton'
 import {
   Wallet,
@@ -36,26 +36,26 @@ export const MetricWidgetSkeleton = ({
   iconColor = 'text-gray-600 dark:text-gray-400'
 }: MetricWidgetSkeletonProps) => {
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className={`text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2`}>
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10">
+        <div className={`text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2`}>
           <Icon className={`h-4 w-4 ${iconColor}`} />
           {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </div>
+      </div>
+      <div className="p-6">
         <Skeleton className="h-8 w-32 mb-2" />
         {showSecondaryText && <Skeleton className="h-4 w-24 mt-1" />}
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }
 
 // Skeleton for Account Balances Widget (horizontal carousel)
 export const AccountBalancesWidgetSkeleton = () => {
   return (
-    <Card className="h-[140px]">
-      <CardContent className="h-full flex items-center !p-0">
+    <ClairCard className="h-[140px]">
+      <div className="h-full flex items-center !p-0">
         <div className="relative w-full h-full flex items-center px-4">
           <div className="flex gap-2 w-full">
             {[1, 2, 3].map((i) => (
@@ -83,8 +83,8 @@ export const AccountBalancesWidgetSkeleton = () => {
             ))}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }
 
@@ -103,14 +103,14 @@ export const ChartWidgetSkeleton = ({
   height = 264
 }: ChartWidgetSkeletonProps) => {
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10">
+        <div className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
           <Icon className="h-4 w-4" />
           {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </div>
+      </div>
+      <div className="p-6">
         {chartType === 'pie' ? (
           <div className="flex items-center justify-center" style={{ height: `${height}px` }}>
             <Skeleton className="rounded-full" style={{ width: `${height * 0.6}px`, height: `${height * 0.6}px` }} />
@@ -128,8 +128,8 @@ export const ChartWidgetSkeleton = ({
         ) : (
           <Skeleton className="w-full" style={{ height: `${height}px` }} />
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }
 
@@ -148,14 +148,14 @@ export const ListWidgetSkeleton = ({
   showAvatar = false
 }: ListWidgetSkeletonProps) => {
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10">
+        <div className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
           <Icon className="h-4 w-4" />
           {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </div>
+      </div>
+      <div className="p-6">
         <div className="space-y-3">
           {Array.from({ length: itemCount }).map((_, i) => (
             <div key={i} className="flex items-center gap-3">
@@ -168,28 +168,28 @@ export const ListWidgetSkeleton = ({
             </div>
           ))}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }
 
 // Skeleton for Quick Actions Widget
 export const QuickActionsWidgetSkeleton = () => {
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10">
+        <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
           Quick Actions
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </div>
+      </div>
+      <div className="p-6">
         <div className="grid grid-cols-2 gap-3">
           {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-20 w-full rounded-lg" />
           ))}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }
 
@@ -206,14 +206,14 @@ export const ProgressListWidgetSkeleton = ({
   itemCount = 3
 }: ProgressListWidgetSkeletonProps) => {
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
+    <ClairCard>
+      <div className="px-6 py-4 border-b border-white/20 dark:border-white/10">
+        <div className={`text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2`}>
           <Icon className="h-4 w-4" />
           {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </div>
+      </div>
+      <div className="p-6">
         <div className="space-y-4">
           {Array.from({ length: itemCount }).map((_, i) => (
             <div key={i} className="space-y-2">
@@ -226,8 +226,8 @@ export const ProgressListWidgetSkeleton = ({
             </div>
           ))}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </ClairCard>
   )
 }
 
